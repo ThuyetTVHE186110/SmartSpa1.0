@@ -16,7 +16,7 @@ import java.util.logging.Logger;
  */
 public class DBContext {
     private static final String USER = "sa";
-    private static final String PASS = "123";
+    private static final String PASS = "123456";
     private static final String URL = "jdbc:sqlserver://localhost:1433;databaseName=SmartBeautySpaa";
     private static final String DRIVER = "com.microsoft.sqlserver.jdbc.SQLServerDriver";
 
