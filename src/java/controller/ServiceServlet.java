@@ -10,9 +10,17 @@ import dal.ServiceDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.File;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import model.Discount;
 import model.Service;
 import java.sql.*;
@@ -22,11 +30,16 @@ import java.util.List;
  *
  * @author Asus
  */
+@MultipartConfig(
+    fileSizeThreshold = 1024 * 1024 * 2, // 2MB before writing to disk
+    maxFileSize = 1024 * 1024 * 10,      // Maximum file size 10MB
+    maxRequestSize = 1024 * 1024 * 50    // Maximum request size 50MB
+)
 public class ServiceServlet extends HttpServlet {
    
     
    private ServiceDAO serviceDAO;
-
+   private static final String UPLOAD_DIRECTORY = "C:\\Users\\Asus\\Desktop\\SmartSpa1.0\\web\\img";
    @Override
     public void init() {
         serviceDAO = new ServiceDAO(); // Initializing ServiceDAO instance
@@ -96,16 +109,28 @@ public class ServiceServlet extends HttpServlet {
 
     // Insert a new service into the database
     private void insertService(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException {
-        String name = request.getParameter("name");
-        int price = Integer.parseInt(request.getParameter("price"));
-        int duration = Integer.parseInt(request.getParameter("duration"));
-        String description = request.getParameter("description");
-        String image= request.getParameter("image"); // Fetch discount
-        Service newService = new Service(name, price, duration,description,image);
-        serviceDAO.addService(newService);
-        response.sendRedirect("services?action=list");
-    }
+        throws ServletException, IOException, SQLException {
+    Part filePart = request.getPart("file");
+    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+    String uploadPath = "C:/Users/Asus/Desktop/SmartSpa1.0/web/img";
+    Path filePath = Paths.get(uploadPath, fileName);
+
+    // Overwrite the existing file if it exists
+    Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+
+    // Continue with saving the rest of the form data
+    String name = request.getParameter("name");
+    int price = Integer.parseInt(request.getParameter("price"));
+    int duration = Integer.parseInt(request.getParameter("duration"));
+    String description = request.getParameter("description");
+    String image = "img/" + fileName;
+
+    Service newService = new Service(name, price, duration, description, image);
+    // Save newService to the database
+    serviceDAO.addService(newService);
+    response.sendRedirect(request.getContextPath() + "/services?action=list");
+}
 
     // Update an existing service in the database
     private void updateService(HttpServletRequest request, HttpServletResponse response)
