@@ -108,7 +108,7 @@ public class AppointmentServlet extends HttpServlet {
         //Add bảng trung gian
         AppointmentServiceDAO aSDAO = new AppointmentServiceDAO();
         int maxID = appointmentDAO.getMaxAppointmentID();
-        aSDAO.addAppointmentService(maxID, service);
+        aSDAO.addAppointmentService(maxID + 1, service);
         doGet(request, response);
     }
 

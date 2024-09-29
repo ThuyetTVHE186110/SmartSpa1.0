@@ -90,14 +90,14 @@
                             <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="appointment" class="dropdown-item active">Appointment</a>
-                                <a href="opening" class="dropdown-item">Open Hours</a>
-                                <a href="team" class="dropdown-item">Our Team</a>
-                                <a href="testimonial" class="dropdown-item">Testimonial</a>
+                                <a href="opening.html" class="dropdown-item">Open Hours</a>
+                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="feedback" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
-                    <a href="" class="btn btn-primary d-none d-lg-block">Book Now</a>
+                    <a href="#appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
                 </div>
             </nav>
         </div>
@@ -124,7 +124,7 @@
                 <div class="row mx-0 justify-content-center text-center">
                     <div class="col-lg-6">
                         <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Appointment</h6>
-                        <h1 class="mb-5">Make An Appointment</h1>
+                        <h1 id="appointment" class="mb-5">Make An Appointment</h1>
                     </div>
                 </div>
                 <div class="row justify-content-center bg-appointment mx-0">
@@ -210,7 +210,7 @@
                                 <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Saturday : 9:00 AM - 6:00 PM</li>
                                 <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Sunday : Closed</li>
                             </ul>
-                            <a href="" class="btn btn-primary mt-2">Book Now</a>
+                            <a href="#appointment" class="btn btn-primary mt-2">Book Now</a>
                         </div>
                     </div>
                 </div>

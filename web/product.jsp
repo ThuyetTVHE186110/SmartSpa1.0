@@ -107,8 +107,8 @@
                     <div class="navbar-nav m-auto py-0">
                         <a href="index" class="nav-item nav-link">Home</a>
                         <a href="About.jsp" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="service" class="nav-item nav-link active">Services</a>
+                        <a href="product" class="nav-item nav-link active">Product</a>
+                        <a href="services" class="nav-item nav-link">Services</a>
                         <a href="price.html" class="nav-item nav-link">Pricing</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
@@ -121,7 +121,7 @@
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
-                    <a href="" class="btn btn-primary d-none d-lg-block">Book Now</a>
+                    <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
                 </div>
             </nav>
         </div>
