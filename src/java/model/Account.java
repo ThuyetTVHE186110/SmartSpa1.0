@@ -16,6 +16,14 @@ public class Account {
     private String role;
     private Person personInfo;
 
+    public Account(int id, String username, String password, String role, Person personInfo) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.personInfo = personInfo;
+    }
+
     // Getters and Setters
     public int getId() {
         return id;
