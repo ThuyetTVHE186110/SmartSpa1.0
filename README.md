@@ -17,7 +17,7 @@ Chúng mình là nhóm 5 lớp SE1866-KS trường Đại học FPT Hà Nội.
 ## Features v1.0
 
 - Login, Signup, ForgotPassword
-- View Service
+- View Service, Add Service
 - View Product
 - Create Appoinment
 - View Feedback
