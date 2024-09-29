@@ -86,12 +86,13 @@
                 <div class="navbar-nav m-auto py-0">
                     <a href="." class="nav-item nav-link active">Home</a>
                     <a href="about.html" class="nav-item nav-link">About</a>
+                    <a href="product" class="nav-item nav-link">Product</a>
                     <a href="services" class="nav-item nav-link">Services</a>
                     <a href="price.html" class="nav-item nav-link">Pricing</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu rounded-0 m-0">
-                            <a href="appointment.html" class="dropdown-item">Appointment</a>
+                            <a href="appointment" class="dropdown-item">Appointment</a>
                             <a href="opening.html" class="dropdown-item">Open Hours</a>
                             <a href="team.html" class="dropdown-item">Our Team</a>
                             <a href="feedback" class="dropdown-item">Testimonial</a>
