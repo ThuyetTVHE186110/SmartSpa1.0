@@ -4,7 +4,7 @@
  */
 package model;
 
-import java.util.Date;
+import java.sql.Date;
 
 /**
  *
@@ -20,6 +20,7 @@ public class Person {
     private String email;
     private String address;
 
+    
     public int getId() {
         return id;
     }

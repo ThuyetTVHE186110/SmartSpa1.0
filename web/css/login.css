@@ -363,3 +363,62 @@
 .facebook :hover::before {
     box-shadow: inset 0 0 0 10em #0163E0;
 }
+.error-container {
+    position: fixed; /* Fix the position */
+    top: 20px; /* Position it at the top */
+    left: 50%; /* Center it horizontally */
+    transform: translateX(-50%); /* Adjust position */
+    background-color: #f44336; /* Red background for error */
+    color: white; /* White text color */
+    padding: 15px; /* Padding inside the container */
+    border-radius: 8px; /* Rounded corners */
+    z-index: 1000; /* Ensure it's on top of other content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    opacity: 0; /* Start as invisible */
+    transition: opacity 0.5s ease; /* Smooth transition for visibility */
+}
+
+/* Show the error message */
+.error-container.show {
+    opacity: 1; /* Make it fully visible */
+}
+
+.success-container {
+    position: fixed; /* Fix the position */
+    top: 20px; /* Position it at the top */
+    left: 50%; /* Center it horizontally */
+    transform: translateX(-50%); /* Adjust position */
+    background-color: #4caf50; /* Green background for success */
+    color: white; /* White text color */
+    padding: 15px; /* Padding inside the container */
+    border-radius: 8px; /* Rounded corners */
+    z-index: 1000; /* Ensure it's on top of other content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    opacity: 0; /* Start as invisible */
+    transition: opacity 0.5s ease; /* Smooth transition for visibility */
+}
+
+/* Show the success message */
+.success-container.show {
+    opacity: 1; /* Make it fully visible */
+}
+
+.success-container {
+    position: fixed; /* Fix the position */
+    top: 20px; /* Position it at the top */
+    left: 50%; /* Center it horizontally */
+    transform: translateX(-50%); /* Adjust position */
+    background-color: #4caf50; /* Green background for success */
+    color: white; /* White text color */
+    padding: 15px; /* Padding inside the container */
+    border-radius: 8px; /* Rounded corners */
+    z-index: 1000; /* Ensure it's on top of other content */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow for depth */
+    opacity: 0; /* Start as invisible */
+    transition: opacity 0.5s ease; /* Smooth transition for visibility */
+}
+
+/* Show the success message */
+.success-container.show {
+    opacity: 1; /* Make it fully visible */
+}
