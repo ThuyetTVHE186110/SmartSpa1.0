@@ -154,7 +154,7 @@ public class PasswordForgotServlet extends HttpServlet {
 
     private boolean sendOtpEmail(String recipient, String otp) {
         String host = "smtp.gmail.com"; // Your SMTP server
-        String from = "dat33112@gmail.com"; // Your sender email
+        String from = "no@reply.smartbeauty.com"; // Your sender email
         String subject = "Your OTP Code";
         String messageContent = "Your OTP is: " + otp;
 

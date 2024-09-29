@@ -12,13 +12,17 @@ public class Product {
 
     private int id;
     private String name;
-    private Integer price;
-    private Integer quantity;
+    private int price;
+    private int quantity;
     private Discount discountInfo;
     private Supplier supplierInfo;
     private String category;
     private String branchName;
+    private String image;
     private String description;
+
+    public Product() {
+    }
 
     public int getId() {
         return id;
@@ -36,19 +40,19 @@ public class Product {
         this.name = name;
     }
 
-    public Integer getPrice() {
+    public int getPrice() {
         return price;
     }
 
-    public void setPrice(Integer price) {
+    public void setPrice(int price) {
         this.price = price;
     }
 
-    public Integer getQuantity() {
+    public int getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(Integer quantity) {
+    public void setQuantity(int quantity) {
         this.quantity = quantity;
     }
 
@@ -84,6 +88,14 @@ public class Product {
         this.branchName = branchName;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -91,5 +103,8 @@ public class Product {
     public void setDescription(String description) {
         this.description = description;
     }
+
+   
+    
 
 }
