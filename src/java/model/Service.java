@@ -13,10 +13,29 @@ public class Service {
     private int id;
     private String name;
     private Integer price;
-    private Integer quantity;
     private Integer duration;
-    private Discount discountInfo;
     private String description;
+    private String image;
+
+    public Service() {
+    }
+
+    public Service(int id, String name, Integer price, Integer duration, String description, String image) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.duration = duration;
+        this.description = description;
+        this.image = image;
+    }
+
+    public Service(String name, Integer price, Integer duration, String description, String image) {
+        this.name = name;
+        this.price = price;
+        this.duration = duration;
+        this.description = description;
+        this.image = image;
+    }
 
     public int getId() {
         return id;
@@ -42,20 +61,12 @@ public class Service {
         this.price = price;
     }
 
-    public Integer getQuantity() {
-        return quantity;
+    public Integer getDuration() {
+        return duration;
     }
 
-    public void setQuantity(Integer quantity) {
-        this.quantity = quantity;
-    }
-
-    public Discount getDiscountInfo() {
-        return discountInfo;
-    }
-
-    public void setDiscountInfo(Discount discountInfo) {
-        this.discountInfo = discountInfo;
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 
     public String getDescription() {
@@ -66,12 +77,13 @@ public class Service {
         this.description = description;
     }
 
-    public Integer getDuration() {
-        return duration;
+    public String getImage() {
+        return image;
     }
 
-    public void setDuration(Integer duration) {
-        this.duration = duration;
+    public void setImage(String image) {
+        this.image = image;
     }
 
+    
 }

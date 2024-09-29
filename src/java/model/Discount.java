@@ -19,6 +19,19 @@ public class Discount {
     private Date discountEnd;
     private Integer discountPercent;
 
+    public Discount() {
+    }
+
+    public Discount(int discountID, String name, String code, Date discountStart, Date discountEnd, Integer discountPercent) {
+        this.discountID = discountID;
+        this.name = name;
+        this.code = code;
+        this.discountStart = discountStart;
+        this.discountEnd = discountEnd;
+        this.discountPercent = discountPercent;
+    }
+
+    
     public int getDiscountID() {
         return discountID;
     }
