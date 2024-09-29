@@ -129,5 +129,7 @@ public class AppointmentDAO extends DBContext {
 
     public static void main(String[] args) {
         AppointmentDAO appointmentDAO = new AppointmentDAO();
+        int max = appointmentDAO.getMaxAppointmentID();
+        System.out.println(max);
     }
 }
