@@ -88,10 +88,10 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment.html" class="dropdown-item active">Appointment</a>
-                                <a href="opening.html" class="dropdown-item">Open Hours</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="testimonial.html" class="dropdown-item">Testimonial</a>
+                                <a href="appointment" class="dropdown-item active">Appointment</a>
+                                <a href="opening" class="dropdown-item">Open Hours</a>
+                                <a href="team" class="dropdown-item">Our Team</a>
+                                <a href="testimonial" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
@@ -139,6 +139,13 @@
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
+                                            <input type="text" name="phone" class="form-control bg-transparent p-4" placeholder="Your Phone" required="required" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="col-sm-12">
+                                        <div class="form-group">
                                             <input type="email" name="email" class="form-control bg-transparent p-4" placeholder="Your Email" required="required" />
                                         </div>
                                     </div>
@@ -147,14 +154,14 @@
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <div class="date" id="date" data-target-input="nearest">
-                                                <input type="text" name="appointmentDate" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Date" data-target="#date" data-toggle="datetimepicker"/>
+                                                <input type="text" name="appointmentDate" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Date" data-target="#date" data-toggle="datetimepicker" required="required"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="col-sm-6">
                                         <div class="form-group">
                                             <div class="time" id="time" data-target-input="nearest">
-                                                <input type="text" name="appointmentTime" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Time" data-target="#time" data-toggle="datetimepicker"/>
+                                                <input type="text" name="appointmentTime" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Time" data-target="#time" data-toggle="datetimepicker" required="required" accept=""/>
                                             </div>
                                         </div>
                                     </div>
