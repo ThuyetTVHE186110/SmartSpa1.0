@@ -7,8 +7,10 @@ package dal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Feedback;
 
 /**
  *
@@ -37,6 +39,12 @@ public class DBContext {
             if (connection != null) {
                 System.out.println("Connected to the database!");
             }
+             FeedbackDAO o= new FeedbackDAO();
+        ArrayList<Feedback> f= o.getFeedback();
+        for (Feedback feedback : f) {
+            System.out.println(feedback.getContent());
+        }
+    
         } catch (SQLException ex) {
             Logger.getLogger(DBContext.class.getName()).log(Level.SEVERE, "SQL Error", ex);
             System.out.println("SQLException: " + ex.getMessage());

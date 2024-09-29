@@ -1,14 +1,14 @@
 <%-- 
-    Document   : appointment
-    Created on : Sep 29, 2024, 9:28:41 AM
-    Author     : Thắng
+    Document   : testimonial
+    Created on : Sep 29, 2024, 9:55:22 PM
+    Author     : admin
 --%>
 
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
         <meta charset="utf-8">
         <title>SPA Center - Beauty & Spa HTML Template</title>
@@ -88,10 +88,10 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment.html" class="dropdown-item active">Appointment</a>
+                                <a href="appointment.html" class="dropdown-item">Appointment</a>
                                 <a href="opening.html" class="dropdown-item">Open Hours</a>
                                 <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="feedback" class="dropdown-item">Testimonial</a>
+                                <a href="feedback" class="dropdown-item active">Testimonial</a>
                             </div>
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
@@ -106,109 +106,51 @@
         <!-- Header Start -->
         <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 90px;">
             <div class="container text-center py-5">
-                <h3 class="text-white display-3 mb-4">Appointment</h3>
+                <h3 class="text-white display-3 mb-4">Testimonial</h3>
                 <div class="d-inline-flex align-items-center text-white">
                     <p class="m-0"><a class="text-white" href="">Home</a></p>
                     <i class="far fa-circle px-3"></i>
-                    <p class="m-0">Appointment</p>
+                    <p class="m-0">Testimonial</p>
                 </div>
             </div>
         </div>
         <!-- Header End -->
 
 
-        <!-- Appointment Start -->
+        <!-- Testimonial Start -->
+
         <div class="container-fluid py-5">
             <div class="container py-5">
-                <div class="row mx-0 justify-content-center text-center">
+                <div class="row align-items-center">
+                    <div class="col-lg-6 pb-5 pb-lg-0">
+                        <img class="img-fluid w-100" src="img/testimonial.jpg" alt="">
+                    </div>
                     <div class="col-lg-6">
-                        <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Appointment</h6>
-                        <h1 class="mb-5">Make An Appointment</h1>
-                    </div>
-                </div>
-                <div class="row justify-content-center bg-appointment mx-0">
-                    <div class="col-lg-6 py-5">
-                        <div class="p-5 my-5" style="background: rgba(33, 30, 28, 0.7);">
-                            <h1 class="text-white text-center mb-4">Make Appointment</h1>
-                            <form action="appointment" method="post">
-                                <div class="form-row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <input type="text" name="name" class="form-control bg-transparent p-4" placeholder="Your Name" required="required" />
+                        <h6 class="d-inline-block text-primary text-uppercase bg-light py-1 px-2">Testimonial</h6>
+                        <h1 class="mb-4">What Our Clients Say!</h1>
+
+
+                        <div class="owl-carousel testimonial-carousel"> 
+                            <c:forEach items="${feedback}" var="feedback">
+                                <div class="position-relative">
+                                    <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
+                                    <div class="d-flex align-items-center mb-3">
+                                        <img class="img-fluid rounded-circle" src="img/testimonial-3.jpg" style="width: 60px; height: 60px;" alt="">
+                                        <div class="ml-3">
+                                            <h6 class="text-uppercase">${feedback.customer.name}</h6>
+                                            <span>${feedback.service.name}</span>
                                         </div>
                                     </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <input type="email" name="email" class="form-control bg-transparent p-4" placeholder="Your Email" required="required" />
-                                        </div>
-                                    </div>
+                                    <p class="m-0">${feedback.content}</p>
                                 </div>
-                                <div class="form-row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <div class="date" id="date" data-target-input="nearest">
-                                                <input type="text" name="appointmentDate" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Date" data-target="#date" data-toggle="datetimepicker"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <div class="time" id="time" data-target-input="nearest">
-                                                <input type="text" name="appointmentTime" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Time" data-target="#time" data-toggle="datetimepicker"/>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="form-row">
-                                    <div class="col-sm-6">
-                                        <div class="form-group">
-                                            <select class="custom-select bg-transparent px-4" name="serviceID" style="height: 47px;">
-                                                <option selected>Select A Service</option>
-                                                <c:forEach items="${requestScope.serviceList}" var="service">
-                                                    <option value="${service.id}">${service.name}</option>
-                                                </c:forEach>
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Make Appointment</button>
-                                    </div>
-                                </div>
-                            </form>
+                            </c:forEach>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Appointment End -->
 
-
-        <!-- Open Hours Start -->
-        <div class="container-fluid py-5">
-            <div class="container py-5">
-                <div class="row">
-                    <div class="col-lg-6" style="min-height: 500px;">
-                        <div class="position-relative h-100">
-                            <img class="position-absolute w-100 h-100" src="img/opening.jpg" style="object-fit: cover;">
-                        </div>
-                    </div>
-                    <div class="col-lg-6 pt-5 pb-lg-5">
-                        <div class="hours-text bg-light p-4 p-lg-5 my-lg-5">
-                            <h6 class="d-inline-block text-white text-uppercase bg-primary py-1 px-2">Open Hours</h6>
-                            <h1 class="mb-4">Best Relax And Spa Zone</h1>
-                            <p>Dolores lorem lorem ipsum sit et ipsum. Sadip sea amet diam dolore sed et. Sit rebum labore sit sit ut vero no sit. Et elitr stet dolor sed sit et sed ipsum et kasd ut. Erat duo eos et erat sed diam duo</p>
-                            <ul class="list-inline">
-                                <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Mon – Fri : 9:00 AM - 7:00 PM</li>
-                                <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Saturday : 9:00 AM - 6:00 PM</li>
-                                <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Sunday : Closed</li>
-                            </ul>
-                            <a href="" class="btn btn-primary mt-2">Book Now</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Open Hours End -->
+        <!-- Testimonial End -->
 
 
         <!-- Footer Start -->
@@ -305,5 +247,4 @@
         <!-- Template Javascript -->
         <script src="js/main.js"></script>
     </body>
-
 </html>
