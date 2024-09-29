@@ -159,7 +159,7 @@
                         <h4 class="text-white font-weight-medium px-3">${p.name}</h4>
                         <p class="text-white px-3 mb-3">${p.description}</p>
                         <div class="w-100 bg-white text-center p-4">
-                            <a class="btn btn-primary" href="producdetailservlet?id=${p.id}">View Detail</a>
+                            <a class="btn btn-primary" href="producdetail?id=${p.id}">View Detail</a>
                         </div>
                     </div>
                 </div>
