@@ -19,6 +19,8 @@ import model.Person;
  * @author PC
  */
 public class AccountDAO {
+
+    // Existing method to get account by username and password
     public Account getByUsernamePassword(String username, String password) {
         try {
             String sql = "SELECT * FROM Account WHERE Username = ? AND Password = ?";
@@ -34,18 +36,53 @@ public class AccountDAO {
         }
         return null;
     }
-    
+
+    // Method to update the password for an account
+    public boolean updatePassword(String username, String newPassword) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        boolean isUpdated = false;
+
+        try {
+            connection = getConnection(); // Use existing method to get connection
+            String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
+            preparedStatement = connection.prepareStatement(sql);
+            preparedStatement.setString(1, newPassword); // Set new password
+            preparedStatement.setString(2, username);    // Set the username
+
+            int rowsAffected = preparedStatement.executeUpdate();
+            isUpdated = (rowsAffected > 0); // Return true if rows were updated
+
+        } catch (SQLException e) {
+            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
+        } finally {
+            // Close resources
+            try {
+                if (preparedStatement != null) {
+                    preparedStatement.close();
+                }
+                if (connection != null) {
+                    connection.close();
+                }
+            } catch (SQLException e) {
+                Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
+            }
+        }
+
+        return isUpdated;
+    }
+
     public Person getPersonByID(String name) {
         PreparedStatement stm = null;
         ResultSet rs = null;
-        
+
         try (Connection connection = getConnection()) { // Use getConnection from DBContext
             String query = "select * from Person where ID = ?";
             stm = connection.prepareStatement(query);
             stm.setString(1, name);
             rs = stm.executeQuery();
-            
-            if(rs.next()) {
+
+            if (rs.next()) {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
@@ -76,5 +113,9 @@ public class AccountDAO {
             }
         }
         return null;
+    }
+
+    private Connection getConnection() throws SQLException {
+        return DBContext.getConnection(); // Use your DBContext to get the connection
     }
 }

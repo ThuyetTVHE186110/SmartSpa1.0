@@ -55,7 +55,7 @@
                     <input type="checkbox" id="rememberMe" name="rememberMe" <% if(request.getAttribute("rememberMe") != null) { %> checked <% } %> >
                     <label for="rememberMe">Remember me</label>
                 </div>
-                <span class="span">Forgot password?</span>
+                <span class="span"><a href="ForgotPassword.jsp" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
             </div>
             <!-- Submit Button -->
 
@@ -181,8 +181,35 @@
             });
         });
     </script>
-    
-    
+
+    <div class="success-container1"></div> <!-- Success notification container -->
+
+    <% 
+        // Get the success message from the session and remove it after use
+        String successMessage1 = (String) request.getSession().getAttribute("message");
+        request.getSession().removeAttribute("message"); // Remove message after displaying it
+    %>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var successContainer1 = document.querySelector('.success-container1');
+
+        <% if (successMessage1 != null) { %>
+            successContainer1.innerText = "<%= successMessage %>";
+            successContainer1.style.display = 'block'; // Show the container
+            successContainer1.classList.add('show'); // Add the 'show' class for CSS transition
+
+            // Use setTimeout to remove the notification after 3 seconds
+            setTimeout(function () {
+                successContainer1.classList.remove('show'); // Hide the notification
+                successContainer1.style.display = 'none'; // Optionally set display back to none
+            }, 3000);
+        <% } %>
+        });
+    </script>
+
+
+
 </body>
 
 </html>
