@@ -1,3 +1,11 @@
+<%-- 
+    Document   : index
+    Created on : Sep 29, 2024, 3:50:08 PM
+    Author     : Asus
+--%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -28,6 +36,9 @@
 </head>
 
 <body>
+    <c:if test="${empty listServices}">
+    <c:redirect url="index" />
+    </c:if>
     <!-- Topbar Start -->
     <div class="container-fluid bg-light d-none d-lg-block">
         <div class="row py-2 px-lg-5">
@@ -65,7 +76,7 @@
     <!-- Navbar Start -->
     <div class="container-fluid p-0">
         <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-            <a href="index.html" class="navbar-brand ml-lg-3">
+            <a href="." class="navbar-brand ml-lg-3">
                 <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
             </a>
             <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
@@ -73,7 +84,7 @@
             </button>
             <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                 <div class="navbar-nav m-auto py-0">
-                    <a href="index.html" class="nav-item nav-link active">Home</a>
+                    <a href="." class="nav-item nav-link active">Home</a>
                     <a href="about.html" class="nav-item nav-link">About</a>
                     <a href="services" class="nav-item nav-link">Services</a>
                     <a href="price.html" class="nav-item nav-link">Pricing</a>
@@ -184,66 +195,20 @@
             </div>
         </div>
         <div class="owl-carousel service-carousel">
-            <div class="service-item position-relative">
-                <img class="img-fluid" src="img/service-1.jpg" alt="">
-                <div class="service-text text-center">
-                    <h4 class="text-white font-weight-medium px-3">Body Massage</h4>
-                    <p class="text-white px-3 mb-3">Elitr labore sit dolor erat est lorem diam sea ipsum diam dolor duo sit ipsum</p>
-                    <div class="w-100 bg-white text-center p-4" >
-                        <a class="btn btn-primary" href="">Make Order</a>
+            <c:forEach var="service" items="${listServices}">
+                <div class="service-item position-relative">
+                    <img class="img-fluid" src="${service.image}" alt="${service.name}">
+                    <div class="service-text text-center">
+                        <h4 class="text-white font-weight-medium px-3">${service.name}</h4>
+                        <p class="text-white px-3 mb-3">${service.description}</p>
+                        <div class="w-100 bg-white text-center p-4">
+                            <a class="btn btn-primary" href="#">Make Order</a>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="service-item position-relative">
-                <img class="img-fluid" src="img/service-2.jpg" alt="">
-                <div class="service-text text-center">
-                    <h4 class="text-white font-weight-medium px-3">Stone Therapy</h4>
-                    <p class="text-white px-3 mb-3">Elitr labore sit dolor erat est lorem diam sea ipsum diam dolor duo sit ipsum</p>
-                    <div class="w-100 bg-white text-center p-4" >
-                        <a class="btn btn-primary" href="">Make Order</a>
-                    </div>
-                </div>
-            </div>
-            <div class="service-item position-relative">
-                <img class="img-fluid" src="img/service-3.jpg" alt="">
-                <div class="service-text text-center">
-                    <h4 class="text-white font-weight-medium px-3">Facial Therapy</h4>
-                    <p class="text-white px-3 mb-3">Elitr labore sit dolor erat est lorem diam sea ipsum diam dolor duo sit ipsum</p>
-                    <div class="w-100 bg-white text-center p-4" >
-                        <a class="btn btn-primary" href="">Make Order</a>
-                    </div>
-                </div>
-            </div>
-            <div class="service-item position-relative">
-                <img class="img-fluid" src="img/service-4.jpg" alt="">
-                <div class="service-text text-center">
-                    <h4 class="text-white font-weight-medium px-3">Skin Care</h4>
-                    <p class="text-white px-3 mb-3">Elitr labore sit dolor erat est lorem diam sea ipsum diam dolor duo sit ipsum</p>
-                    <div class="w-100 bg-white text-center p-4" >
-                        <a class="btn btn-primary" href="">Make Order</a>
-                    </div>
-                </div>
-            </div>
-            <div class="service-item position-relative">
-                <img class="img-fluid" src="img/service-5.jpg" alt="">
-                <div class="service-text text-center">
-                    <h4 class="text-white font-weight-medium px-3">Stream Bath</h4>
-                    <p class="text-white px-3 mb-3">Elitr labore sit dolor erat est lorem diam sea ipsum diam dolor duo sit ipsum</p>
-                    <div class="w-100 bg-white text-center p-4" >
-                        <a class="btn btn-primary" href="">Make Order</a>
-                    </div>
-                </div>
-            </div>
-            <div class="service-item position-relative">
-                <img class="img-fluid" src="img/service-6.jpg" alt="">
-                <div class="service-text text-center">
-                    <h4 class="text-white font-weight-medium px-3">Face Masking</h4>
-                    <p class="text-white px-3 mb-3">Elitr labore sit dolor erat est lorem diam sea ipsum diam dolor duo sit ipsum</p>
-                    <div class="w-100 bg-white text-center p-4" >
-                        <a class="btn btn-primary" href="">Make Order</a>
-                    </div>
-                </div>
-            </div>
+            </c:forEach>
+            
+            
         </div>
         <div class="row justify-content-center bg-appointment mx-0">
             <div class="col-lg-6 py-5">
@@ -539,7 +504,7 @@
         <div class="container pt-5">
             <div class="row">
                 <div class="col-lg-6 pr-lg-5 mb-5">
-                    <a href="index.html" class="navbar-brand">
+                    <a href="." class="navbar-brand">
                         <h1 class="mb-3 text-white"><span class="text-primary">SPA</span> Center</h1>
                     </a>
                     <p>Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>

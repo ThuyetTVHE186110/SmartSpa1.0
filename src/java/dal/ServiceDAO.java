@@ -11,7 +11,7 @@ import java.util.List;
 import model.Discount;
 /**
  *
- * @author Asus
+ * @author ThuyetTVHE186110
  */
 public class ServiceDAO extends DBContext{
     private static final String INSERT_SERVICE_SQL = "INSERT INTO services (name, price, duration, description, image) VALUES (?, ?, ?, ?, ?)";
