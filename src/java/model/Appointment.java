@@ -4,7 +4,8 @@
  */
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 /**
  *
@@ -13,13 +14,12 @@ import java.util.Date;
 public class Appointment {
 
     private int id;
-    private Date startTime;
-    private Date endTime;
+    private LocalDate appointmentDate;
+    private LocalTime appointmentTime;
     private String status;
     private String note;
     private Person person;
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -28,20 +28,20 @@ public class Appointment {
         this.id = id;
     }
 
-    public Date getStartTime() {
-        return startTime;
+    public LocalDate getAppointmentDate() {
+        return appointmentDate;
     }
 
-    public void setStartTime(Date startTime) {
-        this.startTime = startTime;
+    public void setAppointmentDate(LocalDate appointmentDate) {
+        this.appointmentDate = appointmentDate;
     }
 
-    public Date getEndTime() {
-        return endTime;
+    public LocalTime getAppointmentTime() {
+        return appointmentTime;
     }
 
-    public void setEndTime(Date endTime) {
-        this.endTime = endTime;
+    public void setAppointmentTime(LocalTime appointmentTime) {
+        this.appointmentTime = appointmentTime;
     }
 
     public String getStatus() {
@@ -68,4 +68,5 @@ public class Appointment {
         this.person = person;
     }
 
+    
 }
