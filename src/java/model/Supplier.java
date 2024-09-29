@@ -4,21 +4,17 @@
  */
 package model;
 
-import java.util.Date;
-
 /**
  *
- * @author Asus
+ * @author PC
  */
-public class Person {
+public class Supplier {
 
     private int id;
     private String name;
-    private Date dateOfBirth;
-    private char gender;
+    private String address;
     private String phone;
     private String email;
-    private String address;
 
     public int getId() {
         return id;
@@ -36,20 +32,12 @@ public class Person {
         this.name = name;
     }
 
-    public Date getDateOfBirth() {
-        return dateOfBirth;
+    public String getAddress() {
+        return address;
     }
 
-    public void setDateOfBirth(Date dateOfBirth) {
-        this.dateOfBirth = dateOfBirth;
-    }
-
-    public char getGender() {
-        return gender;
-    }
-
-    public void setGender(char gender) {
-        this.gender = gender;
+    public void setAddress(String address) {
+        this.address = address;
     }
 
     public String getPhone() {
@@ -66,14 +54,6 @@ public class Person {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
     }
 
 }
