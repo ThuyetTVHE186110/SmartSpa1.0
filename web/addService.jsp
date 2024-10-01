@@ -52,7 +52,7 @@
                                 <i class="flaticon-right-arrow"></i>
                             </li>
                             <li class="nav-item">
-                                <a href="${pageContext.request.contextPath}/admin/home">Trang chủ</a>
+                                <a href="${pageContext.request.contextPath}/.">Trang chủ</a>
                             </li>
                             <li class="separator">
                                 <i class="flaticon-right-arrow"></i>
