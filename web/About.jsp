@@ -73,7 +73,7 @@
                 </button>
                 <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                     <div class="navbar-nav m-auto py-0">
-                        <a href="index.html" class="nav-item nav-link">Home</a>
+                        <a href="index" class="nav-item nav-link">Home</a>
                         <a href="about.html" class="nav-item nav-link active">About</a>
                         <a href="product" class="nav-item nav-link">Product</a>
                         <a href="service.html" class="nav-item nav-link">Services</a>
@@ -88,7 +88,7 @@
                         </div>
                         <a href="contact.html" class="nav-item nav-link">Contact</a>
                     </div>
-                    <a href="" class="btn btn-primary d-none d-lg-block">Book Now</a>
+                    <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
                 </div>
             </nav>
         </div>

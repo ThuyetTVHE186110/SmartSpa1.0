@@ -32,7 +32,7 @@ public class PersonDAO extends DBContext {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
-                if(rs.getDate(3) != null){
+                if (rs.getDate(3) != null) {
                     person.setDateOfBirth(rs.getDate(3));
                 }
                 // Lấy giá trị của cột gender (kiểu CHAR)
@@ -63,7 +63,7 @@ public class PersonDAO extends DBContext {
 
         return list;
     }
-    
+
     public Person getPersonByID(int id) {
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -78,7 +78,7 @@ public class PersonDAO extends DBContext {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
-                if(rs.getDate(3) != null){
+                if (rs.getDate(3) != null) {
                     person.setDateOfBirth(rs.getDate(3));
                 }
                 // Lấy giá trị của cột gender (kiểu CHAR)
@@ -123,7 +123,7 @@ public class PersonDAO extends DBContext {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
-                if(rs.getDate(3) != null){
+                if (rs.getDate(3) != null) {
                     person.setDateOfBirth(rs.getDate(3));
                 }
                 // Lấy giá trị của cột gender (kiểu CHAR)
@@ -168,7 +168,7 @@ public class PersonDAO extends DBContext {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
-                if(rs.getDate(3) != null){
+                if (rs.getDate(3) != null) {
                     person.setDateOfBirth(rs.getDate(3));
                 }
                 // Lấy giá trị của cột gender (kiểu CHAR)
@@ -213,7 +213,7 @@ public class PersonDAO extends DBContext {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
-                if(rs.getDate(3) != null){
+                if (rs.getDate(3) != null) {
                     person.setDateOfBirth(rs.getDate(3));
                 }
                 // Lấy giá trị của cột gender (kiểu CHAR)
@@ -259,7 +259,7 @@ public class PersonDAO extends DBContext {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
-                if(rs.getDate(3) != null){
+                if (rs.getDate(3) != null) {
                     person.setDateOfBirth(rs.getDate(3));
                 }
                 // Lấy giá trị của cột gender (kiểu CHAR)
@@ -299,9 +299,9 @@ public class PersonDAO extends DBContext {
 
             // Thiết lập các giá trị cho PreparedStatement
             stm.setString(1, person.getName());
-            stm.setDate(2,  person.getDateOfBirth());
+            stm.setDate(2, person.getDateOfBirth());
             stm.setString(3, String.valueOf(person.getGender()));
-            stm.setString(4, person.getPhone());               
+            stm.setString(4, person.getPhone());
             stm.setString(5, person.getEmail());
             stm.setString(6, person.getAddress());
 
@@ -320,9 +320,41 @@ public class PersonDAO extends DBContext {
             }
         }
     }
-    
+
+    public int maxID() {
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+        int maxID = 1;
+        try (Connection connection = getConnection()) {
+            String query = "SELECT MAX(ID) AS max_id FROM Person";
+            stm = connection.prepareStatement(query);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                maxID = rs.getInt("max_id");
+                return maxID;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while getting max appointment ID: " + e.getMessage());
+        } finally {
+            // Đóng ResultSet và PreparedStatement nếu không null
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+        return maxID; // Trả về 1 nếu có lỗi hoặc không tìm thấy ID nào
+    }
 
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
+        int max = testDAO.maxID();
+        System.out.println(max);
     }
 }

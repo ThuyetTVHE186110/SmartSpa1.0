@@ -96,6 +96,8 @@ public class AppointmentServlet extends HttpServlet {
         Person existCustomer = personDAO.existCheck(customer);
         if (existCustomer == null) {
             personDAO.addPerson(customer);
+            int max = personDAO.maxID();
+            customer.setId(max);
             appointment.setPerson(customer);
         } else {
             appointment.setPerson(existCustomer);
