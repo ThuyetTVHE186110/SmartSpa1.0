@@ -25,9 +25,10 @@ import model.Discount;
 import model.Service;
 import java.sql.*;
 import java.util.List;
+import jakarta.servlet.ServletContext;
 
 /**
- *
+ * Servlet for handling Service-related operations
  * @author Asus
  */
 @MultipartConfig(
@@ -37,15 +38,22 @@ import java.util.List;
 )
 public class ServiceServlet extends HttpServlet {
    
-    
-   private ServiceDAO serviceDAO;
-   private static final String UPLOAD_DIRECTORY = "C:\\Users\\Asus\\Desktop\\SmartSpa1.0\\web\\img";
-   @Override
-    public void init() {
+    private ServiceDAO serviceDAO;
+    private String uploadPath;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
         serviceDAO = new ServiceDAO(); // Initializing ServiceDAO instance
+        
+        // Get the upload path
+        ServletContext context = getServletContext();
+        uploadPath = context.getRealPath("/img");
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists()) uploadDir.mkdir();
     }
 
-   @Override
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
@@ -70,12 +78,14 @@ public class ServiceServlet extends HttpServlet {
                     listServices(request, response);
                     break;
             }
-        } catch (SQLException ex) {
-            throw new ServletException(ex);
+        } catch (SQLException | ServletException ex) {
+            request.setAttribute("errorMessage", ex.getMessage());
+            RequestDispatcher dispatcher = request.getRequestDispatcher("addService.jsp");
+            dispatcher.forward(request, response);
         }
     }
 
-   @Override
+    @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         doGet(request, response); // Delegate POST to doGet for form submissions
@@ -107,30 +117,33 @@ public class ServiceServlet extends HttpServlet {
         dispatcher.forward(request, response);
     }
 
-    // Insert a new service into the database
+    /**
+     * Insert a new service into the database
+     */
     private void insertService(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException, SQLException {
-    Part filePart = request.getPart("file");
-    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+        // Validate input parameters
+        String name = validateAndGetParameter(request, "name", "Service name is required");
+        int price = validateAndGetIntParameter(request, "price", "Price must be a valid number");
+        int duration = validateAndGetIntParameter(request, "duration", "Duration must be a valid number");
+        String description = validateAndGetParameter(request, "description", "Description is required");
 
-    String uploadPath = "C:/Users/Asus/Desktop/SmartSpa1.0/web/img";
-    Path filePath = Paths.get(uploadPath, fileName);
+        // Handle file upload
+        Part filePart = request.getPart("file");
+        String fileName = validateAndGetFileName(filePart);
 
-    // Overwrite the existing file if it exists
-    Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+        Path filePath = Paths.get(uploadPath, fileName);
 
-    // Continue with saving the rest of the form data
-    String name = request.getParameter("name");
-    int price = Integer.parseInt(request.getParameter("price"));
-    int duration = Integer.parseInt(request.getParameter("duration"));
-    String description = request.getParameter("description");
-    String image = "img/" + fileName;
+        // Overwrite the existing file if it exists
+        Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 
-    Service newService = new Service(name, price, duration, description, image);
-    // Save newService to the database
-    serviceDAO.addService(newService);
-    response.sendRedirect(request.getContextPath() + "/services?action=list");
-}
+        String image = "img/" + fileName;
+
+        // Create and save new service
+        Service newService = new Service(name, price, duration, description, image);
+        serviceDAO.addService(newService);
+        response.sendRedirect(request.getContextPath() + "/services?action=list");
+    }
 
     // Update an existing service in the database
     private void updateService(HttpServletRequest request, HttpServletResponse response)
@@ -158,5 +171,34 @@ public class ServiceServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+
+    // Helper methods for input validation
+
+    private String validateAndGetParameter(HttpServletRequest request, String paramName, String errorMessage) 
+            throws ServletException {
+        String value = request.getParameter(paramName);
+        if (value == null || value.trim().isEmpty()) {
+            throw new ServletException(errorMessage);
+        }
+        return value.trim();
+    }
+
+    private int validateAndGetIntParameter(HttpServletRequest request, String paramName, String errorMessage) 
+            throws ServletException {
+        String value = validateAndGetParameter(request, paramName, errorMessage);
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException e) {
+            throw new ServletException(errorMessage);
+        }
+    }
+
+    private String validateAndGetFileName(Part part) throws ServletException {
+        String fileName = Paths.get(part.getSubmittedFileName()).getFileName().toString();
+        if (fileName == null || fileName.trim().isEmpty()) {
+            throw new ServletException("File name is required");
+        }
+        return fileName;
+    }
 
 }
