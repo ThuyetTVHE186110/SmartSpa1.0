@@ -23,7 +23,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import model.Discount;
 import model.Service;
-import java.sql.*;
+import java.sql.SQLException;
 import java.util.List;
 import jakarta.servlet.ServletContext;
 
@@ -50,7 +50,9 @@ public class ServiceServlet extends HttpServlet {
         ServletContext context = getServletContext();
         uploadPath = context.getRealPath("/img");
         File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists()) uploadDir.mkdir();
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
+        }
     }
 
     @Override
