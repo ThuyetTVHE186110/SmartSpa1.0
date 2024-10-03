@@ -3,18 +3,10 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/service-management.jsp</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/js/main.js</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/ServiceManagement.java</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/accountmanagement.html</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/service.jsp</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/ServiceDAO.java</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/index.html</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PasswordForgotServlet.java</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/SignupServlet.java</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/ServiceServlet.java</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/users-profile.html</file>
-            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/addService.jsp</file>
+            <file>file:/E:/FALL2024/SmartSpa1.0/src/java/controller/LoginServlet.java</file>
+            <file>file:/E:/FALL2024/SmartSpa1.0/web/index.jsp</file>
+            <file>file:/E:/FALL2024/SmartSpa1.0/web/WEB-INF/web.xml</file>
+            <file>file:/E:/FALL2024/SmartSpa1.0/src/java/controller/SignupServlet.java</file>
         </group>
     </open-files>
 </project-private>
