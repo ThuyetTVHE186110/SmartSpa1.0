@@ -14,11 +14,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.ResultSet;
-import javax.mail.*;
-import javax.mail.internet.*;
-import java.util.Properties;
-import java.util.Random;
 
 /**
  *
@@ -84,8 +79,6 @@ public class SignupServlet extends HttpServlet {
             handleRegistration(request, response);
         } else if ("Reset".equals(action)) {
             handleReset(request, response);
-        } else if ("verifyOtp".equals(action)) {
-            handleOtpVerification(request, response);
         }
     }
 
@@ -103,119 +96,28 @@ public class SignupServlet extends HttpServlet {
             return;
         }
 
-        String checkEmailSql = "SELECT * FROM Account WHERE Username = ?";
+        String sql = "INSERT INTO Account (Username, Password, RoleID) VALUES (?, ?, ?)";
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailSql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            pstmt.setInt(3, roleID);
 
-            // Check if the email already exists
-            checkStmt.setString(1, username);
-            try (ResultSet rs = checkStmt.executeQuery()) {
-                if (rs.next()) {
-                    request.setAttribute("error", "This email is already registered. Please log in or reset your password.");
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
-                    return;
-                }
-            }
-
-            // If email doesn't exist, proceed with OTP generation
-            String otp = generateOtp();
-            if (sendOtpEmail(username, otp)) {
-                // Store the OTP and other info in session
-                request.getSession().setAttribute("otp", otp);
-                request.getSession().setAttribute("email", username);
-                request.getSession().setAttribute("password", password);
-                request.getSession().setAttribute("roleID", roleID);
-
-                // Redirect to OTP verification page
-                response.sendRedirect("OtpConfirmRegistration.jsp");
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                // Set success message in session
+                request.getSession().setAttribute("message", "Registration successful! Please log in.");
+                response.sendRedirect("login.jsp"); // Redirect to login page
+                return;
             } else {
-                request.setAttribute("error", "Failed to send OTP. Please try again.");
-                request.getRequestDispatcher("signup.jsp").forward(request, response);
+                request.setAttribute("message", "Registration failed!");
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("message", "Database error: " + e.getMessage());
-            request.getRequestDispatcher("signup.jsp").forward(request, response);
         }
-    }
 
-    private void handleOtpVerification(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        String enteredOtp = request.getParameter("otp");
-        String sessionOtp = (String) request.getSession().getAttribute("otp");
-
-        if (enteredOtp.equals(sessionOtp)) {
-            // Retrieve stored user info
-            String email = (String) request.getSession().getAttribute("email");
-            String password = (String) request.getSession().getAttribute("password");
-            int roleID = (int) request.getSession().getAttribute("roleID");
-
-            // Insert user into database
-            String insertSql = "INSERT INTO Account (Username, Password, RoleID) VALUES (?, ?, ?)";
-            try (Connection conn = DBContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setString(1, email);
-                pstmt.setString(2, password);
-                pstmt.setInt(3, roleID);
-                pstmt.executeUpdate();
-
-                // Clear session attributes
-                request.getSession().removeAttribute("otp");
-                request.getSession().removeAttribute("email");
-                request.getSession().removeAttribute("password");
-                request.getSession().removeAttribute("roleID");
-
-                // Redirect to login page
-                request.getSession().setAttribute("message", "Registration successful! Please log in.");
-                response.sendRedirect("login.jsp");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                request.setAttribute("message", "Database error: " + e.getMessage());
-                request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
-            }
-        } else {
-            request.setAttribute("error", "Invalid OTP. Please try again.");
-            request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
-        }
-    }
-
-    private String generateOtp() {
-        Random random = new Random();
-        int otp = 100000 + random.nextInt(900000); // Generate a 6-digit OTP
-        return String.valueOf(otp);
-    }
-
-    private boolean sendOtpEmail(String recipient, String otp) {
-        String host = "smtp.gmail.com";
-        String from = "no@reply.smartbeauty.com";
-        String subject = "Your OTP Code";
-        String messageContent = "Your OTP is: " + otp;
-
-        Properties properties = new Properties();
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", "587");
-        properties.put("mail.smtp.auth", "true");
-        properties.put("mail.smtp.starttls.enable", "true");
-
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("dat33112@gmail.com", "cdct hlco ymoj wklg"); // Use a secure method for this
-            }
-        });
-
-        try {
-            Message mimeMessage = new MimeMessage(session);
-            mimeMessage.setFrom(new InternetAddress(from));
-            mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
-            mimeMessage.setSubject(subject);
-            mimeMessage.setText(messageContent);
-            Transport.send(mimeMessage);
-            return true;
-        } catch (MessagingException e) {
-            e.printStackTrace();
-            return false;
-        }
+        request.getRequestDispatcher("signup.jsp").forward(request, response);
     }
 
     private void handleReset(HttpServletRequest request, HttpServletResponse response)
