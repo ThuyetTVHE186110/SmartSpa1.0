@@ -82,8 +82,8 @@
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu rounded-0 m-0">
                             <a href="appointment" class="dropdown-item">Appointment</a>
-                            <a href="opening.html" class="dropdown-item">Open Hours</a>
-                            <a href="team.html" class="dropdown-item">Our Team</a>
+                            <a href="opening.jsp" class="dropdown-item">Open Hours</a>
+                            <a href="team.jsp" class="dropdown-item">Our Team</a>
                             <a href="feedback" class="dropdown-item">Testimonial</a>
                         </div>
                     </div>
@@ -272,7 +272,6 @@
                     <p class="m-0 text-white">&copy; <a href="#">Your Site Name</a>. All Rights Reserved.</p>
                 </div>
                 <div class="col-md-6 text-center text-md-right">
-                    <p class="m-0 text-white">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
                 </div>
             </div>
         </div>
