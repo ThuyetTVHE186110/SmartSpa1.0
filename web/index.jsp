@@ -85,10 +85,10 @@
                 <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                     <div class="navbar-nav m-auto py-0">
                         <a href="." class="nav-item nav-link active">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="services" class="nav-item nav-link">Services</a>
-                        <a href="price.html" class="nav-item nav-link">Pricing</a>
+                        <a href="about.jsp" class="nav-item nav-link">About</a>
+                        <a href="product.jsp" class="nav-item nav-link">Product</a>
+                        <a href="services.jsp" class="nav-item nav-link">Services</a>
+                        <a href="price.jsp" class="nav-item nav-link">Pricing</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
@@ -98,7 +98,7 @@
                                 <a href="feedback" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a href="contact.jsp" class="nav-item nav-link">Contact</a>
                     </div>
                     <a href="login.jsp" class="nav-item nav-link">Login</a>
                     <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>

@@ -73,11 +73,11 @@
             </button>
             <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                 <div class="navbar-nav m-auto py-0">
-                    <a href="index" class="nav-item nav-link">Home</a>
-                    <a href="about.html" class="nav-item nav-link active">About</a>
+                    <a href="." class="nav-item nav-link">Home</a>
+                    <a href="about.jsp" class="nav-item nav-link">About</a>
                     <a href="product" class="nav-item nav-link">Product</a>
                     <a href="services" class="nav-item nav-link">Services</a>
-                    <a href="price.html" class="nav-item nav-link">Pricing</a>
+                    <a href="price.jsp" class="nav-item nav-link active">Pricing</a>
                     <div class="nav-item dropdown">
                         <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                         <div class="dropdown-menu rounded-0 m-0">
@@ -87,7 +87,7 @@
                             <a href="feedback" class="dropdown-item">Testimonial</a>
                         </div>
                     </div>
-                    <a href="contact.html" class="nav-item nav-link">Contact</a>
+                    <a href="contact.jsp" class="nav-item nav-link">Contact</a>
                 </div>
                 <a href="login.jsp" class="nav-item nav-link">Login</a>
                 <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
@@ -100,123 +100,76 @@
     <!-- Header Start -->
     <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 90px;">
         <div class="container text-center py-5">
-            <h3 class="text-white display-3 mb-4">About</h3>
+            <h3 class="text-white display-3 mb-4">Pricing</h3>
             <div class="d-inline-flex align-items-center text-white">
                 <p class="m-0"><a class="text-white" href="">Home</a></p>
                 <i class="far fa-circle px-3"></i>
-                <p class="m-0">About</p>
+                <p class="m-0">Pricing</p>
             </div>
         </div>
     </div>
     <!-- Header End -->
 
 
-    <!-- About Start -->
+    <!-- Pricing Start -->
     <div class="container-fluid py-5">
         <div class="container py-5">
-            <div class="row align-items-center">
-                <div class="col-lg-6 pb-5 pb-lg-0">
-                    <img class="img-fluid w-100" src="img/about.jpg" alt="">
-                </div>
-                <div class="col-lg-6">
-                    <h6 class="d-inline-block text-primary text-uppercase bg-light py-1 px-2">About Us</h6>
-                    <h1 class="mb-4">Your Best Spa, Beauty & Skin Care Center</h1>
-                    <p class="pl-4 border-left border-primary">Dolores lorem lorem ipsum sit et ipsum. Sadip sea amet diam dolore sed et. Sit rebum labore sit sit ut vero no sit. Et elitr stet dolor sed sit et sed ipsum et kasd erat duo eos et erat</p>
-                    <div class="row pt-3">
-                        <div class="col-6">
-                            <div class="bg-light text-center p-4">
-                                <h3 class="display-4 text-primary" data-toggle="counter-up">99</h3>
-                                <h6 class="text-uppercase">Spa Specialist</h6>
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="bg-light text-center p-4">
-                                <h3 class="display-4 text-primary" data-toggle="counter-up">999</h3>
-                                <h6 class="text-uppercase">Happy Clients</h6>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- About End -->
-
-
-    <!-- Team Start -->
-    <div class="container-fluid py-5">
-        <div class="container pt-5">
-            <div class="row justify-content-center text-center">
-                <div class="col-lg-6">
-                    <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Spa Specialist</h6>
-                    <h1 class="mb-5">Spa & Beauty Specialist</h1>
-                </div>
-            </div>
             <div class="row">
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5">
-                        <img class="img-fluid" src="img/team-1.jpg" alt="">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white">
-                                <h5 class="text-white text-uppercase">Olivia Mia</h5>
-                                <p class="m-0">Spa & Beauty Expert</p>
-                            </div>
-                            <div class="team-social bg-dark text-center">
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
+                <div class="col-lg-5" style="min-height: 500px;">
+                    <div class="position-relative h-100">
+                        <img class="position-absolute w-100 h-100" src="img/pricing.jpg" style="object-fit: cover;">
                     </div>
                 </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5">
-                        <img class="img-fluid" src="img/team-2.jpg" alt="">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white">
-                                <h5 class="text-white text-uppercase">Cory Brown</h5>
-                                <p class="m-0">Spa & Beauty Expert</p>
+                <div class="col-lg-7 pt-5 pb-lg-5">
+                    <div class="pricing-text bg-light p-4 p-lg-5 my-lg-5">
+                        <div class="owl-carousel pricing-carousel">
+                            <div class="bg-white">
+                                <div class="d-flex align-items-center justify-content-between border-bottom border-primary p-4">
+                                    <h1 class="display-4 mb-0">
+                                        <small class="align-top text-muted font-weight-medium" style="font-size: 22px; line-height: 45px;">$</small>49<small class="align-bottom text-muted font-weight-medium" style="font-size: 16px; line-height: 40px;">/Mo</small>
+                                    </h1>
+                                    <h5 class="text-primary text-uppercase m-0">Basic Plan</h5>
+                                </div>
+                                <div class="p-4">
+                                    <p><i class="fa fa-check text-success mr-2"></i>Full Body Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Deep Tissue Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Hot Stone Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Tissue Body Polish</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Foot & Nail Care</p>
+                                    <a href="" class="btn btn-primary my-2">Order Now</a>
+                                </div>
                             </div>
-                            <div class="team-social bg-dark text-center">
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+                            <div class="bg-white">
+                                <div class="d-flex align-items-center justify-content-between border-bottom border-primary p-4">
+                                    <h1 class="display-4 mb-0">
+                                        <small class="align-top text-muted font-weight-medium" style="font-size: 22px; line-height: 45px;">$</small>99<small class="align-bottom text-muted font-weight-medium" style="font-size: 16px; line-height: 40px;">/Mo</small>
+                                    </h1>
+                                    <h5 class="text-primary text-uppercase m-0">Family Plan</h5>
+                                </div>
+                                <div class="p-4">
+                                    <p><i class="fa fa-check text-success mr-2"></i>Full Body Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Deep Tissue Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Hot Stone Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Tissue Body Polish</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Foot & Nail Care</p>
+                                    <a href="" class="btn btn-primary my-2">Order Now</a>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5">
-                        <img class="img-fluid" src="img/team-3.jpg" alt="">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white">
-                                <h5 class="text-white text-uppercase">Elizabeth Ross</h5>
-                                <p class="m-0">Spa & Beauty Expert</p>
-                            </div>
-                            <div class="team-social bg-dark text-center">
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-lg-3 col-md-6">
-                    <div class="team position-relative overflow-hidden mb-5">
-                        <img class="img-fluid" src="img/team-4.jpg" alt="">
-                        <div class="position-relative text-center">
-                            <div class="team-text bg-primary text-white">
-                                <h5 class="text-white text-uppercase">Kelly Walke</h5>
-                                <p class="m-0">Spa & Beauty Expert</p>
-                            </div>
-                            <div class="team-social bg-dark text-center">
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                                <a class="btn btn-outline-primary btn-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                                <a class="btn btn-outline-primary btn-square" href="#"><i class="fab fa-instagram"></i></a>
+                            <div class="bg-white">
+                                <div class="d-flex align-items-center justify-content-between border-bottom border-primary p-4">
+                                    <h1 class="display-4 mb-0">
+                                        <small class="align-top text-muted font-weight-medium" style="font-size: 22px; line-height: 45px;">$</small>149<small class="align-bottom text-muted font-weight-medium" style="font-size: 16px; line-height: 40px;">/Mo</small>
+                                    </h1>
+                                    <h5 class="text-primary text-uppercase m-0">VIP Plan</h5>
+                                </div>
+                                <div class="p-4">
+                                    <p><i class="fa fa-check text-success mr-2"></i>Full Body Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Deep Tissue Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Hot Stone Massage</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Tissue Body Polish</p>
+                                    <p><i class="fa fa-check text-success mr-2"></i>Foot & Nail Care</p>
+                                    <a href="" class="btn btn-primary my-2">Order Now</a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -224,7 +177,35 @@
             </div>
         </div>
     </div>
-    <!-- Team End -->
+    <!-- Pricing End -->
+
+
+    <!-- Open Hours Start -->
+    <div class="container-fluid py-5">
+        <div class="container py-5">
+            <div class="row">
+                <div class="col-lg-6" style="min-height: 500px;">
+                    <div class="position-relative h-100">
+                        <img class="position-absolute w-100 h-100" src="img/opening.jpg" style="object-fit: cover;">
+                    </div>
+                </div>
+                <div class="col-lg-6 pt-5 pb-lg-5">
+                    <div class="hours-text bg-light p-4 p-lg-5 my-lg-5">
+                        <h6 class="d-inline-block text-white text-uppercase bg-primary py-1 px-2">Open Hours</h6>
+                        <h1 class="mb-4">Best Relax And Spa Zone</h1>
+                        <p>Dolores lorem lorem ipsum sit et ipsum. Sadip sea amet diam dolore sed et. Sit rebum labore sit sit ut vero no sit. Et elitr stet dolor sed sit et sed ipsum et kasd ut. Erat duo eos et erat sed diam duo</p>
+                        <ul class="list-inline">
+                            <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Mon ? Fri : 9:00 AM - 7:00 PM</li>
+                            <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Saturday : 9:00 AM - 6:00 PM</li>
+                            <li class="h6 py-1"><i class="far fa-circle text-primary mr-3"></i>Sunday : Closed</li>
+                        </ul>
+                        <a href="appointment" class="btn btn-primary mt-2">Book Now</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Open Hours End -->
 
 
     <!-- Footer Start -->
