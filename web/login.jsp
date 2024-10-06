@@ -57,13 +57,17 @@
                 </div>
                 <span class="span"><a href="ForgotPassword.jsp" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
             </div>
+            <input type="hidden" name="userType" value="customer">           
             <!-- Submit Button -->
 
             <button class="button-submit" type="submit" name = "signin">Sign In</button>
             <!-- Sign Up Option -->
 
             <p class="p">Don't have an account? <span class="span"><a href="signup.jsp" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
-
+            <!-- Add button to switch to admin login -->
+            <button class="button-submit" type="button" onclick="window.location.href = 'adminLogin.jsp';">
+                Admin/Manager/Staff Login
+            </button>
 
         </p>
 

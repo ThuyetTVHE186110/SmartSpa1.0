@@ -83,67 +83,140 @@ public class LoginServlet extends HttpServlet {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+//    /**
+//     * Handles the HTTP <code>POST</code> method.
+//     *
+//     * @param request servlet request
+//     * @param response servlet response
+//     * @throws ServletException if a servlet-specific error occurs
+//     * @throws IOException if an I/O error occurs
+//     */
+//    @Override
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        // Lấy tên đăng nhập và mật khẩu từ form
+//        String username = request.getParameter("txtUsername");
+//        String password = request.getParameter("txtPassword");
+//        String rememberMe = request.getParameter("rememberMe"); // Lấy giá trị "Remember Me"
+//
+//        // Khởi tạo DAO và cố gắng lấy tài khoản dựa trên thông tin xác thực
+//        AccountDAO accountDAO = new AccountDAO();
+//        Account account = null;
+//
+//        try {
+//            account = accountDAO.getByUsernamePassword(username, password);
+//        } catch (Exception e) {
+//            // Xử lý ngoại lệ
+//            e.printStackTrace();
+//            request.setAttribute("error", "An unexpected error occurred. Please try again.");
+//            request.getRequestDispatcher("login.jsp").forward(request, response);
+//            return;
+//        }
+//
+//        // Kiểm tra xem tài khoản có tồn tại không
+//        if (account != null) {
+//            // Tạo session và thiết lập thuộc tính session
+//            HttpSession session = request.getSession();
+//            session.setAttribute("account", account);
+//            session.setAttribute("loggedIn", true);
+//            session.setMaxInactiveInterval(30 * 60); // Thời gian timeout của session
+//
+//            // Xử lý chức năng "Remember Me"
+//            if ("on".equals(rememberMe)) {
+//                // Tạo cookie để ghi nhớ tên đăng nhập và mật khẩu
+//                Cookie usernameCookie = new Cookie("savedUsername", username);
+//                Cookie passwordCookie = new Cookie("savedPassword", password);
+//                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
+//                passwordCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
+//                response.addCookie(usernameCookie);
+//                response.addCookie(passwordCookie);
+//            } else {
+//                // Xóa cookie nếu "Remember Me" không được chọn
+//                Cookie usernameCookie = new Cookie("savedUsername", "");
+//                Cookie passwordCookie = new Cookie("savedPassword", "");
+//                usernameCookie.setMaxAge(0); // Hết hạn cookie
+//                passwordCookie.setMaxAge(0); // Hết hạn cookie
+//                response.addCookie(usernameCookie);
+//                response.addCookie(passwordCookie);
+//            }
+//
+//            // Redirect based on user role
+//            String role = account.getRole();
+//            switch (role) {
+//                case "Admin":
+//                    response.sendRedirect("index.html");
+//                    break;
+//                case "Manager":
+//                    response.sendRedirect("index.html");
+//                    break;
+//                case "Staff":
+//                    response.sendRedirect("index.html");
+//                    break;
+//                case "Customer":
+//                    response.sendRedirect("index.jsp");
+//                    break;
+//                default:
+//                    request.setAttribute("error", "Role not recognized. Please contact support.");
+//                    request.getRequestDispatcher("login.jsp").forward(request, response);
+//                    break;
+//            }
+//        } else {
+//            request.setAttribute("error", "Login failed! Invalid username or password.");
+//            request.getRequestDispatcher("login.jsp").forward(request, response);
+//        }
+//    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy tên đăng nhập và mật khẩu từ form
+        // Get username and password from the form
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
-        String rememberMe = request.getParameter("rememberMe"); // Lấy giá trị "Remember Me"
+        String userType = request.getParameter("userType"); // Determine if it's customer or admin
 
-        // Khởi tạo DAO và cố gắng lấy tài khoản dựa trên thông tin xác thực
+        // Initialize DAO and attempt to retrieve the account based on the credentials
         AccountDAO accountDAO = new AccountDAO();
         Account account = null;
 
         try {
             account = accountDAO.getByUsernamePassword(username, password);
         } catch (Exception e) {
-            // Xử lý ngoại lệ
+            // Handle exception
             e.printStackTrace();
             request.setAttribute("error", "An unexpected error occurred. Please try again.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
             return;
         }
 
-        // Kiểm tra xem tài khoản có tồn tại không
+        // Check if the account exists
         if (account != null) {
-            // Tạo session và thiết lập thuộc tính session
+            // Create session and set session attributes
             HttpSession session = request.getSession();
             session.setAttribute("account", account);
             session.setAttribute("loggedIn", true);
-            session.setMaxInactiveInterval(30 * 60); // Thời gian timeout của session
+            session.setMaxInactiveInterval(30 * 60); // Session timeout
 
-            // Xử lý chức năng "Remember Me"
-            if ("on".equals(rememberMe)) {
-                // Tạo cookie để ghi nhớ tên đăng nhập và mật khẩu
-                Cookie usernameCookie = new Cookie("savedUsername", username);
-                Cookie passwordCookie = new Cookie("savedPassword", password);
-                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
-                passwordCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
-            } else {
-                // Xóa cookie nếu "Remember Me" không được chọn
-                Cookie usernameCookie = new Cookie("savedUsername", "");
-                Cookie passwordCookie = new Cookie("savedPassword", "");
-                usernameCookie.setMaxAge(0); // Hết hạn cookie
-                passwordCookie.setMaxAge(0); // Hết hạn cookie
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
+            // Lấy vai trò từ tài khoản
+            String role = account.getRole(); // Lấy vai trò từ tài khoản
+            System.out.println("User role: " + role); // In ra giá trị vai trò để kiểm tra
+
+            // Redirect based on user role
+            if ("admin".equals(userType) || "manager".equals(userType) || "staff".equals(userType)) {
+                // For admin, manager, and staff login
+                if ("Admin".equals(role) || "Manager".equals(role) || "Staff".equals(role)) {
+                    response.sendRedirect("index.html"); // Successful login for admin/staff/manager
+                } else if ("Customer".equals(role)) {
+                    request.setAttribute("error", "Invalid login for admin/staff/manager.");
+                    request.getRequestDispatcher("adminLogin.jsp").forward(request, response); // Redirect back to admin login
+                }
+            } else { // Customer login
+                if ("Customer".equals(role)) {
+                    response.sendRedirect("index.jsp"); // Successful customer login
+                } else {
+                    request.setAttribute("error", "Invalid login for customer.");
+                    request.getRequestDispatcher("login.jsp").forward(request, response); // Redirect back to customer login
+                }
             }
-
-            // Chuyển hướng đến trang chính
-            response.sendRedirect("HomeServlet");
         } else {
-            // Thiết lập thông báo lỗi cho đăng nhập không hợp lệ
             request.setAttribute("error", "Login failed! Invalid username or password.");
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }

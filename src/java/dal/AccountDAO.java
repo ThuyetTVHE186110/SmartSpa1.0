@@ -29,6 +29,8 @@ public class AccountDAO {
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
+                String role = rs.getString("Role"); // Lấy giá trị role
+                System.out.println("Retrieved role: " + role); // In ra giá trị role để kiểm tra
                 return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), null);
             }
         } catch (SQLException ex) {
@@ -118,4 +120,5 @@ public class AccountDAO {
     private Connection getConnection() throws SQLException {
         return DBContext.getConnection(); // Use your DBContext to get the connection
     }
+
 }
