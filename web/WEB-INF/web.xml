@@ -51,7 +51,6 @@
         <servlet-name>PickTimeServlet</servlet-name>
         <servlet-class>controller.PickTimeServlet</servlet-class>
     </servlet>
-    <servlet>
         <servlet-name>VerifyRegistrationOtpServlet</servlet-name>
         <servlet-class>controller.VerifyRegistrationOtpServlet</servlet-class>
     </servlet>
@@ -104,7 +103,6 @@
         <servlet-name>PickTimeServlet</servlet-name>
         <url-pattern>/pick-time</url-pattern>
     </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>VerifyRegistrationOtpServlet</servlet-name>
         <url-pattern>/VerifyRegistrationOtpServlet</url-pattern>
     </servlet-mapping>
