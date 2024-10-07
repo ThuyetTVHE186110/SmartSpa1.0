@@ -20,23 +20,45 @@ import model.Person;
  */
 public class AccountDAO {
 
-    // Existing method to get account by username and password
+//    // Existing method to get account by username and password
+//    public Account getByUsernamePassword(String username, String password) {
+//        try {
+//            String sql = "SELECT * FROM Account WHERE Username = ? AND Password = ?";
+//            PreparedStatement ps = getConnection().prepareStatement(sql);
+//            ps.setString(1, username);
+//            ps.setString(2, password);
+//            ResultSet rs = ps.executeQuery();
+//            if (rs.next()) {
+//                String role = rs.getString("Role"); // Lấy giá trị role
+//                System.out.println("Retrieved role: " + role); // In ra giá trị role để kiểm tra
+//                return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), null);
+//            }
+//        } catch (SQLException ex) {
+//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//        return null;
+//    }
     public Account getByUsernamePassword(String username, String password) {
         try {
+            // Query to fetch account details, including the role
             String sql = "SELECT * FROM Account WHERE Username = ? AND Password = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
-                String role = rs.getString("Role"); // Lấy giá trị role
-                System.out.println("Retrieved role: " + role); // In ra giá trị role để kiểm tra
-                return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), null);
+                // Assuming the role is stored in the 4th column of the Account table
+                String role = rs.getString("Role"); // Or rs.getString(4) if you are using column indexes
+                System.out.println("Retrieved role: " + role); // Log for checking role value
+
+                // Return the account with role and person info
+                return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), role, null);
             }
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return null;
+        return null; // Return null if no account found
     }
 
     // Method to update the password for an account

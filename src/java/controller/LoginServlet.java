@@ -195,22 +195,22 @@ public class LoginServlet extends HttpServlet {
             session.setAttribute("loggedIn", true);
             session.setMaxInactiveInterval(30 * 60); // Session timeout
 
-            // Lấy vai trò từ tài khoản
-            String role = account.getRole(); // Lấy vai trò từ tài khoản
-            System.out.println("User role: " + role); // In ra giá trị vai trò để kiểm tra
+            // Get the role from the account object
+            String role = account.getRole(); // Should return Admin, Manager, Staff, or Customer
+            System.out.println("User role: " + role); // Log for debugging
 
             // Redirect based on user role
             if ("admin".equals(userType) || "manager".equals(userType) || "staff".equals(userType)) {
                 // For admin, manager, and staff login
                 if ("Admin".equals(role) || "Manager".equals(role) || "Staff".equals(role)) {
-                    response.sendRedirect("index.html"); // Successful login for admin/staff/manager
+                    response.sendRedirect("index.html"); // Redirect to admin dashboard
                 } else if ("Customer".equals(role)) {
                     request.setAttribute("error", "Invalid login for admin/staff/manager.");
                     request.getRequestDispatcher("adminLogin.jsp").forward(request, response); // Redirect back to admin login
                 }
-            } else { // Customer login
+            } else { // For customer login
                 if ("Customer".equals(role)) {
-                    response.sendRedirect("index.jsp"); // Successful customer login
+                    response.sendRedirect("index.jsp"); // Redirect to customer dashboard
                 } else {
                     request.setAttribute("error", "Invalid login for customer.");
                     request.getRequestDispatcher("login.jsp").forward(request, response); // Redirect back to customer login

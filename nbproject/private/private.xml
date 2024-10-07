@@ -6,6 +6,8 @@
             <file>file:/E:/FALL2024/SmartSpa1.0/src/java/model/Account.java</file>
             <file>file:/E:/FALL2024/SmartSpa1.0/web/adminLogin.jsp</file>
             <file>file:/E:/FALL2024/SmartSpa1.0/src/java/controller/LoginServlet.java</file>
+            <file>file:/E:/FALL2024/SmartSpa1.0/web/login.jsp</file>
+            <file>file:/E:/FALL2024/SmartSpa1.0/src/java/dal/AccountDAO.java</file>
         </group>
     </open-files>
 </project-private>
