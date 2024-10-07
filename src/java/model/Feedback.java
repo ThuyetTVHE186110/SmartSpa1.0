@@ -9,6 +9,7 @@ package model;
  * @author admin
  */
 public class Feedback {
+
     private int id;
     private String content;
     private Person customer;
@@ -54,6 +55,11 @@ public class Feedback {
 
     public void setService(Service service) {
         this.service = service;
+    }
+
+    @Override
+    public String toString() {
+        return "Feedback{" + "id=" + id + ", content=" + content + ", customer=" + customer + ", service=" + service + '}';
     }
 
 }
