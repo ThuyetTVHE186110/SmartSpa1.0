@@ -1,0 +1,53 @@
+{}
+
+
+// If necessary, set additional analysis parameters in JSON format here, for example:
+// 
+// {
+//   "java-path": "path",
+//   "compatibility": true,
+//   "source-java": 8,
+//   "target-java": 11,
+//   "exclude-packages": [
+//     "package-name-1",
+//     "package-name-2",
+//     "package-name-3"
+//   ]
+// }
+// 
+// Parameters description:
+// 
+// (these parameters are similar to the arguments passed to the analyzer from the command line. More information can be found in the documentation:
+// https://pvs-studio.com/en/docs/manual/6703/)
+// 
+// analyze-only - The list of files and/or directories to be analyzed (absolute or relative paths that are expanded relative to the current
+// working directory).If this parameter is used, only the specified files will be analyzed when analyzing the entire project.
+// 
+// suppress-base - The path to the suppress file which contains suppressed warnings of the analyzer. Warnings from the suppress file will
+// not be included in the report in any subsequent project checks.
+// 
+// incremental - The flag used to enable the incremental analysis mode. In this mode, the analyzer checks only modified files, which speeds
+// up the analysis process. The default value is false.
+// 
+// disable-cache - The flag used to disable caching of the program metamodel. When the cache is disabled, the project model is not cached
+// and is rebuilt each time. This flag can be useful when identifying the causes of the analyzer errors.Disabling project metamodel caching
+// also disables the incremental analysis (the "incremental" parameter). The default value is false.
+// 
+// compatibility - The flag that enables the V6078 diagnostic rule that detects potential API compatibility issues between the selected
+// Java SE versions.The V6078 diagnostic enables you to ensure that the JDK API you are using will not be modified or will not disappear
+// in future versions of the JDK. The default value is false.
+// 
+// source-java - The Java SE version that your application is developed on. This setting is used by the V6078 diagnostic rule if the 'compatibility'
+// setting is enabled. The minimum value is 8. The maximum value is 14.
+// 
+// target-java - The Java SE version to be checked for compatibility with the API used in your application (source-java).The V6078 diagnostic
+// uses this setting if the 'compatibility' setting is enabled. The minimum value is 8. The maximum value is 14
+// 
+// exclude-packages - Packages to be excluded from the compatibility analysis (the V6078 diagnostic). The V6078 diagnostic uses this setting
+// if the 'compatibility' setting is enabled.
+// 
+// force-rebuild - The parameter used to force the rebuild of the entire cached metamodel of a program.The metamodel contains information
+// about the program structure and data types.Rebuilding the project metamodel can be necessary when the analyzer version is updated or
+// if the project metamodel is corrupted.When this parameter is true, the incremental analysis mode is disabled (the "incremental" parameter)
+// 
+// logging - Enables logging of the analyzer. Possible values: ALL, TRACE, DEBUG, INFO, WARN, ERROR, OFF.

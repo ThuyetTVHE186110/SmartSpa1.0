@@ -28,8 +28,11 @@ import java.util.List;
 import jakarta.servlet.ServletContext;
 
 /**
- * Servlet for handling Service-related operations
- * @author Asus
+ * ServiceServlet
+ * 
+ * This servlet handles operations related to services, including listing,
+ * adding, updating, and deleting services. It also manages file uploads
+ * for service images.
  */
 @MultipartConfig(
     fileSizeThreshold = 1024 * 1024 * 2, // 2MB before writing to disk

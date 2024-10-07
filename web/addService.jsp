@@ -70,7 +70,7 @@
                                         <div class="card-header">
                                             <section class="row">
                                                 <div class="col-9 offset-1">
-                                                    <form action="${pageContext.request.contextPath}/services"
+                                                    <form action="${pageContext.request.contextPath}/servicemanagement"
                                                         method="post" enctype="multipart/form-data">
                                                         <c:if test="${not empty errorMessage}">
                                                             <div class="alert alert-danger" role="alert">
@@ -80,7 +80,7 @@
                                                         <div class="row">
                                                             <div class="col-sm-12">
                                                                 <div class="form-group form-group-default">
-                                                                    <label>Tên dịch vụ</label>
+                                                                    <label for="name">Tên dịch vụ</label>
                                                                     <input name="name" id="name" type="text"
                                                                         class="form-control"
                                                                         placeholder="Tên dịch vụ..." required>
@@ -119,14 +119,13 @@
                                                                         placeholder="Mô tả dịch vụ"></textarea>
                                                                 </div>
                                                             </div>
-                                                            <input name="action" value="insert" type="hidden">
+                                                            <input type="hidden" name="action" value="insert">
                                                         </div>
                                                         <div class="modal-footer no-bd">
-                                                            <button type="submit" id="" class="btn btn-primary">Cập
+                                                            <button type="submit" class="btn btn-primary">Cập
                                                                 nhật</button>
-                                                            <button type="submit" class="btn btn-danger"
-                                                                formaction="${pageContext.request.contextPath}/services"
-                                                                formmethod="get">Hủy</button>
+                                                            <a href="${pageContext.request.contextPath}/servicemanagement"
+                                                                class="btn btn-danger">Hủy</a>
                                                         </div>
                                                     </form>
                                                 </div>

@@ -106,21 +106,22 @@
                 <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                     <div class="navbar-nav m-auto py-0">
                         <a href="index" class="nav-item nav-link">Home</a>
-                        <a href="About.jsp" class="nav-item nav-link">About</a>
+                        <a href="about.jsp" class="nav-item nav-link">About</a>
                         <a href="product" class="nav-item nav-link active">Product</a>
                         <a href="services" class="nav-item nav-link">Services</a>
-                        <a href="price.html" class="nav-item nav-link">Pricing</a>
+                        <a href="price.jsp" class="nav-item nav-link">Pricing</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
                                 <a href="appointment" class="dropdown-item">Appointment</a>
-                                <a href="opening.html" class="dropdown-item">Open Hours</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
+                                <a href="opening.jsp" class="dropdown-item">Open Hours</a>
+                                <a href="team.jsp" class="dropdown-item">Our Team</a>
                                 <a href="feedback" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
+                        <a href="contact.jsp" class="nav-item nav-link">Contact</a>
                     </div>
+                    <a href="login.jsp" class="nav-item nav-link">Login</a>
                     <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
                 </div>
             </nav>
@@ -283,7 +284,6 @@
                         <p class="m-0 text-white">&copy; <a href="#">Your Site Name</a>. All Rights Reserved.</p>
                     </div>
                     <div class="col-md-6 text-center text-md-right">
-                        <p class="m-0 text-white">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
                     </div>
                 </div>
             </div>

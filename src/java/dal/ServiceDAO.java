@@ -101,4 +101,78 @@ public class ServiceDAO extends DBContext{
         }
         return rowDeleted;
     }
+
+    public List<Service> searchServices(String searchQuery, int offset, int limit) throws SQLException {
+        List<Service> services = new ArrayList<>();
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) AS RowNum FROM services WHERE name LIKE ? OR description LIKE ?) AS SubQuery WHERE RowNum > ? AND RowNum <= ?";
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, "%" + searchQuery + "%");
+            preparedStatement.setString(2, "%" + searchQuery + "%");
+            preparedStatement.setInt(3, offset);
+            preparedStatement.setInt(4, offset + limit);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                services.add(extractServiceFromResultSet(rs));
+            }
+        }
+        return services;
+    }
+
+    public int getTotalSearchResults(String searchQuery) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM services WHERE name LIKE ? OR description LIKE ?";
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setString(1, "%" + searchQuery + "%");
+            preparedStatement.setString(2, "%" + searchQuery + "%");
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public List<Service> selectAllServices(int offset, int limit) throws SQLException {
+        List<Service> services = new ArrayList<>();
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) AS RowNum FROM services) AS SubQuery WHERE RowNum > ? AND RowNum <= ?";
+        System.out.println("Executing SQL: " + sql + " with offset: " + offset + " and limit: " + limit);
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setInt(1, offset);
+            preparedStatement.setInt(2, offset + limit);
+            ResultSet rs = preparedStatement.executeQuery();
+            while (rs.next()) {
+                services.add(extractServiceFromResultSet(rs));
+            }
+        }
+        System.out.println("Retrieved " + services.size() + " services");
+        return services;
+    }
+
+    public int getTotalServices() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM services";
+        System.out.println("Executing SQL: " + sql);
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            ResultSet rs = preparedStatement.executeQuery();
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                System.out.println("Total services count: " + count);
+                return count;
+            }
+        }
+        System.out.println("No services found");
+        return 0;
+    }
+
+    private Service extractServiceFromResultSet(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        String name = rs.getString("name");
+        int price = rs.getInt("price");
+        int duration = rs.getInt("duration");
+        String description = rs.getString("description");
+        String image = rs.getString("image");
+        return new Service(id, name, price, duration, description, image);
+    }
 }
