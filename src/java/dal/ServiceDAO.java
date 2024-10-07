@@ -28,14 +28,14 @@ public class ServiceDAO extends DBContext{
     public void addService(Service service) throws SQLException {
     try (Connection connection = getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SERVICE_SQL)) {
-        preparedStatement.setString(1, service.getName());
-        preparedStatement.setInt(2, service.getPrice());
-        preparedStatement.setInt(3, service.getDuration());
-        preparedStatement.setString(4, service.getDescription());
-        preparedStatement.setString(5, service.getImage()); // Set image link
-        preparedStatement.executeUpdate();
+            preparedStatement.setString(1, service.getName());
+            preparedStatement.setInt(2, service.getPrice());
+            preparedStatement.setInt(3, service.getDuration());
+            preparedStatement.setString(4, service.getDescription());
+            preparedStatement.setString(5, service.getImage()); // Set image link
+            preparedStatement.executeUpdate();
+        }
     }
-}
 
 
     // Select a service by its ID
@@ -80,15 +80,15 @@ public class ServiceDAO extends DBContext{
     public boolean updateService(Service service) throws SQLException {
     try (Connection connection = getConnection();
          PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SERVICE_SQL)) {
-        preparedStatement.setString(1, service.getName());
-        preparedStatement.setInt(2, service.getPrice());
-        preparedStatement.setInt(3, service.getDuration());
-        preparedStatement.setString(4, service.getDescription());
-        preparedStatement.setString(5, service.getImage()); // Update image link
-        preparedStatement.setInt(6, service.getId());
-        return preparedStatement.executeUpdate() > 0;
+            preparedStatement.setString(1, service.getName());
+            preparedStatement.setInt(2, service.getPrice());
+            preparedStatement.setInt(3, service.getDuration());
+            preparedStatement.setString(4, service.getDescription());
+            preparedStatement.setString(5, service.getImage()); // Update image link
+            preparedStatement.setInt(6, service.getId());
+            return preparedStatement.executeUpdate() > 0;
+        }
     }
-}
 
 
     // Delete a service by its ID

@@ -9,10 +9,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import model.Appointment;
+import model.AppointmentService;
 import model.Service;
 
 /**
+ * AppointmentService Data Access Object
  *
  * @author ADMIN
  */
@@ -44,13 +48,46 @@ public class AppointmentServiceDAO extends DBContext {
             }
         }
     }
-    
+
+    public List<AppointmentService> getAllAppointmentServices() {
+        List<AppointmentService> services = new ArrayList<>();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try (Connection connection = getConnection()) {
+            String query = "SELECT * FROM Appointment_Service";
+            stm = connection.prepareStatement(query);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                AppointmentService appointmentService = new AppointmentService();
+                appointmentService.setId(rs.getInt("ID"));
+                appointmentService.setAppointmentID(rs.getInt("AppointmentID"));
+                appointmentService.setServiceID(rs.getInt("ServiceID"));
+                services.add(appointmentService);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while retrieving all appointment services: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+        return services;
+    }
+
     public static void main(String[] args) {
         AppointmentServiceDAO aO = new AppointmentServiceDAO();
-        Appointment appointment = new Appointment();
-        appointment.setId(2);
-        Service service = new Service();
-        service.setId(1);
-//        aO.addAppointmentService(appointment, service);
+        List<AppointmentService> list = aO.getAllAppointmentServices();
+        for (AppointmentService appointmentService : list) {
+            System.out.println(appointmentService.getAppointmentID());
+        }
     }
 }
