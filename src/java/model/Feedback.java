@@ -56,11 +56,4 @@ public class Feedback {
         this.service = service;
     }
 
-    @Override
-    public String toString() {
-        return "Feedback{" + "id=" + id + ", content=" + content + ", customer=" + customer + ", service=" + service + '}';
-    }
-    
-    
-
 }

@@ -144,11 +144,6 @@
                                         </div>
                                     </div>
                                     <p class="m-0">${feedback.content}</p>
-                                    <div class="mt-3">
-                                        <button class="btn btn-sm btn-info" onclick="editFeedback(${feedback.id}, '${feedback.content}')">Edit</button>
-                                        <button class="btn btn-sm btn-danger" onclick="confirmDelete(${feedback.id})">Delete</button>
-                                        <!--<button class="btn btn-sm btn-secondary" onclick="showAddForm(${feedback.customer.id})">Add</button>-->
-                                    </div>
                                 </div>
                             </c:forEach>
                         </div>
@@ -158,28 +153,7 @@
         </div>
 
         <!-- Testimonial End -->
-        <!--Edit Feedback Modal-->  
-        <div id="editFeedbackModal" style="display:none; text-align: center;">
-            <h2>Edit Feedback</h2>
 
-            <input type="text" id="editContent" placeholder="Edit feedback content">
-            <input type="hidden" id="editId" value="">
-            <button onclick="submitEdit()">Submit</button>
-            <button onclick="closeEditModal()">Close</button>
-        </div>
-
-        <!-- Add Feedback Modal -->
-        <div id="addFeedbackModal" style="display:none; text-align: center;">
-            <h2>Add Feedback</h2>
-            <form id="addFeedbackForm" action="feedback" method="post">
-                <input type="hidden" id="addCustomerId" name="customerId"> <!-- Hidden field for customer ID -->
-                <input type="hidden" id="addServiceId" name="serviceId"> <!-- Hidden field for service ID -->
-                <textarea id="addContent" name="content" placeholder="Enter feedback content" required></textarea>
-                <input type="hidden" name="action" value="add"> <!-- Action to specify add -->
-                <button type="submit">Add</button>
-                <button onclick="closeAddModal()">Close</button>
-            </form>
-        </div>
 
         <!-- Footer Start -->
         <div class="footer container-fluid position-relative bg-dark py-5" style="margin-top: 90px;">
@@ -251,66 +225,6 @@
             </div>
         </div>
         <!-- Footer End -->
-
-        <script>
-            function confirmDelete(id) {
-                if (confirm("Are you sure you want to delete this feedback?")) {
-                    // AJAX call to delete feedback
-                    $.post('feedback', {action: 'delete', id: id}, function () {
-                        location.reload(); // Reload the page to reflect changes
-                    });
-                }
-            }
-
-            function editFeedback(id, content) {
-                document.getElementById('editContent').value = content;
-                document.getElementById('editId').value = id;
-                document.getElementById('editFeedbackModal').style.display = 'block';
-            }
-
-            function submitEdit() {
-                const id = document.getElementById('editId').value;
-                const content = document.getElementById('editContent').value;
-
-                $.post('feedback', {action: 'edit', id: id, content: content}, function () {
-                    location.reload(); // Reload the page to see changes
-                });
-            }
-            function closeEditModal() {
-                document.getElementById('editFeedbackModal').style.display = 'none';
-            }
-
-            function showAddForm(customerId, serviceId) {
-                document.getElementById('addCustomerId').value = customerId; // Set the customer ID
-                document.getElementById('addServiceId').value = serviceId; // Set the service ID
-                document.getElementById('addFeedbackModal').style.display = 'block'; // Show the modal
-            }
-
-            function submitAdd(event) {
-                event.preventDefault(); // Prevent the default form submission
-
-                const customerId = document.getElementById('addCustomerId').value;
-                const serviceId = document.getElementById('addServiceId').value;
-                const content = document.getElementById('addContent').value;
-
-                $.post('feedback', {action: 'add', customerId: customerId, serviceId: serviceId, content: content})
-                        .done(function () {
-                            alert("Feedback added successfully!"); // Optionally show a success message
-                            location.reload(); // Reload the page to see changes
-                        })
-                        .fail(function () {
-                            alert("An error occurred while adding feedback. Please try again.");
-                        });
-            }
-            
-            function closeAdđModal() {
-                document.getElementById('addFeedbackModal').style.display = 'none';
-            }
-            
-            // Attach the submitAdd function to the form submission
-            document.getElementById('addFeedbackForm').addEventListener('submit', submitAdd);
-
-        </script>
 
 
         <!-- Back to Top -->
