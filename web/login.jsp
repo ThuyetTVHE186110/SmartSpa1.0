@@ -48,10 +48,6 @@
                        id="password_field" minlength="8" maxlength="20" required oninput="this.value = this.value.trim()">
             </div>
 
-
-
-
-
             <div class="flex-row">
                 <div>
                     <input type="checkbox" id="rememberMe" name="rememberMe" <% if(request.getAttribute("rememberMe") != null) { %> checked <% } %> >

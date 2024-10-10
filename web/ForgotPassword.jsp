@@ -28,13 +28,12 @@
                 </path>
                 </svg>
                 <input placeholder="name@mail.com" title="Inpit title" name="email" type="text" class="input_field"
-                       id="email_field" required>
+                       id="email_field" maxlength="50" required oninput="this.value = this.value.trim()">
             </div>
             
 
             <button class="button-submit" type="submit" name ="forgot">Confirm</button>
             <!-- Sign Up Option -->
-
             <p class="p">Login to another account? <span class="span"><a href="login.jsp" style="text-decoration: none; color: inherit;">Login</a></span></p>
 
 

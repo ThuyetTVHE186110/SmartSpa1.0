@@ -27,8 +27,8 @@
                       d="M2.01577 13.4756C2.08114 16.5412 2.11383 18.0739 3.24496 19.2094C4.37608 20.3448 5.95033 20.3843 9.09883 20.4634C11.0393 20.5122 12.9607 20.5122 14.9012 20.4634C18.0497 20.3843 19.6239 20.3448 20.7551 19.2094C21.8862 18.0739 21.9189 16.5412 21.9842 13.4756C22.0053 12.4899 22.0053 11.5101 21.9842 10.5244C21.9189 7.45886 21.8862 5.92609 20.7551 4.79066C19.6239 3.65523 18.0497 3.61568 14.9012 3.53657C12.9607 3.48781 11.0393 3.48781 9.09882 3.53656C5.95033 3.61566 4.37608 3.65521 3.24495 4.79065C2.11382 5.92608 2.08114 7.45885 2.01576 10.5244C1.99474 11.5101 1.99475 12.4899 2.01577 13.4756Z">
                 </path>
                 </svg>
-                <input placeholder="OTP" title="Inpit title" name="txtUsername" type="text" class="input_field"
-                       id="email_field" required>
+                <input placeholder="6 Digits Number" title="Input title" name="otp" type="text" class="input_field"
+                       id="email_field" maxlength="6" required onkeypress="return event.charCode >= 48 && event.charCode <= 57;">
             </div>
             
 
@@ -36,10 +36,6 @@
             <!-- Sign Up Option -->
 
             <p class="p">Login to another account? <span class="span"><a href="login.jsp" style="text-decoration: none; color: inherit;">Login</a></span></p>
-
-
-        </p>
-
         <!-- Separator -->
         <div class="separator">
             <hr class="line">
@@ -64,11 +60,8 @@
                 <path style="fill:#F14336;" d="M419.404,58.936l-82.933,67.896c-23.335-14.586-50.919-23.012-80.471-23.012
                       c-66.729,0-123.429,42.957-143.965,102.724l-83.397-68.276h-0.014C71.23,56.123,157.06,0,256,0
                       C318.115,0,375.068,22.126,419.404,58.936z"></path>
-
                 </svg>
-
                 Google
-
             </button>
             <button class="btn facebook">
                 <svg viewBox="0 0 16 16" class="bi bi-facebook" fill="currentColor" height="16" width="16"
