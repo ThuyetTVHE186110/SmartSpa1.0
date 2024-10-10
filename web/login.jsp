@@ -55,7 +55,7 @@
                 </div>
                 <span class="span"><a href="ForgotPassword.jsp" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
             </div>
-            <input type="hidden" name="userType" value="customer">           
+<!--            <input type="hidden" name="userType" value="customer">           -->
             <!-- Submit Button -->
 
             <button class="button-submit" type="submit" name = "signin">Sign In</button>

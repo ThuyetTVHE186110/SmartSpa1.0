@@ -98,7 +98,7 @@ public class HomeServlet extends HttpServlet {
             }
 
             // Forward to the home page (About.jsp in your case)
-            request.getRequestDispatcher("About.jsp").forward(request, response);
+            request.getRequestDispatcher("about.jsp").forward(request, response);
         }
     }
 
