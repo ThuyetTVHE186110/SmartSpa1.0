@@ -205,17 +205,18 @@ public class PersonDAO extends DBContext {
         return null;
     }
 
-    public Person getPersonByName(String name) {
+    public List<Person> getPersonByName(String name) {
+        List<Person> list = new ArrayList<>();
         PreparedStatement stm = null;
         ResultSet rs = null;
 
         try (Connection connection = getConnection()) { // Use getConnection from DBContext
-            String query = "select * from Person where name = ?";
-            stm = connection.prepareStatement(query);
+            String strSelect = "SELECT * FROM Person Like ?";
+            stm = connection.prepareStatement(strSelect);
             stm.setString(1, name);
             rs = stm.executeQuery();
 
-            if (rs.next()) {
+            while (rs.next()) {
                 Person person = new Person();
                 person.setId(rs.getInt(1));
                 person.setName(rs.getString(2));
@@ -230,7 +231,7 @@ public class PersonDAO extends DBContext {
                 person.setPhone(rs.getString(5));
                 person.setEmail(rs.getString(6));
                 person.setAddress(rs.getString(7));
-                return person;
+                list.add(person);
             }
         } catch (SQLException e) {
             System.out.println("Error while retrieving persons: " + e.getMessage());
@@ -247,7 +248,8 @@ public class PersonDAO extends DBContext {
                 System.out.println("Error closing resources: " + e.getMessage());
             }
         }
-        return null;
+
+        return list;
     }
 
     public Person existCheck(Person personCheck) {
