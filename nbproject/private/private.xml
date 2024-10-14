@@ -3,8 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Study/Term%205/SmartSpa1.0/src/java/controller/AppointmentManagementServlet.java</file>
-            <file>file:/D:/Study/Term%205/SmartSpa1.0/web/appointmentManagement.jsp</file>
+            <file>file:/D:/SmartSpa1.0/web/appointment/detail-summary.jsp</file>
+            <file>file:/D:/SmartSpa1.0/web/appointment/select-service.jsp</file>
+            <file>file:/D:/SmartSpa1.0/src/java/controller/AppointmentManagementServlet.java</file>
+            <file>file:/D:/SmartSpa1.0/src/java/dal/PersonDAO.java</file>
+            <file>file:/D:/SmartSpa1.0/web/appointmentManagement.jsp</file>
+            <file>file:/D:/SmartSpa1.0/web/addService.jsp</file>
+            <file>file:/D:/SmartSpa1.0/web/WEB-INF/web.xml</file>
         </group>
     </open-files>
 </project-private>
