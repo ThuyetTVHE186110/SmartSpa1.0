@@ -83,6 +83,29 @@ public class AppointmentServiceDAO extends DBContext {
         return services;
     }
 
+    public void deleteAppointmentServiceByAppointmentID(int appointmentID) {
+        PreparedStatement stm = null;
+
+        try (Connection connection = getConnection()) {
+            String query = "DELETE FROM Appointment_Service WHERE AppointmentID = ?";
+            stm = connection.prepareStatement(query);
+            stm.setInt(1, appointmentID);
+
+            int rowsAffected = stm.executeUpdate();
+            System.out.println("Deleted " + rowsAffected + " appointment service(s) with AppointmentID = " + appointmentID);
+        } catch (SQLException e) {
+            System.out.println("Error while deleting appointment services: " + e.getMessage());
+        } finally {
+            try {
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+    }
+
     public static void main(String[] args) {
         AppointmentServiceDAO aO = new AppointmentServiceDAO();
         List<AppointmentService> list = aO.getAllAppointmentServices();
