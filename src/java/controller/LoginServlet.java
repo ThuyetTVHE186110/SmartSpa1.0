@@ -134,7 +134,7 @@ public class LoginServlet extends HttpServlet {
             }
 
 // Chuyển hướng đến trang chính
-            response.sendRedirect("HomeServlet");
+            response.sendRedirect("index.jsp");
         } else {
             // Thiết lập thông báo lỗi cho đăng nhập không hợp lệ
             request.setAttribute("error", "Login failed! Invalid username or password.");
@@ -142,14 +142,6 @@ public class LoginServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+    
 
 }

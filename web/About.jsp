@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+    <%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
 
     <head>
         <meta charset="utf-8">
@@ -81,14 +82,27 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment="dropdown-item">Open Hours</a>
+                                <a href="appointment="class="dropdown-item">Open Hours</a>
                                 <a href="team.jsp" class="dropdown-item">Our Team</a>
                                 <a href="feedback" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
                         <a href="contact.jsp" class="nav-item nav-link">Contact</a>
                     </div>
+                    <% 
+                        // Check if the user is logged in
+                        Account loggedInAccount = (Account) session.getAttribute("account");
+                        if (loggedInAccount != null) {
+                    %>
+                    <span class="nav-item nav-link">Welcome, <%= loggedInAccount.getUsername() %></span>
+                    <a href="login?action=logout" class="nav-item nav-link">Logout</a>
+                    <% 
+                        } else { 
+                    %>
                     <a href="login.jsp" class="nav-item nav-link">Login</a>
+                    <% 
+                        } 
+                    %>
                     <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
                 </div>
             </nav>

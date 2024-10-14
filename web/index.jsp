@@ -1,10 +1,6 @@
-<%-- 
-    Document   : index
-    Created on : Sep 29, 2024, 3:50:08 PM
-    Author     : Asus
---%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
 <!DOCTYPE html>
 <!DOCTYPE html>
 <html lang="en">
@@ -36,6 +32,7 @@
     </head>
 
     <body>
+
         <c:if test="${empty listServices}">
             <c:redirect url="index" />
         </c:if>
@@ -73,39 +70,10 @@
         <!-- Topbar End -->
 
 
-        <!-- Navbar Start -->
-        <div class="container-fluid p-0">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-                <a href="." class="navbar-brand ml-lg-3">
-                    <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                    <div class="navbar-nav m-auto py-0">
-                        <a href="." class="nav-item nav-link active">Home</a>
-                        <a href="about.jsp" class="nav-item nav-link">About</a>
-                        <a href="product.jsp" class="nav-item nav-link">Product</a>
-                        <a href="services.jsp" class="nav-item nav-link">Services</a>
-                        <a href="price.jsp" class="nav-item nav-link">Pricing</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment" class="dropdown-item">Appointment</a>
-                                <a href="opening.jsp" class="dropdown-item">Open Hours</a>
-                                <a href="team.jsp" class="dropdown-item">Our Team</a>
-                                <a href="feedback" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.jsp" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <a href="login.jsp" class="nav-item nav-link">Login</a>
-                    <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
-                </div>
-            </nav>
-        </div>
-        <!-- Navbar End -->
+        <!-- Include the Navbar -->
+        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
+
+
 
 
         <!-- Carousel Start -->
