@@ -97,12 +97,14 @@ public class SignupServlet extends HttpServlet {
         int roleID = 4;
 
         // Check if passwords match
-        if (!password.equals(confirm)) {
+        if (password == null || confirm == null || !password.equals(confirm)) {
             request.setAttribute("error", "Password does not match the confirm password.");
+            // Ensure it forwards back to signup.jsp with the error message
             request.getRequestDispatcher("signup.jsp").forward(request, response);
             return;
         }
 
+        // Check if the email already exists only after passwords match
         String checkEmailSql = "SELECT * FROM Account WHERE Username = ?";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailSql)) {

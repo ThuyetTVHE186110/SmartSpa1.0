@@ -36,7 +36,7 @@
                                 <a href="appointment.jsp" class="dropdown-item">Appointment</a>
                                 <a href="opening.jsp" class="dropdown-item">Open Hours</a>
                                 <a href="team.jsp" class="dropdown-item">Our Team</a>
-                                <a href="feedback.jsp" class="dropdown-item">Testimonial</a>
+                                <a href="testimonial.jsp" class="dropdown-item">Testimonial</a>
                             </div>
                         </div>
                         <a href="contact.jsp" class="nav-item nav-link">Contact</a>

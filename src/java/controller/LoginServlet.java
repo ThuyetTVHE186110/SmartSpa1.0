@@ -89,8 +89,7 @@ public class LoginServlet extends HttpServlet {
         // Get username and password from the form
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
-//        String userType = request.getParameter("userType"); // Determine if it's customer or admin
-        String rememberMe = request.getParameter("rememberMe"); // Lấy giá trị "Remember Me"
+        String rememberMe = request.getParameter("rememberMe"); // Get the "Remember Me" value
 
         // Initialize DAO and attempt to retrieve the account based on the credentials
         AccountDAO accountDAO = new AccountDAO();
@@ -112,36 +111,31 @@ public class LoginServlet extends HttpServlet {
             HttpSession session = request.getSession();
             session.setAttribute("account", account);
             session.setAttribute("loggedIn", true);
-            session.setMaxInactiveInterval(30 * 60); // Session timeout
+            session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
 
-            // Xử lý chức năng "Remember Me"
+            // Handle "Remember Me" functionality
             if ("on".equals(rememberMe)) {
-                // Tạo cookie để ghi nhớ tên đăng nhập và mật khẩu
+                // Create cookies to remember username (not password for security reasons)
                 Cookie usernameCookie = new Cookie("savedUsername", username);
-                Cookie passwordCookie = new Cookie("savedPassword", password);
-                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
-                passwordCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
+                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                usernameCookie.setHttpOnly(true); // Make it HTTP-only
+                usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
                 response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
             } else {
-                // Xóa cookie nếu "Remember Me" không được chọn
+                // Delete cookies if "Remember Me" is not checked
                 Cookie usernameCookie = new Cookie("savedUsername", "");
-                Cookie passwordCookie = new Cookie("savedPassword", "");
-                usernameCookie.setMaxAge(0); // Hết hạn cookie
-                passwordCookie.setMaxAge(0); // Hết hạn cookie
+                usernameCookie.setMaxAge(0); // Expire the cookie
                 response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
             }
 
-// Chuyển hướng đến trang chính
+            // Redirect to the main page after successful login
             response.sendRedirect("index.jsp");
         } else {
-            // Thiết lập thông báo lỗi cho đăng nhập không hợp lệ
+            // Set error message for invalid login
             request.setAttribute("error", "Login failed! Invalid username or password.");
+            request.setAttribute("username", username);  // Retain the entered username
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
-
-    
 
 }
