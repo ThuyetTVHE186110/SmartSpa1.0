@@ -36,6 +36,7 @@
                     id="name_field" 
                     maxlength="50" 
                     required 
+                    value="<%= request.getAttribute("txtName") != null ? request.getAttribute("txtName") : "" %>" 
                     oninput="this.value = this.value.trim()">
             </div>
 
@@ -64,6 +65,7 @@
                     maxlength="10" 
                     pattern="^0[0-9]{9}$" 
                     required 
+                    value="<%= request.getAttribute("txtPhone") != null ? request.getAttribute("txtPhone") : "" %>" 
                     oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhone(this)">
             </div>
             <span class="error-message" id="phone_error" style="display: none;">Please enter a valid phone number containing 10 digits.</span>
@@ -105,7 +107,7 @@
                     class="input_field" 
                     id="email_field" 
                     maxlength="50" 
-                    value="<%= request.getAttribute("email") != null ? request.getAttribute("email") : "" %>" 
+                    value="<%= request.getAttribute("txtEmail") != null ? request.getAttribute("txtEmail") : "" %>" 
                     required 
                     oninput="validateEmail(this)">
 

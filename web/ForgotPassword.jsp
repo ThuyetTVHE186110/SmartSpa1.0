@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login Form</title>
         <link rel="stylesheet" href="./css/login.css">
+        <link rel="stylesheet" href="./css/validate.css">
+
     </head>
 
     <body>
@@ -30,7 +32,7 @@
                 <input placeholder="name@mail.com" title="Inpit title" name="email" type="text" class="input_field"
                        id="email_field" maxlength="50" required oninput="this.value = this.value.trim()">
             </div>
-            
+
 
             <button class="button-submit" type="submit" name ="forgot">Confirm</button>
             <!-- Sign Up Option -->
@@ -81,7 +83,7 @@
             </button>
         </div>
     </form>
-    
+
 </body>
 
 </html>

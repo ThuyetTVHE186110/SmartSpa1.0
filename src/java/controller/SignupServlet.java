@@ -19,6 +19,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
 import java.util.Random;
+import java.sql.Statement;
 
 /**
  *
@@ -89,52 +90,209 @@ public class SignupServlet extends HttpServlet {
         }
     }
 
+//    private void handleRegistration(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        String username = request.getParameter("txtEmail");
+//        String phone = request.getParameter("txtPhone");
+//        String name = request.getParameter("txtName");
+//        String password = request.getParameter("txtPassword");
+//        String confirm = request.getParameter("txtConfirmPassword");
+//        int roleID = 4;
+//
+//        // Check if passwords match
+//        if (password == null || confirm == null || !password.equals(confirm)) {
+//            request.setAttribute("error", "Password does not match the confirm password.");
+//            request.setAttribute("txtName", request.getParameter("txtName"));
+//            request.setAttribute("txtPhone", request.getParameter("txtPhone"));
+//            request.setAttribute("txtEmail", request.getParameter("txtEmail"));
+//            request.getRequestDispatcher("signup.jsp").forward(request, response);
+//            return;
+//        }
+//
+//        // SQL query to check if the email or phone already exists
+//        String checkEmailSql = "SELECT Person.Phone, Account.Username "
+//                + "FROM dbo.Person "
+//                + "INNER JOIN dbo.Account ON Person.ID = Account.PersonID "
+//                + "WHERE Account.Username = ? OR Person.Phone = ?";
+//
+//        // Check if the email already exists only after passwords match
+////        String checkEmailSql = "SELECT * FROM Account WHERE Username = ?";
+//        try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailSql)) {
+//
+////            // Check if the email already exists
+////            checkStmt.setString(1, username);
+////            try (ResultSet rs = checkStmt.executeQuery()) {
+////                if (rs.next()) {
+////                    request.setAttribute("error", "This email is already registered. Please log in or reset your password.");
+////                    request.getRequestDispatcher("login.jsp").forward(request, response);
+////                    return;
+////                }
+////            }
+//            // Set parameters for the email and phone
+//            checkStmt.setString(1, username);
+//            checkStmt.setString(2, phone);
+//            try (ResultSet rs = checkStmt.executeQuery()) {
+//                if (rs.next()) {
+//                    if (rs.getString("Username").equals(username)) {
+//                        request.setAttribute("error", "This email is already registered. Please log in or reset your password.");
+//                    } else if (rs.getString("Phone").equals(phone)) {
+//                        request.setAttribute("error", "This phone number is already registered.");
+//                    }
+//                    // Giữ lại thông tin nhập vào
+//                    request.setAttribute("txtName", name);
+//                    request.setAttribute("txtPhone", phone);
+//                    request.setAttribute("txtEmail", username);
+//                    request.getRequestDispatcher("signup.jsp").forward(request, response);
+//                    return;
+//                }
+//            }
+//
+////            // If email doesn't exist, proceed with OTP generation
+////            String otp = generateOtp();
+////            if (sendOtpEmail(username, otp)) {
+////                // Store the OTP and other info in session
+////                request.getSession().setAttribute("otp", otp);
+////                request.getSession().setAttribute("email", username);
+////                request.getSession().setAttribute("password", password);
+////                request.getSession().setAttribute("roleID", roleID);
+////
+////                // Redirect to OTP verification page
+////                response.sendRedirect("OtpConfirmRegistration.jsp");
+////            } else {
+////                request.setAttribute("error", "Failed to send OTP. Please try again.");
+////                request.getRequestDispatcher("signup.jsp").forward(request, response);
+////            }
+////
+////        } catch (SQLException e) {
+////            e.printStackTrace();
+////            request.setAttribute("message", "Database error: " + e.getMessage());
+////            request.getRequestDispatcher("signup.jsp").forward(request, response);
+////        }
+////    }
+//// If email and phone don't exist, proceed with OTP generation
+//            String otp = generateOtp();
+//            if (sendOtpEmail(username, otp)) {
+//                // Store the OTP and other info in session
+//                request.getSession().setAttribute("otp", otp);
+//                request.getSession().setAttribute("email", username);
+//                request.getSession().setAttribute("phone", phone);
+//                request.getSession().setAttribute("name", name);
+//                request.getSession().setAttribute("password", password);
+//                request.getSession().setAttribute("roleID", roleID);
+//
+//                // Redirect to OTP verification page
+//                response.sendRedirect("OtpConfirmRegistration.jsp");
+//            } else {
+//                request.setAttribute("error", "Failed to send OTP. Please try again.");
+//                request.setAttribute("txtName", name);
+//                request.setAttribute("txtPhone", phone);
+//                request.setAttribute("txtEmail", username);
+//                request.getRequestDispatcher("signup.jsp").forward(request, response);
+//            }
+//
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            request.setAttribute("message", "Database error: " + e.getMessage());
+//            request.setAttribute("txtName", name);
+//            request.setAttribute("txtPhone", phone);
+//            request.setAttribute("txtEmail", username);
+//            request.getRequestDispatcher("signup.jsp").forward(request, response);
+//        }
+//    }
     private void handleRegistration(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("txtEmail");
+        String email = request.getParameter("txtEmail");
         String password = request.getParameter("txtPassword");
         String confirm = request.getParameter("txtConfirmPassword");
+        String name = request.getParameter("txtName");
+        String phone = request.getParameter("txtPhone");
         int roleID = 4;
 
         // Check if passwords match
         if (password == null || confirm == null || !password.equals(confirm)) {
             request.setAttribute("error", "Password does not match the confirm password.");
-            // Ensure it forwards back to signup.jsp with the error message
+            request.setAttribute("txtName", name);
+            request.setAttribute("txtPhone", phone);
+            request.setAttribute("txtEmail", email);
             request.getRequestDispatcher("signup.jsp").forward(request, response);
             return;
         }
 
-        // Check if the email already exists only after passwords match
-        String checkEmailSql = "SELECT * FROM Account WHERE Username = ?";
+        String checkEmailPhoneSql = "SELECT Person.Phone, Account.Username FROM Person LEFT JOIN Account ON Person.ID = Account.PersonID WHERE Person.Phone = ? OR Account.Username = ?";
+        String insertPersonSql = "INSERT INTO Person (Name, Phone) VALUES (?, ?)";
+        String insertAccountSql = "INSERT INTO Account (Username, Password, RoleID, PersonID) VALUES (?, ?, ?, ?)";
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailSql)) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailPhoneSql); PreparedStatement insertPersonStmt = conn.prepareStatement(insertPersonSql, Statement.RETURN_GENERATED_KEYS); PreparedStatement insertAccountStmt = conn.prepareStatement(insertAccountSql)) {
 
-            // Check if the email already exists
-            checkStmt.setString(1, username);
+            // Check if the email or phone already exists
+            checkStmt.setString(1, phone);
+            checkStmt.setString(2, email);
+            boolean phoneExists = false;
+            boolean emailExists = false;
+
             try (ResultSet rs = checkStmt.executeQuery()) {
-                if (rs.next()) {
+                while (rs.next()) {
+                    String dbPhone = rs.getString("Phone");
+                    String dbEmail = rs.getString("Username");
+
+                    if (dbPhone != null && dbPhone.equals(phone)) {
+                        phoneExists = true;
+                    }
+
+                    if (dbEmail != null && dbEmail.equals(email)) {
+                        emailExists = true;
+                    }
+                }
+
+                if (phoneExists) {
+                    request.setAttribute("error", "This phone number is already registered. Please log in or reset your password.");
+                    request.getRequestDispatcher("signup.jsp").forward(request, response);
+                    return;
+                }
+
+                if (emailExists) {
                     request.setAttribute("error", "This email is already registered. Please log in or reset your password.");
-                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                    request.getRequestDispatcher("signup.jsp").forward(request, response);
                     return;
                 }
             }
 
-            // If email doesn't exist, proceed with OTP generation
-            String otp = generateOtp();
-            if (sendOtpEmail(username, otp)) {
-                // Store the OTP and other info in session
-                request.getSession().setAttribute("otp", otp);
-                request.getSession().setAttribute("email", username);
-                request.getSession().setAttribute("password", password);
-                request.getSession().setAttribute("roleID", roleID);
+            // Insert into the Person table
+            insertPersonStmt.setString(1, name);
+            insertPersonStmt.setString(2, phone);
+            insertPersonStmt.executeUpdate();
 
-                // Redirect to OTP verification page
-                response.sendRedirect("OtpConfirmRegistration.jsp");
+            // Get the generated PersonID
+            ResultSet generatedKeys = insertPersonStmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                int personID = generatedKeys.getInt(1);
+
+                // Insert into the Account table
+                insertAccountStmt.setString(1, email);
+                insertAccountStmt.setString(2, password);
+                insertAccountStmt.setInt(3, roleID);
+                insertAccountStmt.setInt(4, personID);
+                insertAccountStmt.executeUpdate();
+
+                // Proceed with OTP generation and redirection
+                String otp = generateOtp();
+                if (sendOtpEmail(email, otp)) {
+                    request.getSession().setAttribute("otp", otp);
+                    request.getSession().setAttribute("email", email);
+                    request.getSession().setAttribute("password", password);
+                    request.getSession().setAttribute("roleID", roleID);
+                    request.getSession().setAttribute("name", name);
+                    request.getSession().setAttribute("phone", phone);
+
+                    response.sendRedirect("OtpConfirmRegistration.jsp");
+                } else {
+                    request.setAttribute("error", "Failed to send OTP. Please try again.");
+                    request.getRequestDispatcher("signup.jsp").forward(request, response);
+                }
             } else {
-                request.setAttribute("error", "Failed to send OTP. Please try again.");
+                request.setAttribute("error", "Failed to register. Please try again.");
                 request.getRequestDispatcher("signup.jsp").forward(request, response);
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("message", "Database error: " + e.getMessage());
@@ -142,41 +300,68 @@ public class SignupServlet extends HttpServlet {
         }
     }
 
+// Helper method to retain input values in the form
+    private void retainInput(HttpServletRequest request, String name, String phone, String email) {
+        request.setAttribute("txtName", name);
+        request.setAttribute("txtPhone", phone);
+        request.setAttribute("txtEmail", email);
+    }
+
+//    private void handleOtpVerification(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        String enteredOtp = request.getParameter("otp");
+//        String sessionOtp = (String) request.getSession().getAttribute("otp");
+//
+//        if (enteredOtp.equals(sessionOtp)) {
+//            // Retrieve stored user info
+//            String email = (String) request.getSession().getAttribute("email");
+//            String password = (String) request.getSession().getAttribute("password");
+//            int roleID = (int) request.getSession().getAttribute("roleID");
+//
+//            // Insert user into database
+//            String insertSql = "INSERT INTO Account (Username, Password, RoleID) VALUES (?, ?, ?)";
+//            try (Connection conn = DBContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
+//                pstmt.setString(1, email);
+//                pstmt.setString(2, password);
+//                pstmt.setInt(3, roleID);
+//                pstmt.executeUpdate();
+//
+//                // Clear session attributes
+//                request.getSession().removeAttribute("otp");
+//                request.getSession().removeAttribute("email");
+//                request.getSession().removeAttribute("password");
+//                request.getSession().removeAttribute("roleID");
+//
+//                // Redirect to login page
+//                request.getSession().setAttribute("message", "Registration successful! Please log in.");
+//                response.sendRedirect("login.jsp");
+//
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//                request.setAttribute("message", "Database error: " + e.getMessage());
+//                request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
+//            }
+//        } else {
+//            request.setAttribute("error", "Invalid OTP. Please try again.");
+//            request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
+//        }
+//    }
     private void handleOtpVerification(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String enteredOtp = request.getParameter("otp");
         String sessionOtp = (String) request.getSession().getAttribute("otp");
 
         if (enteredOtp.equals(sessionOtp)) {
-            // Retrieve stored user info
-            String email = (String) request.getSession().getAttribute("email");
-            String password = (String) request.getSession().getAttribute("password");
-            int roleID = (int) request.getSession().getAttribute("roleID");
+            // OTP is valid, proceed with user registration completion
+            // Clear session attributes related to OTP after successful verification
+            request.getSession().removeAttribute("otp");
 
-            // Insert user into database
-            String insertSql = "INSERT INTO Account (Username, Password, RoleID) VALUES (?, ?, ?)";
-            try (Connection conn = DBContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(insertSql)) {
-                pstmt.setString(1, email);
-                pstmt.setString(2, password);
-                pstmt.setInt(3, roleID);
-                pstmt.executeUpdate();
+            // Redirect user to a different process that handles finalizing the registration
+            request.getSession().setAttribute("message", "OTP verified successfully! Now you can complete your registration.");
+            response.sendRedirect("CompleteRegistration.jsp"); // A new page that completes the registration
 
-                // Clear session attributes
-                request.getSession().removeAttribute("otp");
-                request.getSession().removeAttribute("email");
-                request.getSession().removeAttribute("password");
-                request.getSession().removeAttribute("roleID");
-
-                // Redirect to login page
-                request.getSession().setAttribute("message", "Registration successful! Please log in.");
-                response.sendRedirect("login.jsp");
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-                request.setAttribute("message", "Database error: " + e.getMessage());
-                request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
-            }
         } else {
+            // Invalid OTP, return to the OTP input page with an error message
             request.setAttribute("error", "Invalid OTP. Please try again.");
             request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
         }

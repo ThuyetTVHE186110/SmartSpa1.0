@@ -6,6 +6,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login Form</title>
         <link rel="stylesheet" href="./css/login.css">
+        <link rel="stylesheet" href="./css/validate.css">
+
     </head>
 
     <body>
@@ -62,6 +64,13 @@
                        maxlength="20" 
                        required 
                        oninput="this.value = this.value.trim()">
+                <button type="button" class="show_password" onclick="togglePassword('password_field')">
+                    <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                    <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                          d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                    </path>
+                    </svg>
+                </button>
             </div>
 
             <div class="flex-row">
@@ -226,7 +235,75 @@
         });
     </script>
 
+    <script>
+        function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const button = event.target;
 
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                button.querySelector('path').setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S13.39 14 12 14s-2.5-1.11-2.5-2.5S10.61 9 12 9z');
+            } else {
+                passwordField.type = 'password';
+                button.querySelector('path').setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
+            }
+        }
+
+        function validateForm() {
+            const passwordField = document.getElementById('password_field');
+            const confirmPasswordField = document.getElementById('confirm_password_field');
+            const password = passwordField.value;
+
+            // Ki?m tra ??nh d?ng m?t kh?u
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // ít nh?t 8 ký t?, có ch? hoa, ch? th??ng và s?
+
+            if (!passwordRegex.test(password)) {
+                alert("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.");
+                return false; // Ng?n ch?n g?i bi?u m?u
+            }
+
+            // Ki?m tra xem m?t kh?u và xác nh?n m?t kh?u có kh?p không
+            if (password !== confirmPasswordField.value) {
+                alert("Passwords do not match.");
+                return false; // Ng?n ch?n g?i bi?u m?u
+            }
+
+            return true; // G?i bi?u m?u
+        }
+    </script>
+    <script>
+        function validatePassword() {
+            const passwordField = document.getElementById('password_field');
+            const confirmPasswordField = document.getElementById('confirm_password_field');
+            const passwordError = document.getElementById('password_error');
+            const confirmPasswordError = document.getElementById('confirm_password_error');
+
+            const password = passwordField.value;
+            const confirmPassword = confirmPasswordField.value;
+
+            // Reset error messages
+            passwordError.style.display = 'none';
+            confirmPasswordError.style.display = 'none';
+
+            // Password validation
+            const passwordCriteria = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Z].{4,19}$/; // First letter uppercase, at least 5 characters, one digit, one special character
+
+            if (!password.match(passwordCriteria)) {
+                passwordError.innerText = "Password must start with an uppercase letter, be at least 5 characters long, contain at least one digit and one special character.";
+                passwordError.style.display = 'block';
+            }
+
+            // Confirm password validation
+            if (password !== confirmPassword) {
+                confirmPasswordError.innerText = "Passwords do not match.";
+                confirmPasswordError.style.display = 'block';
+            }
+        }
+
+        // Add event listeners
+        document.getElementById('password_field').addEventListener('input', validatePassword);
+        document.getElementById('confirm_password_field').addEventListener('input', validatePassword);
+    </script>
 
 </body>
 
