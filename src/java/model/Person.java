@@ -20,7 +20,22 @@ public class Person {
     private String email;
     private String address;
 
+    public Person() {
+    }
+
     
+    
+    // Constructor with parameters
+    public Person(int id, String name, Date dateOfBirth, char gender, String phone, String email, String address) {
+        this.id = id;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+    }
+
     public int getId() {
         return id;
     }

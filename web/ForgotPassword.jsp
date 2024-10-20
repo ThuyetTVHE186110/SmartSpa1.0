@@ -30,8 +30,23 @@
                 </path>
                 </svg>
                 <input placeholder="name@mail.com" title="Inpit title" name="email" type="text" class="input_field"
-                       id="email_field" maxlength="50" required oninput="this.value = this.value.trim()">
+                       id="email_field" maxlength="50" value="<%= request.getAttribute("txtEmail") != null ? request.getAttribute("txtEmail") : "" %>" required oninput="validateEmail(this)">
             </div>
+            <span class="error-message" id="email_error" style="display: none;">Please enter a valid email address.</span>
+            <script>
+                function validateEmail(input) {
+                    const emailError = document.getElementById('email_error');
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
+
+                    if (!emailPattern.test(input.value)) {
+                        input.classList.add('invalid'); // Add invalid class for styling
+                        emailError.style.display = 'block'; // Show error message
+                    } else {
+                        input.classList.remove('invalid'); // Remove invalid class if valid
+                        emailError.style.display = 'none'; // Hide error message
+                    }
+                }
+            </script>
 
 
             <button class="button-submit" type="submit" name ="forgot">Confirm</button>
@@ -83,6 +98,27 @@
             </button>
         </div>
     </form>
+
+    <div class="error-container"></div> <!-- Error notification container -->
+
+    <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var errorContainer = document.querySelector('.error-container');
+        <% if (errorMessage != null) { %>
+            errorContainer.innerText = "<%= errorMessage %>";
+            errorContainer.style.display = 'block'; // Hi?n th? khung thông báo
+            errorContainer.classList.add('show');  // Thêm class ?? hi?n th? CSS
+
+            // ?n thông báo sau 3 giây
+            setTimeout(function () {
+                errorContainer.classList.remove('show');
+                errorContainer.style.display = 'none';
+            }, 3000);
+        <% } %>
+        });
+    </script>
 
 </body>
 

@@ -23,13 +23,30 @@ public class AccountDAO {
     // Existing method to get account by username and password
     public Account getByUsernamePassword(String username, String password) {
         try {
-            String sql = "SELECT * FROM Account WHERE Username = ? AND Password = ?";
+            // Truy vấn lấy thông tin Account và liên kết với Person qua PersonID
+            String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address "
+                    + "FROM Account a "
+                    + "JOIN Person p ON a.PersonID = p.ID "
+                    + "WHERE a.Username = ? AND a.Password = ?";
             PreparedStatement ps = getConnection().prepareStatement(sql);
             ps.setString(1, username);
             ps.setString(2, password);
             ResultSet rs = ps.executeQuery();
+
             if (rs.next()) {
-                return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4), null);
+                // Tạo đối tượng Person từ dữ liệu bảng Person
+                Person person = new Person();
+                person.setId(rs.getInt(5));  // Person.ID
+                person.setName(rs.getString(6));  // Person.Name
+                person.setDateOfBirth(rs.getDate(7));  // Person.DateOfBirth
+                person.setGender(rs.getString(8).charAt(0));  // Person.Gender
+                person.setPhone(rs.getString(9));  // Person.Phone
+                person.setEmail(rs.getString(10));  // Person.Email
+                person.setAddress(rs.getString(11));  // Person.Address
+
+                // Tạo đối tượng Account với thông tin lấy được từ Account và Person
+                // RoleID là kiểu int thay vì String
+                return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
             }
         } catch (SQLException ex) {
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
@@ -38,38 +55,51 @@ public class AccountDAO {
     }
 
     // Method to update the password for an account
-    public boolean updatePassword(String username, String newPassword) {
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        boolean isUpdated = false;
-
-        try {
-            connection = getConnection(); // Use existing method to get connection
-            String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.setString(1, newPassword); // Set new password
-            preparedStatement.setString(2, username);    // Set the username
-
-            int rowsAffected = preparedStatement.executeUpdate();
-            isUpdated = (rowsAffected > 0); // Return true if rows were updated
-
-        } catch (SQLException e) {
-            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
-        } finally {
-            // Close resources
-            try {
-                if (preparedStatement != null) {
-                    preparedStatement.close();
-                }
-                if (connection != null) {
-                    connection.close();
-                }
-            } catch (SQLException e) {
-                Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
-            }
+//    public boolean updatePassword(String username, String newPassword) {
+//        Connection connection = null;
+//        PreparedStatement preparedStatement = null;
+//        boolean isUpdated = false;
+//
+//        try {
+//            connection = getConnection(); // Use existing method to get connection
+//            String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
+//            preparedStatement = connection.prepareStatement(sql);
+//            preparedStatement.setString(1, newPassword); // Set new password
+//            preparedStatement.setString(2, username);    // Set the username
+//
+//            System.out.println("Executing query: " + preparedStatement.toString());
+//
+//            int rowsAffected = preparedStatement.executeUpdate();
+//            System.out.println("Rows affected: " + rowsAffected);
+//
+//            isUpdated = (rowsAffected > 0); // Return true if rows were updated
+//
+//        } catch (SQLException e) {
+//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
+//        } finally {
+//            // Close resources
+//            try {
+//                if (preparedStatement != null) {
+//                    preparedStatement.close();
+//                }
+//                if (connection != null) {
+//                    connection.close();
+//                }
+//            } catch (SQLException e) {
+//                Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
+//            }
+//        }
+//
+//        return isUpdated;
+//    }
+    public boolean updatePassword(String email, String newPassword) throws SQLException {
+        String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newPassword);
+            stmt.setString(2, email);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
         }
-
-        return isUpdated;
     }
 
     public Person getPersonByID(String name) {
@@ -113,6 +143,32 @@ public class AccountDAO {
             }
         }
         return null;
+    }
+
+    public boolean checkEmailExists(String email) {
+        String query = "SELECT COUNT(*) FROM Account WHERE Username = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+            ps.setString(1, email);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0; // Trả về true nếu email tồn tại
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; // Trả về false nếu email không tồn tại hoặc có lỗi xảy ra
+    }
+
+    public void insertAccount(Connection conn, Account account) throws SQLException {
+        String sql = "INSERT INTO Account (Username, Password, RoleID, PersonID) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, account.getUsername());
+            stmt.setString(2, account.getPassword());
+            stmt.setInt(3, account.getRole());
+            stmt.setInt(4, account.getId());
+            stmt.executeUpdate();
+        }
     }
 
     private Connection getConnection() throws SQLException {

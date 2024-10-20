@@ -4,14 +4,14 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Signup Form</title>
+        <title>Create your account</title>
         <link rel="stylesheet" href="./css/login.css">
         <link rel="stylesheet" href="./css/validate.css">
     </head>
 
     <body>
         <div class="backgroundImg"></div>
-        <form class="form form-container" action="signup" method="POST">
+        <form class="form form-container" action="signup" method="POST" onsubmit="return validateForm()">
             <div class="logo_container"></div>
             <div class="title_container">
                 <p class="title">Create Your Account</p>
@@ -27,17 +27,9 @@
                 <path stroke-linecap="round" stroke-width="1.5" stroke="#141B34"
                       d="M4 20C4 16.6863 7.68629 14 12 14C16.3137 14 20 16.6863 20 20"></path>
                 </svg>
-                <input 
-                    placeholder="Your Full Name" 
-                    title="Input your full name" 
-                    name="txtName" 
-                    type="text" 
-                    class="input_field" 
-                    id="name_field" 
-                    maxlength="50" 
-                    required 
-                    value="<%= request.getAttribute("txtName") != null ? request.getAttribute("txtName") : "" %>" 
-                    oninput="this.value = this.value.trim()">
+                <input placeholder="Your Full Name" title="Input your full name" name="txtName" type="text" class="input_field"
+                       id="name_field" maxlength="50" required value="<%= request.getAttribute("txtName") != null ? request.getAttribute("txtName") : "" %>" 
+                       oninput="this.value = this.value.trim()">
             </div>
 
             <!-- Phone Field -->
@@ -55,18 +47,10 @@
                 </svg>
 
 
-                <input 
-                    placeholder="Your Phone Number" 
-                    title="Input your phone number" 
-                    name="txtPhone" 
-                    type="tel" 
-                    class="input_field" 
-                    id="phone_field" 
-                    maxlength="10" 
-                    pattern="^0[0-9]{9}$" 
-                    required 
-                    value="<%= request.getAttribute("txtPhone") != null ? request.getAttribute("txtPhone") : "" %>" 
-                    oninput="this.value = this.value.replace(/[^0-9]/g, ''); validatePhone(this)">
+                <input placeholder="Your Phone Number" title="Input your phone number" name="txtPhone" type="tel"
+                       class="input_field" id="phone_field" maxlength="10" pattern="^0[0-9]{9}$" required
+                       value="<%= request.getAttribute("txtPhone") != null ? request.getAttribute("txtPhone") : "" %>" 
+                       oninput="validatePhone(this)">
             </div>
             <span class="error-message" id="phone_error" style="display: none;">Please enter a valid phone number containing 10 digits.</span>
 
@@ -74,15 +58,17 @@
             <script>
                 function validatePhone(input) {
                     const phoneError = document.getElementById('phone_error');
-                    const phonePattern = /^0\d{9}$/; // Pattern for phone number starting with 0 and followed by 9 digits
+                    const phonePattern = /^0\d{9}$/;
+                    const isValid = phonePattern.test(input.value);
 
-                    if (!phonePattern.test(input.value)) {
-                        input.classList.add('invalid'); // Add invalid class for styling
-                        phoneError.style.display = 'block'; // Show error message
+                    if (!isValid) {
+                        input.classList.add('invalid');
+                        phoneError.style.display = 'block';
                     } else {
-                        input.classList.remove('invalid'); // Remove invalid class if valid
-                        phoneError.style.display = 'none'; // Hide error message
+                        input.classList.remove('invalid');
+                        phoneError.style.display = 'none';
                     }
+                    return isValid;
                 }
             </script>
 
@@ -99,18 +85,9 @@
                 </path>
                 </svg>
 
-                <input 
-                    placeholder="name@mail.com" 
-                    title="Input your email" 
-                    name="txtEmail" 
-                    type="email" 
-                    class="input_field" 
-                    id="email_field" 
-                    maxlength="50" 
-                    value="<%= request.getAttribute("txtEmail") != null ? request.getAttribute("txtEmail") : "" %>" 
-                    required 
-                    oninput="validateEmail(this)">
-
+                <input placeholder="name@mail.com" title="Input your email" name="txtEmail" type="email" class="input_field"
+                       id="email_field" maxlength="50" required value="<%= request.getAttribute("txtEmail") != null ? request.getAttribute("txtEmail") : "" %>" 
+                       oninput="validateEmail(this)">
 
             </div>
             <span class="error-message" id="email_error" style="display: none;">Please enter a valid email address.</span>
@@ -118,15 +95,17 @@
             <script>
                 function validateEmail(input) {
                     const emailError = document.getElementById('email_error');
-                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; // Simple regex for email validation
+                    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    const isValid = emailPattern.test(input.value);
 
-                    if (!emailPattern.test(input.value)) {
-                        input.classList.add('invalid'); // Add invalid class for styling
-                        emailError.style.display = 'block'; // Show error message
+                    if (!isValid) {
+                        input.classList.add('invalid');
+                        emailError.style.display = 'block';
                     } else {
-                        input.classList.remove('invalid'); // Remove invalid class if valid
-                        emailError.style.display = 'none'; // Hide error message
+                        input.classList.remove('invalid');
+                        emailError.style.display = 'none';
                     }
+                    return isValid;
                 }
             </script>
 
@@ -145,7 +124,7 @@
                 </path>
                 </svg>
                 <input placeholder="Password" title="Input your password" name="txtPassword" type="password" class="input_field"
-                       id="password_field" minlength="8" maxlength="20" required oninput="this.value = this.value.trim()" >
+                       id="password_field" minlength="8" maxlength="20" required oninput="validatePassword()">
                 <button type="button" class="show_password" onclick="togglePassword('password_field')">
                     <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
                     <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
@@ -171,8 +150,8 @@
                 </path>
                 </svg>
                 <!-- Confirm Password Input -->
-                <input placeholder="Confirm Password" title="Input title" name="txtConfirmPassword" type="password"
-                       class="input_field" id="confirm_password_field" minlength="8" maxlength="20" required oninput="this.value = this.value.trim()">
+                <input placeholder="Confirm Password" title="Confirm your password" name="txtConfirmPassword" type="password"
+                       class="input_field" id="confirm_password_field" minlength="8" maxlength="20" required oninput="validatePassword()">
                 <button type="button" class="show_password" onclick="togglePassword('confirm_password_field')">
                     <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
                     <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
@@ -197,29 +176,6 @@
                     }
                 }
 
-                function validateForm() {
-                    const passwordField = document.getElementById('password_field');
-                    const confirmPasswordField = document.getElementById('confirm_password_field');
-                    const password = passwordField.value;
-
-                    // Ki?m tra ??nh d?ng m?t kh?u
-                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)[A-Za-z\d@$!%*?&]{8,}$/; // ít nh?t 8 ký t?, có ch? hoa, ch? th??ng và s?
-
-                    if (!passwordRegex.test(password)) {
-                        alert("Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, and one number.");
-                        return false; // Ng?n ch?n g?i bi?u m?u
-                    }
-
-                    // Ki?m tra xem m?t kh?u và xác nh?n m?t kh?u có kh?p không
-                    if (password !== confirmPasswordField.value) {
-                        alert("Passwords do not match.");
-                        return false; // Ng?n ch?n g?i bi?u m?u
-                    }
-
-                    return true; // G?i bi?u m?u
-                }
-            </script>
-            <script>
                 function validatePassword() {
                     const passwordField = document.getElementById('password_field');
                     const confirmPasswordField = document.getElementById('confirm_password_field');
@@ -229,33 +185,40 @@
                     const password = passwordField.value;
                     const confirmPassword = confirmPasswordField.value;
 
-                    // Reset error messages
+                    const passwordCriteria = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Z].{4,19}$/;
+                    let isValid = true;
+
                     passwordError.style.display = 'none';
                     confirmPasswordError.style.display = 'none';
 
-                    // Password validation
-                    const passwordCriteria = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Z].{4,19}$/; // First letter uppercase, at least 5 characters, one digit, one special character
-
+                    // Check password complexity
                     if (!password.match(passwordCriteria)) {
-                        passwordError.innerText = "Password must start with an uppercase letter, be at least 5 characters long, contain at least one digit and one special character.";
+                        passwordError.innerText = "Password must start with an uppercase letter, be at least 5 characters long, contain at least one digit, and one special character.";
                         passwordError.style.display = 'block';
+                        isValid = false;
                     }
 
-                    // Confirm password validation
+                    // Check if passwords match
                     if (password !== confirmPassword) {
                         confirmPasswordError.innerText = "Passwords do not match.";
                         confirmPasswordError.style.display = 'block';
+                        isValid = false;
                     }
+
+                    return isValid;
                 }
 
-                // Add event listeners
-                document.getElementById('password_field').addEventListener('input', validatePassword);
-                document.getElementById('confirm_password_field').addEventListener('input', validatePassword);
+                function validateForm() {
+                    const isPhoneValid = validatePhone(document.getElementById('phone_field'));
+                    const isEmailValid = validateEmail(document.getElementById('email_field'));
+                    const isPasswordValid = validatePassword();
+
+                    return isPhoneValid && isEmailValid && isPasswordValid;
+                }
             </script>
 
-
             <!-- Submit Button -->
-            <button class="button-submit" type="submit" value="signup" name = "signup">Sign Up</button>
+            <button class="button-submit" type="submit" value="signup" name="signup">Sign Up</button>
 
             <!-- Login Option -->
             <p class="p">Already have an account? <span class="span"><a href="login.jsp" style="text-decoration: none; color: inherit;">Log In</a></span></p>
@@ -305,7 +268,7 @@
         </form>
         <div class="error-container" style="display:none;"></div> <!-- Error notification container -->
 
-        <% String errorMessage = (String) request.getAttribute("error"); %>
+        <% String errorMessage = (String) request.getAttribute("errorMessage"); %>
 
         <script>
             document.addEventListener("DOMContentLoaded", function () {

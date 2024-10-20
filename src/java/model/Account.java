@@ -13,10 +13,10 @@ public class Account {
     private int id;
     private String username;
     private String password;
-    private String role;
+    private int role;  // Role is now an int
     private Person personInfo;
 
-    public Account(int id, String username, String password, String role, Person personInfo) {
+    public Account(int id, String username, String password, int role, Person personInfo) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -49,11 +49,11 @@ public class Account {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public int getRole() {
+        return role;  // Change role getter and setter to work with int
     }
 
-    public void setRole(String role) {
+    public void setRole(int role) {
         this.role = role;
     }
 
@@ -64,5 +64,4 @@ public class Account {
     public void setPersonInfo(Person personInfo) {
         this.personInfo = personInfo;
     }
-
 }
