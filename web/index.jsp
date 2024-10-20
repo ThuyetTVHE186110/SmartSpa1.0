@@ -32,6 +32,30 @@
     </head>
 
     <body>
+        <div class="success-container"></div> <!-- Success notification container -->
+
+        <% 
+            String successMessage = (String) request.getSession().getAttribute("message");
+            request.getSession().removeAttribute("message"); // Remove message after displaying it
+        %>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var successContainer = document.querySelector('.success-container');
+
+            <% if (successMessage != null) { %>
+                successContainer.innerText = "<%= successMessage %>";
+                successContainer.style.display = 'block'; // Show the container
+                successContainer.classList.add('show'); // Add the 'show' class for CSS transition
+
+                // Use setTimeout to remove the notification after 3 seconds
+                setTimeout(function () {
+                    successContainer.classList.remove('show'); // Hide the notification
+                    successContainer.style.display = 'none'; // Optionally set display back to none
+                }, 3000);
+            <% } %>
+            });
+        </script>
 
         <c:if test="${empty listServices}">
             <c:redirect url="index" />
@@ -567,6 +591,8 @@
 
             <!-- Template Javascript -->
             <script src="js/main.js"></script>
+
+
     </body>
 
 </html>

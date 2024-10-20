@@ -20,38 +20,49 @@ import model.Person;
  */
 public class AccountDAO {
 
-    // Existing method to get account by username and password
     public Account getByUsernamePassword(String username, String password) {
-        try {
-            // Truy vấn lấy thông tin Account và liên kết với Person qua PersonID
-            String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address "
-                    + "FROM Account a "
-                    + "JOIN Person p ON a.PersonID = p.ID "
-                    + "WHERE a.Username = ? AND a.Password = ?";
-            PreparedStatement ps = getConnection().prepareStatement(sql);
+        Account account = null;
+        Person person = null;
+
+        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, "
+                + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address "
+                + "FROM Account a "
+                + "JOIN Person p ON a.PersonID = p.ID "
+                + "WHERE a.Username = ? AND a.Password = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set the parameters for the prepared statement
             ps.setString(1, username);
             ps.setString(2, password);
-            ResultSet rs = ps.executeQuery();
 
-            if (rs.next()) {
-                // Tạo đối tượng Person từ dữ liệu bảng Person
-                Person person = new Person();
-                person.setId(rs.getInt(5));  // Person.ID
-                person.setName(rs.getString(6));  // Person.Name
-                person.setDateOfBirth(rs.getDate(7));  // Person.DateOfBirth
-                person.setGender(rs.getString(8).charAt(0));  // Person.Gender
-                person.setPhone(rs.getString(9));  // Person.Phone
-                person.setEmail(rs.getString(10));  // Person.Email
-                person.setAddress(rs.getString(11));  // Person.Address
+            // Execute the query
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Create a Person object from the ResultSet
+                    person = new Person();
+                    person.setId(rs.getInt(5));  // Person.ID
+                    person.setName(rs.getString(6));  // Person.Name
+                    person.setDateOfBirth(rs.getDate(7));  // Person.DateOfBirth
 
-                // Tạo đối tượng Account với thông tin lấy được từ Account và Person
-                // RoleID là kiểu int thay vì String
-                return new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
+                    // Check Gender safely (to avoid StringIndexOutOfBoundsException)
+                    String genderStr = rs.getString(8);
+                    char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';  // 'U' for unknown
+                    person.setGender(gender);
+
+                    person.setPhone(rs.getString(9));  // Person.Phone
+                    person.setEmail(rs.getString(10));  // Person.Email
+                    person.setAddress(rs.getString(11));  // Person.Address
+
+                    // Create an Account object from the ResultSet
+                    account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
+                }
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException e) {
+            e.printStackTrace();  // Print stack trace for debugging
+            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "Database error", e);
         }
-        return null;
+        return account;  // Return null if no account is found
     }
 
     // Method to update the password for an account
