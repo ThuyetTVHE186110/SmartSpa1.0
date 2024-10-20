@@ -5,6 +5,8 @@
 --%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -75,38 +77,8 @@
         <!-- Topbar End -->
 
 
-        <!-- Navbar Start -->
-        <div class="container-fluid p-0">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-                <a href="." class="navbar-brand ml-lg-3">
-                    <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                    <div class="navbar-nav m-auto py-0">
-                        <a href="." class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="services" class="nav-item nav-link">Services</a>
-                        <a href="price.html" class="nav-item nav-link">Pricing</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment" class="dropdown-item active">Appointment</a>
-                                <a href="opening.html" class="dropdown-item">Open Hours</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="feedback" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <a href="#appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
-                </div>
-            </nav>
-        </div>
-        <!-- Navbar End -->
+        <!-- Include the Navbar -->
+        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
 
         <!-- Header Start -->
         <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 90px;">
@@ -120,16 +92,16 @@
             </div>
         </div>
         <!-- Header End -->
-        
+
         <div class="container">
             <div class="services-nav">
                 <a class="active nav-link" data-target="packages">Packages</a>
                 <a class="nav-link" data-target="massages">Massages</a>
                 <a class="nav-link" data-target="skin-care">Skin Care</a>
-<!--                <a class="nav-link" data-target="packages">Advanced Beauty</a>
-                <a class="nav-link" data-target="packages">Body Services</a>
-                <a class="nav-link" data-target="packages">Facials</a>
-                <a class="nav-link" data-target="packages">Wellness or Integrative</a>-->
+                <!--                <a class="nav-link" data-target="packages">Advanced Beauty</a>
+                                <a class="nav-link" data-target="packages">Body Services</a>
+                                <a class="nav-link" data-target="packages">Facials</a>
+                                <a class="nav-link" data-target="packages">Wellness or Integrative</a>-->
             </div>
             <!--<h2>SERVICES</h2>-->
             <h3 id="packages">PACKAGES</h3>
@@ -143,78 +115,78 @@
                     </div>
                 </c:forEach>
             </div>
-<!--            <h3 id="massages">MASSAGES</h3>
-            <div class="massages">
-                <div class="massage">
-                    <h3>1</h3>
-                    <p class="price">1 hr · $120.00</p>
-                    <p>A classic Swedish massage to relax and rejuvenate your body.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="massage">
-                    <h3>2</h3>
-                    <p class="price">1 hr · $140.00</p>
-                    <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-            </div>
-            <h3 id="skin-care">SKIN CARE</h3>
-            <div class="skin-care">
-                <div class="skin-care-item">
-                    <h3>Facial Treatment</h3>
-                    <p class="price">1 hr · $100.00</p>
-                    <p>A rejuvenating facial treatment to refresh your skin.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-                <div class="skin-care-item">
-                    <h3>Anti-Aging Treatment</h3>
-                    <p class="price">1 hr · $150.00</p>
-                    <p>An anti-aging treatment to reduce wrinkles and fine lines.</p>
-                    <a class="book-btn" href="#">Book</a>
-                </div>
-            </div>-->
+            <!--            <h3 id="massages">MASSAGES</h3>
+                        <div class="massages">
+                            <div class="massage">
+                                <h3>1</h3>
+                                <p class="price">1 hr · $120.00</p>
+                                <p>A classic Swedish massage to relax and rejuvenate your body.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="massage">
+                                <h3>2</h3>
+                                <p class="price">1 hr · $140.00</p>
+                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                        </div>
+                        <h3 id="skin-care">SKIN CARE</h3>
+                        <div class="skin-care">
+                            <div class="skin-care-item">
+                                <h3>Facial Treatment</h3>
+                                <p class="price">1 hr · $100.00</p>
+                                <p>A rejuvenating facial treatment to refresh your skin.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                            <div class="skin-care-item">
+                                <h3>Anti-Aging Treatment</h3>
+                                <p class="price">1 hr · $150.00</p>
+                                <p>An anti-aging treatment to reduce wrinkles and fine lines.</p>
+                                <a class="book-btn" href="#">Book</a>
+                            </div>
+                        </div>-->
         </div>
         <script>
             // Get all the navigation links

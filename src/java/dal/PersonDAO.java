@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import model.Person;
+import java.sql.Statement;
 
 /**
  *
@@ -358,6 +359,71 @@ public class PersonDAO extends DBContext {
             }
         }
         return maxID; // Trả về 1 nếu có lỗi hoặc không tìm thấy ID nào
+    }
+
+    // Chèn dữ liệu vào bảng Person, trả về ID của Person
+    public int insertPerson(Person person) throws SQLException {
+        String sql = "INSERT INTO Person (Name, DateOfBirth, Gender, Phone, Email, Address) "
+                + "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, person.getName());
+            ps.setDate(2, person.getDateOfBirth());
+            ps.setString(3, String.valueOf(person.getGender()));
+            ps.setString(4, person.getPhone());
+            ps.setString(5, person.getEmail());  // Email sẽ được dùng cho Username sau
+            ps.setString(6, person.getAddress());
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Creating person failed, no rows affected.");
+            }
+
+            // Lấy ID của Person vừa chèn
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Creating person failed, no ID obtained.");
+                }
+            }
+        }
+    }
+
+    // Chèn dữ liệu vào bảng Account, dùng Email làm Username và PersonID từ bảng Person
+    public void insertAccount(String email, String password, int roleID, int personID) throws SQLException {
+        String sql = "INSERT INTO Account (Username, Password, RoleID, PersonID) "
+                + "VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, email);  // Username là Email
+            ps.setString(2, password);
+            ps.setInt(3, roleID);
+            ps.setInt(4, personID);  // ID từ bảng Person
+
+            ps.executeUpdate();
+        }
+    }
+
+    public int insertPersonAndReturnID(Connection conn, Person person) throws SQLException {
+        String sql = "INSERT INTO Person (Name, Phone, Email) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, person.getName());
+            stmt.setString(2, person.getPhone());
+            stmt.setString(3, person.getEmail());
+            stmt.executeUpdate();
+
+            // Lấy ID của Person vừa chèn
+            ResultSet generatedKeys = stmt.getGeneratedKeys();
+            if (generatedKeys.next()) {
+                return generatedKeys.getInt(1);
+            } else {
+                throw new SQLException("Failed to insert person, no ID obtained.");
+            }
+        }
     }
 
     public static void main(String[] args) {
