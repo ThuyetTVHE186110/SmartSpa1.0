@@ -82,6 +82,7 @@
             </div>
             <!--            <input type="hidden" name="userType" value="customer">           -->
             <!-- Submit Button -->
+            <input type="hidden" name="userType" value="customer">
 
             <button class="button-submit" type="submit" name = "signin">Sign In</button>
             <!-- Sign Up Option -->
@@ -89,7 +90,7 @@
             <p class="p">Don't have an account? <span class="span"><a href="signup.jsp" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
             <!-- Add button to switch to admin login -->
             <button class="button-submit" type="button" onclick="window.location.href = 'adminLogin.jsp';">
-                Admin/Manager/Staff Login
+                For Admin Only
             </button>
 
         </p>
@@ -102,7 +103,7 @@
         </div>
         <!-- Google and Facebook Login Options -->
         <div class="flex-row">
-            <button class="btn google">
+            <button class="btn google" id="googleSignInButton">
                 <svg version="1.1" width="20" id="Layer_1" xmlns="http://www.w3.org/2000/svg"
                      xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" viewBox="0 0 512 512"
                      style="enable-background:new 0 0 512 512;" xml:space="preserve">
@@ -124,6 +125,41 @@
                 Google
 
             </button>
+            <script src="https://accounts.google.com/gsi/client" async defer></script>
+            <script>
+                window.onload = function () {
+                    google.accounts.id.initialize({
+                        client_id: '608049009163-67or5j0sd3q1g1bnf3qg6qdm2t821gaj.apps.googleusercontent.com', // Your client ID
+                        callback: handleCredentialResponse
+                    });
+
+                    document.getElementById('googleSignInButton').addEventListener('click', function () {
+                        google.accounts.id.prompt();  // Show the Google Sign-In prompt
+                    });
+                };
+
+                function handleCredentialResponse(response) {
+                    console.log("Encoded JWT ID token: " + response.credential);
+
+                    // Send the token to your backend for verification and login
+                    fetch('/SmartSpa1.0/oauth2callback', {// Update this path to match your servlet mapping
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({credential: response.credential}),
+                    }).then(response => {
+                        if (response.ok) {
+                            window.location.href = '/SmartSpa1.0/index'; // Redirect to dashboard or desired page
+                        } else {
+                            alert('Google Sign-In failed. Please try again.');
+                        }
+                    }).catch(error => {
+                        console.error('Error during Google Sign-In:', error);
+                    });
+                }
+            </script>
+
             <button class="btn facebook">
                 <svg viewBox="0 0 16 16" class="bi bi-facebook" fill="currentColor" height="16" width="16"
                      xmlns="http://www.w3.org/2000/svg">

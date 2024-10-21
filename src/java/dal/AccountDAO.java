@@ -65,44 +65,8 @@ public class AccountDAO {
         return account;  // Return null if no account is found
     }
 
-    // Method to update the password for an account
-//    public boolean updatePassword(String username, String newPassword) {
-//        Connection connection = null;
-//        PreparedStatement preparedStatement = null;
-//        boolean isUpdated = false;
-//
-//        try {
-//            connection = getConnection(); // Use existing method to get connection
-//            String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
-//            preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setString(1, newPassword); // Set new password
-//            preparedStatement.setString(2, username);    // Set the username
-//
-//            System.out.println("Executing query: " + preparedStatement.toString());
-//
-//            int rowsAffected = preparedStatement.executeUpdate();
-//            System.out.println("Rows affected: " + rowsAffected);
-//
-//            isUpdated = (rowsAffected > 0); // Return true if rows were updated
-//
-//        } catch (SQLException e) {
-//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
-//        } finally {
-//            // Close resources
-//            try {
-//                if (preparedStatement != null) {
-//                    preparedStatement.close();
-//                }
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
-//            }
-//        }
-//
-//        return isUpdated;
-//    }
+  
+    
     public boolean updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {

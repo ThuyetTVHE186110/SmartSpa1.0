@@ -5,7 +5,7 @@
     <meta charset="utf-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-    <title>Feedback Management - NiceAdmin</title>
+    <title>Account Management - SmartBeautySpa</title>
     <meta content="" name="description">
     <meta content="" name="keywords">
 
@@ -269,7 +269,7 @@
         <ul class="sidebar-nav" id="sidebar-nav">
 
             <li class="nav-item">
-                <a class="nav-link collapsed" href="index.html">
+                <a class="nav-link " href="dashboard.jsp">
                     <i class="bi bi-grid"></i>
                     <span>Dashboard</span>
                 </a>
@@ -310,10 +310,10 @@
 
             <!-- Staff Section -->
             <li class="nav-item">
-                <a class="nav-link" data-bs-target="#staff-nav" data-bs-toggle="collapse" href="#">
+                <a class="nav-link collapsed" data-bs-target="#staff-nav" data-bs-toggle="collapse" href="#">
                     <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
                 </a>
-                <ul id="staff-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
+                <ul id="staff-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                     <li>
                         <a href="appoinment-management.html">
                             <i class="bi bi-circle"></i><span>Appointment Management</span>
@@ -325,7 +325,7 @@
                         </a>
                     </li>
                     <li>
-                        <a href="feedback-management.html" class="active">
+                        <a href="feedback-management.html">
                             <i class="bi bi-circle"></i><span>Feedback Management</span>
                         </a>
                     </li>
@@ -339,12 +339,11 @@
     <main id="main" class="main">
 
         <div class="pagetitle">
-            <h1>Feedback Management</h1>
+            <h1>Account Management</h1>
             <nav>
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                    <li class="breadcrumb-item">Staff</li>
-                    <li class="breadcrumb-item active">Feedback Management</li>
+                    <li class="breadcrumb-item active">Account Management</li>
                 </ol>
             </nav>
         </div><!-- End Page Title -->
@@ -355,19 +354,18 @@
 
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="card-title">Feedback</h5>
-                            <p>Manage customer feedback from this panel.</p>
+                            <h5 class="card-title">User Accounts</h5>
+                            <p>Manage user accounts from this panel.</p>
 
                             <!-- Table with stripped rows -->
                             <table class="table datatable">
                                 <thead>
                                     <tr>
                                         <th scope="col">#</th>
-                                        <th scope="col">Customer Name</th>
-                                        <th scope="col">Service</th>
-                                        <th scope="col">Rating</th>
-                                        <th scope="col">Comment</th>
-                                        <th scope="col">Date</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Status</th>
                                         <th scope="col">Actions</th>
                                     </tr>
                                 </thead>
@@ -375,26 +373,24 @@
                                     <tr>
                                         <th scope="row">1</th>
                                         <td>Brandon Jacob</td>
-                                        <td>Haircut</td>
-                                        <td>4.5</td>
-                                        <td>Great service, very satisfied!</td>
-                                        <td>2023-05-25</td>
+                                        <td>brandon@example.com</td>
+                                        <td>Admin</td>
+                                        <td><span class="badge bg-success">Active</span></td>
                                         <td>
                                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#viewFeedbackModal">View</button>
+                                                data-bs-target="#editAccountModal">Edit</button>
                                             <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                         </td>
                                     </tr>
                                     <tr>
                                         <th scope="row">2</th>
                                         <td>Bridie Kessler</td>
-                                        <td>Hair Coloring</td>
-                                        <td>3.5</td>
-                                        <td>Good service, but took longer than expected.</td>
-                                        <td>2023-05-26</td>
+                                        <td>bridie@example.com</td>
+                                        <td>Staff</td>
+                                        <td><span class="badge bg-warning">Pending</span></td>
                                         <td>
                                             <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                data-bs-target="#viewFeedbackModal">View</button>
+                                                data-bs-target="#editAccountModal">Edit</button>
                                             <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                         </td>
                                     </tr>
@@ -402,6 +398,13 @@
                                 </tbody>
                             </table>
                             <!-- End Table with stripped rows -->
+
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#addAccountModal">
+                                    <i class="bi bi-plus-circle me-1"></i> Add New Account
+                                </button>
+                            </div>
 
                         </div>
                     </div>
@@ -438,48 +441,94 @@
     <!-- Template Main JS File -->
     <script src="assets/js/main.js"></script>
 
-    <!-- View Feedback Modal -->
-    <div class="modal fade" id="viewFeedbackModal" tabindex="-1">
+    <!-- Add Account Modal -->
+    <div class="modal fade" id="addAccountModal" tabindex="-1">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">View Feedback</h5>
+                    <h5 class="modal-title">Add New Account</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <!-- View Feedback Form -->
+                    <!-- Add Account Form -->
                     <form class="row g-3">
                         <div class="col-12">
-                            <label for="viewCustomerName" class="form-label">Customer Name</label>
-                            <input type="text" class="form-control" id="viewCustomerName" value="Brandon Jacob"
-                                readonly>
+                            <label for="inputName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="inputName">
                         </div>
                         <div class="col-12">
-                            <label for="viewService" class="form-label">Service</label>
-                            <input type="text" class="form-control" id="viewService" value="Haircut" readonly>
+                            <label for="inputEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="inputEmail">
                         </div>
                         <div class="col-12">
-                            <label for="viewRating" class="form-label">Rating</label>
-                            <input type="text" class="form-control" id="viewRating" value="4.5" readonly>
+                            <label for="inputPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="inputPassword">
                         </div>
                         <div class="col-12">
-                            <label for="viewComment" class="form-label">Comment</label>
-                            <textarea class="form-control" id="viewComment" rows="3"
-                                readonly>Great service, very satisfied!</textarea>
-                        </div>
-                        <div class="col-12">
-                            <label for="viewDate" class="form-label">Date</label>
-                            <input type="text" class="form-control" id="viewDate" value="2023-05-25" readonly>
+                            <label for="inputRole" class="form-label">Role</label>
+                            <select id="inputRole" class="form-select">
+                                <option selected>Choose...</option>
+                                <option>Admin</option>
+                                <option>Manager</option>
+                                <option>Staff</option>
+                            </select>
                         </div>
                     </form>
-                    <!-- End View Feedback Form -->
+                    <!-- End Add Account Form -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Add Account</button>
                 </div>
             </div>
         </div>
-    </div><!-- End View Feedback Modal-->
+    </div><!-- End Add Account Modal-->
+
+    <!-- Edit Account Modal -->
+    <div class="modal fade" id="editAccountModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Account</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Edit Account Form -->
+                    <form class="row g-3">
+                        <div class="col-12">
+                            <label for="editName" class="form-label">Full Name</label>
+                            <input type="text" class="form-control" id="editName" value="Brandon Jacob">
+                        </div>
+                        <div class="col-12">
+                            <label for="editEmail" class="form-label">Email</label>
+                            <input type="email" class="form-control" id="editEmail" value="brandon@example.com">
+                        </div>
+                        <div class="col-12">
+                            <label for="editRole" class="form-label">Role</label>
+                            <select id="editRole" class="form-select">
+                                <option>Admin</option>
+                                <option>Manager</option>
+                                <option>Staff</option>
+                            </select>
+                        </div>
+                        <div class="col-12">
+                            <label for="editStatus" class="form-label">Status</label>
+                            <select id="editStatus" class="form-select">
+                                <option>Active</option>
+                                <option>Pending</option>
+                                <option>Suspended</option>
+                            </select>
+                        </div>
+                    </form>
+                    <!-- End Edit Account Form -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div><!-- End Edit Account Modal-->
 
 </body>
 

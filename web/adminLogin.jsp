@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Login Form</title>
         <link rel="stylesheet" href="./css/login.css">
+        <link rel="stylesheet" href="./css/validate.css">
     </head>
 
     <body>
@@ -46,6 +47,13 @@
                 </svg>
                 <input placeholder="Password" title="Input your password" name="txtPassword" type="password" class="input_field"
                        id="password_field" minlength="8" maxlength="20" required oninput="this.value = this.value.trim()">
+                <button type="button" class="show_password" onclick="togglePassword('password_field')">
+                    <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                    <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                          d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                    </path>
+                    </svg>
+                </button>
             </div>
 
 
@@ -60,6 +68,7 @@
             </div>
             <!-- Submit Button -->
             <input type="hidden" name="userType" value="admin">
+
             <button class="button-submit" type="submit" name = "signin">Sign In</button>
             <!-- Sign Up Option -->
             <button class="button-submit" type="button" onclick="window.location.href = 'login.jsp';">
@@ -169,7 +178,20 @@
             <% } %>
             });
         </script>
+        <script>
+            function togglePassword(fieldId) {
+            const passwordField = document.getElementById(fieldId);
+            const button = event.target;
 
+            if (passwordField.type === 'password') {
+                passwordField.type = 'text';
+                button.querySelector('path').setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S13.39 14 12 14s-2.5-1.11-2.5-2.5S10.61 9 12 9z');
+            } else {
+                passwordField.type = 'password';
+                button.querySelector('path').setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
+            }
+        }
+        </script>
 
 
     </body>
