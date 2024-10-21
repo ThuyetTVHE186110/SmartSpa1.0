@@ -1,3 +1,11 @@
+<%-- 
+    Document   : feedback-management
+    Created on : Oct 17, 2024, 7:58:42 AM
+    Author     : admin
+--%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -369,41 +377,27 @@
                                         <tr>
                                             <th scope="col">#</th>
                                             <th scope="col">Customer Name</th>
+                                            <th scope="col">Content</th>
                                             <th scope="col">Service</th>
-                                            <th scope="col">Rating</th>
-                                            <th scope="col">Comment</th>
-                                            <th scope="col">Date</th>
-                                            <th scope="col">Actions</th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr>
-                                            <th scope="row">1</th>
-                                            <td>Brandon Jacob</td>
-                                            <td>Haircut</td>
-                                            <td>4.5</td>
-                                            <td>Great service, very satisfied!</td>
-                                            <td>2023-05-25</td>
-                                            <td>
-                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                        data-bs-target="#viewFeedbackModal">View</button>
-                                                <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th scope="row">2</th>
-                                            <td>Bridie Kessler</td>
-                                            <td>Hair Coloring</td>
-                                            <td>3.5</td>
-                                            <td>Good service, but took longer than expected.</td>
-                                            <td>2023-05-26</td>
-                                            <td>
-                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                        data-bs-target="#viewFeedbackModal">View</button>
-                                                <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                                            </td>
-                                        </tr>
-                                        <!-- Add more rows as needed -->
+                                        <c:forEach items="${feedback}" var="feedback" varStatus="status">
+                                            <tr>
+                                                <th scope="row">${status.index + 1}</th>
+                                                <td>${feedback.customer.name}</td>
+                                                <td>${feedback.content}</td>
+                                                <td>${feedback.service.name}</td>
+
+                                                <td>
+                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                            data-bs-target="#viewFeedbackModal" onclick="setModalData('${feedback.customer.name}', '${feedback.service.name}', '${feedback.content}')">View</button>
+                                                    <!--<button type="button" class="btn btn-danger btn-sm">Delete</button>-->
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+
                                     </tbody>
                                 </table>
                                 <!-- End Table with stripped rows -->
@@ -456,25 +450,15 @@
                         <form class="row g-3">
                             <div class="col-12">
                                 <label for="viewCustomerName" class="form-label">Customer Name</label>
-                                <input type="text" class="form-control" id="viewCustomerName" value="Brandon Jacob"
-                                       readonly>
+                                <input type="text" class="form-control" id="viewCustomerName" readonly>
                             </div>
                             <div class="col-12">
                                 <label for="viewService" class="form-label">Service</label>
-                                <input type="text" class="form-control" id="viewService" value="Haircut" readonly>
-                            </div>
-                            <div class="col-12">
-                                <label for="viewRating" class="form-label">Rating</label>
-                                <input type="text" class="form-control" id="viewRating" value="4.5" readonly>
+                                <input type="text" class="form-control" id="viewService" readonly>
                             </div>
                             <div class="col-12">
                                 <label for="viewComment" class="form-label">Comment</label>
-                                <textarea class="form-control" id="viewComment" rows="3"
-                                          readonly>Great service, very satisfied!</textarea>
-                            </div>
-                            <div class="col-12">
-                                <label for="viewDate" class="form-label">Date</label>
-                                <input type="text" class="form-control" id="viewDate" value="2023-05-25" readonly>
+                                <textarea class="form-control" id="viewComment" rows="3" readonly></textarea>
                             </div>
                         </form>
                         <!-- End View Feedback Form -->
@@ -485,6 +469,13 @@
                 </div>
             </div>
         </div><!-- End View Feedback Modal-->
+        <script>
+                                                                function setModalData(customerName, serviceName, content) {
+                                                                    document.getElementById('viewCustomerName').value = customerName;
+                                                                    document.getElementById('viewService').value = serviceName;
+                                                                    document.getElementById('viewComment').value = content;
+                                                                }
+        </script>
 
     </body>
 

@@ -313,6 +313,11 @@
                                     <i class="bi bi-circle"></i><span>Product Management</span>
                                 </a>
                             </li>
+                            <li>
+                            <a href="employee-management" class="active">
+                                <i class="bi bi-circle"></i><span>Staff Management</span>
+                            </a>
+                        </li>
                         </ul>
                     </li><!-- End Manager Nav -->
 
@@ -333,7 +338,7 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="feedback-management.html">
+                                <a href="feedback-management">
                                     <i class="bi bi-circle"></i><span>Feedback Management</span>
                                 </a>
                             </li>
