@@ -31,6 +31,52 @@
 
         <!-- Customized Bootstrap Stylesheet -->
         <link href="css/style.css" rel="stylesheet">
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+
+            }
+            .product-container {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .service-item {
+                border: 1px solid #ccc;
+                border-radius: 5px;
+                margin: 50px 10px; /* Tăng khoảng cách giữa các sản phẩm */
+                width: calc(33.33% - 20px); /* 3 sản phẩm mỗi dòng */
+                box-sizing: border-box;
+            }
+            .service-item img {
+                max-width: 100%;
+                height: auto;
+            }
+
+            @media (max-width: 800px) {
+                .service-item {
+                    width: calc(50% - 20px); /* 2 sản phẩm mỗi dòng trên màn hình nhỏ */
+                }
+            }
+            @media (max-width: 500px) {
+                .service-item {
+                    width: 100%; /* 1 sản phẩm mỗi dòng trên màn hình rất nhỏ */
+                }
+            }
+            .page-number {
+                display: inline-block; /* Để có thể sử dụng margin và padding */
+                border: 1px solid #ccc; /* Viền cho ô vuông */
+                border-radius: 4px; /* Bo góc nhẹ */
+                padding: 10px 15px; /* Khoảng cách bên trong */
+                text-decoration: none; /* Bỏ gạch chân */
+                color: #333; /* Màu chữ */
+                transition: background-color 0.3s; /* Hiệu ứng chuyển màu khi hover */
+            }
+
+            .page-number:hover {
+                background-color: #f0f0f0; /* Màu nền khi hover */
+            }
+        </style>
     </head>
     <body>
     <head>
@@ -106,9 +152,9 @@
                 <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
                     <div class="navbar-nav m-auto py-0">
                         <a href="index" class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="service" class="nav-item nav-link active">Services</a>
+                        <a href="About.jsp" class="nav-item nav-link">About</a>
+                        <a href="product" class="nav-item nav-link active">Product</a>
+                        <a href="services" class="nav-item nav-link">Services</a>
                         <a href="price.html" class="nav-item nav-link">Pricing</a>
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
@@ -129,9 +175,9 @@
 
 
         <!-- Header Start -->
-        <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 90px;">
+        <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 20px;">
             <div class="container text-center py-5">
-                <h3 class="text-white display-3 mb-4">Products</h3>
+                <h3 class="text-white display-3 mb-4">Spa & Beauty Products</h3>
                 <div class="d-inline-flex align-items-center text-white">
                     <p class="m-0"><a class="text-white" href="">Home</a></p>
                     <i class="far fa-circle px-3"></i>
@@ -139,104 +185,41 @@
                 </div>
             </div>
         </div>
-        <!-- Header End -->
 
-
-        <!-- Service Start -->
-        <div class="container-fluid px-0 py-5 my-5">
-            <div class="row mx-0 justify-content-center text-center">
-                <div class="col-lg-6">
-                    <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Our Products</h6>
-                    <h1>Spa & Beauty Products</h1>
-                </div>
+        <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
+            <div style="flex: 1; text-align: center; padding-left: 350px">
+                <span id="searchResult">All Products Found</span>
             </div>
-        </div>  
-        <div class="container my-5">
-            <h1>Product Detail</h1>
-            <c:if test="${not empty product}">
-                <div class="card">
-                    <div class="card-body d-flex align-items-start"> <!-- Căn chỉnh các phần tử theo chiều dọc -->
-
-                        <div class="flex-grow-1"> <!-- Để phần văn bản chiếm toàn bộ không gian còn lại -->
-                            <h5 class="card-title">${product.name}</h5>
-                            <p class="card-text">${product.description}</p>
-                            <p class="card-text">Price: $${product.price}</p>
-                            <p class="card-text">Quantity: ${product.quantity}</p>
-                            <p class="card-text">Discount: ${product.discountInfo.discountPercent}%</p>
-                            <p class="card-text">Supplier: ${product.supplierInfo.name}, ${product.supplierInfo.address}</p>
-                            <p class="card-text">Category: ${product.category}</p>
-                            <p class="card-text">Branch: ${product.branchName}</p>
-                        </div>
-                        <div class="me-3"> <!-- Thêm khoảng cách cho hình ảnh -->
-                            <img class="img-fluid product-image" src="${pageContext.request.contextPath}/img/${product.image}" alt="">
-                        </div>
-                    </div>
-                </div>
-            </c:if>
-
-            <style>
-                .product-image {
-                    width: 300px; /* Đặt chiều rộng cố định cho ảnh */
-                    height: auto; /* Giữ tỷ lệ khung hình */
-                    max-height: 300px; /* Đặt chiều cao tối đa */
-                }
-            </style>
-            <c:if test= "${empty product}">
-                <p>No product found.</p>
-            </c:if>
+            <form action="searchproduct?index=1" method="post" style="display: flex; align-items: center; margin-left: auto; padding-right: 10px">
+                <input class="searchBox" type="text" name="txtSearch" required 
+                       style="padding: 5px; border: 1px solid #ccc; border-right: none; width: 250px;" 
+                       value="${param.txtSearch}"> <!-- Giữ lại giá trị đã nhập -->
+                <input class="searchButton" type="submit" name="btnGo" value="Search" 
+                       style="background-color: #F9A392; color: white; border: 1px solid #F9A392; border-left: none; padding: 5px; cursor: pointer;">
+            </form>
         </div>
 
-        <!-- Testimonial Start -->
-        <div class="container-fluid py-5">
-            <div class="container py-5">
-                <div class="row align-items-center">
-                    <div class="col-lg-6 pb-5 pb-lg-0">
-                        <img class="img-fluid w-100" src="img/testimonial.jpg" alt="">
-                    </div>
-                    <div class="col-lg-6">
-                        <h6 class="d-inline-block text-primary text-uppercase bg-light py-1 px-2">Testimonial</h6>
-                        <h1 class="mb-4">What Our Clients Say!</h1>
-                        <div class="owl-carousel testimonial-carousel">
-                            <div class="position-relative">
-                                <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img class="img-fluid rounded-circle" src="img/testimonial-1.jpg" style="width: 60px; height: 60px;" alt="">
-                                    <div class="ml-3">
-                                        <h6 class="text-uppercase">Client Name</h6>
-                                        <span>Profession</span>
-                                    </div>
-                                </div>
-                                <p class="m-0">Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                            </div>
-                            <div class="position-relative">
-                                <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img class="img-fluid rounded-circle" src="img/testimonial-2.jpg" style="width: 60px; height: 60px;" alt="">
-                                    <div class="ml-3">
-                                        <h6 class="text-uppercase">Client Name</h6>
-                                        <span>Profession</span>
-                                    </div>
-                                </div>
-                                <p class="m-0">Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                            </div>
-                            <div class="position-relative">
-                                <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img class="img-fluid rounded-circle" src="img/testimonial-3.jpg" style="width: 60px; height: 60px;" alt="">
-                                    <div class="ml-3">
-                                        <h6 class="text-uppercase">Client Name</h6>
-                                        <span>Profession</span>
-                                    </div>
-                                </div>
-                                <p class="m-0">Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                            </div>
+        <div class="product-container">
+            <c:forEach items="${listSearch}" var="p">
+                <div class="service-item position-relative">
+                    <img class="img-fluid" src="${pageContext.request.contextPath}/img/${p.image}" alt="">
+                    <div class="service-text text-center">
+                        <h4 class="text-white font-weight-medium px-3">${p.name}</h4>
+                        <p class="text-white px-3 mb-3">${p.description}</p>
+                        <h4 class="text-white font-weight-medium px-3">Price: ${p.price}$</h4>
+                        <div class="w-100 bg-white text-center p-4">
+                            <a class="btn btn-primary" href="producdetail?id=${p.id}">View Detail</a>
                         </div>
                     </div>
                 </div>
-            </div>
+            </c:forEach>
         </div>
-        <!-- Testimonial End -->
 
+        <div class="paging text-center" style="margin-top: 80px;"> 
+            <c:forEach begin="1" end="${endPage}" var="i">
+                <a href="searchproduct?txtSearch=${param.txtSearch}&index=${i}" class="page-number">${i}</a>
+            </c:forEach>
+        </div>
 
         <!-- Footer Start -->
         <div class="footer container-fluid position-relative bg-dark py-5" style="margin-top: 90px;">
