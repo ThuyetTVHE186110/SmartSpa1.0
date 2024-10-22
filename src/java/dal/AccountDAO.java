@@ -150,12 +150,11 @@ public class AccountDAO {
         List<Account> accounts = new ArrayList<>();
 
         // SQL truy vấn để lấy thông tin tài khoản, bao gồm tên, username, và tên vai trò
-        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName "
+        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
                 + "JOIN Role r ON a.RoleID = r.ID "
-                + "WHERE a.RoleID IN (1, 2, 3)"; // Lọc chỉ lấy roleID 1 (Admin), 2 (Manager), và 3 (Staff)
-
+                + "WHERE a.RoleID IN (1, 2, 3)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
@@ -173,6 +172,11 @@ public class AccountDAO {
                 // Lấy tên role và gán vào Account
                 String roleName = rs.getString("roleName");  // Lấy tên vai trò từ bảng Role
                 account.setRoleName(roleName);  // Gán roleName vào account
+                String status = rs.getString("Status");
+                if (status == null) {
+                    status = "Unknown";  // hoặc gán giá trị mặc định như "Inactive"
+                }
+                account.setStatus(status);
 
                 // Thêm tài khoản vào danh sách
                 accounts.add(account);
