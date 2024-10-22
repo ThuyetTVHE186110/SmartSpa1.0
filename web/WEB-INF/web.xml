@@ -72,6 +72,10 @@
         <servlet-name>AccountManagementServlet</servlet-name>
         <servlet-class>controller.AccountManagementServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserProfileServlet</servlet-name>
+        <servlet-class>controller.UserProfileServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -143,6 +147,10 @@
     <servlet-mapping>
         <servlet-name>AccountManagementServlet</servlet-name>
         <url-pattern>/accountManagement</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserProfileServlet</servlet-name>
+        <url-pattern>/UserProfileServlet</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

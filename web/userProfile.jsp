@@ -1,6 +1,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="model.Account" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="model.Person" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -34,13 +35,7 @@
         <!-- Template Main CSS File -->
         <link href="assets/css/style.css" rel="stylesheet">
 
-        <!-- =======================================================
-        * Template Name: NiceAdmin
-        * Template URL: https://bootstrapmade.com/nice-admin-bootstrap-admin-html-template/
-        * Updated: Apr 20 2024 with Bootstrap v5.3.3
-        * Author: BootstrapMade.com
-        * License: https://bootstrapmade.com/license/
-        ======================================================== -->
+
     </head>
 
     <body>
@@ -59,7 +54,7 @@
                 <h1>Profile</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                        <li class="breadcrumb-item"><a href="dashboard.jsp">Home</a></li>
                         <li class="breadcrumb-item">Users</li>
                         <li class="breadcrumb-item active">Profile</li>
                     </ol>
@@ -73,7 +68,7 @@
                         <div class="card">
                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                                <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                                <img src="img/profile-img.jpg" alt="Profile" class="rounded-circle">
                                 <h2><%= (displayName != null) ? displayName : "Guest" %></h2>
                                 <h3>Web Designer</h3>
                                 <div class="social-links mt-2">
@@ -113,6 +108,19 @@
                                     </li>
 
                                 </ul>
+
+
+                                <%
+    Person person = (Person) session.getAttribute("person");
+    String fullName = (person != null) ? person.getName() : "Guest";
+    String phone = (person != null) ? person.getPhone() : "N/A";
+    String email = (person != null) ? person.getEmail() : "N/A";
+    String address = (person != null) ? person.getAddress() : "N/A";
+    char gender = (person != null) ? person.getGender() : 'N';  // Giả sử 'N' là not available
+    // Lấy ngày sinh và định dạng nó thành chuỗi (nếu person không null)
+    java.sql.Date dob = (person != null) ? person.getDateOfBirth() : null;
+    String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
+                                %>
                                 <div class="tab-content pt-2">
 
                                     <div class="tab-pane fade show active profile-overview" id="profile-overview">
@@ -125,28 +133,32 @@
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                            <div class="col-lg-9 col-md-8">Kevin Hello Anderson</div>
-                                        </div>
-
-
-                                        <div class="row">
-                                            <div class="col-lg-3 col-md-4 label">Job</div>
-                                            <div class="col-lg-9 col-md-8">Web Designer</div>
+                                            <div class="col-lg-9 col-md-8"><%= fullName %></div>
                                         </div>
 
                                         <div class="row">
-                                            <div class="col-lg-3 col-md-4 label">Address</div>
-                                            <div class="col-lg-9 col-md-8">A108 Adam Street, New York, NY 535022</div>
+                                            <div class="col-lg-3 col-md-4 label ">Date of Birth</div>
+                                            <div class="col-lg-9 col-md-8"><%= dateOfBirth %></div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Gender</div>
+                                            <div class="col-lg-9 col-md-8"><%= (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "Other" %></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label">Phone</div>
-                                            <div class="col-lg-9 col-md-8">(436) 486-3538 x29071</div>
+                                            <div class="col-lg-9 col-md-8"><%= phone %></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label">Email</div>
-                                            <div class="col-lg-9 col-md-8">k.anderson@example.com</div>
+                                            <div class="col-lg-9 col-md-8"><%= email %></div>
+                                        </div>
+
+                                        <div class="row">
+                                            <div class="col-lg-3 col-md-4 label">Address</div>
+                                            <div class="col-lg-9 col-md-8"><%= address %></div>
                                         </div>
 
                                     </div>
@@ -158,7 +170,7 @@
                                             <div class="row mb-3">
                                                 <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <img src="assets/img/profile-img.jpg" alt="Profile">
+                                                    <img src="img/profile-img.jpg" alt="Profile">
                                                     <div class="pt-2">
                                                         <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i
                                                                 class="bi bi-upload"></i></a>
@@ -171,7 +183,7 @@
                                             <div class="row mb-3">
                                                 <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="fullName" type="text" class="form-control" id="fullName" value="Kevin Anderson">
+                                                    <input name="fullName" type="text" class="form-control" id="fullName" value="<%= fullName %>">
                                                 </div>
                                             </div>
 
@@ -184,56 +196,36 @@
                                             </div>
 
                                             <div class="row mb-3">
-                                                <label for="company" class="col-md-4 col-lg-3 col-form-label">Company</label>
+                                                <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Date of Birth</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="company" type="text" class="form-control" id="company"
-                                                           value="Lueilwitz, Wisoky and Leuschke">
+                                                    <input name="dateOfBirth" type="text" class="form-control" id="dateOfBirth"
+                                                           value="<%= dateOfBirth %>">
                                                 </div>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <label for="Job" class="col-md-4 col-lg-3 col-form-label">Job</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <input name="job" type="text" class="form-control" id="Job" value="Web Designer">
-                                                </div>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <label for="Country" class="col-md-4 col-lg-3 col-form-label">Country</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <input name="country" type="text" class="form-control" id="Country" value="USA">
-                                                </div>
-                                            </div>
+                                            </div>                                         
 
                                             <div class="row mb-3">
                                                 <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                                                 <div class="col-md-8 col-lg-9">
                                                     <input name="address" type="text" class="form-control" id="Address"
-                                                           value="A108 Adam Street, New York, NY 535022">
+                                                           value="<%= address %>">
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="phone" type="text" class="form-control" id="Phone" value="(436) 486-3538 x29071">
+                                                    <input name="phone" type="text" class="form-control" id="Phone" value="<%= phone %>">
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="email" type="email" class="form-control" id="Email" value="k.anderson@example.com">
+                                                    <input name="email" type="email" class="form-control" id="Email" value="<%= email %>">
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
-                                                <label for="Twitter" class="col-md-4 col-lg-3 col-form-label">Twitter Profile</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <input name="twitter" type="text" class="form-control" id="Twitter"
-                                                           value="https://twitter.com/#">
-                                                </div>
-                                            </div>
+                                          
 
                                             <div class="row mb-3">
                                                 <label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook Profile</label>

@@ -5,6 +5,7 @@
 package controller;
 
 import dal.AccountDAO;
+import dal.PersonDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Account;
+import model.Person;
 
 /**
  *
@@ -109,7 +111,12 @@ public class LoginServlet extends HttpServlet {
 
                     // Set success message for admin/staff
                     session.setAttribute("successMessage", "Admin/Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+                    // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
+                    PersonDAO personDAO = new PersonDAO();
+                    Person person = personDAO.getPersonById(account.getPersonInfo().getId());  // Giả sử account có liên kết với Person
 
+                    // Lưu thông tin Person vào session
+                    session.setAttribute("person", person);
                     // Redirect to the admin/staff dashboard
                     response.sendRedirect("dashboard.jsp");
                 } else {
