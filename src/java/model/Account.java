@@ -97,5 +97,4 @@ public class Account {
     public void setPersonInfo(Person personInfo) {
         this.personInfo = personInfo;
     }
-
 }
