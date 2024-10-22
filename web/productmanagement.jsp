@@ -3,6 +3,7 @@
     Created on : Oct 4, 2024, 8:35:40 AM
     Author     : Dell Alienware
 --%>
+<%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -209,16 +210,20 @@
 
                     </li><!-- End Messages Nav -->
 
+                    <% 
+    Account account = (Account) session.getAttribute("account"); 
+    String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
+                    %>
                     <li class="nav-item dropdown pe-3">
 
                         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                             <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                            <span class="d-none d-md-block dropdown-toggle ps-2">K. Anderson</span>
+                            <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName %></span>
                         </a><!-- End Profile Iamge Icon -->
 
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                             <li class="dropdown-header">
-                                <h6>Kevin Anderson</h6>
+                                <h6><%= (displayName != null) ? displayName : "Guest" %></h6>
                                 <span>Web Designer</span>
                             </li>
                             <li>
@@ -226,7 +231,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <a class="dropdown-item d-flex align-items-center" href="dashboard.html">
                                     <i class="bi bi-person"></i>
                                     <span>My Profile</span>
                                 </a>
@@ -236,7 +241,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center" href="users-profile.html">
+                                <a class="dropdown-item d-flex align-items-center" href="dashboard.html">
                                     <i class="bi bi-gear"></i>
                                     <span>Account Settings</span>
                                 </a>
@@ -256,7 +261,7 @@
                             </li>
 
                             <li>
-                                <a class="dropdown-item d-flex align-items-center" href="#">
+                                <a class="dropdown-item d-flex align-items-center" href="LogoutServlet">
                                     <i class="bi bi-box-arrow-right"></i>
                                     <span>Sign Out</span>
                                 </a>
@@ -271,77 +276,8 @@
         </header><!-- End Header -->
 
         <!-- ======= Sidebar ======= -->
-        <aside id="sidebar" class="sidebar">
-
-            <ul class="sidebar-nav" id="sidebar-nav">
-
-                <li class="nav-item">
-                    <a class="nav-link collapsed" href="index.html">
-                        <i class="bi bi-grid"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li><!-- End Dashboard Nav -->
-
-                <!-- Admin Section -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-person-gear"></i><span>Admin</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="admin-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="accountmanagement.html">
-                                <i class="bi bi-circle"></i><span>Account Management</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Admin Nav -->
-
-                <!-- Manager Section -->
-                <li class="nav-item">
-                    <a class="nav-link" data-bs-target="#manager-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-briefcase"></i><span>Manager</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="manager-nav" class="nav-content collapse show" data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="service-management.html">
-                                <i class="bi bi-circle"></i><span>Service Management</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="productmanagement.html" class="active">
-                                <i class="bi bi-circle"></i><span>Product Management</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Manager Nav -->
-
-                <!-- Staff Section -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#staff-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="staff-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="appoinment-management.html">
-                                <i class="bi bi-circle"></i><span>Appointment Management</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="schedulemanagement.html">
-                                <i class="bi bi-circle"></i><span>Schedule Management</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="feedback-management.html">
-                                <i class="bi bi-circle"></i><span>Feedback Management</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Staff Nav -->
-
-            </ul>
-
-        </aside><!-- End Sidebar-->
+        <!-- Include the Navbar -->
+        <jsp:include page="sideBar.jsp" />
 
         <main id="main" class="main">
 
@@ -567,34 +503,35 @@
         </div><!-- End Edit Product Modal-->
 
         <script>
-                var editProductModal = document.getElementById('editProductModal');
-                editProductModal.addEventListener('show.bs.modal', function (event) {
-                // Lấy nút đã kích hoạt modal (nút Edit)
-                var button = event.relatedTarget;
-                // Lấy giá trị id từ thuộc tính data-id của nút
-                var productId = button.getAttribute('data-id');
-                // Gửi yêu cầu AJAX tới server để lấy chi tiết sản phẩm
-                fetch('${pageContext.request.contextPath}/detail?id=' + productId)
-                .then(response => response.json())  // Parse dữ liệu JSON
-                .then(product => {
-                // Tìm form và cập nhật action URL với id sản phẩm
-                var form = editProductModal.querySelector('form');
-                form.action = form.action.split('?')[0] + "?id=" + productId;
+                                                        var editProductModal = document.getElementById('editProductModal');
+                                                        editProductModal.addEventListener('show.bs.modal', function (event) {
+                                                            // Lấy nút đã kích hoạt modal (nút Edit)
+                                                            var button = event.relatedTarget;
+                                                            // Lấy giá trị id từ thuộc tính data-id của nút
+                                                            var productId = button.getAttribute('data-id');
+                                                            // Gửi yêu cầu AJAX tới server để lấy chi tiết sản phẩm
+                                                            fetch('${pageContext.request.contextPath}/detail?id=' + productId)
+                                                                    .then(response => response.json())  // Parse dữ liệu JSON
+                                                                    .then(product => {
+                                                                        // Tìm form và cập nhật action URL với id sản phẩm
+                                                                        var form = editProductModal.querySelector('form');
+                                                                        form.action = form.action.split('?')[0] + "?id=" + productId;
 
-                // Cập nhật giá trị cho các trường trong modal
-                form.querySelector('input[name="id"]').value = product.id;
-                form.querySelector('input[name="name"]').value = product.name;
-                form.querySelector('textarea[name="description"]').value = product.description;
-                form.querySelector('input[name="price"]').value = product.price;
-                form.querySelector('input[name="quantity"]').value = product.quantity;
-                form.querySelector('input[name="categoryId"]').value = product.categoryId;
-                form.querySelector('input[name="supplierId"]').value = product.supplierId;
-                form.querySelector('input[name="discountId"]').value = product.discountId;
-                form.querySelector('input[name="branchName"]').value = product.branchName;
-                // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
-                })
-                .catch(error => console.error('Error fetching product details:', error));
-                x});
+                                                                        // Cập nhật giá trị cho các trường trong modal
+                                                                        form.querySelector('input[name="id"]').value = product.id;
+                                                                        form.querySelector('input[name="name"]').value = product.name;
+                                                                        form.querySelector('textarea[name="description"]').value = product.description;
+                                                                        form.querySelector('input[name="price"]').value = product.price;
+                                                                        form.querySelector('input[name="quantity"]').value = product.quantity;
+                                                                        form.querySelector('input[name="categoryId"]').value = product.categoryId;
+                                                                        form.querySelector('input[name="supplierId"]').value = product.supplierId;
+                                                                        form.querySelector('input[name="discountId"]').value = product.discountId;
+                                                                        form.querySelector('input[name="branchName"]').value = product.branchName;
+                                                                        // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
+                                                                    })
+                                                                    .catch(error => console.error('Error fetching product details:', error));
+                                                            x
+                                                        });
 
         </script>
 

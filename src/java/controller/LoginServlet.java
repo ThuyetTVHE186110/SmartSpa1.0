@@ -56,63 +56,6 @@ public class LoginServlet extends HttpServlet {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
-//    @Override
-//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-//            throws ServletException, IOException {
-//        // Get username and password from the form
-//        String username = request.getParameter("txtUsername");
-//        String password = request.getParameter("txtPassword");
-//        String rememberMe = request.getParameter("rememberMe"); // Get the "Remember Me" value
-//
-//        // Initialize DAO and attempt to retrieve the account based on the credentials
-//        AccountDAO accountDAO = new AccountDAO();
-//        Account account = null;
-//
-//        try {
-//            account = accountDAO.getByUsernamePassword(username, password);
-//        } catch (Exception e) {
-//            // Handle exception
-//            e.printStackTrace();
-//            request.setAttribute("error", "An unexpected error occurred. Please try again.");
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//            return;
-//        }
-//
-//        // Check if the account exists
-//        if (account != null) {
-//            // Create session and set session attributes
-//            HttpSession session = request.getSession();
-//            session.setAttribute("account", account);
-//            session.setAttribute("loggedIn", true);
-//            session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
-//
-//            // Handle "Remember Me" functionality
-//            if ("on".equals(rememberMe)) {
-//                // Create cookies to remember username (not password for security reasons)
-//                Cookie usernameCookie = new Cookie("savedUsername", username);
-//                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
-//                usernameCookie.setHttpOnly(true); // Make it HTTP-only
-//                usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
-//                response.addCookie(usernameCookie);
-//            } else {
-//                // Delete cookies if "Remember Me" is not checked
-//                Cookie usernameCookie = new Cookie("savedUsername", "");
-//                usernameCookie.setMaxAge(0); // Expire the cookie
-//                response.addCookie(usernameCookie);
-//            }
-//
-//            // Set success message in session
-//            session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-//
-//            // Redirect to the main page after successful login
-//            response.sendRedirect("index");
-//        } else {
-//            // Set error message for invalid login
-//            request.setAttribute("error", "Login failed! Invalid username or password.");
-//            request.setAttribute("username", username);  // Retain the entered username
-//            request.getRequestDispatcher("login.jsp").forward(request, response);
-//        }
-//    }
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -204,7 +147,7 @@ public class LoginServlet extends HttpServlet {
                     response.sendRedirect("index");
                 } else {
                     // Not authorized for customer login
-                    request.setAttribute("error", "Invalid account for customer login.");
+                    request.setAttribute("error", "Invalid username or password.");
                     request.getRequestDispatcher("login.jsp").forward(request, response);
                 }
             }

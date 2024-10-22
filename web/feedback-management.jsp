@@ -8,7 +8,7 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        <title>Service Management - NiceAdmin</title>
+        <title>Feedback Management - NiceAdmin</title>
         <meta content="" name="description">
         <meta content="" name="keywords">
 
@@ -43,7 +43,7 @@
             <div class="d-flex align-items-center justify-content-between">
                 <a href="index.html" class="logo d-flex align-items-center">
                     <img src="assets/img/logo.png" alt="">
-                    <span class="d-none d-lg-block">NiceAdmin</span>
+                    <span class="d-none d-lg-block">SmartBeautySpa</span>
                 </a>
                 <i class="bi bi-list toggle-sidebar-btn"></i>
             </div><!-- End Logo -->
@@ -160,8 +160,7 @@
                                     <img src="assets/img/messages-1.jpg" alt="" class="rounded-circle">
                                     <div>
                                         <h4>Maria Hudson</h4>
-                                        <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...
-                                        </p>
+                                        <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
                                         <p>4 hrs. ago</p>
                                     </div>
                                 </a>
@@ -175,8 +174,7 @@
                                     <img src="assets/img/messages-2.jpg" alt="" class="rounded-circle">
                                     <div>
                                         <h4>Anna Nelson</h4>
-                                        <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...
-                                        </p>
+                                        <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
                                         <p>6 hrs. ago</p>
                                     </div>
                                 </a>
@@ -190,8 +188,7 @@
                                     <img src="assets/img/messages-3.jpg" alt="" class="rounded-circle">
                                     <div>
                                         <h4>David Muldon</h4>
-                                        <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...
-                                        </p>
+                                        <p>Velit asperiores et ducimus soluta repudiandae labore officia est ut...</p>
                                         <p>8 hrs. ago</p>
                                     </div>
                                 </a>
@@ -207,10 +204,9 @@
                         </ul><!-- End Messages Dropdown Items -->
 
                     </li><!-- End Messages Nav -->
-
                     <% 
-    Account account = (Account) session.getAttribute("account"); 
-    String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
+                        Account account = (Account) session.getAttribute("account"); 
+                        String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
                     %>
                     <li class="nav-item dropdown pe-3">
 
@@ -280,12 +276,12 @@
         <main id="main" class="main">
 
             <div class="pagetitle">
-                <h1>Service Management</h1>
+                <h1>Feedback Management</h1>
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
-                        <li class="breadcrumb-item">Manager</li>
-                        <li class="breadcrumb-item active">Service Management</li>
+                        <li class="breadcrumb-item">Staff</li>
+                        <li class="breadcrumb-item active">Feedback Management</li>
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
@@ -296,100 +292,53 @@
 
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Services</h5>
-                                <p>Manage services from this panel.</p>
+                                <h5 class="card-title">Feedback</h5>
+                                <p>Manage customer feedback from this panel.</p>
 
-                                <!-- Add this near the top of the body, after the header -->
-                                <c:if test="${not empty errorMessage}">
-                                    <div class="alert alert-danger" role="alert">
-                                        ${errorMessage}
-                                    </div>
-                                </c:if>
-
-                                <!-- Search Form -->
-                                <form action="servicemanagement" method="get" class="mb-3">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control" placeholder="Search services"
-                                               name="search" value="${param.search}">
-                                        <button class="btn btn-primary" type="submit">Search</button>
-                                    </div>
-                                </form>
-
-                                <!-- Table with services -->
+                                <!-- Table with stripped rows -->
                                 <table class="table datatable">
                                     <thead>
                                         <tr>
                                             <th scope="col">#</th>
-                                            <th scope="col">Image</th>
-                                            <th scope="col">Service Name</th>
-                                            <th scope="col">Description</th>
-                                            <th scope="col">Price</th>
-                                            <th scope="col">Duration</th>
+                                            <th scope="col">Customer Name</th>
+                                            <th scope="col">Service</th>
+                                            <th scope="col">Rating</th>
+                                            <th scope="col">Comment</th>
+                                            <th scope="col">Date</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach var="service" items="${services}">
-                                            <tr>
-                                                <th scope="row">
-                                                    <c:out value="${service.id}" />
-                                                </th>
-                                                <td><img src="<c:out value=" ${service.image}" />"
-                                                         alt="${service.name}" width="50" height="50"></td>
-                                                <td>
-                                                    <c:out value="${service.name}" />
-                                                </td>
-                                                <td>
-                                                    <c:out value="${service.description}" />
-                                                </td>
-                                                <td>$
-                                                    <c:out value="${service.price}" />
-                                                </td>
-                                                <td>
-                                                    <c:out value="${service.duration}" /> min
-                                                </td>
-                                                <td>
-                                                    <button type="button" class="btn btn-primary btn-sm"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#editServiceModal${service.id}">Edit</button>
-                                                    <a href="servicemanagement?action=delete&id=${service.id}"
-                                                       class="btn btn-danger btn-sm"
-                                                       onclick="return confirm('Are you sure you want to delete this service?')">Delete</a>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
+                                        <tr>
+                                            <th scope="row">1</th>
+                                            <td>Brandon Jacob</td>
+                                            <td>Haircut</td>
+                                            <td>4.5</td>
+                                            <td>Great service, very satisfied!</td>
+                                            <td>2023-05-25</td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#viewFeedbackModal">View</button>
+                                                <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">2</th>
+                                            <td>Bridie Kessler</td>
+                                            <td>Hair Coloring</td>
+                                            <td>3.5</td>
+                                            <td>Good service, but took longer than expected.</td>
+                                            <td>2023-05-26</td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
+                                                        data-bs-target="#viewFeedbackModal">View</button>
+                                                <button type="button" class="btn btn-danger btn-sm">Delete</button>
+                                            </td>
+                                        </tr>
+                                        <!-- Add more rows as needed -->
                                     </tbody>
                                 </table>
-                                <!-- End Table with services -->
-
-                                <!-- Pagination -->
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-center">
-                                        <li class="page-item ${currentPage == 1 ? 'disabled' : ''}">
-                                            <a class="page-link"
-                                               href="servicemanagement?page=${currentPage - 1}&search=${param.search}"
-                                               tabindex="-1">Previous</a>
-                                        </li>
-                                        <c:forEach begin="1" end="${totalPages}" var="i">
-                                            <li class="page-item ${currentPage == i ? 'active' : ''}">
-                                                <a class="page-link"
-                                                   href="servicemanagement?page=${i}&search=${param.search}">${i}</a>
-                                            </li>
-                                        </c:forEach>
-                                        <li class="page-item ${currentPage == totalPages ? 'disabled' : ''}">
-                                            <a class="page-link"
-                                               href="servicemanagement?page=${currentPage + 1}&search=${param.search}">Next</a>
-                                        </li>
-                                    </ul>
-                                </nav>
-                                <!-- End Pagination -->
-
-                                <div class="text-center mt-3">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addServiceModal">
-                                        <i class="bi bi-plus-circle me-1"></i> Add New Service
-                                    </button>
-                                </div>
+                                <!-- End Table with stripped rows -->
 
                             </div>
                         </div>
@@ -413,107 +362,6 @@
         <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
                 class="bi bi-arrow-up-short"></i></a>
 
-        <!-- Add Service Modal -->
-        <div class="modal fade" id="addServiceModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Add New Service</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <!-- Add Service Form -->
-                        <form action="${pageContext.request.contextPath}/servicemanagement" method="post"
-                              enctype="multipart/form-data">
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Service Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="duration" class="form-label">Duration (minutes)</label>
-                                <input type="number" class="form-control" id="duration" name="duration" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="description" class="form-label">Description</label>
-                                <textarea class="form-control" id="description" name="description" rows="3"
-                                          required></textarea>
-                            </div>
-                            <div class="mb-3">
-                                <label for="file" class="form-label">Image</label>
-                                <input type="file" class="form-control" id="file" name="file" required>
-                            </div>
-                            <input type="hidden" name="action" value="insert">
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary"
-                                        data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Add Service</button>
-                            </div>
-                        </form>
-                        <!-- End Add Service Form -->
-                    </div>
-                </div>
-            </div>
-        </div><!-- End Add Service Modal-->
-
-        <!-- Edit Service Modals -->
-        <c:forEach var="service" items="${services}">
-            <div class="modal fade" id="editServiceModal${service.id}" tabindex="-1">
-                <div class="modal-dialog modal-dialog-centered">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h5 class="modal-title">Edit Service</h5>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                        </div>
-                        <div class="modal-body">
-                            <!-- Edit Service Form -->
-                            <form action="servicemanagement?action=update" method="post"
-                                  enctype="multipart/form-data">
-                                <input type="hidden" name="id" value="${service.id}">
-                                <div class="mb-3">
-                                    <label for="name${service.id}" class="form-label">Service Name</label>
-                                    <input type="text" class="form-control" id="name${service.id}" name="name"
-                                           value="${service.name}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="description${service.id}" class="form-label">Description</label>
-                                    <textarea class="form-control" id="description${service.id}" name="description"
-                                              rows="3" required>${service.description}</textarea>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="price${service.id}" class="form-label">Price</label>
-                                    <input type="number" class="form-control" id="price${service.id}" name="price"
-                                           value="${service.price}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="duration${service.id}" class="form-label">Duration (minutes)</label>
-                                    <input type="number" class="form-control" id="duration${service.id}"
-                                           name="duration" value="${service.duration}" required>
-                                </div>
-                                <div class="mb-3">
-                                    <label for="file${service.id}" class="form-label">Image</label>
-                                    <input type="file" class="form-control" id="file${service.id}" name="file">
-                                    <small class="form-text text-muted">Leave empty to keep the current
-                                        image.</small>
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-secondary"
-                                            data-bs-dismiss="modal">Close</button>
-                                    <button type="submit" class="btn btn-primary">Save Changes</button>
-                                </div>
-                            </form>
-                            <!-- End Edit Service Form -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </c:forEach>
-        <!-- End Edit Service Modals -->
-
         <!-- Vendor JS Files -->
         <script src="assets/vendor/apexcharts/apexcharts.min.js"></script>
         <script src="assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -526,6 +374,49 @@
 
         <!-- Template Main JS File -->
         <script src="assets/js/main.js"></script>
+
+        <!-- View Feedback Modal -->
+        <div class="modal fade" id="viewFeedbackModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">View Feedback</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- View Feedback Form -->
+                        <form class="row g-3">
+                            <div class="col-12">
+                                <label for="viewCustomerName" class="form-label">Customer Name</label>
+                                <input type="text" class="form-control" id="viewCustomerName" value="Brandon Jacob"
+                                       readonly>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewService" class="form-label">Service</label>
+                                <input type="text" class="form-control" id="viewService" value="Haircut" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewRating" class="form-label">Rating</label>
+                                <input type="text" class="form-control" id="viewRating" value="4.5" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewComment" class="form-label">Comment</label>
+                                <textarea class="form-control" id="viewComment" rows="3"
+                                          readonly>Great service, very satisfied!</textarea>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewDate" class="form-label">Date</label>
+                                <input type="text" class="form-control" id="viewDate" value="2023-05-25" readonly>
+                            </div>
+                        </form>
+                        <!-- End View Feedback Form -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div><!-- End View Feedback Modal-->
 
     </body>
 

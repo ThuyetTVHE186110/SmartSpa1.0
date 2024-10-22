@@ -222,7 +222,7 @@
 
                         <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                             <img src="assets/img/profile-img.jpg" alt="Profile" class="rounded-circle">
-                             <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName %></span>
+                            <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName %></span>
                         </a><!-- End Profile Iamge Icon -->
 
                         <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
@@ -280,77 +280,8 @@
         </header><!-- End Header -->
 
         <!-- ======= Sidebar ======= -->
-        <aside id="sidebar" class="sidebar">
-
-            <ul class="sidebar-nav" id="sidebar-nav">
-
-                <li class="nav-item">
-                    <a class="nav-link " href="dashboard.jsp">
-                        <i class="bi bi-grid"></i>
-                        <span>Dashboard</span>
-                    </a>
-                </li><!-- End Dashboard Nav -->
-
-                <!-- Admin Section -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#admin-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-person-gear"></i><span>Admin</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="admin-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="accountManagement.jsp">
-                                <i class="bi bi-circle"></i><span>Account Management</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Admin Nav -->
-
-                <!-- Manager Section -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#manager-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-briefcase"></i><span>Manager</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="manager-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="servicemanagement">
-                                <i class="bi bi-circle"></i><span>Service Management</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="productmanagement.html">
-                                <i class="bi bi-circle"></i><span>Product Management</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Manager Nav -->
-
-                <!-- Staff Section -->
-                <li class="nav-item">
-                    <a class="nav-link collapsed" data-bs-target="#staff-nav" data-bs-toggle="collapse" href="#">
-                        <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
-                    </a>
-                    <ul id="staff-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
-                        <li>
-                            <a href="appointment-management">
-                                <i class="bi bi-circle"></i><span>Appointment Management</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="schedulemanagement.html">
-                                <i class="bi bi-circle"></i><span>Schedule Management</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="feedback-management.html">
-                                <i class="bi bi-circle"></i><span>Feedback Management</span>
-                            </a>
-                        </li>
-                    </ul>
-                </li><!-- End Staff Nav -->
-
-            </ul>
-
-        </aside><!-- End Sidebar-->
+        <!-- Include the Navbar -->
+        <jsp:include page="sideBar.jsp" />
 
         <main id="main" class="main">
 

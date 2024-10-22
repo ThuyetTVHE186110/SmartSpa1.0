@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Account;
@@ -65,8 +67,6 @@ public class AccountDAO {
         return account;  // Return null if no account is found
     }
 
-  
-    
     public boolean updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -144,6 +144,44 @@ public class AccountDAO {
             stmt.setInt(4, account.getId());
             stmt.executeUpdate();
         }
+    }
+
+    public List<Account> getAllStaffAccounts() {
+        List<Account> accounts = new ArrayList<>();
+
+        // SQL truy vấn để lấy thông tin tài khoản, bao gồm tên, username, và tên vai trò
+        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName "
+                + "FROM Account a "
+                + "JOIN Person p ON a.PersonID = p.ID "
+                + "JOIN Role r ON a.RoleID = r.ID "
+                + "WHERE a.RoleID IN (1, 2, 3)"; // Lọc chỉ lấy roleID 1 (Admin), 2 (Manager), và 3 (Staff)
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Tạo đối tượng Person
+                Person person = new Person();
+                person.setName(rs.getString("personName"));  // Lấy tên người từ cột personName
+                person.setEmail(rs.getString("Email"));  // Lấy email của người
+
+                // Tạo đối tượng Account
+                Account account = new Account();
+                account.setUsername(rs.getString("Username"));  // Lấy username
+                account.setPersonInfo(person);  // Gán đối tượng Person vào Account
+
+                // Lấy tên role và gán vào Account
+                String roleName = rs.getString("roleName");  // Lấy tên vai trò từ bảng Role
+                account.setRoleName(roleName);  // Gán roleName vào account
+
+                // Thêm tài khoản vào danh sách
+                accounts.add(account);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accounts;  // Trả về danh sách các tài khoản
     }
 
     private Connection getConnection() throws SQLException {

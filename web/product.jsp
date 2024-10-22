@@ -126,39 +126,8 @@
         </div>
         <!-- Topbar End -->
 
-
-        <!-- Navbar Start -->
-        <div class="container-fluid p-0">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-                <a href="index.html" class="navbar-brand ml-lg-3">
-                    <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                    <div class="navbar-nav m-auto py-0">
-                        <a href="index" class="nav-item nav-link">Home</a>
-                        <a href="About.jsp" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link active">Product</a>
-                        <a href="services" class="nav-item nav-link">Services</a>
-                        <a href="price.html" class="nav-item nav-link">Pricing</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment" class="dropdown-item">Appointment</a>
-                                <a href="opening.html" class="dropdown-item">Open Hours</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="feedback" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
-                </div>
-            </nav>
-        </div>
-        <!-- Navbar End -->
+        <!-- Include the Navbar -->
+        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
 
 
         <!-- Header Start -->
@@ -173,7 +142,7 @@
             </div>
         </div>
         <div style="display: flex; align-items: center; justify-content: center; width: 100%;">
-             <form action="searchproduct?index=1" method="post" style="display: flex; align-items: center; margin-left: auto; padding-right: 10px">
+            <form action="searchproduct?index=1" method="post" style="display: flex; align-items: center; margin-left: auto; padding-right: 10px">
                 <input class="searchBox" type="text" name="txtSearch" required 
                        style="padding: 5px; border: 1px solid #ccc; border-right: none; width: 250px;" 
                        value="${param.txtSearch}"> <!-- Giữ lại giá trị đã nhập -->
@@ -185,7 +154,7 @@
         <div class="product-container">
             <c:forEach items="${product}" var="p">
                 <div class="service-item position-relative">
-                      <img class="img-fluid" src="img/${p.image}" alt="">
+                    <img class="img-fluid" src="img/${p.image}" alt="">
                     <div class="service-text text-center">
                         <h4 class="text-white font-weight-medium px-3">${p.name}</h4>
                         <p class="text-white px-3 mb-3">${p.description}</p>

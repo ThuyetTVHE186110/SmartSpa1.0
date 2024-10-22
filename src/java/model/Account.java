@@ -15,6 +15,11 @@ public class Account {
     private String password;
     private int role;  // Role is now an int
     private Person personInfo;
+    private boolean status;
+    private String roleName; // Tên vai trò (Role Name)
+
+    public Account() {
+    }
 
     public Account(int id, String username, String password, int role, Person personInfo) {
         this.id = id;
@@ -22,6 +27,25 @@ public class Account {
         this.password = password;
         this.role = role;
         this.personInfo = personInfo;
+
+    }
+
+    // Getters and setters for roleName
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    // Getter and setter methods for status
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 
     // Getters and Setters
@@ -64,4 +88,5 @@ public class Account {
     public void setPersonInfo(Person personInfo) {
         this.personInfo = personInfo;
     }
+
 }
