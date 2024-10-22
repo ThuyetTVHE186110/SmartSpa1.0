@@ -69,6 +69,10 @@
         <servlet-class>controller.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>FeedbackManagementServlet</servlet-name>
+        <servlet-class>controller.FeedbackManagementServlet</servlet-class>
+    </servlet> 
+    <servlet>
         <servlet-name>AccountManagementServlet</servlet-name>
         <servlet-class>controller.AccountManagementServlet</servlet-class>
     </servlet>
@@ -145,12 +149,17 @@
         <url-pattern>/LogoutServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+
+        <servlet-name>FeedbackManagementServlet</servlet-name>
+        <url-pattern>/feedback-management</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>AccountManagementServlet</servlet-name>
         <url-pattern>/accountManagement</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UserProfileServlet</servlet-name>
-        <url-pattern>/UserProfileServlet</url-pattern>
+        <url-pattern>/UserProfileServlet</url-pattern>       
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
