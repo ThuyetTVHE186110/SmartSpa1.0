@@ -426,6 +426,29 @@ public class PersonDAO extends DBContext {
         }
     }
 
+    public Person getPersonById(int personId) {
+        String sql = "SELECT Name, DateOfBirth, Gender, Phone, Email, Address FROM Person WHERE ID = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, personId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                Person person = new Person();
+                person.setName(rs.getString("Name"));
+                person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                person.setGender(rs.getString("Gender").charAt(0));
+                person.setPhone(rs.getString("Phone"));
+                person.setEmail(rs.getString("Email"));
+                person.setAddress(rs.getString("Address"));
+
+                return person;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null; // Trả về null nếu không tìm thấy person
+    }
+
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
         int max = testDAO.maxID();

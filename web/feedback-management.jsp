@@ -1,3 +1,4 @@
+
 <%-- 
     Document   : feedback-management
     Created on : Oct 17, 2024, 7:58:42 AM
@@ -6,6 +7,9 @@
 
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page import="model.Account" %> 
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,6 +18,7 @@
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
         <title>Feedback Management - NiceAdmin</title>
+        <title>Feedback</title>
         <meta content="" name="description">
         <meta content="" name="keywords">
 
@@ -349,6 +354,11 @@
 
         </aside><!-- End Sidebar-->
 
+        <jsp:include page="headerHTML.jsp" />
+
+        <!-- ======= Sidebar ======= -->
+        <jsp:include page="sideBar.jsp" />
+
         <main id="main" class="main">
 
             <div class="pagetitle">
@@ -397,8 +407,7 @@
                                                 </td>
                                             </tr>
                                         </c:forEach>
-
-                                    </tbody>
+                                    
                                 </table>
                                 <!-- End Table with stripped rows -->
 
@@ -459,6 +468,27 @@
                             <div class="col-12">
                                 <label for="viewComment" class="form-label">Comment</label>
                                 <textarea class="form-control" id="viewComment" rows="3" readonly></textarea>
+
+                                <input type="text" class="form-control" id="viewCustomerName" value="Brandon Jacob"
+                                       readonly>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewService" class="form-label">Service</label>
+                                <input type="text" class="form-control" id="viewService" value="Haircut" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewRating" class="form-label">Rating</label>
+                                <input type="text" class="form-control" id="viewRating" value="4.5" readonly>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewComment" class="form-label">Comment</label>
+                                <textarea class="form-control" id="viewComment" rows="3"
+                                          readonly>Great service, very satisfied!</textarea>
+                            </div>
+                            <div class="col-12">
+                                <label for="viewDate" class="form-label">Date</label>
+                                <input type="text" class="form-control" id="viewDate" value="2023-05-25" readonly>
+
                             </div>
                         </form>
                         <!-- End View Feedback Form -->

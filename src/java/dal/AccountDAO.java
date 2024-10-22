@@ -9,6 +9,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Account;
@@ -65,44 +67,6 @@ public class AccountDAO {
         return account;  // Return null if no account is found
     }
 
-    // Method to update the password for an account
-//    public boolean updatePassword(String username, String newPassword) {
-//        Connection connection = null;
-//        PreparedStatement preparedStatement = null;
-//        boolean isUpdated = false;
-//
-//        try {
-//            connection = getConnection(); // Use existing method to get connection
-//            String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
-//            preparedStatement = connection.prepareStatement(sql);
-//            preparedStatement.setString(1, newPassword); // Set new password
-//            preparedStatement.setString(2, username);    // Set the username
-//
-//            System.out.println("Executing query: " + preparedStatement.toString());
-//
-//            int rowsAffected = preparedStatement.executeUpdate();
-//            System.out.println("Rows affected: " + rowsAffected);
-//
-//            isUpdated = (rowsAffected > 0); // Return true if rows were updated
-//
-//        } catch (SQLException e) {
-//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
-//        } finally {
-//            // Close resources
-//            try {
-//                if (preparedStatement != null) {
-//                    preparedStatement.close();
-//                }
-//                if (connection != null) {
-//                    connection.close();
-//                }
-//            } catch (SQLException e) {
-//                Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, null, e);
-//            }
-//        }
-//
-//        return isUpdated;
-//    }
     public boolean updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -180,6 +144,48 @@ public class AccountDAO {
             stmt.setInt(4, account.getId());
             stmt.executeUpdate();
         }
+    }
+
+    public List<Account> getAllStaffAccounts() {
+        List<Account> accounts = new ArrayList<>();
+
+        // SQL truy vấn để lấy thông tin tài khoản, bao gồm tên, username, và tên vai trò
+        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
+                + "FROM Account a "
+                + "JOIN Person p ON a.PersonID = p.ID "
+                + "JOIN Role r ON a.RoleID = r.ID "
+                + "WHERE a.RoleID IN (1, 2, 3)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                // Tạo đối tượng Person
+                Person person = new Person();
+                person.setName(rs.getString("personName"));  // Lấy tên người từ cột personName
+                person.setEmail(rs.getString("Email"));  // Lấy email của người
+
+                // Tạo đối tượng Account
+                Account account = new Account();
+                account.setUsername(rs.getString("Username"));  // Lấy username
+                account.setPersonInfo(person);  // Gán đối tượng Person vào Account
+
+                // Lấy tên role và gán vào Account
+                String roleName = rs.getString("roleName");  // Lấy tên vai trò từ bảng Role
+                account.setRoleName(roleName);  // Gán roleName vào account
+                String status = rs.getString("Status");
+                if (status == null) {
+                    status = "Unknown";  // hoặc gán giá trị mặc định như "Inactive"
+                }
+                account.setStatus(status);
+
+                // Thêm tài khoản vào danh sách
+                accounts.add(account);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return accounts;  // Trả về danh sách các tài khoản
     }
 
     private Connection getConnection() throws SQLException {

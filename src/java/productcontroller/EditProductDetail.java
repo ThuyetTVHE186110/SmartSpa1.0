@@ -2,8 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package controller;
+package productcontroller;
 
+import com.google.gson.Gson;
 import dal.ProductDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -12,15 +13,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.List;
 import model.Product;
 
 /**
  *
- * @author Dell Alienware
+ * @author hotdo
  */
-@WebServlet(name = "Product", urlPatterns = {"/product"})
-public class ProductServlet extends HttpServlet {
+@WebServlet(name = "ProductDetail", urlPatterns = {"/detail"})
+public class EditProductDetail extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +39,10 @@ public class ProductServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet Product</title>");
+            out.println("<title>Servlet ProductDetail</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet Product at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet ProductDetail at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -57,15 +57,34 @@ public class ProductServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-@Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-        ProductDAO productDAO = new ProductDAO();
-        List<Product> products = productDAO.getAllProducts();
-        request.setAttribute("product", products);
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        String idParam = request.getParameter("id");
+        if (idParam == null) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Product ID is required");
+            return;
+        }
 
-        request.getRequestDispatcher("product.jsp").forward(request, response);
-}
+        int id;
+        try {
+            id = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Product ID format");
+            return;
+        }
+
+        ProductDAO productDAO = new ProductDAO();
+        Product product = productDAO.getProductByID(id);
+
+        // Trả về dữ liệu sản phẩm dưới dạng JSON
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        PrintWriter out = response.getWriter();
+        out.print(new Gson().toJson(product));
+        out.flush();
+    }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *

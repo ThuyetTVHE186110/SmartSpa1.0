@@ -5,8 +5,8 @@
 package controller;
 
 import dal.AccountDAO;
+import dal.PersonDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Account;
+import model.Person;
 
 /**
  *
@@ -60,10 +61,11 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Get username and password from the form
+        // Get username, password, and userType from the form
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
         String rememberMe = request.getParameter("rememberMe"); // Get the "Remember Me" value
+        String userType = request.getParameter("userType"); // Identify if the user is customer or admin/staff
 
         // Initialize DAO and attempt to retrieve the account based on the credentials
         AccountDAO accountDAO = new AccountDAO();
@@ -75,44 +77,95 @@ public class LoginServlet extends HttpServlet {
             // Handle exception
             e.printStackTrace();
             request.setAttribute("error", "An unexpected error occurred. Please try again.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("login.jsp").forward(request, response);  // Default to customer login page for errors
             return;
         }
 
         // Check if the account exists
         if (account != null) {
-            // Create session and set session attributes
-            HttpSession session = request.getSession();
-            session.setAttribute("account", account);
-            session.setAttribute("loggedIn", true);
-            session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
+            // Get the user's role
+            int roleID = account.getRole();  // Use `account.getRoleID()`
+            if ("admin".equals(userType)) {
+                // Admin or Staff login: only roleID 1, 2, or 3 are allowed
+                if (roleID == 1 || roleID == 2 || roleID == 3) {
+                    // Create session and set session attributes
+                    HttpSession session = request.getSession();
+                    session.setAttribute("account", account);
+                    session.setAttribute("loggedIn", true);
+                    session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
 
-            // Handle "Remember Me" functionality
-            if ("on".equals(rememberMe)) {
-                // Create cookies to remember username (not password for security reasons)
-                Cookie usernameCookie = new Cookie("savedUsername", username);
-                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
-                usernameCookie.setHttpOnly(true); // Make it HTTP-only
-                usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
-                response.addCookie(usernameCookie);
+                    // Handle "Remember Me" functionality for admin login
+                    if ("on".equals(rememberMe)) {
+                        Cookie usernameCookie = new Cookie("savedUsername", username);
+                        usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                        usernameCookie.setHttpOnly(true); // Make it HTTP-only
+                        usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
+                        response.addCookie(usernameCookie);
+                    } else {
+                        // Delete cookies if "Remember Me" is not checked
+                        Cookie usernameCookie = new Cookie("savedUsername", "");
+                        usernameCookie.setMaxAge(0); // Expire the cookie
+                        response.addCookie(usernameCookie);
+                    }
+
+                    // Set success message for admin/staff
+                    session.setAttribute("successMessage", "Admin/Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+                    // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
+                    PersonDAO personDAO = new PersonDAO();
+                    Person person = personDAO.getPersonById(account.getPersonInfo().getId());  // Giả sử account có liên kết với Person
+
+                    // Lưu thông tin Person vào session
+                    session.setAttribute("person", person);
+                    // Redirect to the admin/staff dashboard
+                    response.sendRedirect("dashboard.jsp");
+                } else {
+                    // Not authorized for admin login
+                    request.setAttribute("error", "You do not have permission to access this area.");
+                    request.getRequestDispatcher("adminLogin.jsp").forward(request, response);
+                }
             } else {
-                // Delete cookies if "Remember Me" is not checked
-                Cookie usernameCookie = new Cookie("savedUsername", "");
-                usernameCookie.setMaxAge(0); // Expire the cookie
-                response.addCookie(usernameCookie);
+                // Customer login: only roleID 4 is allowed
+                if (roleID == 4) {
+                    // Create session and set session attributes for customer
+                    HttpSession session = request.getSession();
+                    session.setAttribute("account", account);
+                    session.setAttribute("loggedIn", true);
+                    session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
+
+                    // Handle "Remember Me" functionality for customer login
+                    if ("on".equals(rememberMe)) {
+                        Cookie usernameCookie = new Cookie("savedUsername", username);
+                        usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                        usernameCookie.setHttpOnly(true); // Make it HTTP-only
+                        usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
+                        response.addCookie(usernameCookie);
+                    } else {
+                        // Delete cookies if "Remember Me" is not checked
+                        Cookie usernameCookie = new Cookie("savedUsername", "");
+                        usernameCookie.setMaxAge(0); // Expire the cookie
+                        response.addCookie(usernameCookie);
+                    }
+
+                    // Set success message for customer
+                    session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+
+                    // Redirect to the customer dashboard or index
+                    response.sendRedirect("index");
+                } else {
+                    // Not authorized for customer login
+                    request.setAttribute("error", "Invalid username or password.");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                }
             }
-
-            // Set success message in session
-            session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-
-            // Redirect to the main page after successful login
-            response.sendRedirect("index");
         } else {
             // Set error message for invalid login
             request.setAttribute("error", "Login failed! Invalid username or password.");
             request.setAttribute("username", username);  // Retain the entered username
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            if ("admin".equals(userType)) {
+                request.getRequestDispatcher("adminLogin.jsp").forward(request, response); // Admin login failed
+            } else {
+                request.getRequestDispatcher("login.jsp").forward(request, response); // Customer login failed
+            }
         }
     }
-
 }

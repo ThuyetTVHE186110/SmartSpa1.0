@@ -33,7 +33,7 @@
                         <div class="nav-item dropdown">
                             <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
                             <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment.jsp" class="dropdown-item">Appointment</a>
+                                <a href="appointment" class="dropdown-item">Appointment</a>
                                 <a href="opening.jsp" class="dropdown-item">Open Hours</a>
                                 <a href="team.jsp" class="dropdown-item">Our Team</a>
                                 <a href="testimonial.jsp" class="dropdown-item">Testimonial</a>
