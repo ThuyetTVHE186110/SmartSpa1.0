@@ -85,7 +85,6 @@ public class LoginServlet extends HttpServlet {
         if (account != null) {
             // Get the user's role
             int roleID = account.getRole();  // Use `account.getRoleID()`
-
             if ("admin".equals(userType)) {
                 // Admin or Staff login: only roleID 1, 2, or 3 are allowed
                 if (roleID == 1 || roleID == 2 || roleID == 3) {
