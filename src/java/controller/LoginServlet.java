@@ -117,7 +117,7 @@ public class LoginServlet extends HttpServlet {
                     // Lưu thông tin Person vào session
                     session.setAttribute("person", person);
                     // Redirect to the admin/staff dashboard
-                    response.sendRedirect("dashboard.jsp");
+                    response.sendRedirect("dashboard");
                 } else {
                     // Not authorized for admin login
                     request.setAttribute("error", "You do not have permission to access this area.");
