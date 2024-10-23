@@ -23,8 +23,6 @@ public class Person {
     public Person() {
     }
 
-    
-    
     // Constructor with parameters
     public Person(int id, String name, Date dateOfBirth, char gender, String phone, String email, String address) {
         this.id = id;

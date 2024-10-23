@@ -94,38 +94,8 @@
         <!-- Topbar End -->
 
 
-        <!-- Navbar Start -->
-        <div class="container-fluid p-0">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-                <a href="index.html" class="navbar-brand ml-lg-3">
-                    <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                    <div class="navbar-nav m-auto py-0">
-                        <a href="index" class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="service" class="nav-item nav-link active">Services</a>
-                        <a href="price.html" class="nav-item nav-link">Pricing</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment" class="dropdown-item">Appointment</a>
-                                <a href="opening.html" class="dropdown-item">Open Hours</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="feedback" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <a href="appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
-                </div>
-            </nav>
-        </div>
-        <!-- Navbar End -->
+        <!-- Include the Navbar -->
+        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
 
 
         <!-- Header Start -->
@@ -155,21 +125,32 @@
             <h1>Product Detail</h1>
             <c:if test="${not empty product}">
                 <div class="card">
-                    <div class="card-body">
-                        <h5 class="card-title">${product.name}</h5>
-                        <p class="card-text">${product.description}</p>
-                        <p class="card-text">Price: $${product.price}</p>
-                        <p class="card-text">Quantity: ${product.quantity}</p>
-                        <p class="card-text">Discount: ${product.discountInfo.discountPercent}%</p>
-                        <p class="card-text">Supplier: ${product.supplierInfo.name}, ${product.supplierInfo.address}</p>
-                        <p class="card-text">Category: ${product.category}</p>
-                        <p class="card-text">Branch: ${product.branchName}</p>
-                        <div class="d-flex justify-content-end">
-                 <img class="img-fluid" src=${p.image} alt="">
+                    <div class="card-body d-flex align-items-start"> <!-- Căn chỉnh các phần tử theo chiều dọc -->
+
+                        <div class="flex-grow-1"> <!-- Để phần văn bản chiếm toàn bộ không gian còn lại -->
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">${product.description}</p>
+                            <p class="card-text">Price: $${product.price}</p>
+                            <p class="card-text">Quantity: ${product.quantity}</p>
+                            <p class="card-text">Discount: ${product.discountInfo.discountPercent}%</p>
+                            <p class="card-text">Supplier: ${product.supplierInfo.name}, ${product.supplierInfo.address}</p>
+                            <p class="card-text">Category: ${product.category}</p>
+                            <p class="card-text">Branch: ${product.branchName}</p>
+                        </div>
+                        <div class="me-3"> <!-- Thêm khoảng cách cho hình ảnh -->
+                            <img class="img-fluid product-image" src="${pageContext.request.contextPath}/img/${product.image}" alt="">
                         </div>
                     </div>
                 </div>
             </c:if>
+
+            <style>
+                .product-image {
+                    width: 300px; /* Đặt chiều rộng cố định cho ảnh */
+                    height: auto; /* Giữ tỷ lệ khung hình */
+                    max-height: 300px; /* Đặt chiều cao tối đa */
+                }
+            </style>
             <c:if test= "${empty product}">
                 <p>No product found.</p>
             </c:if>
