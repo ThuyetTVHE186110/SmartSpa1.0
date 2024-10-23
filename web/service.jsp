@@ -104,13 +104,20 @@
                             <h4 class="text-white font-weight-medium px-3">${service.name}</h4>
                             <p class="text-white px-3 mb-3">${service.description}</p>
                             <div class="w-100 bg-white text-center p-4">
-                                <a class="btn btn-primary" href="#">Make Order</a>
+                                <form action="http://localhost:3030/create-payment-link" method="post">
+                                    <input type="hidden" name="amount" value="${service.price}"/>
+                                    <input type="hidden" name="description" value="${service.description}"/>
+                                    <input type="hidden" name="cancelurl" value="http://localhost:9991/SmartSpa1.0/index"/>
+                                    <input type="hidden" name="returnurl" value="http://localhost:9991/SmartSpa1.0/services"/>
+                                    <button class="btn btn-primary">Mua ngay</button>
+                                </form>
+                                <a class="btn btn-primary" href="appointmentt">Make Order</a>
                             </div>
                         </div>
                     </div>
                 </c:forEach>
             </div>
-            <div class="row justify-content-center bg-appointment mx-0">
+            <div id="appointmentt" class="row justify-content-center bg-appointment mx-0">
                 <div class="col-lg-6 py-5">
                     <div class="p-5 my-5" style="background: rgba(33, 30, 28, 0.7);">
                         <h1 class="text-white text-center mb-4">Make Appointment</h1>
