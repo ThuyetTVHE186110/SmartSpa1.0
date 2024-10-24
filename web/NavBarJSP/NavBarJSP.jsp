@@ -9,50 +9,39 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <!-- navbar.jsp -->
-        <div class="container-fluid p-0">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-                <a href="index" class="navbar-brand ml-lg-3">
-                    <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                    <div class="navbar-nav m-auto py-0">
-                        <a href="index" class="nav-item nav-link">Home</a>
-                        <a href="about.jsp" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="services" class="nav-item nav-link">Services</a>
-                        <a href="price.jsp" class="nav-item nav-link">Pricing</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment" class="dropdown-item">Appointment</a>
-                                <a href="opening.jsp" class="dropdown-item">Open Hours</a>
-                                <a href="team.jsp" class="dropdown-item">Our Team</a>
-                                <a href="testimonial.jsp" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.jsp" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <%
-                        // Check if the user is logged in
-                        Account loggedInAccount = (Account) session.getAttribute("account");
-                         if (loggedInAccount != null) {
-                            // Get the Person object from the account
-                            Person loggedInPerson = loggedInAccount.getPersonInfo();
-                            String personName = (loggedInPerson != null) ? loggedInPerson.getName() : "User";
-                    %>
-                    <span>Welcome, <%= personName %>!</span>
-                    <a href="LogoutServlet" class="nav-item nav-link">Logout</a>
-                    <% } else { %>
-                    <a href="login" class="nav-item nav-link">Login</a>
-                    <% } %>
-                    <a href="appointment.jsp" class="btn btn-primary d-none d-lg-block">Book Now</a>
+        <!-- Navbar Section -->
+        <header>
+            <nav class="navbar">
+                <div class="logo">
+                    <img src="newUI/assets/img/logo.png" alt="Blushed Beauty Bar Logo">
                 </div>
+                <div class="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+                <ul class="nav-links">
+                    <li><a href="index" class="active">Home</a></li>
+                    <li><a href="services">Services</a></li>
+                    <li><a href="about.jsp">About</a></li>
+                    <li><a href="contact.jsp">Contact</a></li>
+                    <li><a href="appointment1.jsp">Appointments</a></li>
+                    <li> <%
+                            // Check if the user is logged in
+                            Account loggedInAccount = (Account) session.getAttribute("account");
+                             if (loggedInAccount != null) {
+                                // Get the Person object from the account
+                                Person loggedInPerson = loggedInAccount.getPersonInfo();
+                                String personName = (loggedInPerson != null) ? loggedInPerson.getName() : "User";
+                        %>
+                        <span>Welcome, <%= personName %>!</span>
+                        <a href="LogoutServlet" class="nav-item nav-link">Logout</a>
+                        <% } else { %>
+                        <a href="login" class="profile-link"><i class="fas fa-user"></i></a><% } %></li>
+                    <li><a href="booking.html" class="book-now-btn">Book Now</a></li>
+                </ul>
             </nav>
-        </div>
+        </header>
 
     </body>
 </html>
