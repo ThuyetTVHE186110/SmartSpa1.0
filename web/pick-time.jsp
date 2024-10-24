@@ -110,7 +110,7 @@
                     <div class="appointment-info">
                         <img height="50" src="" alt="Logo Service" width="50"/>
                         <div>
-                            
+
                             <h3>
                                 ${service.name}
                             </h3>

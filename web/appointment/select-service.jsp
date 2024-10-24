@@ -100,6 +100,31 @@
                 padding: 10px;
                 margin-bottom: 10px;
             }
+            .notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #f44336; /* Màu đỏ cho thông báo lỗi */
+                color: white;
+                padding: 15px;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+                font-size: 16px;
+                z-index: 1000;
+                transition: opacity 0.3s ease-in-out;
+            }
+
+            /* Ẩn thông báo khi không sử dụng */
+            .notification.hidden {
+                opacity: 0;
+                pointer-events: none;
+            }
+
+            /* Hiển thị thông báo */
+            .notification.show {
+                opacity: 1;
+                pointer-events: auto;
+            }
         </style>
     </head>
     <body>
@@ -125,14 +150,15 @@
                 <a href="#">Facials</a>
                 <a href="#">Wellness or Integrative</a>
             </div>
+
             <div class="services">
                 <div class="left">
                     <c:forEach items="${requestScope.serviceList}" var="service">
                         <div class="service" data-service-id="${service.id}">
                             <h2>${service.name} - ${service.duration} min</h2>
-                            <div class="price">1 hr &middot; $${service.price}.00</div>
+                            <div class="price">${service.duration} mins &middot; $${service.price}.00</div>
                             <p>${service.description}</p>
-                            <button class="add-btn">Add</button>
+                            <button type="button" class="add-btn" onclick="addService(this, '${service.id}')">Add</button>
                         </div>
                     </c:forEach>
                 </div>
@@ -147,60 +173,82 @@
                     </div>
                 </div>
             </div>
-        </div>F
+        </div>
+        <div id="notification" class="notification hidden"></div>
         <script>
-            window.onload = function () {
-                let selectedServices = [];
+            let selectedServices = [];
+            function showNotification(message, duration = 3000) {
+                const notification = document.getElementById('notification');
+                notification.textContent = message;
+                notification.classList.remove('hidden');
+                notification.classList.add('show');
 
-                document.querySelectorAll('.add-btn').forEach(button => {
-                    button.addEventListener('click', function () {
-                        const serviceElement = this.closest('.service');
-                        const serviceId = serviceElement.getAttribute('data-service-id');
-                        const serviceName = serviceElement.querySelector('h2').innerText;
-                        const appointmentList = document.getElementById('appointment-list');
+                // Tự động ẩn thông báo sau một khoảng thời gian
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                    notification.classList.add('hidden');
+                }, duration);
+            }
+            function addService(button, serviceId) {
+                // Lấy thông tin dịch vụ từ HTML
+                const serviceDiv = button.closest('.service');
+                const serviceName = serviceDiv.querySelector('h2').textContent;
+                const servicePrice = serviceDiv.querySelector('.price').textContent;
 
-                        if (!selectedServices.includes(serviceId)) {
-                            const selectedService = document.createElement('div');
-                            selectedService.className = 'selected-service';
-                            selectedService.setAttribute('data-service-id', serviceId);
-                            selectedService.innerHTML =
-                                    `<span>${serviceName}</span><span class="remove" onclick="removeService(`+ serviceId +`)">&times;</span>`;
+                // Kiểm tra nếu dịch vụ đã được thêm vào trước đó
+                if (selectedServices.includes(serviceId)) {
+                    showNotification('This service has been added.', 3000);
+                    return;
+                }
 
-                            appointmentList.appendChild(selectedService);
-                            selectedServices.push(serviceId); // Add service ID to array
+                // Thêm dịch vụ vào danh sách
+                selectedServices.push(serviceId);
 
-                            this.classList.add('disabled');
-                            this.innerText = 'Added';
-                            this.disabled = true; // Disable button after adding
-                        }
-                    });
-                });
+                // Tạo một phần tử mới để hiển thị dịch vụ trong "Your Appointment"
+                const appointmentList = document.getElementById('appointment-list');
+                const newServiceDiv = document.createElement('div');
+                newServiceDiv.classList.add('selected-service');
+                newServiceDiv.setAttribute('data-service-id', serviceId);
+                newServiceDiv.innerHTML = `
+                    <span>` + serviceName + `</span>
+                    <span>` + servicePrice + `</span>
+                    <span class="remove" onclick="removeService('` + serviceId + `')">✖</span>
+                `;
 
-                // Remove service function
-                window.removeService = function (serviceId) {
-                    const serviceToRemove = document.querySelector(`.selected-service[data-service-id="`+ serviceId +`"]`);
-                    if (serviceToRemove) {
-                        serviceToRemove.remove(); // Remove selected service from the list
-                        selectedServices = selectedServices.filter(id => id !== serviceId); // Remove from the array
+                // Thêm vào danh sách "Your Appointment"
+                appointmentList.appendChild(newServiceDiv);
 
-                        // Re-enable the add button for the removed service
-                        const button = document.querySelector(`.service[data-service-id="`+ serviceId +`"] .add-btn`);
-                        if (button) {
-                            button.classList.remove('disabled'); // Enable the button
-                            button.innerText = 'Add'; // Reset button text
-                            button.disabled = false; // Allow re-adding
-                        }
-                    }
-                };
+                // Cập nhật giá trị ẩn để gửi khi submit form
+                updateSelectedServicesInput();
+            }
 
-                // Handle continue button click
-                window.handleContinueClick = function (event) {
-                    event.preventDefault(); // Prevent default form submission
-                    console.log('Selected services:', selectedServices);
-                    document.getElementById('selected-services-input').value = selectedServices.join(','); // Join IDs as a comma-separated string
-                    event.target.closest('form').submit(); // Submit the form programmatically
-                };
-            };
+            function removeService(serviceId) {
+                // Xóa dịch vụ khỏi mảng selectedServices
+                // Xóa phần tử hiển thị trong "Your Appointment"
+                const appointmentList = document.getElementById('appointment-list');
+                const serviceDiv = appointmentList.querySelector(`[data-service-id="` + serviceId + `"]`);
+                if (serviceDiv) {
+                    appointmentList.removeChild(serviceDiv);
+                    selectedServices = selectedServices.filter(id => id !== serviceId);
+                }
+
+                // Cập nhật giá trị ẩn để gửi khi submit form
+                updateSelectedServicesInput();
+            }
+
+            function updateSelectedServicesInput() {
+                // Cập nhật input ẩn với các ID dịch vụ đã chọn
+                document.getElementById('selected-services-input').value = selectedServices.join(',');
+                console.log("Selected Service:", selectedServices);
+            }
+
+            function handleContinueClick(event) {
+                // Nếu chưa chọn dịch vụ nào, không cho tiếp tục
+                if (selectedServices.length === 0) {
+                    event.preventDefault();
+                    showNotification('Please select at least one service.', 3000);
+                }
+            }
         </script>
     </body>
 </html>

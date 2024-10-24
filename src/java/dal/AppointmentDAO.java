@@ -25,7 +25,7 @@ import model.Appointment;
  */
 public class AppointmentDAO extends DBContext {
 
-    private static final String SELECT_ALL_APPOINTMENTS = "SELECT * FROM Appointment ORDER BY appointmentTime";
+    private static final String SELECT_ALL_APPOINTMENTS = "SELECT * FROM Appointment ORDER BY appointmentDate DESC, appointmentTime DESC";
     private static final String INSERT_APPOINTMENT = "INSERT INTO Appointment (appointmentTime, appointmentDate, CreatedDate, status, note, personID) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String DELETE_APPOINTMENT = "DELETE FROM Appointment WHERE ID = ?";
     private static final String UPDATE_APPOINTMENT = "UPDATE Appointment SET AppointmentTime = ?, AppointmentDate = ?, CreatedDate = ?, Status = ?, Note = ?, PersonID = ? WHERE ID = ?";
@@ -61,11 +61,16 @@ public class AppointmentDAO extends DBContext {
         return appointments;
     }
 
+    /**
+     * Get list of appointments by date 
+     * @param date Search Date
+     * @return
+     */
     public List<Appointment> getByDate(LocalDate date) {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
 
-        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE appointmentDate = ? ORDER BY appointmentTime";
+        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE appointmentDate = ? ORDER BY appointmentDate DESC, appointmentTime DESC";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
 
@@ -101,7 +106,7 @@ public class AppointmentDAO extends DBContext {
 
         String SELECT_APPOINTMENTS_BY_DATE = """
                                              SELECT * FROM Appointment a join Person p on a.personID = p.ID where p.Name like ?
-                                             ORDER BY a.appointmentDate, a.appointmentTime""";
+                                             ORDER BY a.appointmentDate DESC, a.appointmentTime DESC""";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
 

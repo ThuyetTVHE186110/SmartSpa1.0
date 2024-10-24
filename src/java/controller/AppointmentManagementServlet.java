@@ -8,28 +8,25 @@ package controller;
 
 import dal.AppointmentDAO;
 import dal.AppointmentServiceDAO;
+import dal.PersonDAO;
 import dal.ServiceDAO;
-import jakarta.servlet.RequestDispatcher;
-
 import java.io.IOException;
-import java.io.PrintWriter;
-
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.Month;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 import model.Appointment;
 import model.AppointmentService;
+import model.Person;
 import model.Service;
 
 /**
@@ -74,7 +71,7 @@ public class AppointmentManagementServlet extends HttpServlet {
             }
             request.setAttribute("serviceList", serviceList);
             request.setAttribute("appointmentServicesMap", appointmentServicesMap);
-            request.getRequestDispatcher("appointmentManagement.jsp").forward(request, response);
+            request.getRequestDispatcher("appointment-management.jsp").forward(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -92,19 +89,48 @@ public class AppointmentManagementServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            PersonDAO personDAO = new PersonDAO();
             AppointmentDAO appointmentDAO = new AppointmentDAO();
             AppointmentServiceDAO asdao = new AppointmentServiceDAO();
             String action = request.getParameter("action");
+            List<Appointment> appointments = null;
+            ServiceDAO serviceDAO = new ServiceDAO();
+            AppointmentServiceDAO appointmentServiceDAO = new AppointmentServiceDAO();
+            HashMap<Integer, List<Service>> appointmentServicesMap = new HashMap<>();
+            List<Service> serviceList = serviceDAO.selectAllServices();
+            List<AppointmentService> appointmentServiceList = appointmentServiceDAO.getAllAppointmentServices();
             switch (action) {
                 case "customerSearch":
                     String searchTerm = request.getParameter("searchTerm").trim();
-                    List<Appointment> appointments = appointmentDAO.getByCustomer(searchTerm);
-                    request.setAttribute("appointmentList", appointments);
-                    ServiceDAO serviceDAO = new ServiceDAO();
-                    HashMap<Integer, List<Service>> appointmentServicesMap = new HashMap<>();
-                    AppointmentServiceDAO appointmentServiceDAO = new AppointmentServiceDAO();
-                    List<AppointmentService> appointmentServiceList = appointmentServiceDAO.getAllAppointmentServices();
-                    List<Service> serviceList = serviceDAO.selectAllServices();
+                    request.setAttribute("searchTerm", searchTerm);
+                    appointments = appointmentDAO.getByCustomer(searchTerm);
+                    
+                    break;
+                case "remove":
+                    String delAppointment = request.getParameter("appointmentID");
+                    int appointmentID = Integer.parseInt(delAppointment);
+                    asdao.deleteAppointmentServiceByAppointmentID(appointmentID);
+                    appointmentDAO.deleteAppointment(appointmentID);
+                    doGet(request, response);
+                    break;
+                case "edit":
+                    String editAppointment = request.getParameter("appointmentID");
+                    int editID = Integer.parseInt(editAppointment);
+                    String editDatetemp = request.getParameter("editDate");
+                    LocalDate editDate = LocalDate.parse(editDatetemp);
+                    String editTimetemp = request.getParameter("editTime");
+                    LocalTime editTime = LocalTime.parse(editTimetemp);
+                    String editStatus = request.getParameter("editStatus");
+                    String editNote = request.getParameter("editNote");
+                    String personIDtp = request.getParameter("personID");
+                    int personID = Integer.parseInt(personIDtp);
+                    Person person = personDAO.getPersonByID(personID);
+                    Appointment appointment = new Appointment(editID, editDate, editTime, LocalDateTime.now(), editStatus, editNote, person);
+                    appointmentDAO.updateAppointment(appointment);
+                    doGet(request, response);
+                    break;
+                case "today":
+                    appointments = appointmentDAO.getByDate(LocalDate.now());
                     for (AppointmentService appointmentService : appointmentServiceList) {
                         int appointmentId = appointmentService.getAppointmentID();
                         Service service = serviceDAO.selectService(appointmentService.getServiceID()); // This is a method to fetch service details
@@ -118,21 +144,38 @@ public class AppointmentManagementServlet extends HttpServlet {
                             appointmentServicesMap.put(appointmentId, services);
                         }
                     }
-                    request.setAttribute("searchTerm", searchTerm);
-                    request.setAttribute("serviceList", serviceList);
-                    request.setAttribute("appointmentServicesMap", appointmentServicesMap);
-                    request.getRequestDispatcher("appointmentManagement.jsp").forward(request, response);
+                    request.setAttribute("searchDate", LocalDate.now());
                     break;
-                    case "deleteAppointment":
-                        String delAppointment = request.getParameter("appointmentID");
-                        int appointmentID = Integer.parseInt(delAppointment);
-                        asdao.deleteAppointmentServiceByAppointmentID(appointmentID);
-                        appointmentDAO.deleteAppointment(appointmentID);
+                case "searchDate":
+                    String searchDateTemp = request.getParameter("searchDate");
+                    if (!searchDateTemp.isBlank()) {
+                        LocalDate searchDate = LocalDate.parse(searchDateTemp);
+                        appointments = appointmentDAO.getByDate(searchDate);
+                        request.setAttribute("searchDate", searchDate);
+                    } else {
                         doGet(request, response);
-                        break;
+                    }
+                    break;
                 default:
                     throw new AssertionError();
             }
+            request.setAttribute("appointmentList", appointments);
+            for (AppointmentService appointmentService : appointmentServiceList) {
+                int appointmentId = appointmentService.getAppointmentID();
+                Service service = serviceDAO.selectService(appointmentService.getServiceID()); // This is a method to fetch service details
+                // If this appointment ID already exists, add to the list of services
+                if (appointmentServicesMap.containsKey(appointmentId)) {
+                    appointmentServicesMap.get(appointmentId).add(service);
+                } else {
+                    // Otherwise, create a new list for this appointment ID
+                    List<Service> services = new ArrayList<>();
+                    services.add(service);
+                    appointmentServicesMap.put(appointmentId, services);
+                }
+            }
+            request.setAttribute("serviceList", serviceList);
+            request.setAttribute("appointmentServicesMap", appointmentServicesMap);
+            request.getRequestDispatcher("appointment-management.jsp").forward(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
