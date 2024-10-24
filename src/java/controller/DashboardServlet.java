@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.Account;
 
 /**
  *
@@ -21,13 +22,21 @@ public class DashboardServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        HttpSession session = request.getSession(false);  // Lấy session hiện tại, nhưng không tạo mới nếu chưa có
+        HttpSession session = request.getSession(false);
+
         if (session == null || session.getAttribute("account") == null) {
-            // Nếu session không tồn tại hoặc chưa đăng nhập, chuyển hướng đến trang đăng nhập
             response.sendRedirect("adminLogin.jsp");
         } else {
-            // Nếu đã đăng nhập, tiếp tục xử lý yêu cầu và hiển thị dashboard
-            request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+            // Lấy đối tượng account từ session
+            Account account = (Account) session.getAttribute("account");
+
+            if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+                request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+            } else {
+                // Set error message and redirect to ErrorServlet
+                request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+                request.getRequestDispatcher("error").forward(request, response);
+            }
         }
     }
 }

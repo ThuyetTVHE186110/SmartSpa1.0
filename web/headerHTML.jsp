@@ -6,7 +6,7 @@
 <header id="header" class="header fixed-top d-flex align-items-center">
 
     <div class="d-flex align-items-center justify-content-between">
-        <a href="dashboard.jsp" class="logo d-flex align-items-center">
+        <a href="index" class="logo d-flex align-items-center">
             <img src="assets/img/logo.png" alt="">
             <span class="d-none d-lg-block">SmartBeautySpa</span>
         </a>
@@ -176,7 +176,7 @@
                     String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
                 %>
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="img/profile-img.jpg" alt="Profile" class="rounded-circle">
+                    <img src="img/adminChien.jpg" alt="Profile" class="rounded-circle">
                     <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName %></span>                        </a><!-- End Profile Iamge Icon -->
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">

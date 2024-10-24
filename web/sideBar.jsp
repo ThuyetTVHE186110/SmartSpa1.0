@@ -1,8 +1,3 @@
-<%-- 
-    Document   : sideBar
-    Created on : Oct 22, 2024, 4:18:26 PM
-    Author     : PC
---%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
