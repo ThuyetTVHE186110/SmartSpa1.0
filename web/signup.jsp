@@ -221,7 +221,7 @@
             <button class="button-submit" type="submit" value="signup" name="signup">Sign Up</button>
 
             <!-- Login Option -->
-            <p class="p">Already have an account? <span class="span"><a href="login.jsp" style="text-decoration: none; color: inherit;">Log In</a></span></p>
+            <p class="p">Already have an account? <span class="span"><a href="login" style="text-decoration: none; color: inherit;">Log In</a></span></p>
 
 
             <!-- Separator -->

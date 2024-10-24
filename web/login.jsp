@@ -92,9 +92,6 @@
             <button class="button-submit" type="button" onclick="window.location.href = 'adminLogin.jsp';">
                 For Admin Only
             </button>
-
-        </p>
-
         <!-- Separator -->
         <div class="separator">
             <hr class="line">

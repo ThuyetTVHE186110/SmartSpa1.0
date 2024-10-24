@@ -139,7 +139,7 @@
             <!-- Submit Button -->
             <button class="button-submit" type="submit" name = "submit">Confirm</button>
             <!-- Sign Up Option -->
-            <p class="p">Don't have an account? <span class="span"><a href="signup.jsp" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
+            <p class="p">Don't have an account? <span class="span"><a href="signup" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
         </form>
 
         <div class="error-container"></div> <!-- Error notification container -->
