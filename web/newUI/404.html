@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Page Not Found - Blushed Beauty Bar</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar Section -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="./assets/img/logo.png" alt="Blushed Beauty Bar Logo">
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="appointments.html">Appointments</a></li>
+                <li><a href="profile.html" class="profile-link"><i class="fas fa-user"></i></a></li>
+                <li><a href="booking.html" class="book-now-btn">Book Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Error Section -->
+    <section class="error-section">
+        <div class="error-container">
+            <div class="error-content" data-aos="fade-up">
+                <div class="error-image">
+                    <img src="./assets/img/404.png" alt="404 Error">
+                </div>
+                <h1>Oops! Page Not Found</h1>
+                <p>The page you're looking for seems to have vanished like mascara in the rain.</p>
+                <div class="error-actions">
+                    <a href="index.html" class="home-btn">
+                        <i class="fas fa-home"></i> Return Home
+                    </a>
+                    <a href="contact.html" class="contact-btn">
+                        <i class="fas fa-envelope"></i> Contact Us
+                    </a>
+                </div>
+                <div class="helpful-links">
+                    <h3>You might find these helpful:</h3>
+                    <ul>
+                        <li><a href="services.html">Our Services</a></li>
+                        <li><a href="booking.html">Book an Appointment</a></li>
+                        <li><a href="about.html">About Us</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <!-- [Previous footer code remains the same] -->
+    </footer>
+
+    <script>
+        AOS.init();
+
+        // Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>
