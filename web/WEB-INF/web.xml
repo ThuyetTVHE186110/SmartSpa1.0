@@ -13,6 +13,10 @@
         <servlet-class>controller.ServiceServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>ServiceManagement</servlet-name>
+        <servlet-class>controller.ServiceManagement</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>HomeServlet</servlet-name>
         <servlet-class>controller.HomeServlet</servlet-class>
     </servlet>
@@ -99,6 +103,10 @@
     <servlet-mapping>
         <servlet-name>ServiceServlet</servlet-name>
         <url-pattern>/services</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ServiceManagement</servlet-name>
+        <url-pattern>/servicemanagement</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>HomeServlet</servlet-name>
