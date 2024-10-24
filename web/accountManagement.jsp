@@ -1,7 +1,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ page import="model.Account" %> 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    // No need to declare session manually; it's already available in JSP
+    // You can directly use session
+    if (session == null || session.getAttribute("account") == null) {
+        // Redirect to login page if session is not found or account is not in session
+        response.sendRedirect("adminLogin.jsp");
+    } else {
+        // Get the account object from session
+        Account account = (Account) session.getAttribute("account");
 
+        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+            // Allow access to the page (do nothing and let the JSP render)
+        } else {
+            // Set an error message and redirect to an error page
+            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+            request.getRequestDispatcher("error").forward(request, response);
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 
