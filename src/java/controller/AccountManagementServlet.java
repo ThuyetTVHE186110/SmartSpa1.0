@@ -29,26 +29,25 @@ public class AccountManagementServlet extends HttpServlet {
         if (session == null || session.getAttribute("account") == null) {
             response.sendRedirect("adminLogin.jsp");
         } else {
-            // Lấy đối tượng account từ session
+            // Get account from session
             Account account = (Account) session.getAttribute("account");
 
+            // Only role 1, 2, 3 (admin, manager, staff) can access account management
             if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
-                request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+                // Fetch list of staff accounts
+                AccountDAO accountDAO = new AccountDAO();
+                List<Account> accounts = accountDAO.getAllStaffAccounts();  // Fetch the list from the database
+
+                // Set the list of accounts as a request attribute
+                request.setAttribute("accounts", accounts);
+
+                // Forward to the account management JSP
+                request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
             } else {
-                // Set error message and redirect to ErrorServlet
-                request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+                // If user does not have the required role, redirect to the error page
+                request.setAttribute("errorMessage", "You do not have the required permissions to access this page.");
                 request.getRequestDispatcher("error").forward(request, response);
             }
         }
-        // Lấy danh sách tài khoản từ DAO
-        AccountDAO accountDAO = new AccountDAO();
-        List<Account> accounts = accountDAO.getAllStaffAccounts();  // Lấy danh sách từ database
-
-        // Đặt danh sách accounts vào request
-        request.setAttribute("accounts", accounts);
-
-        // Chuyển tiếp tới JSP
-        request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
     }
-
 }
