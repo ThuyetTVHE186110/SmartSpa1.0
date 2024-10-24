@@ -110,6 +110,14 @@
                 margin: 0 5px;
                 cursor: pointer;
             }
+            .no-appointments {
+                text-align: center; /* Canh giữa nội dung */
+                color: #ff0000; /* Màu chữ đỏ để dễ nhìn */
+                font-weight: bold; /* Chữ đậm */
+                font-size: 16px; /* Kích thước chữ */
+                padding: 15px 0; /* Khoảng cách trên dưới để làm nổi bật */
+                background-color: #f8f9fa; /* Màu nền nhẹ nhàng */
+            }
         </style>
     </head>
 
@@ -136,7 +144,6 @@
             <section class="section">
                 <div class="row">
                     <div class="col-lg-12">
-
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Appointments</h5>
@@ -158,12 +165,17 @@
                                             <button type="submit">Search</button>
                                         </form>
                                     </div>
-                                    <button class="button">Today</button>
-                                    <div class="date-picker">
+                                    <div class="today">
                                         <form action="appointment-management" method="post">
-                                            <input type="date" placeholder="" id="appointment-date">
+                                            <input type="hidden" name="action" value="today">
+                                            <button class="button" type="submit">Today</button>
                                         </form>
-
+                                    </div>
+                                    <div class="date-picker">
+                                        <form action="appointment-management" method="post" id="searchDate">
+                                            <input type="hidden" name="action" value="searchDate">
+                                            <input type="date" id="appointment-date" name="searchDate" value="${searchDate}" onchange="document.getElementById('searchDate').submit();">
+                                        </form>
                                     </div>
                                     <!--                                    <div class="view-dropdown">
                                                                             <select>
@@ -178,7 +190,7 @@
                                         <tr>
                                             <th scope="col">ID</th>
                                             <th scope="col">Customer</th>
-                                            <th scope="col">Time</th>
+                                            <th scope="col" style="width: 13%;">Time</th>
                                             <th scope="col">Service</th>
                                             <th scope="col">Staff</th>
                                             <th scope="col">Status</th>
@@ -188,7 +200,7 @@
                                     <tbody>
                                         <c:forEach items="${requestScope.appointmentList}" var="appointment">
                                             <tr>
-                                                <th scope="row">A${appointment.id}</th>
+                                                <th scope="row">${appointment.id}</th>
                                                 <td>${appointment.person.name}</td>
                                                 <td> 
                                                     ${appointment.appointmentDate} ${appointment.appointmentTime}
@@ -210,24 +222,32 @@
                                                     </c:if>
                                                 </td>
                                                 <td></td>
-                                                <td><span class="badge bg-success">${appointment.status}</span></td>
                                                 <td>
-                                                    <button type="button" class="btn btn-success">Check Out</button>
-                                                    <button type="button" class="btn btn-primary btn-sm edit-button" data-bs-toggle="modal"
-                                                            data-bs-target="#editAppointmentModal"
-                                                            date-person-id="${appointment.person.id}"
-                                                            data-name="${appointment.person.name}"
-                                                            data-services="${serviceIds}" 
-                                                            data-date="${appointment.appointmentDate}"
-                                                            data-time="${appointment.appointmentTime}"
-                                                            data-status="${appointment.status}">Edit</button>
-                                                    <form action="appointment-management" method="post">
-                                                        <input type="hidden" name="action" value="deleteAppointment">
-                                                        <input type="hidden" name="appointmentID" value="${appointment.id}">
-                                                        <button type="button" class="btn btn-danger btn-sm cancel-button">
-                                                            Cancel
-                                                        </button>
-                                                    </form>
+                                                    <span class="badge
+                                                          <c:if test="${appointment.status == 'Success'}">bg-success</c:if>
+                                                          <c:if test="${appointment.status == 'Pending'}">bg-warning</c:if>
+                                                          <c:if test="${appointment.status == 'In Processing'}">bg-info</c:if>
+                                                          <c:if test="${appointment.status == 'Cancelled'}"> bg-danger</c:if>
+                                                          <c:if test="${appointment.status != 'Success' && appointment.status != 'Pending' && appointment.status != 'Cancelled'&& appointment.status != 'In Processing'}">bg-secondary</c:if>
+                                                              ">
+                                                          ${appointment.status}
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <div style="display: flex">
+                                                        <button type="button" class="btn btn-success">Check Out</button>
+                                                        <button type="button" class="btn btn-primary btn-sm edit-button" data-bs-toggle="modal"
+                                                                data-bs-target="#editAppointmentModal"
+                                                                data-appointment-id="${appointment.id}"
+                                                                data-name="${appointment.person.name}"
+                                                                data-person-id="${appointment.person.id}"
+                                                                data-services="${serviceIds}" 
+                                                                data-date="${appointment.appointmentDate}"
+                                                                data-time="${appointment.appointmentTime}"
+                                                                data-status="${appointment.status}"
+                                                                data-note="${appointment.note}">Edit</button>
+                                                        <button type="button" class="btn btn-danger btn-sm cancel-appointment" data-bs-toggle="modal" data-bs-target="#cancel-appointment" data-appointment-id="${appointment.id}">Cancel</button>
+                                                    </div>
                                                 </td>
                                             </tr>
                                         </c:forEach>
@@ -235,7 +255,11 @@
                                     </tbody>
                                 </table>
                                 <!-- End Table with stripped rows -->
-
+                                <c:if test="${appointmentList.size() == 0}">
+                                    <div class="no-appointments">
+                                        No appointments found.
+                                    </div>
+                                </c:if>
                                 <div class="text-center mt-3">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#addAppointmentModal">
@@ -323,17 +347,16 @@
             </div>
         </div><!-- End Add Appointment Modal-->
 
-        <!-- Edit Appointment Modal -->
-        <div class="modal fade" id="editAppointmentModal" tabindex="-1">
+        <!-- Modal chỉnh sửa lịch hẹn -->
+        <div class="modal fade" id="editAppointmentModal" tabindex="-1" aria-labelledby="editAppointmentLabel" aria-hidden="true">
             <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
-                    <form action="action" method="post">
+                    <form action="appointment-management" method="post">
                         <div class="modal-header">
                             <h5 class="modal-title">Edit Appointment</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <!-- Edit Appointment Form -->
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="editCustomerName" class="form-label">Customer Name</label>
@@ -359,19 +382,22 @@
                                 <div class="col-12">
                                     <label for="editStatus" class="form-label">Status</label>
                                     <select id="editStatus" class="form-select" name="editStatus">
-                                        <option>Scheduled</option>
-                                        <option>In Processing</option>
-                                        <option>Cancelled</option>
+                                        <option value="Scheduled">Scheduled</option>
+                                        <option value="In Processing">In Processing</option>
+                                        <option value="Success">Success</option>
+                                        <option value="Cancelled">Cancelled</option>
                                     </select>
                                 </div>
                                 <div class="col-12">
                                     <label for="editNote" class="form-label">Note</label>
-                                    <input type="text" class="form-control" id="editNote">
+                                    <input type="text" class="form-control" name="editNote">
                                 </div>
                             </div>
-                            <!-- End Edit Appointment Form -->
                         </div>
                         <div class="modal-footer">
+                            <input type="hidden" name="appointmentID" id="appointmentID">
+                            <input type="hidden" name="personID" id="personID">
+                            <input type="hidden" name="action" value="edit">
                             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                             <button type="submit" class="btn btn-primary">Save Changes</button>
                         </div>
@@ -380,40 +406,67 @@
             </div>
         </div><!-- End Edit Appointment Modal -->
 
-        <!-- Modal để thêm dịch vụ -->
-        <div class="modal fade" id="addServiceModal" tabindex="-1">
-            <div class="modal-dialog">
+        <!-- Modal để chọn dịch vụ -->
+        <div class="modal fade" id="addServiceModal" tabindex="-1" aria-labelledby="addServiceLabel" aria-hidden="true" data-bs-backdrop="static">
+            <div class="modal-dialog modal-dialog-centered modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Select Service</h5>
+                        <h5 class="modal-title" id="addServiceLabel">Select Service</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <div class="list-group">
                             <c:forEach items="${requestScope.serviceList}" var="service">
-                                <button type="button" class="list-group-item list-group-item-action add-service-item" data-service-id="${service.id}" data-service-name="${service.name}">${service.name}</button>
+                                <button type="button" class="list-group-item list-group-item-action add-service-item" 
+                                        data-service-id="${service.id}" 
+                                        data-service-name="${service.name}">
+                                    ${service.name}
+                                </button>
                             </c:forEach>
                         </div>
                     </div>
                 </div>
             </div>
-        </div><!-- End Add Service Modal -->
+        </div>
+
+
+        <!--Cancel Appointment-->
+        <div class="modal fade" id="cancel-appointment" tabindex="-1" aria-labelledby="addCouncilModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editCouncilModalLabel">Cancel Appointment</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <form action="appointment-management" method="post">
+                            <input type="hidden" name="action" value="remove">
+                            <input type="hidden" name="appointmentID" id="appointmentId">
+                            <p>Are you sure to cancel this appointment? </p>
+                            <button type="submit" class="btn btn-danger">Cancel</button>
+                            <button type="button" class="close btn btn-secondary" data-dismiss="modal">Close</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
 
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script>
-            var serviceMap = {};
+                                                var serviceMap = {};
             <c:forEach items="${requestScope.serviceList}" var="service">
-            serviceMap["${service.id}"] = "${service.name}"; // Tạo ánh xạ giữa ID và tên dịch vụ
+                                                serviceMap["${service.id}"] = "${service.name}"; // Tạo ánh xạ giữa ID và tên dịch vụ
             </c:forEach>
-            console.log(serviceMap);
+                                                console.log(serviceMap);
         </script>
         <script>
 
             $('#editAppointmentModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
                 var personID = button.data('person-id');
+                var appointmentID = button.data('appointment-id');
                 var name = button.data('name');
-
+                console.log("person-id", personID);
                 // Lấy dữ liệu các dịch vụ và loại bỏ dấu phẩy cuối cùng nếu có
                 var services = button.data('services').replace(/,\s*$/, '').split(',');
                 console.log("Services:", services); // Kiểm tra chuỗi services đã chia tách
@@ -421,13 +474,16 @@
                 var date = button.data('date');
                 var time = button.data('time');
                 var status = button.data('status');
-
+                var note = button.data('note');
                 // Update nội dung của modal
                 var modal = $(this);
+                modal.find('#personID').val(personID);
                 modal.find('#editCustomerName').val(name);
                 modal.find('#editDate').val(date);
                 modal.find('#editTime').val(time);
                 modal.find('#editStatus').val(status);
+                modal.find('#editNote').val(note);
+                modal.find('#appointmentID').val(appointmentID);
 
                 // Hiển thị các dịch vụ đã chọn
                 var servicesDiv = modal.find('#editServices');
@@ -459,51 +515,43 @@
                 });
             });
 
-            // Thêm sự kiện click cho các dịch vụ
-            $(document).on('click', '.add-service-item', function () {
-                var serviceId = $(this).data('service-id');
-                var serviceName = $(this).data('service-name');
-                var servicesDiv = $('#editServices');
-
-                // Kiểm tra xem dịch vụ đã được thêm chưa
-                if (!servicesDiv.find('[data-service-id="' + serviceId + '"]').length) {
-                    servicesDiv.append('<div class="selected-service" data-service-id="' + serviceId + '">' + serviceName + ' <button type="button" class="btn btn-danger btn-sm remove-service">Remove</button></div>');
-                }
-
-                $('#addServiceModal').modal('hide'); // Đóng modal thêm dịch vụ
-            });
-
             $(document).ready(function () {
-                $('.cancel-button').click(function (event) {
-                    event.preventDefault(); // Ngăn chặn hành động mặc định của nút
-                    var confirmation = confirm("Are you sure you want to cancel this appointment?");
+                // Khi nhấn nút "Add Service"
+                $('.add-service').click(function () {
+                    // Mở modal thêm dịch vụ
+                    $('#editAppointmentModal').modal('show');
+                });
 
-                    if (confirmation) {
-                        var form = $(this).closest('form'); // Lấy form gần nhất
+                // Khi nhấn vào dịch vụ trong modal thêm dịch vụ
+                $(document).on('click', '.add-service-item', function () {
+                    var serviceId = $(this).data('service-id');
+                    var serviceName = $(this).data('service-name');
+                    var servicesDiv = $('#editServices');
 
-                        // Hiển thị thông báo thành công
-                        $('#success-alert').fadeIn().delay(2000).fadeOut(function () {
-                            // Tải lại trang sau khi thông báo đã fade out
-                            form.submit();
-                        });
-                    } else {
-                        console.log("Cancellation aborted."); // Người dùng nhấn Cancel
+                    // Kiểm tra xem dịch vụ đã được thêm chưa
+                    if (!servicesDiv.find('[data-service-id="' + serviceId + '"]').length) {
+                        servicesDiv.append('<div class="selected-service" data-service-id="' + serviceId + '">' + serviceName + ' <button type="button" class="btn btn-danger btn-sm remove-service">Remove</button></div>');
                     }
+
+                    // Đóng modal thêm dịch vụ
+                    $('#addServiceModal').modal('hide');
+                });
+
+                // Thêm sự kiện click cho nút "Remove"
+                $(document).on('click', '.remove-service', function () {
+                    $(this).parent().remove(); // Xóa dịch vụ đã chọn
                 });
             });
-            function setTodayDate() {
-                var today = new Date(); // Lấy ngày hiện tại
-                var yyyy = today.getFullYear(); // Năm
-                var mm = String(today.getMonth() + 1).padStart(2, '0'); // Tháng (cộng thêm 1 vì getMonth() trả về từ 0-11)
-                var dd = String(today.getDate()).padStart(2, '0'); // Ngày
+            $('#cancel-appointment').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Button that triggered the modal
+                var appointmentID = button.data('appointment-id'); // Extract appointment ID from the button
+                $(this).find('#appointmentId').val(appointmentID); // Set the appointment ID in the modal input
+                console.log(appointmentID); // Log the appointment ID for debugging
+            });
+            $('.close').click(function () {
+                $('#cancel-appointment').modal('hide');
+            });
 
-                var todayFormatted = yyyy + '-' + mm + '-' + dd; // Format ngày theo chuẩn HTML date input
-                document.getElementById('appointment-date').value = todayFormatted; // Gán giá trị ngày hiện tại cho input
-            }
-
-            // Gọi hàm khi trang tải xong
-            window.onload = setTodayDate;
         </script>
     </body>
-
 </html>
