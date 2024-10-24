@@ -97,8 +97,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <c:forEach var="service" items="${services}">
-                                                >>>>>>> ae03ce95e8572fb14b7c98f2935d0cdb4654b2cb
+                                            <c:forEach var="service" items="${services}">     
                                                 <tr>
                                                     <th scope="row">
                                                         <c:out value="${service.id}" />

@@ -24,13 +24,21 @@ public class AccountManagementServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Kiểm tra xem có session hay không
         HttpSession session = request.getSession(false);
 
         if (session == null || session.getAttribute("account") == null) {
-            // Chưa đăng nhập, chuyển hướng về trang đăng nhập
             response.sendRedirect("adminLogin.jsp");
-            return;
+        } else {
+            // Lấy đối tượng account từ session
+            Account account = (Account) session.getAttribute("account");
+
+            if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+                request.getRequestDispatcher("dashboard.jsp").forward(request, response);
+            } else {
+                // Set error message and redirect to ErrorServlet
+                request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+                request.getRequestDispatcher("error").forward(request, response);
+            }
         }
         // Lấy danh sách tài khoản từ DAO
         AccountDAO accountDAO = new AccountDAO();
