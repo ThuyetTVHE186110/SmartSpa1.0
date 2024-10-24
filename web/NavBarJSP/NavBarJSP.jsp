@@ -22,10 +22,11 @@
                 </div>
                 <ul class="nav-links">
                     <li><a href="index" class="active">Home</a></li>
-                    <li><a href="services">Services</a></li>
-                    <li><a href="about.jsp">About</a></li>
+                    <li><a href="services">Services</a></li>          
+                    <li><a href="product.jsp">Product</a></li>
                     <li><a href="contact.jsp">Contact</a></li>
                     <li><a href="appointment1.jsp">Appointments</a></li>
+                    <li><a href="about.jsp">About</a></li>
                     <li> <%
                             // Check if the user is logged in
                             Account loggedInAccount = (Account) session.getAttribute("account");
@@ -38,7 +39,7 @@
                         <a href="LogoutServlet" class="nav-item nav-link">Logout</a>
                         <% } else { %>
                         <a href="login" class="profile-link"><i class="fas fa-user"></i></a><% } %></li>
-                    <li><a href="booking.html" class="book-now-btn">Book Now</a></li>
+                    <li><a href="booking.jsp" class="book-now-btn">Book Now</a></li>
                 </ul>
             </nav>
         </header>
