@@ -1,329 +1,265 @@
-<%-- 
-    Document   : service
-    Created on : Sep 29, 2024, 11:27:06 AM
-    Author     : Asus
---%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+    <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+        <!DOCTYPE html>
+        <html lang="en">
 
-<!DOCTYPE html>
-<html>
-    <head>
-        <meta charset="utf-8">
-        <title>SPA Center - Beauty & Spa HTML Template</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="Free HTML Templates" name="keywords">
-        <meta content="Free HTML Templates" name="description">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Lash Services - Blushed Beauty Bar</title>
+            <!-- <link rel="stylesheet" href="./assets/css/styles.css"> -->
+            <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+            <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+            <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap"
+                rel="stylesheet">
+            <link href="lib/animate/animate.min.css" rel="stylesheet">
+            <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+            <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
+            <link href="./newUI/assets/css/styles.css" rel="stylesheet">
+            <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        </head>
 
-        <!-- Favicon -->
-        <link href="img/favicon.ico" rel="icon">
-
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-        <!-- Libraries Stylesheet -->
-        <link href="lib/animate/animate.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-        <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
-    </head>
-
-    <body>
-        <!-- Topbar Start -->
-        <div class="container-fluid bg-light d-none d-lg-block">
-            <div class="row py-2 px-lg-5">
-                <div class="col-lg-6 text-left mb-2 mb-lg-0">
-                    <div class="d-inline-flex align-items-center">
-                        <small><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</small>
-                        <small class="px-3">|</small>
-                        <small><i class="fa fa-envelope mr-2"></i>info@example.com</small>
+        <body>
+            <!-- Navbar Section -->
+            <header>
+                <nav class="navbar">
+                    <div class="logo">
+                        <img src="./newUI/assets/img/logo.png" alt="Blushed Beauty Bar Logo">
                     </div>
-                </div>
-                <div class="col-lg-6 text-right">
-                    <div class="d-inline-flex align-items-center">
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a class="text-primary pl-2" href="">
-                            <i class="fab fa-youtube"></i>
-                        </a>
+                    <div class="hamburger">
+                        <span></span>
+                        <span></span>
+                        <span></span>
                     </div>
+                    <ul class="nav-links">
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="services" class="active">Services</a></li>
+                        <li><a href="about.html">About</a></li>
+                        <li><a href="contact.html">Contact</a></li>
+                        <li><a href="appointments.html">Appointments</a></li>
+                        <li><a href="profile.html" class="profile-link"><i class="fas fa-user"></i></a></li>
+                        <li><a href="booking.html" class="book-now-btn">Book Now</a></li>
+                    </ul>
+                </nav>
+            </header>
+
+            <!-- Services Hero Section -->
+            <section class="services-hero">
+                <div class="hero-content">
+                    <h1>Our Services</h1>
+                    <p>Professional beauty services tailored for you</p>
                 </div>
-            </div>
-        </div>
-        <!-- Topbar End -->
+            </section>
 
-
-        <!-- Include the Navbar -->
-        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
-
-
-        <!-- Header Start -->
-        <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 90px;">
-            <div class="container text-center py-5">
-                <h3 class="text-white display-3 mb-4">Services</h3>
-                <div class="d-inline-flex align-items-center text-white">
-                    <p class="m-0"><a class="text-white" href="">Home</a></p>
-                    <i class="far fa-circle px-3"></i>
-                    <p class="m-0">Services</p>
-                </div>
-            </div>
-        </div>
-        <!-- Header End -->
-
-
-        <!-- Service Start -->
-        <div class="container-fluid px-0 py-5 my-5">
-            <div class="row mx-0 justify-content-center text-center">
-                <div class="col-lg-6">
-                    <h6 class="d-inline-block bg-light text-primary text-uppercase py-1 px-2">Our Service</h6>
-                    <h1>Spa & Beauty Services</h1>
-                </div>
-            </div>
-            <div class="owl-carousel service-carousel">
-                <c:forEach var="service" items="${listServices}">
-                    <div class="service-item position-relative">
-                        <img class="img-fluid" src="${service.image}" alt="${service.name}">
-                        <div class="service-text text-center">
-                            <h4 class="text-white font-weight-medium px-3">${service.name}</h4>
-                            <p class="text-white px-3 mb-3">${service.description}</p>
-                            <div class="w-100 bg-white text-center p-4">
-                                <form action="http://localhost:3030/create-payment-link" method="post">
-                                    <input type="hidden" name="amount" value="${service.price}"/>
-                                    <input type="hidden" name="description" value="${service.description}"/>
-                                    <input type="hidden" name="cancelurl" value="http://localhost:9991/SmartSpa1.0/index"/>
-                                    <input type="hidden" name="returnurl" value="http://localhost:9991/SmartSpa1.0/services"/>
-                                    <button class="btn btn-primary">Mua ngay</button>
-                                </form>
-                                <a class="btn btn-primary" href="appointmentt">Make Order</a>
+            <!-- Services List Section -->
+            <section class="services-list">
+                <div class="service-grid">
+                    <c:forEach var="service" items="${listServices}">
+                        <div class="service-item" data-aos="fade-up">
+                            <img src="${service.image}" alt="${service.name}">
+                            <div class="service-info">
+                                <h3>${service.name}</h3>
+                                <p>Starting at $${service.price}</p>
+                                <div class="service-actions">
+                                    <a href="service-detail.jsp?id=${service.id}" class="view-details">View Details</a>
+                                    <a href="booking.jsp?serviceId=${service.id}" class="book-now">Book Now</a>
+                                </div>
                             </div>
                         </div>
+                    </c:forEach>
+                </div>
+            </section>
+
+            <!-- Testimonial Section -->
+            <section class="testimonial">
+                <div class="testimonial-content">
+                    <h2>Client Love</h2>
+                    <div class="testimonial-slider-container">
+                        <div class="star-decoration top-left"></div>
+                        <div class="star-decoration top-right"></div>
+                        <button class="slider-control prev" aria-label="Previous testimonial">&lt;</button>
+                        <div class="testimonial-slider">
+                            <div class="testimonial-slide active">
+                                <p>"I can't say enough wonderful things about Blushed! All of the staff have been so
+                                    friendly,
+                                    professional, and welcoming!"</p>
+                                <span class="client-name">- Linh</span>
+                            </div>
+                            <div class="testimonial-slide">
+                                <p>"The lash extensions I got here are amazing! They look so natural and last for weeks.
+                                    I'm
+                                    definitely coming back!"</p>
+                                <span class="client-name">- Sarah</span>
+                            </div>
+                            <div class="testimonial-slide">
+                                <p>"Blushed Beauty Bar is my go-to place for all things beauty. Their facials are
+                                    absolutely
+                                    divine!"</p>
+                                <span class="client-name">- Emma</span>
+                            </div>
+                            <!-- Add more testimonial slides as needed -->
+                        </div>
+                        <button class="slider-control next" aria-label="Next testimonial">&gt;</button>
+                        <div class="star-decoration bottom-left"></div>
+                        <div class="star-decoration bottom-right"></div>
                     </div>
-                </c:forEach>
-            </div>
-            <div id="appointmentt" class="row justify-content-center bg-appointment mx-0">
-                <div class="col-lg-6 py-5">
-                    <div class="p-5 my-5" style="background: rgba(33, 30, 28, 0.7);">
-                        <h1 class="text-white text-center mb-4">Make Appointment</h1>
-                        <form action="appointment" method="post">
-                            <div class="form-row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <input type="text" name="name" class="form-control bg-transparent p-4" placeholder="Your Name" required="required" />
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <input type="text" name="phone" class="form-control bg-transparent p-4" placeholder="Your Phone" required="required" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="col-sm-12">
-                                    <div class="form-group">
-                                        <input type="email" name="email" class="form-control bg-transparent p-4" placeholder="Your Email" required="required" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <div class="date" id="date" data-target-input="nearest">
-                                            <input type="text" name="appointmentDate" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Date" data-target="#date" data-toggle="datetimepicker" required="required"/>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <div class="time" id="time" data-target-input="nearest">
-                                            <input type="text" name="appointmentTime" class="form-control bg-transparent p-4 datetimepicker-input" placeholder="Select Time" data-target="#time" data-toggle="datetimepicker" required="required" accept=""/>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-row">
-                                <div class="col-sm-6">
-                                    <div class="form-group">
-                                        <select class="custom-select bg-transparent px-4" name="serviceID" style="height: 47px;">
-                                            <option selected>Select A Service</option>
-                                            <c:forEach items="${requestScope.listServices}" var="service">
-                                                <option value="${service.id}">${service.name}</option>
-                                            </c:forEach>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-sm-6">
-                                    <button class="btn btn-primary btn-block" type="submit" style="height: 47px;">Make Appointment</button>
-                                </div>
-                            </div>
+                    <div class="slider-dots"></div>
+                </div>
+            </section>
+
+            <!-- Call to Action Section -->
+            <section class="cta-section">
+                <img src="./newUI/assets/img/Slogan.png" alt="Slogan">
+                <a href="booking.jsp" class="cta-button">Book Now</a>
+            </section>
+
+            <!-- Footer Section -->
+            <footer>
+                <div class="footer-links">
+                    <div class="footer-column services-list">
+                        <h4>Our Services</h4>
+                        <ul>
+                            <li><a href="#">Lash Services</a></li>
+                            <li><a href="#">Facials & Peels</a></li>
+                            <li><a href="#">Microblading</a></li>
+                            <li><a href="#">SMP Services</a></li>
+                            <li><a href="#">Waxing & Threading</a></li>
+                            <li><a href="#">Makeup Application</a></li>
+                            <li><a href="#">Airbrush Tanning</a></li>
+                            <li><a href="#">Permanent Jewelry</a></li>
+                            <li><a href="#">Ear Piercing & Curating</a></li>
+                        </ul>
+                    </div>
+
+                    <div class="footer-column contact-info">
+                        <h4>Contact Us</h4>
+                        <p><strong>Blushed Beauty Bar</strong></p>
+                        <p><i class="fas fa-map-marker-alt"></i> 5177 44th Street S, Fargo, ND</p>
+                        <p><i class="fas fa-phone"></i> 218.790.3444</p>
+                        <div class="social-icons">
+                            <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                            <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                            <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                        </div>
+                    </div>
+
+                    <div class="footer-column email-signup">
+                        <h4>Stay Connected</h4>
+                        <p>Subscribe for exclusive offers and beauty tips!</p>
+                        <form class="newsletter-form">
+                            <input type="email" placeholder="Enter your email" required>
+                            <button type="submit" class="cta-button">Sign Up</button>
                         </form>
                     </div>
                 </div>
-            </div>
-        </div>
-        <!-- Service End -->
 
-
-        <!-- Testimonial Start -->
-        <div class="container-fluid py-5">
-            <div class="container py-5">
-                <div class="row align-items-center">
-                    <div class="col-lg-6 pb-5 pb-lg-0">
-                        <img class="img-fluid w-100" src="img/testimonial.jpg" alt="">
-                    </div>
-                    <div class="col-lg-6">
-                        <h6 class="d-inline-block text-primary text-uppercase bg-light py-1 px-2">Testimonial</h6>
-                        <h1 class="mb-4">What Our Clients Say!</h1>
-                        <div class="owl-carousel testimonial-carousel">
-                            <div class="position-relative">
-                                <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img class="img-fluid rounded-circle" src="img/testimonial-1.jpg" style="width: 60px; height: 60px;" alt="">
-                                    <div class="ml-3">
-                                        <h6 class="text-uppercase">Client Name</h6>
-                                        <span>Profession</span>
-                                    </div>
-                                </div>
-                                <p class="m-0">Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                            </div>
-                            <div class="position-relative">
-                                <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img class="img-fluid rounded-circle" src="img/testimonial-2.jpg" style="width: 60px; height: 60px;" alt="">
-                                    <div class="ml-3">
-                                        <h6 class="text-uppercase">Client Name</h6>
-                                        <span>Profession</span>
-                                    </div>
-                                </div>
-                                <p class="m-0">Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                            </div>
-                            <div class="position-relative">
-                                <i class="fa fa-3x fa-quote-right text-primary position-absolute" style="top: -6px; right: 0;"></i>
-                                <div class="d-flex align-items-center mb-3">
-                                    <img class="img-fluid rounded-circle" src="img/testimonial-3.jpg" style="width: 60px; height: 60px;" alt="">
-                                    <div class="ml-3">
-                                        <h6 class="text-uppercase">Client Name</h6>
-                                        <span>Profession</span>
-                                    </div>
-                                </div>
-                                <p class="m-0">Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                            </div>
-                        </div>
-                    </div>
+                <div class="footer-bottom">
+                    <p>&copy; 2023 Blushed Beauty Bar. All rights reserved.</p>
+                    <ul class="footer-legal">
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                    </ul>
                 </div>
-            </div>
-        </div>
-        <!-- Testimonial End -->
+            </footer>
 
+            <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+            <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
+            <script src="lib/easing/easing.min.js"></script>
+            <script src="lib/waypoints/waypoints.min.js"></script>
+            <script src="lib/counterup/counterup.min.js"></script>
+            <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+            <script src="lib/tempusdominus/js/moment.min.js"></script>
+            <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
+            <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+            <script src="mail/jqBootstrapValidation.min.js"></script>
+            <script src="mail/contact.js"></script>
+            <script src="js/main.js"></script>
 
-        <!-- Footer Start -->
-        <div class="footer container-fluid position-relative bg-dark py-5" style="margin-top: 90px;">
-            <div class="container pt-5">
-                <div class="row">
-                    <div class="col-lg-6 pr-lg-5 mb-5">
-                        <a href="." class="navbar-brand">
-                            <h1 class="mb-3 text-white"><span class="text-primary">SPA</span> Center</h1>
-                        </a>
-                        <p>Aliquyam sed elitr elitr erat sed diam ipsum eirmod eos lorem nonumy. Tempor sea ipsum diam  sed clita dolore eos dolores magna erat dolore sed stet justo et dolor.</p>
-                        <p><i class="fa fa-map-marker-alt mr-2"></i>123 Street, New York, USA</p>
-                        <p><i class="fa fa-phone-alt mr-2"></i>+012 345 67890</p>
-                        <p><i class="fa fa-envelope mr-2"></i>info@example.com</p>
-                        <div class="d-flex justify-content-start mt-4">
-                            <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#"><i class="fab fa-twitter"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#"><i class="fab fa-facebook-f"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square mr-2" href="#"><i class="fab fa-linkedin-in"></i></a>
-                            <a class="btn btn-lg btn-primary btn-lg-square" href="#"><i class="fab fa-instagram"></i></a>
-                        </div>
-                    </div>
-                    <div class="col-lg-6 pl-lg-5">
-                        <div class="row">
-                            <div class="col-sm-6 mb-5">
-                                <h5 class="text-white text-uppercase mb-4">Quick Links</h5>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Home</a>
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>About Us</a>
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Our Services</a>
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Pricing Plan</a>
-                                    <a class="text-white-50" href="#"><i class="fa fa-angle-right mr-2"></i>Contact Us</a>
-                                </div>
-                            </div>
-                            <div class="col-sm-6 mb-5">
-                                <h5 class="text-white text-uppercase mb-4">Our Services</h5>
-                                <div class="d-flex flex-column justify-content-start">
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Body Massage</a>
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Stone Therapy</a>
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Facial Therapy</a>
-                                    <a class="text-white-50 mb-2" href="#"><i class="fa fa-angle-right mr-2"></i>Skin Care</a>
-                                    <a class="text-white-50" href="#"><i class="fa fa-angle-right mr-2"></i>Nail Care</a>
-                                </div>
-                            </div>
-                            <div class="col-sm-12 mb-5">
-                                <h5 class="text-white text-uppercase mb-4">Newsletter</h5>
-                                <div class="w-100">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control border-light" style="padding: 30px;" placeholder="Your Email Address">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary px-4">Sign Up</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="container-fluid bg-dark text-light border-top py-4" style="border-color: rgba(256, 256, 256, .15) !important;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-6 text-center text-md-left mb-3 mb-md-0">
-                        <p class="m-0 text-white">&copy; <a href="#">Your Site Name</a>. All Rights Reserved.</p>
-                    </div>
-                    <div class="col-md-6 text-center text-md-right">
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Footer End -->
+            <script>
+                AOS.init();
 
+                // Hamburger menu functionality
+                const hamburger = document.querySelector('.hamburger');
+                const navLinks = document.querySelector('.nav-links');
 
-        <!-- Back to Top -->
-        <a href="#" class="btn btn-lg btn-primary back-to-top"><i class="fa fa-angle-double-up"></i></a>
+                hamburger.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                    hamburger.classList.toggle('active');
+                });
 
+                // Close menu when a link is clicked
+                document.querySelectorAll('.nav-links a').forEach(link => {
+                    link.addEventListener('click', () => {
+                        navLinks.classList.remove('active');
+                        hamburger.classList.remove('active');
+                    });
+                });
 
-        <!-- JavaScript Libraries -->
-        <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
-        <script src="lib/easing/easing.min.js"></script>
-        <script src="lib/waypoints/waypoints.min.js"></script>
-        <script src="lib/counterup/counterup.min.js"></script>
-        <script src="lib/owlcarousel/owl.carousel.min.js"></script>
-        <script src="lib/tempusdominus/js/moment.min.js"></script>
-        <script src="lib/tempusdominus/js/moment-timezone.min.js"></script>
-        <script src="lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+                // Testimonial Slider
+                const slides = document.querySelectorAll('.testimonial-slide');
+                const dotsContainer = document.querySelector('.slider-dots');
+                const prevButton = document.querySelector('.slider-control.prev');
+                const nextButton = document.querySelector('.slider-control.next');
+                let currentSlide = 0;
+                let slideInterval;
 
-        <!-- Contact Javascript File -->
-        <script src="mail/jqBootstrapValidation.min.js"></script>
-        <script src="mail/contact.js"></script>
+                // Create dots
+                slides.forEach((_, index) => {
+                    const dot = document.createElement('span');
+                    dot.classList.add('dot');
+                    dot.addEventListener('click', () => goToSlide(index));
+                    dotsContainer.appendChild(dot);
+                });
 
-        <!-- Template Javascript -->
-        <script src="js/main.js"></script>
-    </body>
+                const dots = document.querySelectorAll('.dot');
 
-</html>
+                function goToSlide(n) {
+                    slides[currentSlide].classList.remove('active');
+                    dots[currentSlide].classList.remove('active');
+                    currentSlide = (n + slides.length) % slides.length;
+                    slides[currentSlide].classList.add('active');
+                    dots[currentSlide].classList.add('active');
+                }
+
+                function nextSlide() {
+                    goToSlide(currentSlide + 1);
+                }
+
+                function prevSlide() {
+                    goToSlide(currentSlide - 1);
+                }
+
+                // Initialize slider
+                goToSlide(0);
+
+                // Event listeners for controls
+                prevButton.addEventListener('click', () => {
+                    prevSlide();
+                    resetInterval();
+                });
+
+                nextButton.addEventListener('click', () => {
+                    nextSlide();
+                    resetInterval();
+                });
+
+                // Auto-advance slides
+                function startSlideShow() {
+                    slideInterval = setInterval(nextSlide, 5000);
+                }
+
+                function resetInterval() {
+                    clearInterval(slideInterval);
+                    startSlideShow();
+                }
+
+                startSlideShow();
+
+                // Pause auto-advance on hover
+                const sliderContainer = document.querySelector('.testimonial-slider-container');
+                sliderContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
+                sliderContainer.addEventListener('mouseleave', startSlideShow);
+            </script>
+        </body>
+
+        </html>
