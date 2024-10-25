@@ -1,213 +1,468 @@
-<%-- 
-    Document   : booking
-    Created on : Oct 5, 2024, 8:41:13 PM
-    Author     : ADMIN
---%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
-
+<%@ page import="model.Account" %> 
+<%@ page import="model.Person" %>  <!-- Import Person class -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
     <head>
-        <title></title>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-        <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600&display=swap" rel="stylesheet"/>
-        <link href="css/service-menu.css" rel="stylesheet">
-    </head>
-    <body>
-    <head>
-        <meta charset="utf-8">
-        <title>SPA Center - Beauty & Spa HTML Template</title>
-        <meta content="width=device-width, initial-scale=1.0" name="viewport">
-        <meta content="Free HTML Templates" name="keywords">
-        <meta content="Free HTML Templates" name="description">
-
-        <!-- Favicon -->
-        <link href="img/favicon.ico" rel="icon">
-
-        <!-- Google Web Fonts -->
-        <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-        <!-- Font Awesome -->
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
-
-        <!-- Libraries Stylesheet -->
-        <link href="lib/animate/animate.min.css" rel="stylesheet">
-        <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
-        <link href="lib/tempusdominus/css/tempusdominus-bootstrap-4.min.css" rel="stylesheet" />
-
-        <!-- Customized Bootstrap Stylesheet -->
-        <link href="css/style.css" rel="stylesheet">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Appointments - Blushed Beauty Bar</title>
+        <link rel="stylesheet" href="newUI/assets/css/styles.css">
+        <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+        <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+        <!-- Add FullCalendar CSS -->
+        <link href='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.css' rel='stylesheet' />
     </head>
 
     <body>
-        <!-- Topbar Start -->
-        <div class="container-fluid bg-light d-none d-lg-block">
-            <div class="row py-2 px-lg-5">
-                <div class="col-lg-6 text-left mb-2 mb-lg-0">
-                    <div class="d-inline-flex align-items-center">
-                        <small><i class="fa fa-phone-alt mr-2"></i>+012 345 6789</small>
-                        <small class="px-3">|</small>
-                        <small><i class="fa fa-envelope mr-2"></i>info@example.com</small>
-                    </div>
-                </div>
-                <div class="col-lg-6 text-right">
-                    <div class="d-inline-flex align-items-center">
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-facebook-f"></i>
-                        </a>
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-linkedin-in"></i>
-                        </a>
-                        <a class="text-primary px-2" href="">
-                            <i class="fab fa-instagram"></i>
-                        </a>
-                        <a class="text-primary pl-2" href="">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- Topbar End -->
-
-
-        <!-- Include the Navbar -->
         <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
 
-        <!-- Header Start -->
-        <div class="jumbotron jumbotron-fluid bg-jumbotron" style="margin-bottom: 90px;">
-            <div class="container text-center py-5">
-                <h3 class="text-white display-3 mb-4">Appointment</h3>
-                <div class="d-inline-flex align-items-center text-white">
-                    <p class="m-0"><a class="text-white" href="">Home</a></p>
-                    <i class="far fa-circle px-3"></i>
-                    <p class="m-0">Appointment</p>
+        <!-- Appointments Section -->
+        <section class="appointments-section">
+            <div class="appointments-container">
+                <!-- Staff Filter -->
+                <div class="staff-filter">
+                    <h2>Staff Schedule</h2>
+                    <div class="staff-toggle">
+                        <label class="staff-checkbox">
+                            <input type="checkbox" checked data-staff="all">
+                            <span>All Staff</span>
+                        </label>
+                        <label class="staff-checkbox">
+                            <input type="checkbox" data-staff="sarah">
+                            <span>Sarah Johnson</span>
+                        </label>
+                        <label class="staff-checkbox">
+                            <input type="checkbox" data-staff="emily">
+                            <span>Emily Davis</span>
+                        </label>
+                        <label class="staff-checkbox">
+                            <input type="checkbox" data-staff="lauren">
+                            <span>Lauren Smith</span>
+                        </label>
+                        <label class="staff-checkbox">
+                            <input type="checkbox" data-staff="jessica">
+                            <span>Jessica Chen</span>
+                        </label>
+                        <label class="staff-checkbox">
+                            <input type="checkbox" data-staff="rachel">
+                            <span>Rachel Thompson</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Calendar Section -->
+                <div class="calendar-section">
+                    <div class="calendar-container">
+                        <div class="calendar-header">
+                            <div class="calendar-nav">
+                                <button class="prev-month"><i class="fas fa-chevron-left"></i></button>
+                                <h3 class="current-month">March 2024</h3>
+                                <button class="next-month"><i class="fas fa-chevron-right"></i></button>
+                            </div>
+                            <div class="view-toggle">
+                                <button class="view-btn active" data-view="month">Month</button>
+                                <button class="view-btn" data-view="week">Week</button>
+                                <button class="view-btn" data-view="day">Day</button>
+                            </div>
+                        </div>
+                        <div id="calendar"></div>
+                    </div>
+                </div>
+
+                <!-- Details Section -->
+                <div class="details-section">
+                    <div class="appointment-details">
+                        <div class="details-header">
+                            <h3>Appointment Details</h3>
+                        </div>
+                        <div class="details-content">
+                            <div class="detail-item">
+                                <span class="label">Client</span>
+                                <span class="value" data-field="client">Jane Smith</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Service</span>
+                                <span class="value" data-field="service">Classic Lash Extensions</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Date</span>
+                                <span class="value" data-field="date">March 15, 2024</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Time</span>
+                                <span class="value" data-field="time">2:00 PM - 4:30 PM</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Staff</span>
+                                <span class="value" data-field="staff">Jessica Chen</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Notes</span>
+                                <span class="value" data-field="notes">First-time client, consultation needed</span>
+                            </div>
+                            <div class="detail-actions">
+                                <button class="edit-btn">Edit Appointment</button>
+                                <button class="cancel-btn">Cancel Appointment</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add this new section after the calendar container -->
+                <div class="quick-book-container">
+                    <button class="quick-book-btn" id="quickBookBtn">
+                        <i class="fas fa-plus"></i> New Appointment
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Add this new modal section before the footer -->
+        <div class="booking-modal" id="bookingModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Quick Book Appointment</h2>
+                    <button class="close-modal" onclick="closeBookingModal()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="quickBookForm">
+                        <div class="form-group">
+                            <label>Select Service</label>
+                            <select required>
+                                <option value="">Choose a service...</option>
+                                <option value="classic-full">Classic Full Set ($150)</option>
+                                <option value="hybrid-full">Hybrid Full Set ($170)</option>
+                                <option value="volume-full">Volume Full Set ($185)</option>
+                                <option value="classic-fill">Classic Fill ($65-$105)</option>
+                                <option value="hybrid-fill">Hybrid Fill ($80-$130)</option>
+                                <option value="volume-fill">Volume Fill ($85-$140)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Select Staff</label>
+                            <select required>
+                                <option value="">Choose a staff member...</option>
+                                <option value="sarah">Sarah Johnson</option>
+                                <option value="emily">Emily Davis</option>
+                                <option value="lauren">Lauren Smith</option>
+                                <option value="jessica">Jessica Chen</option>
+                                <option value="rachel">Rachel Thompson</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Time</label>
+                                <select required>
+                                    <option value="">Select time...</option>
+                                    <option>9:00 AM</option>
+                                    <option>10:00 AM</option>
+                                    <option>11:00 AM</option>
+                                    <option>1:00 PM</option>
+                                    <option>2:00 PM</option>
+                                    <option>3:00 PM</option>
+                                    <option>4:00 PM</option>
+                                    <option>5:00 PM</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>Notes (Optional)</label>
+                            <textarea rows="3" placeholder="Any special requests or notes..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" onclick="closeBookingModal()">Cancel</button>
+                            <button type="submit" class="confirm-btn">Book Appointment</button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
-        <!-- Header End -->
 
-        <div class="container">
-            <div class="services-nav">
-                <a class="active nav-link" data-target="packages">Packages</a>
-                <a class="nav-link" data-target="massages">Massages</a>
-                <a class="nav-link" data-target="skin-care">Skin Care</a>
-                <!--                <a class="nav-link" data-target="packages">Advanced Beauty</a>
-                                <a class="nav-link" data-target="packages">Body Services</a>
-                                <a class="nav-link" data-target="packages">Facials</a>
-                                <a class="nav-link" data-target="packages">Wellness or Integrative</a>-->
-            </div>
-            <!--<h2>SERVICES</h2>-->
-            <h3 id="packages">PACKAGES</h3>
-            <div class="packages">
-                <c:forEach items="${requestScope.serviceList}" var="service">
-                    <div class="package">
-                        <h3>${service.name}</h3>
-                        <p class="price" >${service.duration} min · $${service.price}.00</p>
-                        <p>${service.description}</p>
-                        <a class="book-btn" href="pick-time?service=${service.id}">Book</a>
-                    </div>
-                </c:forEach>
-            </div>
-            <!--            <h3 id="massages">MASSAGES</h3>
-                        <div class="massages">
-                            <div class="massage">
-                                <h3>1</h3>
-                                <p class="price">1 hr · $120.00</p>
-                                <p>A classic Swedish massage to relax and rejuvenate your body.</p>
-                                <a class="book-btn" href="#">Book</a>
+        <!-- Edit Appointment Modal -->
+        <div class="booking-modal" id="editAppointmentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>Edit Appointment</h2>
+                    <button class="close-modal" id="closeEditModal">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="editAppointmentForm">
+                        <div class="form-group">
+                            <label>Client Name</label>
+                            <input type="text" id="editClientName" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Service</label>
+                            <select id="editService" required>
+                                <option value="">Choose a service...</option>
+                                <option value="classic-full">Classic Full Set ($150)</option>
+                                <option value="hybrid-full">Hybrid Full Set ($170)</option>
+                                <option value="volume-full">Volume Full Set ($185)</option>
+                                <option value="classic-fill">Classic Fill ($65-$105)</option>
+                                <option value="hybrid-fill">Hybrid Fill ($80-$130)</option>
+                                <option value="volume-fill">Volume Fill ($85-$140)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Staff Member</label>
+                            <select id="editStaff" required>
+                                <option value="">Choose a staff member...</option>
+                                <option value="sarah">Sarah Johnson</option>
+                                <option value="emily">Emily Davis</option>
+                                <option value="lauren">Lauren Smith</option>
+                                <option value="jessica">Jessica Chen</option>
+                                <option value="rachel">Rachel Thompson</option>
+                            </select>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="editDate" required>
                             </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="massage">
-                                <h3>2</h3>
-                                <p class="price">1 hr · $140.00</p>
-                                <p>A deep tissue massage to relieve muscle tension and stress.</p>
-                                <a class="book-btn" href="#">Book</a>
+                            <div class="form-group">
+                                <label>Time</label>
+                                <select id="editTime" required>
+                                    <option value="">Select time...</option>
+                                    <option>9:00 AM</option>
+                                    <option>10:00 AM</option>
+                                    <option>11:00 AM</option>
+                                    <option>1:00 PM</option>
+                                    <option>2:00 PM</option>
+                                    <option>3:00 PM</option>
+                                    <option>4:00 PM</option>
+                                    <option>5:00 PM</option>
+                                </select>
                             </div>
                         </div>
-                        <h3 id="skin-care">SKIN CARE</h3>
-                        <div class="skin-care">
-                            <div class="skin-care-item">
-                                <h3>Facial Treatment</h3>
-                                <p class="price">1 hr · $100.00</p>
-                                <p>A rejuvenating facial treatment to refresh your skin.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                            <div class="skin-care-item">
-                                <h3>Anti-Aging Treatment</h3>
-                                <p class="price">1 hr · $150.00</p>
-                                <p>An anti-aging treatment to reduce wrinkles and fine lines.</p>
-                                <a class="book-btn" href="#">Book</a>
-                            </div>
-                        </div>-->
+                        <div class="form-group">
+                            <label>Notes</label>
+                            <textarea id="editNotes" rows="3" placeholder="Any special requests or notes..."></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="cancel-btn" id="cancelEdit">Cancel</button>
+                            <button type="submit" class="confirm-btn">Save Changes</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
+
+        <!-- Footer Section -->
+        <footer>
+            <!-- [Previous footer code remains the same] -->
+        </footer>
+
+        <!-- Add FullCalendar JS -->
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/main.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/main.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/main.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
+        <!-- Move this script section right after the FullCalendar JS scripts and before the main script -->
         <script>
-            // Get all the navigation links
-            const navLinks = document.querySelectorAll('.services-nav a');
-            // Loop through each link and add a click event listener
-            navLinks.forEach(link => {
-                link.addEventListener('click', function () {
-                    // Remove 'active' class from all links
-                    navLinks.forEach(link => link.classList.remove('active'));
+                                AOS.init();
 
-                    // Add 'active' class to the clicked link
-                    this.classList.add('active');
-                    const targetId = this.getAttribute('data-target');
-                    const targetElement = document.getElementById(targetId);
+                                // Initialize FullCalendar
+                                document.addEventListener('DOMContentLoaded', function () {
+                                    const calendarEl = document.getElementById('calendar');
+                                    const calendar = new FullCalendar.Calendar(calendarEl, {
+                                        initialView: 'dayGridMonth',
+                                        headerToolbar: false,
+                                        events: [
+                                            {
+                                                title: 'Classic Lash Extensions - Jane Smith',
+                                                start: '2024-03-15T14:00:00',
+                                                end: '2024-03-15T16:30:00',
+                                                staff: 'jessica',
+                                                color: '#B38886',
+                                                extendedProps: {
+                                                    client: 'Jane Smith',
+                                                    service: 'Classic Lash Extensions',
+                                                    staff: 'Jessica Chen',
+                                                    notes: 'First-time client, consultation needed'
+                                                }
+                                            }
+                                        ],
+                                        eventClick: function (info) {
+                                            // Update the details content with event information
+                                            const event = info.event;
 
-                    // Scroll to the target element smoothly
-                    targetElement.scrollIntoView({
-                        behavior: 'smooth'
+                                            // Update the details content
+                                            document.querySelector('.detail-item .value[data-field="client"]').textContent = event.extendedProps.client;
+                                            document.querySelector('.detail-item .value[data-field="service"]').textContent = event.extendedProps.service;
+                                            document.querySelector('.detail-item .value[data-field="date"]').textContent = event.start.toLocaleDateString();
+                                            document.querySelector('.detail-item .value[data-field="time"]').textContent =
+                                                    `${event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
+            ${event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+                            document.querySelector('.detail-item .value[data-field="staff"]').textContent = event.extendedProps.staff;
+                            document.querySelector('.detail-item .value[data-field="notes"]').textContent = event.extendedProps.notes;
+                        }
+                    });
+                    calendar.render();
+
+                    // View toggle functionality
+                    document.querySelectorAll('.view-btn').forEach(btn => {
+                        btn.addEventListener('click', () => {
+                            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            const view = btn.dataset.view;
+                            calendar.changeView(
+                                    view === 'month' ? 'dayGridMonth' :
+                                    view === 'week' ? 'timeGridWeek' : 'timeGridDay'
+                                    );
+                        });
+                    });
+
+                    // Month navigation
+                    document.querySelector('.prev-month').addEventListener('click', () => {
+                        calendar.prev();
+                        updateMonthTitle();
+                    });
+
+                    document.querySelector('.next-month').addEventListener('click', () => {
+                        calendar.next();
+                        updateMonthTitle();
+                    });
+
+                    function updateMonthTitle() {
+                        const date = calendar.getDate();
+                        document.querySelector('.current-month').textContent =
+                                date.toLocaleString('default', {month: 'long', year: 'numeric'});
+                    }
+                    updateMonthTitle();
+
+                    // Modal functionality
+                    const quickBookBtn = document.getElementById('quickBookBtn');
+                    const bookingModal = document.getElementById('bookingModal');
+
+                    quickBookBtn.addEventListener('click', () => {
+                        bookingModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    });
+
+                    // Form submission handling
+                    document.getElementById('quickBookForm').addEventListener('submit', function (e) {
+                        e.preventDefault();
+                        alert('Appointment booked successfully!');
+                        bookingModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    });
+
+                    // Close modal when clicking outside
+                    bookingModal.addEventListener('click', (e) => {
+                        if (e.target === bookingModal) {
+                            bookingModal.classList.remove('active');
+                            document.body.style.overflow = '';
+                        }
+                    });
+
+                    // Close modal button
+                    const closeModalBtn = document.querySelector('.close-modal');
+                    if (closeModalBtn) {
+                        closeModalBtn.addEventListener('click', () => {
+                            bookingModal.classList.remove('active');
+                            document.body.style.overflow = '';
+                        });
+                    }
+                });
+
+                // Hamburger menu functionality
+                const hamburger = document.querySelector('.hamburger');
+                const navLinks = document.querySelector('.nav-links');
+
+                hamburger.addEventListener('click', () => {
+                    navLinks.classList.toggle('active');
+                    hamburger.classList.toggle('active');
+                });
+
+                // Add this to your existing script section
+                document.addEventListener('DOMContentLoaded', function () {
+                    // Get modal elements
+                    const editModal = document.getElementById('editAppointmentModal');
+                    const editBtn = document.querySelector('.edit-btn');
+                    const closeEditBtn = document.getElementById('closeEditModal');
+                    const cancelEditBtn = document.getElementById('cancelEdit');
+                    const editForm = document.getElementById('editAppointmentForm');
+
+                    // Function to populate form with current appointment details
+                    function populateEditForm(appointmentDetails) {
+                        document.getElementById('editClientName').value = appointmentDetails.client;
+                        document.getElementById('editService').value = appointmentDetails.service.toLowerCase().replace(/ /g, '-');
+                        document.getElementById('editStaff').value = appointmentDetails.staff.toLowerCase().split(' ')[0];
+                        document.getElementById('editDate').value = appointmentDetails.date;
+                        document.getElementById('editTime').value = appointmentDetails.time.split(' - ')[0];
+                        document.getElementById('editNotes').value = appointmentDetails.notes;
+                    }
+
+                    // Open edit modal
+                    editBtn.addEventListener('click', () => {
+                        // Get current appointment details from the details panel
+                        const appointmentDetails = {
+                            client: document.querySelector('.value[data-field="client"]').textContent,
+                            service: document.querySelector('.value[data-field="service"]').textContent,
+                            staff: document.querySelector('.value[data-field="staff"]').textContent,
+                            date: document.querySelector('.value[data-field="date"]').textContent,
+                            time: document.querySelector('.value[data-field="time"]').textContent,
+                            notes: document.querySelector('.value[data-field="notes"]').textContent
+                        };
+
+                        // Populate form with current details
+                        populateEditForm(appointmentDetails);
+
+                        // Show modal
+                        editModal.classList.add('active');
+                        document.body.style.overflow = 'hidden';
+                    });
+
+                    // Close modal functions
+                    function closeEditModal() {
+                        editModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                        editForm.reset();
+                    }
+
+                    closeEditBtn.addEventListener('click', closeEditModal);
+                    cancelEditBtn.addEventListener('click', closeEditModal);
+
+                    // Close modal when clicking outside
+                    editModal.addEventListener('click', (e) => {
+                        if (e.target === editModal) {
+                            closeEditModal();
+                        }
+                    });
+
+                    // Handle form submission
+                    editForm.addEventListener('submit', function (e) {
+                        e.preventDefault();
+
+                        // Update appointment details in the details panel
+                        document.querySelector('.value[data-field="client"]').textContent = document.getElementById('editClientName').value;
+                        document.querySelector('.value[data-field="service"]').textContent = document.getElementById('editService').options[document.getElementById('editService').selectedIndex].text;
+                        document.querySelector('.value[data-field="staff"]').textContent = document.getElementById('editStaff').options[document.getElementById('editStaff').selectedIndex].text;
+                        document.querySelector('.value[data-field="date"]').textContent = document.getElementById('editDate').value;
+                        document.querySelector('.value[data-field="time"]').textContent = document.getElementById('editTime').value;
+                        document.querySelector('.value[data-field="notes"]').textContent = document.getElementById('editNotes').value;
+
+                        // Show success message
+                        alert('Appointment updated successfully!');
+
+                        // Close modal
+                        closeEditModal();
                     });
                 });
-            });
         </script>
     </body>
+
 </html>
