@@ -449,6 +449,19 @@ public class PersonDAO extends DBContext {
         return null; // Trả về null nếu không tìm thấy person
     }
 
+    public void updatePerson(Person person) throws SQLException {
+        String sql = "UPDATE Person SET Name = ?, Email = ?, Phone = ? WHERE ID = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, person.getName());
+            ps.setString(2, person.getEmail());
+            ps.setString(3, person.getPhone());
+            ps.setInt(4, person.getId());  // ID của Person để cập nhật
+
+            int rowsUpdated = ps.executeUpdate();
+            System.out.println("Rows updated in Person table: " + rowsUpdated);
+        }
+    }
+
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
         int max = testDAO.maxID();
