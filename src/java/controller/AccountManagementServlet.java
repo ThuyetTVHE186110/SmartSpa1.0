@@ -33,7 +33,7 @@ public class AccountManagementServlet extends HttpServlet {
             Account account = (Account) session.getAttribute("account");
 
             // Only role 1, 2, 3 (admin, manager, staff) can access account management
-            if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+            if (account.getRole() == 1) {
                 // Fetch list of staff accounts
                 AccountDAO accountDAO = new AccountDAO();
                 List<Account> accounts = accountDAO.getAllStaffAccounts();  // Fetch the list from the database
@@ -46,7 +46,7 @@ public class AccountManagementServlet extends HttpServlet {
             } else {
                 // If user does not have the required role, redirect to the error page
                 request.setAttribute("errorMessage", "You do not have the required permissions to access this page.");
-                request.getRequestDispatcher("error").forward(request, response);
+                request.getRequestDispatcher("roleError").forward(request, response);
             }
         }
     }

@@ -23,7 +23,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-
+    
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -32,6 +32,7 @@
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+
     </head>
     <body>
         <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
@@ -46,7 +47,7 @@
                             <!-- Hiển thị ảnh của người dùng -->
                             <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
                                 ? "newUI/assets/img/" + person.getImage() 
-                                : "newUI/assets/img/default-avatar.jpg" %>" 
+                                : "newUI/assets/img/default-avartar.jpg" %>" 
                                  alt="Profile Picture">
                             <button class="edit-avatar"><i class="fas fa-camera"></i></button>
                         </div>
@@ -147,7 +148,7 @@
                     <div class="profile-tab" id="settings">
                         <h2>Account Settings</h2>
                         <!-- Form cập nhật thông tin -->
-                        <form class="settings-form" action="customerProfile" method="post">
+                        <form class="settings-form" action="customerProfile" method="post" onsubmit="return validateForm()">
                             <!-- Full Name -->
                             <div class="form-group">
                                 <label>Full Name</label>
@@ -183,15 +184,17 @@
                             <!-- Email -->
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" name="email" value="<%= person.getEmail() %>" required>
+                                <input type="email" name="email" id="email_field" value="<%= person.getEmail() %>" required oninput="validateEmail(this)">
                             </div>
+                            <div id="email_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi email -->
+
 
 
                             <!-- Password -->
                             <div class="form-group">
                                 <label>Password</label>
                                 <div style="display: flex; align-items: center;">
-                                    <input type="password" id="password_field" name="password" class="form-control" value ="<%= account.getPassword() %>" required>
+                                    <input type="password" id="password_field" name="password" class="form-control" value ="<%= account.getPassword() %>" required oninput="validatePassword()">
                                     <button type="button" class="show_password" onclick="togglePassword('password_field')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
                                         <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
                                         <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
@@ -201,6 +204,8 @@
                                     </button>
                                 </div>
                             </div>
+                            <div id="password_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi mật khẩu -->
+
 
                             <!-- Submit Button -->
                             <button type="submit" class="save-settings-btn">Save Changes</button>
@@ -215,18 +220,72 @@
             <!-- [Previous footer code remains the same] -->
         </footer>
         <script>
+            function validatePassword() {
+                const passwordField = document.getElementById('password_field');
+                const confirmPasswordField = document.getElementById('confirm_password_field');
+                const passwordError = document.getElementById('password_error');
+                const confirmPasswordError = document.getElementById('confirm_password_error');
+
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+
+                const passwordCriteria = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Z].{4,19}$/;
+                let isValid = true;
+
+                passwordError.style.display = 'none';
+                confirmPasswordError.style.display = 'none';
+
+                // Check password complexity
+                if (!password.match(passwordCriteria)) {
+                    passwordError.innerText = "Password must start with an uppercase letter, be at least 5 characters long, contain at least one digit, and one special character.";
+                    passwordError.style.display = 'block';
+                    isValid = false;
+                }
+
+                // Check if passwords match
+                if (password !== confirmPassword) {
+                    confirmPasswordError.innerText = "Passwords do not match.";
+                    confirmPasswordError.style.display = 'block';
+                    isValid = false;
+                }
+
+                return isValid;
+            }
+
+            function validateEmail(input) {
+                const emailError = document.getElementById('email_error');
+                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                const isValid = emailPattern.test(input.value);
+
+                if (!isValid) {
+                    input.classList.add('invalid');
+                    emailError.style.display = 'block';
+                } else {
+                    input.classList.remove('invalid');
+                    emailError.style.display = 'none';
+                }
+                return isValid;
+            }
+
             function togglePassword(fieldId) {
                 const passwordField = document.getElementById(fieldId);
-                const button = event.currentTarget;  // Lấy button mà người dùng vừa bấm vào
+                const button = event.currentTarget;
                 const path = button.querySelector('path');
 
                 if (passwordField.type === 'password') {
                     passwordField.type = 'text';
-                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S13.39 14 12 14s2.5-1.11 2.5-2.5S10.61 9 12 9z');
+                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
                 } else {
                     passwordField.type = 'password';
-                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
+                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
                 }
+            }
+
+            function validateForm() {
+                const isEmailValid = validateEmail(document.getElementById('email_field'));
+                const isPasswordValid = validatePassword();
+
+                return isEmailValid && isPasswordValid;
             }
         </script>
 
@@ -258,13 +317,7 @@
                 });
             });
 
-            // Form submission handling
-            document.querySelectorAll('form').forEach(form => {
-                form.addEventListener('submit', (e) => {
-                    e.preventDefault();
-                    alert('Changes saved successfully!');
-                });
-            });
+
         </script>
     </body>
 

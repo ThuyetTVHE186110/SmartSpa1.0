@@ -2,6 +2,26 @@
 <%@ page import="model.Account" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Person" %>
+<%
+    // No need to declare session manually; it's already available in JSP
+    // You can directly use session
+    if (session == null || session.getAttribute("account") == null) {
+        // Redirect to login page if session is not found or account is not in session
+        response.sendRedirect("adminLogin.jsp");
+    } else {
+        // Get the account object from session
+        Account account = (Account) session.getAttribute("account");
+
+        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+            // Allow access to the page (do nothing and let the JSP render)
+        } else {
+            // Set an error message and redirect to an error page
+            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+            request.getRequestDispatcher("error").forward(request, response);
+        }
+    }
+%>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,6 +63,21 @@
                     Account account = (Account) session.getAttribute("account"); 
                     String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
         %>
+
+        <% 
+    Person person = account.getPersonInfo();
+
+    // Lấy các thông tin khác từ person
+    String fullName = (person != null) ? person.getName() : "Guest";
+    String phone = (person != null) ? person.getPhone() : "N/A";
+    String email = (person != null) ? person.getEmail() : "N/A";
+    String address = (person != null) ? person.getAddress() : "N/A";
+    char gender = (person != null) ? person.getGender() : 'N';
+    java.sql.Date dob = (person != null) ? person.getDateOfBirth() : null;
+    String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
+    
+    // Lấy đường dẫn hình ảnh từ person
+        %>
         <jsp:include page="headerHTML.jsp" />
 
         <!-- ======= Sidebar ======= -->
@@ -68,11 +103,11 @@
                         <div class="card">
                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                                <img src="img/adminChien.jpg" alt="Profile" class="rounded-circle">
+                                <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
+                                ? "img/" + person.getImage() 
+                                : "img/default-avartar.jpg" %>"  alt="Profile Picture" class="rounded-circle">
                                 <h2><%= (displayName != null) ? displayName : "Guest" %></h2>
-                                <h3>Web Designer</h3>
                                 <div class="social-links mt-2">
-                                    <a href="#" class="twitter"><i class="bi bi-twitter"></i></a>
                                     <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
                                     <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
                                     <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
@@ -110,17 +145,7 @@
                                 </ul>
 
 
-                                <%
-    Person person = (Person) session.getAttribute("person");
-    String fullName = (person != null) ? person.getName() : "Guest";
-    String phone = (person != null) ? person.getPhone() : "N/A";
-    String email = (person != null) ? person.getEmail() : "N/A";
-    String address = (person != null) ? person.getAddress() : "N/A";
-    char gender = (person != null) ? person.getGender() : 'N';  // Giả sử 'N' là not available
-    // Lấy ngày sinh và định dạng nó thành chuỗi (nếu person không null)
-    java.sql.Date dob = (person != null) ? person.getDateOfBirth() : null;
-    String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
-                                %>
+
                                 <div class="tab-content pt-2">
 
                                     <div class="tab-pane fade show active profile-overview" id="profile-overview">
@@ -300,26 +325,52 @@
 
                                     <div class="tab-pane fade pt-3" id="profile-change-password">
                                         <!-- Change Password Form -->
-                                        <form>
-
+                                        <form action="changePassword" method="post" onsubmit="return validateChangePasswordForm()">
                                             <div class="row mb-3">
                                                 <label for="currentPassword" class="col-md-4 col-lg-3 col-form-label">Current Password</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="password" type="password" class="form-control" id="currentPassword">
+                                                    <div style="display: flex; align-items: center;">
+                                                        <input name="currentPassword" type="password" class="form-control" id="currentPassword" required>
+                                                        <button type="button" class="show_password" onclick="togglePassword('currentPassword')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                                            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                                            <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                                                  d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                                            </path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="newPassword" class="col-md-4 col-lg-3 col-form-label">New Password</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="newpassword" type="password" class="form-control" id="newPassword">
+                                                    <div style="display: flex; align-items: center;">
+                                                        <input name="newPassword" type="password" class="form-control" id="newPassword" required>
+                                                        <button type="button" class="show_password" onclick="togglePassword('newPassword')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                                            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                                            <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                                                  d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                                            </path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="renewPassword" class="col-md-4 col-lg-3 col-form-label">Re-enter New Password</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="renewpassword" type="password" class="form-control" id="renewPassword">
+                                                    <div style="display: flex; align-items: center;">
+                                                        <input name="renewPassword" type="password" class="form-control" id="renewPassword" required>
+                                                        <button type="button" class="show_password" onclick="togglePassword('renewPassword')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                                            <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                                            <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                                                  d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                                            </path>
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
 
@@ -338,6 +389,59 @@
                     </div>
                 </div>
             </section>
+            <script>
+                function validateChangePasswordForm() {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const renewPassword = document.getElementById('renewPassword').value;
+
+                    if (newPassword.length < 8) {
+                        alert('New password must be at least 8 characters long.');
+                        return false;
+                    }
+
+                    if (newPassword !== renewPassword) {
+                        alert('New password and confirmation do not match.');
+                        return false;
+                    }
+
+                    return true;
+                }
+
+                // Function to toggle the visibility of password fields
+                function togglePassword(fieldId) {
+                    const passwordField = document.getElementById(fieldId);
+                    const button = event.currentTarget;
+                    const path = button.querySelector('path');
+
+                    if (passwordField.type === 'password') {
+                        passwordField.type = 'text';
+                        path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
+                    } else {
+                        passwordField.type = 'password';
+                        path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
+                    }
+                }
+            </script>
+
+
+            <% 
+    String successMessage = (String) session.getAttribute("successMessage");
+    String errorMessage = (String) request.getAttribute("errorMessage");
+
+    if (successMessage != null) {
+            %>
+            <div class="alert alert-success"><%= successMessage %></div>
+            <%
+                    session.removeAttribute("successMessage");
+                }
+
+                if (errorMessage != null) {
+            %>
+            <div class="alert alert-danger"><%= errorMessage %></div>
+            <%
+                }
+            %>
 
         </main><!-- End #main -->
 

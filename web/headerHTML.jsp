@@ -1,6 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %>  
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="model.Person" %>  <!-- Import Person class -->
 
 
 <header id="header" class="header fixed-top d-flex align-items-center">
@@ -174,15 +175,17 @@
                 <% 
                     Account account = (Account) session.getAttribute("account"); 
                     String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
+                    Person person = account.getPersonInfo();
                 %>
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="img/adminChien.jpg" alt="Profile" class="rounded-circle">
+                    <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
+                                ? "img/" + person.getImage() 
+                                : "img/default-avartar.jpg" %>"  alt="Profile" class="rounded-circle">
                     <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName %></span>                        </a><!-- End Profile Iamge Icon -->
 
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
                         <h6><%= (displayName != null) ? displayName : "Guest" %></h6>
-                        <span>Web Designer</span>
                     </li>
                     <li>
                         <hr class="dropdown-divider">

@@ -112,10 +112,11 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("successMessage", "Admin/Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
                     // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
                     PersonDAO personDAO = new PersonDAO();
-                    Person person = personDAO.getPersonById(account.getPersonInfo().getId());  // Giả sử account có liên kết với Person
-
-                    // Lưu thông tin Person vào session
-                    session.setAttribute("person", person);
+                    Person person = personDAO.getPersonById(account.getPersonInfo().getId());
+                    // Kiểm tra person có null không trước khi lưu vào session
+                    if (person != null) {
+                        session.setAttribute("person", person);  // Lưu person vào session
+                    }                
                     // Redirect to the admin/staff dashboard
                     response.sendRedirect("dashboard");
                 } else {

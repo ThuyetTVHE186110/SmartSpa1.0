@@ -27,19 +27,17 @@ public class CustomerProfileServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Lấy session
+        // Lấy session hiện tại và thông tin account
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            // Nếu session hoặc account không tồn tại, chuyển hướng về trang login
-            response.sendRedirect("login");
+            response.sendRedirect("login.jsp");
             return;
         }
 
-        // Lấy thông tin account và person từ session
         Account account = (Account) session.getAttribute("account");
         Person person = account.getPersonInfo();
 
-        // Lấy dữ liệu từ form
+        // Lấy các giá trị từ form
         String fullName = request.getParameter("fullName");
         String dateOfBirth = request.getParameter("dateOfBirth");
         String gender = request.getParameter("gender");
@@ -48,39 +46,38 @@ public class CustomerProfileServlet extends HttpServlet {
         String address = request.getParameter("address");
         String password = request.getParameter("password");
 
-        // Cập nhật đối tượng Person
+        // Cập nhật thông tin cá nhân của person
         person.setName(fullName);
-        person.setDateOfBirth(java.sql.Date.valueOf(dateOfBirth));
-        person.setGender(gender.charAt(0)); // Assuming 'M', 'F', 'O' for Male, Female, Other
+        person.setDateOfBirth(java.sql.Date.valueOf(dateOfBirth));  // Chuyển từ String sang Date
+        person.setGender(gender.charAt(0));  // 'M', 'F', or 'O'
         person.setPhone(phone);
         person.setEmail(email);
         person.setAddress(address);
 
-        // Cập nhật mật khẩu cho account nếu có thay đổi
-        if (password != null && !password.isEmpty()) {
-            account.setPassword(password);
-        }
-
-        // Gọi DAO để cập nhật thông tin vào database
         PersonDAO personDAO = new PersonDAO();
         AccountDAO accountDAO = new AccountDAO();
 
         try {
-            // Cập nhật thông tin Person và Account
-            personDAO.updatePerson(person);  // Cập nhật Person trong DB
-            accountDAO.updateAccount(account);  // Cập nhật Account trong DB
+            // Cập nhật thông tin cá nhân của Person trong DB
+            personDAO.updatePerson(person);
 
-            // Cập nhật lại session với thông tin mới
+            // Nếu password không trống, cập nhật password cho account
+            if (password != null && !password.isEmpty()) {
+                accountDAO.updatePassword(account.getUsername(), password);
+                account.setPassword(password);  // Cập nhật password trong session
+            }
+
+            // Cập nhật lại session
+            session.setAttribute("person", person);
             session.setAttribute("account", account);
 
-            // Điều hướng người dùng về trang profile sau khi cập nhật thành công
-            response.sendRedirect("customerProfile.jsp");
+            // Chuyển hướng về trang profile với thông báo thành công
+            response.sendRedirect("customerProfile");
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Gửi thông báo lỗi và chuyển hướng về trang profile
-            request.setAttribute("errorMessage", "An error occurred while updating your profile.");
-            request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+            request.setAttribute("error", "An error occurred while updating your profile.");
+            request.getRequestDispatcher("customerProfile").forward(request, response);
         }
     }
 
@@ -90,7 +87,7 @@ public class CustomerProfileServlet extends HttpServlet {
         // Hiển thị trang profile với thông tin hiện tại
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login");
             return;
         }
 

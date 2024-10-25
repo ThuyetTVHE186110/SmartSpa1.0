@@ -189,16 +189,6 @@ public class AccountDAO {
         return accounts;  // Trả về danh sách các tài khoản
     }
 
-    // Cập nhật mật khẩu cho Account
-    public void updateAccount(Account account) throws SQLException {
-        String sql = "UPDATE Account SET Password = ? WHERE ID = ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, account.getPassword());
-            ps.setInt(2, account.getId());  // ID của Account để cập nhật
-            ps.executeUpdate();
-        }
-    }
-
     private Connection getConnection() throws SQLException {
         return DBContext.getConnection(); // Use your DBContext to get the connection
     }
