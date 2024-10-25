@@ -35,7 +35,7 @@
                                 Person loggedInPerson = loggedInAccount.getPersonInfo();
                                 String personName = (loggedInPerson != null) ? loggedInPerson.getName() : "User";
                         %>
-                        <a href="customerProfile.jsp" class="nav-item nav-link">Welcome, <%= personName %>!</a>
+                        <a href="customerProfile" class="nav-item nav-link">Welcome, <%= personName %>!</a>
                         <a href="LogoutServlet" class="book-now-btn nav-item nav-link">Logout</a>
                         <% } else { %>
                         <a href="login" class="profile-link"><i class="fas fa-user"></i></a><% } %></li>

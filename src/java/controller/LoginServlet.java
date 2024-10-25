@@ -69,7 +69,7 @@ public class LoginServlet extends HttpServlet {
 
         // Initialize DAO and attempt to retrieve the account based on the credentials
         AccountDAO accountDAO = new AccountDAO();
-        Account account = null;
+        Account account = accountDAO.getByUsernamePassword(username, password);
 
         try {
             account = accountDAO.getByUsernamePassword(username, password);

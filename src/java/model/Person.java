@@ -19,6 +19,7 @@ public class Person {
     private String phone;
     private String email;
     private String address;
+    private String image;
 
     public Person() {
     }
@@ -32,6 +33,14 @@ public class Person {
         this.phone = phone;
         this.email = email;
         this.address = address;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 
     public int getId() {

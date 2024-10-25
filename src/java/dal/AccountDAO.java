@@ -27,7 +27,7 @@ public class AccountDAO {
         Person person = null;
 
         String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, "
-                + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address "
+                + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address, p.Image "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
                 + "WHERE a.Username = ? AND a.Password = ?";
@@ -55,6 +55,7 @@ public class AccountDAO {
                     person.setPhone(rs.getString(9));  // Person.Phone
                     person.setEmail(rs.getString(10));  // Person.Email
                     person.setAddress(rs.getString(11));  // Person.Address
+                    person.setImage(rs.getString("image")); // Lấy đường dẫn ảnh
 
                     // Create an Account object from the ResultSet
                     account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
@@ -188,19 +189,52 @@ public class AccountDAO {
         return accounts;  // Trả về danh sách các tài khoản
     }
 
+    // Cập nhật mật khẩu cho Account
     public void updateAccount(Account account) throws SQLException {
         String sql = "UPDATE Account SET Password = ? WHERE ID = ?";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, account.getPassword());
             ps.setInt(2, account.getId());  // ID của Account để cập nhật
-
-            int rowsUpdated = ps.executeUpdate(); // Kiểm tra số lượng bản ghi được cập nhật
-            System.out.println("Rows updated in Account table: " + rowsUpdated);
+            ps.executeUpdate();
         }
     }
 
     private Connection getConnection() throws SQLException {
         return DBContext.getConnection(); // Use your DBContext to get the connection
+    }
+
+    public Account getAccountById(int accountId) throws SQLException {
+        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, p.ID AS PersonID, p.Name, p.Email, p.Phone, p.Address "
+                + "FROM Account a "
+                + "JOIN Person p ON a.PersonID = p.ID "
+                + "WHERE a.ID = ?";  // Tìm theo Account ID
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, accountId);  // Gán giá trị accountId vào câu SQL
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    // Tạo đối tượng Person
+                    Person person = new Person();
+                    person.setId(rs.getInt("PersonID"));
+                    person.setName(rs.getString("Name"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setPhone(rs.getString("Phone"));
+                    person.setAddress(rs.getString("Address"));
+
+                    // Tạo đối tượng Account
+                    Account account = new Account();
+                    account.setId(rs.getInt("ID"));  // Lấy ID của Account từ DB
+                    account.setUsername(rs.getString("Username"));
+                    account.setPassword(rs.getString("Password"));
+                    account.setRole(rs.getInt("RoleID"));
+                    account.setPersonInfo(person);  // Liên kết với đối tượng Person
+
+                    return account;  // Trả về đối tượng Account đã hoàn thiện
+                }
+            }
+        }
+        return null;  // Nếu không tìm thấy Account theo ID
     }
 
 }

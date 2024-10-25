@@ -3,17 +3,16 @@
 <%@ page import="model.Account" %> 
 <%@ page import="model.Person" %>  <!-- Import Person class -->
 <%
-    // Session đã được cung cấp sẵn trong JSP, không cần khai báo lại.
-    // Kiểm tra xem session có tồn tại và người dùng đã đăng nhập hay chưa
-    if (session == null || session.getAttribute("account") == null) {
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa
+    Account account = (Account) session.getAttribute("account");
+    if (account == null) {
         // Nếu chưa đăng nhập, chuyển hướng tới trang lỗi hoặc login
         response.sendRedirect("error");
         return;
     }
 
-    // Lấy đối tượng account từ session
-    Account account = (Account) session.getAttribute("account");
-    Person person = account != null ? account.getPersonInfo() : null;
+    // Lấy thông tin cá nhân từ đối tượng account
+    Person person = account.getPersonInfo();
 
     // Kiểm tra quyền hạn (chỉ cho phép customer role)
     if (account.getRole() != 4) {
@@ -21,6 +20,7 @@
         return;
     }
 %>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -43,7 +43,11 @@
                 <div class="profile-header">
                     <div class="profile-info">
                         <div class="profile-avatar">
-                            <img src="./assets/img/default-avatar.jpg" alt="Profile Picture">
+                            <!-- Hiển thị ảnh của người dùng -->
+                            <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
+                                ? "newUI/assets/img/" + person.getImage() 
+                                : "newUI/assets/img/default-avatar.jpg" %>" 
+                                 alt="Profile Picture">
                             <button class="edit-avatar"><i class="fas fa-camera"></i></button>
                         </div>
                         <div class="profile-details">
@@ -142,31 +146,65 @@
                     <!-- Settings Tab -->
                     <div class="profile-tab" id="settings">
                         <h2>Account Settings</h2>
-                        <form class="settings-form" action="updateProfile" method="post">
+                        <!-- Form cập nhật thông tin -->
+                        <form class="settings-form" action="customerProfile" method="post">
+                            <!-- Full Name -->
                             <div class="form-group">
                                 <label>Full Name</label>
-                                <input type="text" name="fullName" value="<%= (account != null && account.getPersonInfo() != null) ? account.getPersonInfo().getName() : "" %>" required>
+                                <input type="text" name="fullName" value="<%= person.getName() %>" required>
                             </div>
 
+                            <!-- Date of Birth -->
                             <div class="form-group">
-                                <label>Email</label>
-                                <input type="email" name="email" value="<%= (account != null && account.getPersonInfo() != null) ? account.getPersonInfo().getEmail() : "" %>" required>
+                                <label>Date of Birth</label>
+                                <input type="date" name="dateOfBirth" value="<%= person.getDateOfBirth() != null ? person.getDateOfBirth().toString() : "" %>" required>
                             </div>
 
+                            <!-- Gender -->
+                            <div class="form-group">
+                                <label>Gender</label>
+                                <select name="gender" required>
+                                    <option value="M" <%= (person.getGender() == 'M') ? "selected" : "" %>>Male</option>
+                                    <option value="F" <%= (person.getGender() == 'F') ? "selected" : "" %>>Female</option>
+                                    <option value="O" <%= (person.getGender() == 'O') ? "selected" : "" %>>Other</option>
+                                </select>
+                            </div>
+
+                            <!-- Phone -->
                             <div class="form-group">
                                 <label>Phone</label>
-                                <input type="tel" name="phone" value="<%= (account != null && account.getPersonInfo() != null) ? account.getPersonInfo().getPhone() : "" %>" required>
+                                <input type="tel" name="phone" value="<%= person.getPhone() %>" required>
+                            </div>
+                            <!-- Address -->
+                            <div class="form-group">
+                                <label>Address</label>
+                                <input type="text" name="address" value="<%= person.getAddress() %>" required>
+                            </div>
+                            <!-- Email -->
+                            <div class="form-group">
+                                <label>Email</label>
+                                <input type="email" name="email" value="<%= person.getEmail() %>" required>
                             </div>
 
+
+                            <!-- Password -->
                             <div class="form-group">
                                 <label>Password</label>
-                                <input type="password" name="password" value="<%= (account != null) ? account.getPassword() : "" %>">
+                                <div style="display: flex; align-items: center;">
+                                    <input type="password" id="password_field" name="password" class="form-control" value ="<%= account.getPassword() %>" required>
+                                    <button type="button" class="show_password" onclick="togglePassword('password_field')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                        <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                        <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                              d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                        </path>
+                                        </svg>
+                                    </button>
+                                </div>
                             </div>
 
+                            <!-- Submit Button -->
                             <button type="submit" class="save-settings-btn">Save Changes</button>
                         </form>
-
-
                     </div>
                 </div>
             </div>
@@ -176,6 +214,21 @@
         <footer>
             <!-- [Previous footer code remains the same] -->
         </footer>
+        <script>
+            function togglePassword(fieldId) {
+                const passwordField = document.getElementById(fieldId);
+                const button = event.currentTarget;  // Lấy button mà người dùng vừa bấm vào
+                const path = button.querySelector('path');
+
+                if (passwordField.type === 'password') {
+                    passwordField.type = 'text';
+                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S13.39 14 12 14s2.5-1.11 2.5-2.5S10.61 9 12 9z');
+                } else {
+                    passwordField.type = 'password';
+                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
+                }
+            }
+        </script>
 
         <script>
             AOS.init();
