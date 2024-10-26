@@ -21,6 +21,19 @@
         }
     }
 %>
+<style>
+    /* Đảm bảo khung ảnh là hình tròn */
+    .profile-avatar {
+        width: 150px; /* Kích thước vuông cho avatar */
+        height: 150px;
+        border-radius: 50%; /* Khung tròn */
+        overflow: hidden; /* Ẩn phần vượt quá để ảnh có dạng tròn */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid #ddd; /* Viền cho ảnh avatar */
+    }
+</style>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -104,13 +117,11 @@
                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
                                 <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
-                                ? "img/" + person.getImage() 
-                                : "img/default-avartar.jpg" %>"  alt="Profile Picture" class="rounded-circle">
+                ? "img/" + person.getImage() 
+                : "img/default-avatar.jpg" %>" alt="Profile Picturea" class="rounded-circle">
                                 <h2><%= (displayName != null) ? displayName : "Guest" %></h2>
                                 <div class="social-links mt-2">
                                     <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                                    <a href="#" class="instagram"><i class="bi bi-instagram"></i></a>
-                                    <a href="#" class="linkedin"><i class="bi bi-linkedin"></i></a>
                                 </div>
                             </div>
                         </div>
@@ -149,8 +160,7 @@
                                 <div class="tab-content pt-2">
 
                                     <div class="tab-pane fade show active profile-overview" id="profile-overview">
-                                        <h5 class="card-title">About</h5>
-                                        <p class="small fst-italic">Tôi yêu Việt Nam</p>
+
 
                                         <h5 class="card-title">Profile Details</h5>
 
@@ -189,19 +199,27 @@
                                     <div class="tab-pane fade profile-edit pt-3" id="profile-edit">
 
                                         <!-- Profile Edit Form -->
-                                        <form>
+                                        <form action="updateProfile" method="post" enctype="multipart/form-data">
                                             <div class="row mb-3">
                                                 <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <img src="img/profile-img.jpg" alt="Profile">
+                                                    <img id="previewImage" src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
+                                                                 ? "img/" + person.getImage() 
+                                                                 : "img/default-avatar.jpg" %>" alt="Profile">
                                                     <div class="pt-2">
-                                                        <a href="#" class="btn btn-primary btn-sm" title="Upload new profile image"><i
-                                                                class="bi bi-upload"></i></a>
-                                                        <a href="#" class="btn btn-danger btn-sm" title="Remove my profile image"><i
-                                                                class="bi bi-trash"></i></a>
+                                                        <!-- Image upload input -->
+                                                        <label class="btn btn-primary btn-sm" title="Upload new profile image">
+                                                            <i class="bi bi-upload"></i> Upload
+                                                            <input type="file" name="profileImage" style="display: none;" onchange="previewSelectedImage(event)">
+                                                        </label>
+                                                        <!-- Image delete input -->
+                                                        <button type="button" onclick="deleteProfileImage()" class="btn btn-danger btn-sm" title="Remove my profile image">
+                                                            <i class="bi bi-trash"></i> Delete
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
+
 
                                             <div class="row mb-3">
                                                 <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
@@ -210,13 +228,6 @@
                                                 </div>
                                             </div>
 
-                                            <div class="row mb-3">
-                                                <label for="about" class="col-md-4 col-lg-3 col-form-label">About</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <textarea name="about" class="form-control" id="about"
-                                                              style="height: 100px">Sunt est soluta temporibus accusantium neque nam maiores cumque temporibus. Tempora libero non est unde veniam est qui dolor. Ut sunt iure rerum quae quisquam autem eveniet perspiciatis odit. Fuga sequi sed ea saepe at unde.</textarea>
-                                                </div>
-                                            </div>
 
                                             <div class="row mb-3">
                                                 <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Date of Birth</label>
@@ -224,7 +235,15 @@
                                                     <input name="dateOfBirth" type="text" class="form-control" id="dateOfBirth"
                                                            value="<%= dateOfBirth %>">
                                                 </div>
-                                            </div>                                         
+                                            </div>   
+
+                                            <div class="row mb-3">
+                                                <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+                                                <div class="col-md-8 col-lg-9">
+                                                    <input name="gender" type="text" class="form-control" id="gender"
+                                                           value="<%= (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "Other" %>">
+                                                </div>
+                                            </div>    
 
                                             <div class="row mb-3">
                                                 <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
@@ -257,23 +276,6 @@
                                                            value="https://facebook.com/#">
                                                 </div>
                                             </div>
-
-                                            <div class="row mb-3">
-                                                <label for="Instagram" class="col-md-4 col-lg-3 col-form-label">Instagram Profile</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <input name="instagram" type="text" class="form-control" id="Instagram"
-                                                           value="https://instagram.com/#">
-                                                </div>
-                                            </div>
-
-                                            <div class="row mb-3">
-                                                <label for="Linkedin" class="col-md-4 col-lg-3 col-form-label">Linkedin Profile</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <input name="linkedin" type="text" class="form-control" id="Linkedin"
-                                                           value="https://linkedin.com/#">
-                                                </div>
-                                            </div>
-
                                             <div class="text-center">
                                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                                             </div>
@@ -423,7 +425,52 @@
                     }
                 }
             </script>
+            <script>
+                // Xem trước ảnh khi người dùng chọn file
+                function previewSelectedImage(event) {
+                    const previewImage = document.getElementById('previewImage');
+                    const file = event.target.files[0];
 
+                    if (file) {
+                        const reader = new FileReader();
+
+                        reader.onload = function (e) {
+                            previewImage.src = e.target.result;
+                        };
+
+                        reader.readAsDataURL(file);
+                    }
+                }
+
+                // Đặt ảnh về ảnh mặc định khi nhấn Delete
+                function deleteProfileImage() {
+                    const previewImage = document.getElementById('previewImage');
+                    previewImage.src = 'img/default-avatar.jpg';
+
+                    // Đặt giá trị deleteImage để xác định yêu cầu xóa
+                    const deleteForm = document.getElementById('deleteImageForm');
+                    const deleteInput = document.createElement('input');
+                    deleteInput.setAttribute('type', 'hidden');
+                    deleteInput.setAttribute('name', 'deleteImage');
+                    deleteInput.setAttribute('value', 'true');
+                    deleteForm.appendChild(deleteInput);
+
+                    deleteForm.submit(); // Submit form để xóa ảnh
+                }
+            </script>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const activeTab = urlParams.get('tab');
+
+                    if (activeTab === 'editProfile') {
+                        const editTabButton = document.querySelector('[data-bs-target="#profile-edit"]');
+                        if (editTabButton) {
+                            editTabButton.click();
+                        }
+                    }
+                });
+            </script>
 
             <% 
     String successMessage = (String) session.getAttribute("successMessage");
@@ -442,7 +489,33 @@
             <%
                 }
             %>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    // Lấy tham số 'tab' từ URL
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const tab = urlParams.get('tab');
 
+                    // Nếu tham số tab có giá trị là 'edit', chọn tab "Edit Profile"
+                    if (tab === 'edit') {
+                        const editTabButton = document.querySelector('[data-bs-target="#profile-edit"]');
+                        const editTabContent = document.querySelector('#profile-edit');
+
+                        if (editTabButton && editTabContent) {
+                            // Kích hoạt tab "Edit Profile"
+                            editTabButton.classList.add('active');
+                            editTabContent.classList.add('show', 'active');
+
+                            // Vô hiệu hóa tab "Overview" mặc định
+                            const overviewTabButton = document.querySelector('[data-bs-target="#profile-overview"]');
+                            const overviewTabContent = document.querySelector('#profile-overview');
+                            if (overviewTabButton && overviewTabContent) {
+                                overviewTabButton.classList.remove('active');
+                                overviewTabContent.classList.remove('show', 'active');
+                            }
+                        }
+                    }
+                });
+            </script>
         </main><!-- End #main -->
 
         <!-- ======= Footer ======= -->

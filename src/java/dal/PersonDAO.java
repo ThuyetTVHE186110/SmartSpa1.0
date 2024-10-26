@@ -160,7 +160,6 @@ public class PersonDAO extends DBContext {
 //        }
 //        return null;
 //    }
-
     public Person getPersonByPhone(String phone) {
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -501,6 +500,15 @@ public class PersonDAO extends DBContext {
             }
         }
         return null;
+    }
+
+    public void updateImage(int personId, String imageName) throws SQLException {
+        String sql = "UPDATE Person SET Image = ? WHERE ID = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, imageName);
+            ps.setInt(2, personId);
+            ps.executeUpdate();
+        }
     }
 
     public static void main(String[] args) {
