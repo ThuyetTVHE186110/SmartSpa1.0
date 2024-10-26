@@ -36,7 +36,7 @@ public class UpdateProfileServlet extends HttpServlet {
         String fullName = request.getParameter("fullName");
         String phone = request.getParameter("phone");
         String address = request.getParameter("address");
-        String email = request.getParameter("email");
+        String newEmail = request.getParameter("email");
         String dateOfBirthStr = request.getParameter("dateOfBirth");
         String genderStr = request.getParameter("gender");
         // Handle other fields as needed, like phone, address, etc.
@@ -49,9 +49,23 @@ public class UpdateProfileServlet extends HttpServlet {
         if (address != null) {
             person.setAddress(address);
         }
-        if (email != null) {
-            person.setEmail(email);
+        try {
+            // Update email and username if the email has changed
+            if (newEmail != null && !newEmail.equals(person.getEmail())) {
+                boolean emailUpdated = new PersonDAO().updateEmailAndUsername(person.getId(), newEmail);
+                if (emailUpdated) {
+                    person.setEmail(newEmail);  // Update email in session object
+                    account.setUsername(newEmail);  // Update username in session object
+                } else {
+                    // Handle error (e.g., show an error message)
+                    request.setAttribute("errorMessage", "Failed to update email.");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            request.setAttribute("errorMessage", "An error occurred while updating email. Please try again.");
         }
+
         if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
             try {
                 java.sql.Date dateOfBirth = java.sql.Date.valueOf(dateOfBirthStr); // Convert String to Date
@@ -103,6 +117,7 @@ public class UpdateProfileServlet extends HttpServlet {
             request.getRequestDispatcher("userProfile.jsp").forward(request, response);
             return;
         }
+        session.setAttribute("successMessage", "Profile updated successfully!");
 
         // Redirect back to profile page to view updated info
         response.sendRedirect("userProfile.jsp?tab=edit");

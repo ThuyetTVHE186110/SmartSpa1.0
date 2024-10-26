@@ -511,6 +511,60 @@ public class PersonDAO extends DBContext {
         }
     }
 
+    public boolean updateEmailAndUsername(int personId, String newEmail) throws SQLException {
+        Connection conn = null;
+        PreparedStatement personStmt = null;
+        PreparedStatement accountStmt = null;
+        boolean success = false;
+
+        String updatePersonEmail = "UPDATE Person SET Email = ? WHERE ID = ?";
+        String updateAccountUsername = "UPDATE Account SET Username = ? WHERE PersonID = ?";
+
+        try {
+            conn = DBContext.getConnection();
+            conn.setAutoCommit(false);  // Start transaction
+
+            // Update email in Person table
+            personStmt = conn.prepareStatement(updatePersonEmail);
+            personStmt.setString(1, newEmail);
+            personStmt.setInt(2, personId);
+            int personRows = personStmt.executeUpdate();
+
+            // Update username in Account table
+            accountStmt = conn.prepareStatement(updateAccountUsername);
+            accountStmt.setString(1, newEmail);
+            accountStmt.setInt(2, personId);
+            int accountRows = accountStmt.executeUpdate();
+
+            // Commit transaction if both updates are successful
+            if (personRows > 0 && accountRows > 0) {
+                conn.commit();
+                success = true;
+            } else {
+                conn.rollback();  // Rollback if either update fails
+            }
+        } catch (SQLException e) {
+            if (conn != null) {
+                conn.rollback();  // Rollback on error
+            }
+            throw e;
+        } finally {
+            if (personStmt != null) {
+                personStmt.close();
+            }
+            if (accountStmt != null) {
+                accountStmt.close();
+            }
+            if (conn != null) {
+                conn.setAutoCommit(true);  // Restore default behavior
+            }
+            if (conn != null) {
+                conn.close();
+            }
+        }
+        return success;
+    }
+
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
         int max = testDAO.maxID();

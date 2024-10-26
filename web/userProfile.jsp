@@ -238,12 +238,16 @@
                                             </div>   
 
                                             <div class="row mb-3">
-                                                <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Gender</label>
+                                                <label for="gender" class="col-md-4 col-lg-3 col-form-label">Gender</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="gender" type="text" class="form-control" id="gender"
-                                                           value="<%= (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "Other" %>">
+                                                    <select name="gender" class="form-control" id="gender" required>
+                                                        <option value="M" <%= (gender == 'M') ? "selected" : "" %>>Male</option>
+                                                        <option value="F" <%= (gender == 'F') ? "selected" : "" %>>Female</option>
+                                                        <option value="O" <%= (gender == 'O') ? "selected" : "" %>>Other</option>
+                                                    </select>
                                                 </div>
-                                            </div>    
+                                            </div>
+
 
                                             <div class="row mb-3">
                                                 <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
@@ -267,15 +271,6 @@
                                                 </div>
                                             </div>
 
-
-
-                                            <div class="row mb-3">
-                                                <label for="Facebook" class="col-md-4 col-lg-3 col-form-label">Facebook Profile</label>
-                                                <div class="col-md-8 col-lg-9">
-                                                    <input name="facebook" type="text" class="form-control" id="Facebook"
-                                                           value="https://facebook.com/#">
-                                                </div>
-                                            </div>
                                             <div class="text-center">
                                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                                             </div>
