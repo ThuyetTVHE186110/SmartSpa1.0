@@ -61,7 +61,7 @@
                         </c:forEach>
                     </c:when>
                     <c:otherwise>
-                        <p>No blog posts available.</p>
+                        <p>No blog posts found for your search.</p>
                     </c:otherwise>
                 </c:choose>
 
@@ -109,11 +109,23 @@
             <aside class="blog-sidebar">
                 <!-- Search Widget -->
                 <div class="sidebar-widget search-widget">
-                    <form class="search-form">
-                        <input type="search" placeholder="Search blog...">
+                    <form class="search-form" action="blog" method="GET">
+                        <input type="search" name="query" placeholder="Search blog...">
                         <button type="submit"><i class="fas fa-search"></i></button>
                     </form>
                 </div>
+                <c:choose>
+                    <c:when test="${not empty blogs}">
+                        <!-- Loop and display blogs as before -->
+                        <c:forEach var="blog" items="${blogs}" varStatus="status">
+                            <!-- Blog post display logic here -->
+                        </c:forEach>
+                    </c:when>
+                    <c:otherwise>
+                        <p>No blog posts found for your search.</p>
+                    </c:otherwise>
+                </c:choose>
+
 
                 <!-- Categories Widget -->
                 <div class="sidebar-widget categories-widget">

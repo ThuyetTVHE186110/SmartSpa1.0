@@ -65,27 +65,34 @@ public class BlogServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         BlogDAO blogDAO = new BlogDAO();
+        List<Blog> blogs;
+        List<Blog> recentBlogs;
+        String query = request.getParameter("query");
         int page = 1;
         int blogsPerPage = 4;
 
-        // Get the page number from the request, default to 1 if not provided
         String pageParam = request.getParameter("page");
         if (pageParam != null && !pageParam.isEmpty()) {
             page = Integer.parseInt(pageParam);
         }
 
         try {
-            int totalBlogs = blogDAO.getBlogCount();
-            int totalPages = (int) Math.ceil((double) totalBlogs / blogsPerPage);
+            if (query != null && !query.trim().isEmpty()) {
+                // Perform search if a query is provided
+                blogs = blogDAO.searchBlogs(query);
+            } else {
+                // Otherwise, paginate the blogs as usual
+                int totalBlogs = blogDAO.getBlogCount();
+                int totalPages = (int) Math.ceil((double) totalBlogs / blogsPerPage);
+                blogs = blogDAO.getBlogsForPage(page, blogsPerPage);
 
-            // Fetch blogs for the current page
-            List<Blog> blogs = blogDAO.getBlogsForPage(page, blogsPerPage);
-            List<Blog> recentBlogs = blogDAO.getRecentBlogs();
+                request.setAttribute("currentPage", page);
+                request.setAttribute("totalPages", totalPages);
+            }
 
-            request.setAttribute("blogs", blogs); // Set paginated blogs
+            recentBlogs = blogDAO.getRecentBlogs();
+            request.setAttribute("blogs", blogs);
             request.setAttribute("recentBlogs", recentBlogs);
-            request.setAttribute("currentPage", page);
-            request.setAttribute("totalPages", totalPages);
 
             request.getRequestDispatcher("blog.jsp").forward(request, response);
         } catch (SQLException e) {

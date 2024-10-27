@@ -137,4 +137,46 @@ public class BlogDAO {
         return blogs;
     }
 
+    public List<Blog> searchBlogs(String query) throws SQLException {
+        List<Blog> blogs = new ArrayList<>();
+        String sql = """
+                 SELECT b.ID, 
+                                                              b.Title, 
+                                                              b.Content, 
+                                                              b.StaffID, 
+                                                              b.DatePosted, 
+                                                              p.Name AS AuthorName,
+                                                              b.Image  
+                                                       FROM Blog b
+                                                       JOIN Person p ON b.StaffID = p.ID
+                                                       JOIN Account a ON a.PersonID = p.ID
+                                  WHERE Title LIKE ? OR Content LIKE ?
+                                  ORDER BY DatePosted DESC
+                 """;
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            String searchQuery = "%" + query + "%";
+            stmt.setString(1, searchQuery);
+            stmt.setString(2, searchQuery);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Blog blog = new Blog(
+                            rs.getInt("ID"),
+                            rs.getString("Title"),
+                            rs.getString("Content"),
+                            rs.getInt("StaffID"),
+                            rs.getDate("DatePosted"),
+                            rs.getString("AuthorName"),
+                            rs.getString("Image")
+                    );
+                    blogs.add(blog);
+                }
+            }
+        }
+
+        return blogs;
+    }
+
 }
