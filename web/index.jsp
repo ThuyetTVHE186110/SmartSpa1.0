@@ -96,7 +96,7 @@
 
                 <div class="footer-column contact-info">
                     <h4>Contact Us</h4>
-                    <p><strong>Blushed Beauty Bar</strong></p>
+                    <p><strong>Smart Beauty Spa</strong></p>
                     <p><i class="fas fa-map-marker-alt"></i> 5177 44th Street S, Fargo, ND</p>
                     <p><i class="fas fa-phone"></i> 218.790.3444</p>
                     <div class="social-icons">
@@ -117,7 +117,7 @@
             </div>
 
             <div class="footer-bottom">
-                <p>&copy; 2023 Blushed Beauty Bar. All rights reserved.</p>
+                <p>&copy; 2023 Smart Beauty Spa. All rights reserved.</p>
                 <ul class="footer-legal">
                     <li><a href="#">Privacy Policy</a></li>
                     <li><a href="#">Terms of Service</a></li>
