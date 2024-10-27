@@ -81,7 +81,6 @@ public class BlogServlet extends HttpServlet {
             // Fetch blogs for the current page
             List<Blog> blogs = blogDAO.getBlogsForPage(page, blogsPerPage);
             List<Blog> recentBlogs = blogDAO.getRecentBlogs();
-            blogs = blogDAO.getAllBlogs();
 
             request.setAttribute("blogs", blogs); // Set paginated blogs
             request.setAttribute("recentBlogs", recentBlogs);

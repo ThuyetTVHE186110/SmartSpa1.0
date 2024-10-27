@@ -97,18 +97,24 @@ public class BlogDAO {
 
     public List<Blog> getBlogsForPage(int page, int blogsPerPage) throws SQLException {
         List<Blog> blogs = new ArrayList<>();
-        int offset = (page - 1) * blogsPerPage;
         String sql = """
-                 SELECT b.ID, b.Title, b.Content, b.StaffID, b.DatePosted, b.Image, p.Name AS AuthorName
-                 FROM Blog b
-                 JOIN Person p ON b.StaffID = p.ID
-                 JOIN Account a ON a.PersonID = p.ID
-                 WHERE a.RoleID = 3
-                 ORDER BY b.DatePosted DESC
+                 SELECT b.ID, 
+                                             b.Title, 
+                                             b.Content, 
+                                             b.StaffID, 
+                                             b.DatePosted, 
+                                             p.Name AS AuthorName,
+                                             b.Image  -- Make sure Image column is included
+                                      FROM Blog b
+                                      JOIN Person p ON b.StaffID = p.ID
+                                      JOIN Account a ON a.PersonID = p.ID
+                 ORDER BY DatePosted DESC
                  OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                  """;
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            int offset = (page - 1) * blogsPerPage;
             stmt.setInt(1, offset);
             stmt.setInt(2, blogsPerPage);
 
@@ -120,13 +126,14 @@ public class BlogDAO {
                             rs.getString("Content"),
                             rs.getInt("StaffID"),
                             rs.getDate("DatePosted"),
-                            rs.getString("Image"),
-                            rs.getString("AuthorName")
+                            rs.getString("AuthorName"),
+                            rs.getString("Image") // Ensure Blog has an Image field in the constructor
                     );
                     blogs.add(blog);
                 }
             }
         }
+
         return blogs;
     }
 
