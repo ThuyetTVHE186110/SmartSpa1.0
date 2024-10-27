@@ -65,7 +65,7 @@ public class FeedbackServlet extends HttpServlet {
 
         request.setAttribute("feedback", feedback);
 
-        request.getRequestDispatcher("testimonial.jsp").forward(request, response);
+        request.getRequestDispatcher("newUI/services.jsp").forward(request, response);
     }
 
     /**
