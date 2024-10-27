@@ -11,7 +11,7 @@
         // Get the account object from session
         Account account = (Account) session.getAttribute("account");
 
-        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+        if (account.getRole() == 1) {
             // Allow access to the page (do nothing and let the JSP render)
         } else {
             // Set an error message and redirect to an error page
@@ -60,7 +60,21 @@
 
         <!-- ======= Sidebar ======= -->
         <jsp:include page="sideBar.jsp" />
+        <script>
+            function filterAccounts() {
+                const selectedRole = document.getElementById("roleFilter").value;
+                const rows = document.querySelectorAll(".account-row");
 
+                rows.forEach(row => {
+                    const role = row.getAttribute("data-role");
+                    if (selectedRole === "all" || role === selectedRole) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+        </script>
         <main id="main" class="main">
 
             <div class="pagetitle">
@@ -68,7 +82,7 @@
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="dashboard.jsp">Home</a></li>
-                        <li class="breadcrumb-item active">Account Management</li>
+                        <li class="breadcrumb-item active">Account</li>
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
@@ -79,9 +93,17 @@
 
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">User Accounts</h5>
-                                <p>Manage user accounts from this panel.</p>
-
+                                <h5 class="card-title">Account Details</h5>
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <label for="roleFilter" class="form-label">Filter by Role:</label>
+                                        <select id="roleFilter" class="form-select" onchange="filterAccounts()">
+                                            <option value="all">All Roles</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Staff">Staff</option>
+                                        </select>
+                                    </div>
+                                </div>
                                 <!-- Table with stripped rows -->
                                 <table class="table datatable">
                                     <thead>
@@ -97,7 +119,7 @@
                                     <tbody>
                                         <!-- Iterate over the 'accounts' list passed from the servlet -->
                                         <c:forEach var="account" items="${accounts}" varStatus="status">
-                                            <tr>
+                                            <tr class="account-row" data-role="${account.roleName}">
                                                 <th scope="row">${status.index + 1}</th>  <!-- Auto-incremented index -->
                                                 <td>${account.personInfo.name}</td>  <!-- Display person's name -->
                                                 <td>${account.personInfo.email}</td>  <!-- Display person's email -->
@@ -117,8 +139,54 @@
                                                 </td>
                                                 <td>
                                                     <!-- Buttons for actions such as edit and delete -->
-                                                    <button type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                                            data-bs-target="#editAccountModal">View</button>
+                                                    <button type="button" class="btn btn-primary btn-sm view-account-btn"
+                                                            data-bs-toggle="modal" data-bs-target="#editAccountModal"
+                                                            data-id="${account.id}"
+                                                            data-name="${account.personInfo.name}"
+                                                            data-email="${account.personInfo.email}"
+                                                            data-role="${account.roleName}"
+                                                            data-status="${account.status}">
+                                                        View
+                                                    </button>
+                                                    <script>
+                                                        document.addEventListener("DOMContentLoaded", function () {
+                                                            const viewButtons = document.querySelectorAll(".view-account-btn");
+
+                                                            viewButtons.forEach(button => {
+                                                                button.addEventListener("click", function () {
+                                                                    // Get data attributes from the clicked button
+                                                                    const id = button.getAttribute("data-id");
+                                                                    const name = button.getAttribute("data-name");
+                                                                    const email = button.getAttribute("data-email");
+                                                                    const role = button.getAttribute("data-role");
+                                                                    const status = button.getAttribute("data-status");
+
+                                                                    // Set modal fields with the account details
+                                                                    document.getElementById("editName").value = name;
+                                                                    document.getElementById("editEmail").value = email;
+                                                                    document.getElementById("editRole").value = role;
+                                                                    document.getElementById("editStatus").value = status;
+
+                                                                    // You could also store the ID somewhere in the modal to use later for saving changes
+                                                                    document.getElementById("editAccountModal").setAttribute("data-id", id);
+                                                                });
+                                                            });
+                                                        });
+                                                    </script>
+                                                    <script>
+                                                        document.querySelector("#editAccountModal .btn-primary").addEventListener("click", function () {
+                                                            const modal = document.getElementById("editAccountModal");
+                                                            const accountId = modal.getAttribute("data-id");
+
+                                                            const updatedName = document.getElementById("editName").value;
+                                                            const updatedEmail = document.getElementById("editEmail").value;
+                                                            const updatedRole = document.getElementById("editRole").value;
+                                                            const updatedStatus = document.getElementById("editStatus").value;
+
+                                                            // Perform AJAX request to update account (if server setup for this)
+                                                            // Alternatively, submit a form or send this data to the backend to save
+                                                        });
+                                                    </script>
                                                     <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                                 </td>
                                             </tr>
@@ -145,15 +213,6 @@
 
         </main><!-- End #main -->
 
-        <!-- ======= Footer ======= -->
-        <footer id="footer" class="footer">
-            <div class="copyright">
-                &copy; Copyright <strong><span>SmartBeautySpa</span></strong>. All Rights Reserved
-            </div>
-            <div class="credits">
-                Designed by Chien</a>
-            </div>
-        </footer><!-- End Footer -->
 
         <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i
                 class="bi bi-arrow-up-short"></i></a>

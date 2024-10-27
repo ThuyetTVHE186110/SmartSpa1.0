@@ -198,7 +198,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>UserProfileServlet</servlet-name>
-        <url-pattern>/UserProfileServlet</url-pattern>
+        <url-pattern>/userProfile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DashboardServlet</servlet-name>

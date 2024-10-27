@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %>  
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
-<%@ page import="model.Person" %>  <!-- Import Person class -->
+<%@ page import="model.Person" %>
 
 
 <header id="header" class="header fixed-top d-flex align-items-center">
@@ -192,7 +192,7 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="userProfile.jsp">
+                        <a class="dropdown-item d-flex align-items-center" href="userProfile">
                             <i class="bi bi-person"></i>
                             <span>My Profile</span>
                         </a>
@@ -202,7 +202,7 @@
                     </li>
 
                     <li>
-                        <a class="dropdown-item d-flex align-items-center" href="userProfile.jsp">
+                        <a class="dropdown-item d-flex align-items-center" href="userProfile.jsp?tab=edit">
                             <i class="bi bi-gear"></i>
                             <span>Account Settings</span>
                         </a>
@@ -211,12 +211,6 @@
                         <hr class="dropdown-divider">
                     </li>
 
-                    <li>
-                        <a class="dropdown-item d-flex align-items-center" href="pages-faq.html">
-                            <i class="bi bi-question-circle"></i>
-                            <span>Need Help?</span>
-                        </a>
-                    </li>
                     <li>
                         <hr class="dropdown-divider">
                     </li>

@@ -155,7 +155,7 @@ public class AccountDAO {
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
                 + "JOIN Role r ON a.RoleID = r.ID "
-                + "WHERE a.RoleID IN (1, 2, 3)";
+                + "WHERE a.RoleID IN (2, 3)";
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
