@@ -9,6 +9,31 @@
         <title>JSP Page</title>
     </head>
     <body>
+        <script>
+            // Check if the page is scrolled and adjust navbar styling
+            window.addEventListener('scroll', function () {
+                const header = document.querySelector('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+
+// Check if the page has a white background and adjust navbar styling
+            document.addEventListener('DOMContentLoaded', () => {
+                const header = document.querySelector('header');
+                const pageBackground = getComputedStyle(document.body).backgroundColor;
+
+                // If the background is white, add a class to modify navbar colors
+                if (pageBackground === 'rgb(255, 255, 255)') {
+                    header.classList.add('white-background');
+                } else {
+                    header.classList.remove('white-background');
+                }
+            });
+
+        </script>
         <!-- Navbar Section -->
         <header>
             <nav class="navbar">
@@ -27,6 +52,7 @@
                     <li><a href="contact.jsp">Contact</a></li>
                     <li><a href="appointment1.jsp">Appointments</a></li>
                     <li><a href="about.jsp">About</a></li>
+                    <li><a href="blog.jsp">Blog</a></li>
                     <li> <%
                             // Check if the user is logged in
                             Account loggedInAccount = (Account) session.getAttribute("account");
