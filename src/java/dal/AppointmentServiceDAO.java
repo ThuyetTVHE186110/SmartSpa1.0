@@ -11,9 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import model.Appointment;
 import model.AppointmentService;
-import model.Service;
 
 /**
  * AppointmentService Data Access Object
@@ -22,14 +20,15 @@ import model.Service;
  */
 public class AppointmentServiceDAO extends DBContext {
 
-    public void addAppointmentService(int appointmentid, Service service) {
+    public void addAppointmentService(int appointmentid, int serviceID, int staffID) {
         PreparedStatement stm = null;
         ResultSet rs = null;
         try (Connection connection = getConnection()) {
-            String query = "INSERT INTO Appointment_Service (appointmentID, serviceID) VALUES (?, ?)";
+            String query = "INSERT INTO Appointment_Service (appointmentID, serviceID, staffID) VALUES (?, ?, ?)";
             stm = connection.prepareStatement(query);
             stm.setInt(1, appointmentid);
-            stm.setInt(2, service.getId());
+            stm.setInt(2, serviceID);
+            stm.setInt(3, staffID);
             // Thực thi lệnh thêm
             stm.executeUpdate();
         } catch (SQLException e) {
@@ -51,9 +50,10 @@ public class AppointmentServiceDAO extends DBContext {
 
     public List<AppointmentService> getAllAppointmentServices() {
         List<AppointmentService> services = new ArrayList<>();
+        PersonDAO personDAO = new PersonDAO();
+        ServiceDAO serviceDAO = new ServiceDAO();
         PreparedStatement stm = null;
         ResultSet rs = null;
-
         try (Connection connection = getConnection()) {
             String query = "SELECT * FROM Appointment_Service";
             stm = connection.prepareStatement(query);
@@ -63,7 +63,47 @@ public class AppointmentServiceDAO extends DBContext {
                 AppointmentService appointmentService = new AppointmentService();
                 appointmentService.setId(rs.getInt("ID"));
                 appointmentService.setAppointmentID(rs.getInt("AppointmentID"));
-                appointmentService.setServiceID(rs.getInt("ServiceID"));
+                appointmentService.setService(serviceDAO.selectService(rs.getInt("ServiceID")));
+                appointmentService.setStaff(personDAO.getPersonByID(rs.getInt("StaffID")));
+                services.add(appointmentService);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while retrieving all appointment services: " + e.getMessage());
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+        return services;
+    }
+    
+
+    public List<AppointmentService> getServiceByID(int appointmentID) {
+        List<AppointmentService> services = new ArrayList<>();
+        PersonDAO personDAO = new PersonDAO();
+        ServiceDAO serviceDAO = new ServiceDAO();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try (Connection connection = getConnection()) {
+            String query = "SELECT * FROM Appointment_Service Where AppointmentID = ?";
+            stm = connection.prepareStatement(query);
+            stm.setInt(1, appointmentID);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                AppointmentService appointmentService = new AppointmentService();
+                appointmentService.setId(rs.getInt("ID"));
+                appointmentService.setAppointmentID(rs.getInt("AppointmentID"));
+                appointmentService.setService(serviceDAO.selectService(rs.getInt("ServiceID")));
+                appointmentService.setStaff(personDAO.getPersonByID(rs.getInt("StaffID")));
                 services.add(appointmentService);
             }
         } catch (SQLException e) {
