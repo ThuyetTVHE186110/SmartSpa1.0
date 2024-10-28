@@ -31,72 +31,75 @@
             <div class="container">
                 <div class="category-filters">
                     <button class="category-btn active" data-category="all">All Products</button>
-                    <button class="category-btn" data-category="lash-care">Lash Care</button>
-                    <button class="category-btn" data-category="skincare">Skincare</button>
-                    <button class="category-btn" data-category="tools">Tools & Accessories</button>
+                    <button class="category-btn" data-category="Lash-Care">Lash Care</button>
+                    <button class="category-btn" data-category="Skincare">Skincare</button>
+                    <button class="category-btn" data-category="Tools">Tools & Accessories</button>
                 </div>
 
                 <!-- Products Grid -->
                 <div class="products-grid">
-                    <!-- Lash Care Products -->
-                    <div class="product-card" data-category="lash-care" data-aos="fade-up">
-                        <div class="product-image">
-                            <img src="newUI/assets/img/products/lash-cleanser.jpg" alt="Lash Cleanser">
-                            <div class="product-overlay">
-                                <a href="product-detail.html" class="quick-view-btn">View Details</a>
+                    <c:forEach items="${product}" var="p">
+                        <!-- Lash Care Products -->
+                        <div class="product-card" data-category="${p.category}" data-aos="fade-up">
+                            <div class="product-image">
+                                <img class="img-fluid" src="img/${p.image}" alt="">
+                                <div class="product-overlay">
+                                    <a href="producdetail?id=${p.id}" class="quick-view-btn">View Details</a>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <h3>${p.name}</h3>
+                                <p class="price">${p.price}$</p>
+                                <button class="add-to-cart" onclick="addToCart(this)">Add to Cart</button>
                             </div>
                         </div>
-                        <div class="product-info">
-                            <h3>Lash Cleanser</h3>
-                            <p class="price">$24.99</p>
-                            <button class="add-to-cart" onclick="addToCart(this)">Add to Cart</button>
-                        </div>
-                    </div>
 
-                    <div class="product-card" data-category="lash-care" data-aos="fade-up">
-                        <div class="product-image">
-                            <img src="./assets/img/products/lash-brush.jpg" alt="Lash Brush">
-                            <div class="product-overlay">
-                                <button class="quick-view-btn">Quick View</button>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Professional Lash Brush</h3>
-                            <p class="price">$12.99</p>
-                            <button class="add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <!-- Skincare Products -->
-                    <div class="product-card" data-category="skincare" data-aos="fade-up">
-                        <div class="product-image">
-                            <img src="./assets/img/products/facial-serum.jpg" alt="Facial Serum">
-                            <div class="product-overlay">
-                                <button class="quick-view-btn">Quick View</button>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h3>Hydrating Facial Serum</h3>
-                            <p class="price">$45.99</p>
-                            <button class="add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
-
-                    <!-- Tools & Accessories -->
-                    <div class="product-card" data-category="tools" data-aos="fade-up">
-                        <div class="product-image">
-                            <img src="./assets/img/products/lash-mirror.jpg" alt="Lash Mirror">
-                            <div class="product-overlay">
-                                <button class="quick-view-btn">Quick View</button>
-                            </div>
-                        </div>
-                        <div class="product-info">
-                            <h3>LED Lash Mirror</h3>
-                            <p class="price">$34.99</p>
-                            <button class="add-to-cart">Add to Cart</button>
-                        </div>
-                    </div>
+                        <!--                        <div class="product-card" data-category="lash-care" data-aos="fade-up">
+                                                    <div class="product-image">
+                                                        <img src="./assets/img/products/lash-brush.jpg" alt="Lash Brush">
+                                                        <div class="product-overlay">
+                                                            <button class="quick-view-btn">Quick View</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="product-info">
+                                                        <h3>Professional Lash Brush</h3>
+                                                        <p class="price">$12.99</p>
+                                                        <button class="add-to-cart">Add to Cart</button>
+                                                    </div>
+                                                </div>
+                        
+                                                 Skincare Products 
+                                                <div class="product-card" data-category="skincare" data-aos="fade-up">
+                                                    <div class="product-image">
+                                                        <img src="./assets/img/products/facial-serum.jpg" alt="Facial Serum">
+                                                        <div class="product-overlay">
+                                                            <button class="quick-view-btn">Quick View</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="product-info">
+                                                        <h3>Hydrating Facial Serum</h3>
+                                                        <p class="price">$45.99</p>
+                                                        <button class="add-to-cart">Add to Cart</button>
+                                                    </div>
+                                                </div>
+                        
+                                                 Tools & Accessories 
+                                                <div class="product-card" data-category="tools" data-aos="fade-up">
+                                                    <div class="product-image">
+                                                        <img src="./assets/img/products/lash-mirror.jpg" alt="Lash Mirror">
+                                                        <div class="product-overlay">
+                                                            <button class="quick-view-btn">Quick View</button>
+                                                        </div>
+                                                    </div>
+                                                    <div class="product-info">
+                                                        <h3>LED Lash Mirror</h3>
+                                                        <p class="price">$34.99</p>
+                                                        <button class="add-to-cart">Add to Cart</button>
+                                                    </div>
+                                                </div>-->
+                    </c:forEach>
                 </div>
+
             </div>
         </section>
 
@@ -155,6 +158,38 @@
         </footer>
 
         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Chọn tất cả các nút danh mục và thẻ sản phẩm
+                const categoryButtons = document.querySelectorAll('.category-btn');
+                const productCards = document.querySelectorAll('.product-card');
+
+                // Lặp qua từng nút danh mục
+                categoryButtons.forEach(button => {
+                    // Thêm sự kiện click cho từng nút
+                    button.addEventListener('click', () => {
+                        // Lấy danh mục của nút được nhấn
+                        const category = button.getAttribute('data-category');
+
+                        // Xóa lớp 'active' khỏi tất cả các nút và chỉ thêm vào nút được nhấn
+                        categoryButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
+
+                        // Hiển thị hoặc ẩn các thẻ sản phẩm dựa trên danh mục đã chọn
+                        productCards.forEach(card => {
+                            // Lấy danh mục của thẻ sản phẩm
+                            const productCategory = card.getAttribute('data-category');
+
+                            // Hiển thị thẻ nếu nó khớp với danh mục đã chọn hoặc nếu chọn 'all'
+                            if (category === 'all' || productCategory === category) {
+                                card.style.display = 'block'; // Hiển thị thẻ
+                            } else {
+                                card.style.display = 'none'; // Ẩn thẻ
+                            }
+                        });
+                    });
+                });
+            });
+
             AOS.init();
 
             // Hamburger menu functionality
