@@ -77,8 +77,15 @@
                                 <i class="bi bi-circle"></i><span>Feedback Management</span>
                             </a>
                         </li>
+                        <li>
+                            <a href="blogManagement">
+                                <i class="bi bi-circle"></i><span>Blog Management</span>
+                            </a>
+                        </li>
                     </ul>
                 </li><!-- End Staff Nav -->
+
+
 
             </ul>
 

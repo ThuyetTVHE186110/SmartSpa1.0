@@ -395,7 +395,7 @@
                 // Đặt ảnh về ảnh mặc định khi nhấn Delete
                 function deleteProfileImage() {
                     const previewImage = document.getElementById('previewImage');
-                    previewImage.src = 'img/default-avatar.jpg';
+                    previewImage.src = 'img/default-avartar.jpg';
 
                     // Đặt giá trị deleteImage để xác định yêu cầu xóa
                     const deleteForm = document.getElementById('deleteImageForm');

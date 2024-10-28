@@ -172,10 +172,15 @@
             </li><!-- End Messages Nav -->
 
             <li class="nav-item dropdown pe-3">
-                <% 
-                    Account account = (Account) session.getAttribute("account"); 
-                    String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
-                    Person person = account.getPersonInfo();
+                <%
+    Account account = (Account) session.getAttribute("account");
+    Person person = null;
+    String displayName = "Guest";
+
+    if (account != null) {
+        person = account.getPersonInfo();
+        displayName = person != null ? person.getName() : "Guest";
+    }
                 %>
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
                     <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 

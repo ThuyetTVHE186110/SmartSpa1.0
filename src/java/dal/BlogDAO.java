@@ -179,4 +179,79 @@ public class BlogDAO {
         return blogs;
     }
 
+    // Method to create a new blog
+    public void createBlog(Blog blog) throws SQLException {
+        String sql = "INSERT INTO Blog (Title, Content, StaffID, DatePosted, Image) VALUES (?, ?, ?, GETDATE(), ?)";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, blog.getTitle());
+            stmt.setString(2, blog.getContent());
+            stmt.setInt(3, blog.getStaffID());
+            stmt.setString(4, blog.getImage());
+            stmt.executeUpdate();
+        }
+    }
+
+    // Method to update an existing blog
+    public void updateBlog(Blog blog) throws SQLException {
+        String sql = "UPDATE Blog SET Title = ?, Content = ?, Image = ? WHERE ID = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setString(1, blog.getTitle());
+            stmt.setString(2, blog.getContent());
+            stmt.setString(3, blog.getImage());
+            stmt.setInt(4, blog.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    // Method to delete a blog by ID
+    public void deleteBlog(int blogId) throws SQLException {
+        String sql = "DELETE FROM Blog WHERE ID = ?";
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, blogId);
+            stmt.executeUpdate();
+        }
+    }
+
+    // Method to get a single blog by ID
+    public Blog getBlogById(int blogId) throws SQLException {
+        String sql = """
+                     SELECT b.ID, 
+                                                                                   b.Title, 
+                                                                                   b.Content, 
+                                                                                   b.StaffID, 
+                                                                                   b.DatePosted, 
+                                                                                   p.Name AS AuthorName,
+                                                                                   b.Image  
+                                                                            FROM Blog b
+                                                                            JOIN Person p ON b.StaffID = p.ID
+                                                                            JOIN Account a ON a.PersonID = p.ID
+                     													   where b.id = ?
+                     """;
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, blogId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return new Blog(
+                            rs.getInt("ID"),
+                            rs.getString("Title"),
+                            rs.getString("Content"),
+                            rs.getInt("StaffID"),
+                            rs.getDate("DatePosted"),
+                            rs.getString("AuthorName"),
+                            rs.getString("Image")
+                    );
+                }
+            }
+        }
+        return null;
+    }
+
 }
