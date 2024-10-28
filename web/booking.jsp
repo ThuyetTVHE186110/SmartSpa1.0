@@ -48,92 +48,30 @@
                     </div>
                 </div>
 
-                <form id="bookingForm" class="booking-form" data-aos="fade-up">
+                <form id="bookingForm" class="booking-form" data-aos="fade-up" action="booking">
                     <!-- Step 1: Service Selection -->
                     <div class="form-step active" id="step1">
                         <h2>Select Your Service</h2>
                         <div class="service-categories">
+                            <%--<c:forEach items="${requestScope.categoryList}" var="category">--%>
                             <div class="service-category">
-                                <h3>Lash Extensions</h3>
+                                <h3>${category.name}</h3>
                                 <div class="service-options">
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="classic-full">
-                                        <span class="option-content">
-                                            <span class="service-name">Classic Full Set</span>
-                                            <span class="service-price">$150</span>
-                                            <span class="service-duration">2-2.5 hours</span>
-                                        </span>
-                                    </label>
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="hybrid-full">
-                                        <span class="option-content">
-                                            <span class="service-name">Hybrid Full Set</span>
-                                            <span class="service-price">$170</span>
-                                            <span class="service-duration">2.5-3 hours</span>
-                                        </span>
-                                    </label>
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="volume-full">
-                                        <span class="option-content">
-                                            <span class="service-name">Volume Full Set</span>
-                                            <span class="service-price">$185</span>
-                                            <span class="service-duration">2.5-3 hours</span>
-                                        </span>
-                                    </label>
+                                    <c:forEach items="${requestScope.serviceList}" var="service">
+                                        <%--<c:if test="${category.id == service.categoryID}">--%>
+                                        <label class="service-option">
+                                            <input type="radio" name="service" value="classic-full">
+                                            <span class="option-content">
+                                                <span class="service-name">${service.name}</span>
+                                                <span class="service-price">$${service.price}</span>
+                                                <span class="service-duration">${service.duration} mins</span>
+                                            </span>
+                                        </label>
+                                        <%--</c:if>--%>
+                                    </c:forEach>
                                 </div>
                             </div>
-
-                            <div class="service-category">
-                                <h3>Lash Fills</h3>
-                                <div class="service-options">
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="classic-fill">
-                                        <span class="option-content">
-                                            <span class="service-name">Classic Fill</span>
-                                            <span class="service-price">$65 - $105</span>
-                                            <span class="service-duration">1-1.5 hours</span>
-                                        </span>
-                                    </label>
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="hybrid-fill">
-                                        <span class="option-content">
-                                            <span class="service-name">Hybrid Fill</span>
-                                            <span class="service-price">$80 - $130</span>
-                                            <span class="service-duration">1.5-2 hours</span>
-                                        </span>
-                                    </label>
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="volume-fill">
-                                        <span class="option-content">
-                                            <span class="service-name">Volume Fill</span>
-                                            <span class="service-price">$85 - $140</span>
-                                            <span class="service-duration">1.5-2 hours</span>
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="service-category">
-                                <h3>Lifts & Tints</h3>
-                                <div class="service-options">
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="lash-lift">
-                                        <span class="option-content">
-                                            <span class="service-name">Lash Lift</span>
-                                            <span class="service-price">$85</span>
-                                            <span class="service-duration">45 minutes</span>
-                                        </span>
-                                    </label>
-                                    <label class="service-option">
-                                        <input type="radio" name="service" value="lash-lift-tint">
-                                        <span class="option-content">
-                                            <span class="service-name">Lash Lift & Tint</span>
-                                            <span class="service-price">$95</span>
-                                            <span class="service-duration">1 hour</span>
-                                        </span>
-                                    </label>
-                                </div>
-                            </div>
+                            <%--</c:forEach>--%>
                         </div>
                         <div class="form-navigation">
                             <button type="button" class="next-step">Continue to Date & Time</button>
@@ -258,12 +196,31 @@
 
             document.querySelectorAll('.next-step').forEach(button => {
                 button.addEventListener('click', () => {
-                    if (currentStep < totalSteps) {
-                        currentStep++;
-                        updateSteps();
-                        if (currentStep === 4) {
-                            updateSummary();
+                    const currentFormStep = document.querySelector('.form-step.active');
+                    const inputs = currentFormStep.querySelectorAll('input, textarea');
+                    let valid = true;
+
+                    // Check if each input is filled (only if required)
+                    inputs.forEach(input => {
+                        if (input.hasAttribute('required') && !input.value.trim()) {
+                            input.classList.add('error'); // Add an error class (you can style it in CSS)
+                            valid = false;
+                        } else {
+                            input.classList.remove('error'); // Remove error class if input is valid
                         }
+                    });
+
+                    if (valid) {
+                        // Move to the next step only if all required inputs are filled
+                        if (currentStep < totalSteps) {
+                            currentStep++;
+                            updateSteps();
+                            if (currentStep === 4) {
+                                updateSummary(); // Update summary when reaching the last step
+                            }
+                        }
+                    } else {
+                        alert('Please fill in all required fields before continuing.');
                     }
                 });
             });
@@ -278,11 +235,27 @@
             });
 
             function updateSummary() {
+                // Update selected service
                 const selectedService = document.querySelector('input[name="service"]:checked');
                 const serviceName = selectedService ? selectedService.closest('.service-option').querySelector('.service-name').textContent : '';
-                document.getElementById('summary-service').textContent = serviceName;
+                const servicePrice = selectedService ? selectedService.closest('.service-option').querySelector('.service-price').textContent : '';
+                const serviceDuration = selectedService ? selectedService.closest('.service-option').querySelector('.service-duration').textContent : '';
+                document.getElementById('summary-service').textContent = serviceName + " - " + servicePrice + " (" + serviceDuration + ")";
 
-                // Add more summary updates here
+                // Update selected date & time
+                const selectedDate = document.querySelector('.calendar-container .selected-date'); // Assuming you have a selected date element
+                const selectedTime = document.querySelector('.time-options input[name="time"]:checked'); // Assuming time slots have name="time"
+                const summaryDate = selectedDate ? selectedDate.textContent : 'No date selected';
+                const summaryTime = selectedTime ? selectedTime.value : 'No time selected';
+                document.getElementById('summary-datetime').textContent = summaryDate + " at " + summaryTime;
+
+                // Update personal details
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const notes = document.getElementById('notes').value;
+                document.getElementById('summary-details').innerHTML =
+                        "Name: " + name + "<br>Email: " + email + "<br>Phone: " + phone + "<br>Notes: " + (notes ? notes : 'None');
             }
 
             // Form submission

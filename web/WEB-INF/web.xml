@@ -93,6 +93,10 @@
         <servlet-class>controller.ErrorServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>BookingServlet</servlet-name>
+        <servlet-class>controller.BookingServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>CustomerProfileServlet</servlet-name>
         <servlet-class>controller.CustomerProfileServlet</servlet-class>
     </servlet>
@@ -115,6 +119,14 @@
     <servlet>
         <servlet-name>UpdateProfileServlet</servlet-name>
         <servlet-class>controller.UpdateProfileServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>OrderServlet</servlet-name>
+        <servlet-class>controller.OrderServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PaymentCallbackServlet</servlet-name>
+        <servlet-class>controller.PaymentCallbackServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>BlogManagementServlet</servlet-name>
@@ -213,6 +225,10 @@
         <url-pattern>/error</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>BookingServlet</servlet-name>
+        <url-pattern>/booking</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>CustomerProfileServlet</servlet-name>
         <url-pattern>/customerProfile</url-pattern>
     </servlet-mapping>
@@ -235,6 +251,14 @@
     <servlet-mapping>
         <servlet-name>UpdateProfileServlet</servlet-name>
         <url-pattern>/updateProfile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>OrderServlet</servlet-name>
+        <url-pattern>/order/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PaymentCallbackServlet</servlet-name>
+        <url-pattern>/payment-callback</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>BlogManagementServlet</servlet-name>

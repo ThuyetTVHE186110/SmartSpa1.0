@@ -12,15 +12,17 @@ public class AppointmentService {
 
     private int id;
     private int appointmentID;
-    private int serviceID;
+    private Service service;
+    private Person staff;
 
     public AppointmentService() {
     }
 
-    public AppointmentService(int id, int appointmentID, int serviceID) {
+    public AppointmentService(int id, int appointmentID, Service service, Person staff) {
         this.id = id;
         this.appointmentID = appointmentID;
-        this.serviceID = serviceID;
+        this.service = service;
+        this.staff = staff;
     }
 
     public int getId() {
@@ -39,12 +41,21 @@ public class AppointmentService {
         this.appointmentID = appointmentID;
     }
 
-    public int getServiceID() {
-        return serviceID;
+    public Service getService() {
+        return service;
     }
 
-    public void setServiceID(int serviceID) {
-        this.serviceID = serviceID;
+    public void setService(Service service) {
+        this.service = service;
     }
 
+    public Person getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Person staff) {
+        this.staff = staff;
+    }
+
+    
 }

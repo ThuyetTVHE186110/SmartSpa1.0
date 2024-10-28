@@ -58,7 +58,7 @@ public class AppointmentManagementServlet extends HttpServlet {
             List<Service> serviceList = serviceDAO.selectAllServices();
             for (AppointmentService appointmentService : appointmentServiceList) {
                 int appointmentId = appointmentService.getAppointmentID();
-                Service service = serviceDAO.selectService(appointmentService.getServiceID()); // This is a method to fetch service details
+                Service service = serviceDAO.selectService(appointmentService.getService().getId()); // This is a method to fetch service details
                 // If this appointment ID already exists, add to the list of services
                 if (appointmentServicesMap.containsKey(appointmentId)) {
                     appointmentServicesMap.get(appointmentId).add(service);
@@ -104,7 +104,6 @@ public class AppointmentManagementServlet extends HttpServlet {
                     String searchTerm = request.getParameter("searchTerm").trim();
                     request.setAttribute("searchTerm", searchTerm);
                     appointments = appointmentDAO.getByCustomer(searchTerm);
-                    
                     break;
                 case "remove":
                     String delAppointment = request.getParameter("appointmentID");
@@ -125,7 +124,7 @@ public class AppointmentManagementServlet extends HttpServlet {
                     String personIDtp = request.getParameter("personID");
                     int personID = Integer.parseInt(personIDtp);
                     Person person = personDAO.getPersonByID(personID);
-                    Appointment appointment = new Appointment(editID, editDate, editTime, LocalDateTime.now(), editStatus, editNote, person);
+                    Appointment appointment = new Appointment(editID, editDate, editTime, LocalDateTime.MAX, editStatus, editNote, person, appointmentServiceList);
                     appointmentDAO.updateAppointment(appointment);
                     doGet(request, response);
                     break;
@@ -133,7 +132,7 @@ public class AppointmentManagementServlet extends HttpServlet {
                     appointments = appointmentDAO.getByDate(LocalDate.now());
                     for (AppointmentService appointmentService : appointmentServiceList) {
                         int appointmentId = appointmentService.getAppointmentID();
-                        Service service = serviceDAO.selectService(appointmentService.getServiceID()); // This is a method to fetch service details
+                        Service service = serviceDAO.selectService(appointmentService.getService().getId()); // This is a method to fetch service details
                         // If this appointment ID already exists, add to the list of services
                         if (appointmentServicesMap.containsKey(appointmentId)) {
                             appointmentServicesMap.get(appointmentId).add(service);
@@ -162,7 +161,7 @@ public class AppointmentManagementServlet extends HttpServlet {
             request.setAttribute("appointmentList", appointments);
             for (AppointmentService appointmentService : appointmentServiceList) {
                 int appointmentId = appointmentService.getAppointmentID();
-                Service service = serviceDAO.selectService(appointmentService.getServiceID()); // This is a method to fetch service details
+                Service service = serviceDAO.selectService(appointmentService.getService().getId()); // This is a method to fetch service details
                 // If this appointment ID already exists, add to the list of services
                 if (appointmentServicesMap.containsKey(appointmentId)) {
                     appointmentServicesMap.get(appointmentId).add(service);

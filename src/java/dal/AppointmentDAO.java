@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import model.Appointment;
+import model.AppointmentService;
 
 /**
  * Appointment Data Access Objects
@@ -26,9 +27,9 @@ import model.Appointment;
 public class AppointmentDAO extends DBContext {
 
     private static final String SELECT_ALL_APPOINTMENTS = "SELECT * FROM Appointment ORDER BY appointmentDate DESC, appointmentTime DESC";
-    private static final String INSERT_APPOINTMENT = "INSERT INTO Appointment (appointmentTime, appointmentDate, CreatedDate, status, note, personID) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String INSERT_APPOINTMENT = "INSERT INTO Appointment (appointmentTime, appointmentDate, CreatedDate, status, note, CustomerID) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String DELETE_APPOINTMENT = "DELETE FROM Appointment WHERE ID = ?";
-    private static final String UPDATE_APPOINTMENT = "UPDATE Appointment SET AppointmentTime = ?, AppointmentDate = ?, CreatedDate = ?, Status = ?, Note = ?, PersonID = ? WHERE ID = ?";
+    private static final String UPDATE_APPOINTMENT = "UPDATE Appointment SET AppointmentTime = ?, AppointmentDate = ?, CreatedDate = ?, Status = ?, Note = ?, CustomerID = ? WHERE ID = ?";
 
     /**
      * Get all appointment
@@ -52,8 +53,12 @@ public class AppointmentDAO extends DBContext {
                 appointment.setNote(rs.getString("Note"));
 
                 PersonDAO personDAO = new PersonDAO();
-                appointment.setPerson(personDAO.getPersonByID(rs.getInt("PersonID")));
+                appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
                 appointments.add(appointment);
+
+                AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
+                List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                appointment.setServices(list);
             }
         } catch (SQLException e) {
             logger.info(e.getMessage());
@@ -62,14 +67,16 @@ public class AppointmentDAO extends DBContext {
     }
 
     /**
-     * Get list of appointments by date 
+     * Get list of appointments by date
+     *
      * @param date Search Date
      * @return
      */
     public List<Appointment> getByDate(LocalDate date) {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
-
+        PersonDAO personDAO = new PersonDAO();
+        AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
         String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE appointmentDate = ? ORDER BY appointmentDate DESC, appointmentTime DESC";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
@@ -86,9 +93,9 @@ public class AppointmentDAO extends DBContext {
                     appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
                     appointment.setStatus(rs.getString("Status"));
                     appointment.setNote(rs.getString("Note"));
-
-                    PersonDAO personDAO = new PersonDAO();
-                    appointment.setPerson(personDAO.getPersonByID(rs.getInt("PersonID")));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
                     appointments.add(appointment);
                 }
             }
@@ -103,9 +110,10 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getByCustomer(String name) {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
-
+        PersonDAO personDAO = new PersonDAO();
+        AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
         String SELECT_APPOINTMENTS_BY_DATE = """
-                                             SELECT * FROM Appointment a join Person p on a.personID = p.ID where p.Name like ?
+                                             SELECT * FROM Appointment a join Person p on a.customerID = p.ID where p.Name like ?
                                              ORDER BY a.appointmentDate DESC, a.appointmentTime DESC""";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
@@ -122,9 +130,9 @@ public class AppointmentDAO extends DBContext {
                     appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
                     appointment.setStatus(rs.getString("Status"));
                     appointment.setNote(rs.getString("Note"));
-
-                    PersonDAO personDAO = new PersonDAO();
-                    appointment.setPerson(personDAO.getPersonByID(rs.getInt("PersonID")));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
                     appointments.add(appointment);
                 }
             }
@@ -152,7 +160,7 @@ public class AppointmentDAO extends DBContext {
             stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));   // Ngày tạo cuộc hẹn
             stm.setString(4, appointment.getStatus());                              // Trạng thái cuộc hẹn
             stm.setString(5, appointment.getNote());                                // Ghi chú
-            stm.setInt(6, appointment.getPerson().getId());                         // ID của người tham gia
+            stm.setInt(6, appointment.getCustomer().getId());                         // ID của người tham gia
 
             int rowsAffected = stm.executeUpdate();
             if (rowsAffected > 0) {
@@ -200,7 +208,7 @@ public class AppointmentDAO extends DBContext {
             stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));
             stm.setString(4, appointment.getStatus());
             stm.setString(5, appointment.getNote());
-            stm.setInt(6, appointment.getPerson().getId());
+            stm.setInt(6, appointment.getCustomer().getId());
             stm.setInt(7, appointment.getId());
 
             int rowsAffected = stm.executeUpdate();
@@ -259,11 +267,15 @@ public class AppointmentDAO extends DBContext {
 
     public static void main(String[] args) {
         AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> list = appointmentDAO.getByCustomer("d");
-        
+        List<Appointment> list = appointmentDAO.getAll();
+
         for (Appointment appointment : list) {
-            System.out.println(appointment.getPerson().getName());
+            List<AppointmentService> list1 = appointment.getServices();
+            System.out.println("Appoinment" + appointment.getId() + " : ");
+            for (AppointmentService appointmentService : list1) {
+                System.out.println(appointmentService.getService().getName());
+            }
         }
-        
+
     }
 }
