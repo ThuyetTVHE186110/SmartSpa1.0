@@ -42,10 +42,10 @@
             <li><a href="index" class="active">Home</a></li>
             <li><a href="services">Services</a></li>
             <li><a href="product.jsp">Product</a></li>
+            <li><a href="appointment">Appointments</a></li>
             <li><a href="contact.jsp">Contact</a></li>
             <li><a href="about.jsp">About</a></li>
             <li><a href="blog">Blog</a></li>
-            <li><a href="appointment">Appointments</a></li>
             <li>
                 <%
                             // Check if the user is logged in
