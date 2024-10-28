@@ -127,7 +127,7 @@
                 </c:choose>
 
 
-                <!-- Categories Widget -->
+<!--                 Categories Widget 
                 <div class="sidebar-widget categories-widget">
                     <h3>Categories</h3>
                     <ul>
@@ -137,7 +137,7 @@
                         <li><a href="#">Microblading <span>(6)</span></a></li>
                         <li><a href="#">Self Care <span>(10)</span></a></li>
                     </ul>
-                </div>
+                </div>-->
 
                 <!-- Recent Posts Widget -->
                 <div class="sidebar-widget recent-posts-widget">

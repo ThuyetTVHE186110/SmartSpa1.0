@@ -227,4 +227,25 @@ public class AccountDAO {
         return null;  // Nếu không tìm thấy Account theo ID
     }
 
+    public boolean isEmailAvailable(String email) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Account WHERE Username = ?";
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, email);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) == 0;
+            }
+        }
+        return false;
+    }
+
+    public void updateEmail(int accountId, String newEmail) throws SQLException {
+        String sql = "UPDATE Account SET Username = ? WHERE ID = ?";
+        try (Connection conn = getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, newEmail);
+            stmt.setInt(2, accountId);
+            stmt.executeUpdate();
+        }
+    }
+
 }
