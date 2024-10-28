@@ -13,16 +13,49 @@ public class Account {
     private int id;
     private String username;
     private String password;
-    private String role;
+    private int role;  // Role is now an int
     private Person personInfo;
+    private String status; 
+    private String roleName; // Tên vai trò (Role Name)
 
-    public Account(int id, String username, String password, String role, Person personInfo) {
+    public Account() {
+    }
+
+    public Account(int id, String username, String password, int role, Person personInfo) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
         this.personInfo = personInfo;
+
     }
+    public Account(int id, String username, String password, int role, Person personInfo, String status) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.personInfo = personInfo;
+        this.status = status; // Thêm status trong constructor
+    }
+
+    // Getters and setters for roleName
+    public String getRoleName() {
+        return roleName;
+    }
+
+    public void setRoleName(String roleName) {
+        this.roleName = roleName;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+   
 
     // Getters and Setters
     public int getId() {
@@ -49,11 +82,11 @@ public class Account {
         this.password = password;
     }
 
-    public String getRole() {
-        return role;
+    public int getRole() {
+        return role;  // Change role getter and setter to work with int
     }
 
-    public void setRole(String role) {
+    public void setRole(int role) {
         this.role = role;
     }
 
@@ -64,5 +97,4 @@ public class Account {
     public void setPersonInfo(Person personInfo) {
         this.personInfo = personInfo;
     }
-
 }

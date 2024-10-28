@@ -5,8 +5,8 @@
 package controller;
 
 import dal.AccountDAO;
+import dal.PersonDAO;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServlet;
@@ -14,38 +14,13 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Account;
+import model.Person;
 
 /**
  *
  * @author Asus
  */
 public class LoginServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
@@ -83,80 +58,115 @@ public class LoginServlet extends HttpServlet {
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Lấy tên đăng nhập và mật khẩu từ form
+        // Get username, password, and userType from the form
         String username = request.getParameter("txtUsername");
         String password = request.getParameter("txtPassword");
-        String rememberMe = request.getParameter("rememberMe"); // Lấy giá trị "Remember Me"
+        String rememberMe = request.getParameter("rememberMe"); // Get the "Remember Me" value
+        String userType = request.getParameter("userType"); // Identify if the user is customer or admin/staff
 
-        // Khởi tạo DAO và cố gắng lấy tài khoản dựa trên thông tin xác thực
+        // Initialize DAO and attempt to retrieve the account based on the credentials
         AccountDAO accountDAO = new AccountDAO();
-        Account account = null;
+        Account account = accountDAO.getByUsernamePassword(username, password);
 
         try {
             account = accountDAO.getByUsernamePassword(username, password);
         } catch (Exception e) {
-            // Xử lý ngoại lệ
+            // Handle exception
             e.printStackTrace();
             request.setAttribute("error", "An unexpected error occurred. Please try again.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.getRequestDispatcher("login.jsp").forward(request, response);  // Default to customer login page for errors
             return;
         }
 
-        // Kiểm tra xem tài khoản có tồn tại không
+        // Check if the account exists
         if (account != null) {
-            // Tạo session và thiết lập thuộc tính session
-            HttpSession session = request.getSession();
-            session.setAttribute("account", account);
-            session.setAttribute("loggedIn", true);
-            session.setMaxInactiveInterval(30 * 60); // Thời gian timeout của session
+            // Get the user's role
+            int roleID = account.getRole();  // Use `account.getRoleID()`
+            if ("admin".equals(userType)) {
+                // Admin or Staff login: only roleID 1, 2, or 3 are allowed
+                if (roleID == 1 || roleID == 2 || roleID == 3) {
+                    // Create session and set session attributes
+                    HttpSession session = request.getSession();
+                    session.setAttribute("account", account);
+                    session.setAttribute("loggedIn", true);
+                    session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
 
-            // Xử lý chức năng "Remember Me"
-            if ("on".equals(rememberMe)) {
-                // Tạo cookie để ghi nhớ tên đăng nhập và mật khẩu
-                Cookie usernameCookie = new Cookie("savedUsername", username);
-                Cookie passwordCookie = new Cookie("savedPassword", password);
-                usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
-                passwordCookie.setMaxAge(60 * 60 * 24 * 30); // 30 ngày
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
+                    // Handle "Remember Me" functionality for admin login
+                    if ("on".equals(rememberMe)) {
+                        Cookie usernameCookie = new Cookie("savedUsername", username);
+                        usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                        usernameCookie.setHttpOnly(true); // Make it HTTP-only
+                        usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
+                        response.addCookie(usernameCookie);
+                    } else {
+                        // Delete cookies if "Remember Me" is not checked
+                        Cookie usernameCookie = new Cookie("savedUsername", "");
+                        usernameCookie.setMaxAge(0); // Expire the cookie
+                        response.addCookie(usernameCookie);
+                    }
+
+                    // Set success message for admin/staff
+                    session.setAttribute("successMessage", "Admin/Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+                    // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
+                    PersonDAO personDAO = new PersonDAO();
+                    Person person = personDAO.getPersonById(account.getPersonInfo().getId());
+                    // Kiểm tra person có null không trước khi lưu vào session
+                    if (person != null) {
+                        session.setAttribute("person", person);  // Lưu person vào session
+                    }                
+                    // Redirect to the admin/staff dashboard
+                    response.sendRedirect("dashboard");
+                } else {
+                    // Not authorized for admin login
+                    request.setAttribute("error", "You do not have permission to access this area.");
+                    request.getRequestDispatcher("adminLogin.jsp").forward(request, response);
+                }
             } else {
-                // Xóa cookie nếu "Remember Me" không được chọn
-                Cookie usernameCookie = new Cookie("savedUsername", "");
-                Cookie passwordCookie = new Cookie("savedPassword", "");
-                usernameCookie.setMaxAge(0); // Hết hạn cookie
-                passwordCookie.setMaxAge(0); // Hết hạn cookie
-                response.addCookie(usernameCookie);
-                response.addCookie(passwordCookie);
-            }
+                // Customer login: only roleID 4 is allowed
+                if (roleID == 4) {
+                    // Create session and set session attributes for customer
+                    HttpSession session = request.getSession();
+                    session.setAttribute("account", account);
+                    session.setAttribute("loggedIn", true);
+                    session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
 
-            // Chuyển hướng đến trang chính
-            response.sendRedirect("HomeServlet");
+                    // Handle "Remember Me" functionality for customer login
+                    if ("on".equals(rememberMe)) {
+                        Cookie usernameCookie = new Cookie("savedUsername", username);
+                        usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
+                        usernameCookie.setHttpOnly(true); // Make it HTTP-only
+                        usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
+                        response.addCookie(usernameCookie);
+                    } else {
+                        // Delete cookies if "Remember Me" is not checked
+                        Cookie usernameCookie = new Cookie("savedUsername", "");
+                        usernameCookie.setMaxAge(0); // Expire the cookie
+                        response.addCookie(usernameCookie);
+                    }
+
+                    // Set success message for customer
+                    session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+
+                    // Redirect to the customer dashboard or index
+                    response.sendRedirect("index");
+                } else {
+                    // Not authorized for customer login
+                    request.setAttribute("error", "Invalid username or password.");
+                    request.getRequestDispatcher("login.jsp").forward(request, response);
+                }
+            }
         } else {
-            // Thiết lập thông báo lỗi cho đăng nhập không hợp lệ
+            // Set error message for invalid login
             request.setAttribute("error", "Login failed! Invalid username or password.");
-            request.getRequestDispatcher("login.jsp").forward(request, response);
+            request.setAttribute("username", username);  // Retain the entered username
+            if ("admin".equals(userType)) {
+                request.getRequestDispatcher("adminLogin.jsp").forward(request, response); // Admin login failed
+            } else {
+                request.getRequestDispatcher("login.jsp").forward(request, response); // Customer login failed
+            }
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

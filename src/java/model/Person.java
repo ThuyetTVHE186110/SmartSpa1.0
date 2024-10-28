@@ -19,8 +19,30 @@ public class Person {
     private String phone;
     private String email;
     private String address;
+    private String image;
 
-    
+    public Person() {
+    }
+
+    // Constructor with parameters
+    public Person(int id, String name, Date dateOfBirth, char gender, String phone, String email, String address) {
+        this.id = id;
+        this.name = name;
+        this.dateOfBirth = dateOfBirth;
+        this.gender = gender;
+        this.phone = phone;
+        this.email = email;
+        this.address = address;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public int getId() {
         return id;
     }

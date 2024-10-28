@@ -1,0 +1,87 @@
+body {
+    font-family: 'Open Sans', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f8f8;
+    color: #333;
+}
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #fff;
+    border-bottom: 1px solid #ddd;
+}
+.header img {
+    height: 50px;
+}
+.header .nav {
+    display: flex;
+    gap: 20px;
+}
+.header .nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+}
+.header .nav a:hover {
+    text-decoration: underline;
+}
+.container {
+    padding: 20px;
+}
+.services-nav {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+.services-nav a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 600;
+    padding-bottom: 5px;
+}
+.services-nav a.active {
+    border-bottom: 2px solid #bfa980;
+    color: #bfa980;
+}
+.packages, .massages, .skin-care {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+    margin-bottom: 40px;
+}
+.package, .massage, .skin-care-item {
+    background-color: #fff;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+.package h3, .massage h3, .skin-care-item h3 {
+    margin-top: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+.package p, .massage p, .skin-care-item p {
+    margin: 10px 0;
+    font-size: 14px;
+    color: #666;
+}
+.package .price, .massage .price, .skin-care-item .price {
+    font-weight: 600;
+    color: #333;
+}
+.package .book-btn, .massage .book-btn, .skin-care-item .book-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #a28363;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: 600;
+}
+.package .book-btn:hover, .massage .book-btn:hover, .skin-care-item .book-btn:hover {
+    background-color: #8d5d2c;
+}

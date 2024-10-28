@@ -6,61 +6,25 @@ package controller;
 
 import dal.DBContext;
 import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.ResultSet;
+import javax.mail.*;
+import javax.mail.internet.*;
+import java.util.Properties;
+import java.util.Random;
 
 /**
  *
  * @author PC
  */
 public class SignupServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SignupServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SignupServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
 
     /**
      * Handles the HTTP <code>POST</code> method.
@@ -84,55 +48,149 @@ public class SignupServlet extends HttpServlet {
 
     private void handleRegistration(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("txtEmail");
+        String email = request.getParameter("txtEmail");
         String password = request.getParameter("txtPassword");
         String confirm = request.getParameter("txtConfirmPassword");
+        String name = request.getParameter("txtName");
+        String phone = request.getParameter("txtPhone");
         int roleID = 4;
 
         // Check if passwords match
-        if (!password.equals(confirm)) {
+        if (password == null || confirm == null || !password.equals(confirm)) {
             request.setAttribute("error", "Password does not match the confirm password.");
+            request.setAttribute("txtName", name);
+            request.setAttribute("txtPhone", phone);
+            request.setAttribute("txtEmail", email);
             request.getRequestDispatcher("signup.jsp").forward(request, response);
             return;
         }
 
-        String sql = "INSERT INTO Account (Username, Password, RoleID) VALUES (?, ?, ?)";
+        // SQL query to check if the phone or email already exists in Person or Account
+        String checkEmailPhoneSql = "SELECT Person.Phone, Person.Email, Account.Username "
+                + "FROM Person LEFT JOIN Account ON Person.ID = Account.PersonID "
+                + "WHERE Person.Phone = ? OR Person.Email = ? OR Account.Username = ?";
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement pstmt = conn.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            pstmt.setInt(3, roleID);
+        try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailPhoneSql)) {
 
-            int rowsAffected = pstmt.executeUpdate();
-            if (rowsAffected > 0) {
-                // Set success message in session
-                request.getSession().setAttribute("message", "Registration successful! Please log in.");
-                response.sendRedirect("login.jsp"); // Redirect to login page
-                return;
-            } else {
-                request.setAttribute("message", "Registration failed!");
+            // Set parameters to check for phone and email
+            checkStmt.setString(1, phone);
+            checkStmt.setString(2, email);
+            checkStmt.setString(3, email);
+
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                boolean phoneExists = false;
+                boolean emailExists = false;
+
+                while (rs.next()) {
+                    String dbPhone = rs.getString("Phone");
+                    String dbEmailPerson = rs.getString("Email");
+                    String dbEmailAccount = rs.getString("Username");
+
+                    if (dbPhone != null && dbPhone.equals(phone)) {
+                        phoneExists = true;
+                    }
+
+                    if ((dbEmailPerson != null && dbEmailPerson.equals(email))
+                            || (dbEmailAccount != null && dbEmailAccount.equals(email))) {
+                        emailExists = true;
+                    }
+                }
+
+                // Nếu số điện thoại đã tồn tại
+                if (phoneExists) {
+                    request.setAttribute("errorMessage", "This phone number is already registered.");
+                    request.setAttribute("txtName", name);
+                    request.setAttribute("txtPhone", phone);
+                    request.setAttribute("txtEmail", email);
+                    request.getRequestDispatcher("signup.jsp").forward(request, response);
+                    return;
+                }
+
+                // Nếu email đã tồn tại
+                if (emailExists) {
+                    request.setAttribute("errorMessage", "This email is already registered.");
+                    request.setAttribute("txtName", name);
+                    request.setAttribute("txtPhone", phone);
+                    request.setAttribute("txtEmail", email);
+                    request.getRequestDispatcher("signup.jsp").forward(request, response);
+                    return;
+                }
             }
+
+            // Lưu thông tin vào session và chờ xác nhận OTP
+            String otp = generateOtp(); // Hàm tạo OTP
+            if (sendOtpEmail(email, otp)) {
+                // Lưu OTP và thông tin người dùng vào session để xác nhận sau khi người dùng nhập đúng OTP
+                HttpSession session = request.getSession();
+                session.setAttribute("otp", otp);
+                session.setAttribute("email", email);
+                session.setAttribute("password", password);
+                session.setAttribute("roleID", roleID);
+                session.setAttribute("name", name);
+                session.setAttribute("phone", phone);
+
+                // Chuyển hướng đến trang OTP để xác nhận
+                response.sendRedirect("OtpConfirmRegistration.jsp");
+            } else {
+                request.setAttribute("errorMessage", "Failed to send OTP. Please try again.");
+                request.getRequestDispatcher("signup.jsp").forward(request, response);
+            }
+
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("message", "Database error: " + e.getMessage());
+            request.setAttribute("errorMessage", "Database error: " + e.getMessage());
+            request.getRequestDispatcher("signup.jsp").forward(request, response);
         }
+    }
 
-        request.getRequestDispatcher("signup.jsp").forward(request, response);
+// Helper method to retain input values in the form
+    private void retainInput(HttpServletRequest request, String name, String phone, String email) {
+        request.setAttribute("txtName", name);
+        request.setAttribute("txtPhone", phone);
+        request.setAttribute("txtEmail", email);
+    }
+
+    private String generateOtp() {
+        Random random = new Random();
+        int otp = 100000 + random.nextInt(900000); // Generate a 6-digit OTP
+        return String.valueOf(otp);
+    }
+
+    private boolean sendOtpEmail(String recipient, String otp) {
+        String host = "smtp.gmail.com";
+        String from = "no@reply.smartbeauty.com";
+        String subject = "Your OTP Code";
+        String messageContent = "Your OTP is: " + otp;
+
+        Properties properties = new Properties();
+        properties.put("mail.smtp.host", host);
+        properties.put("mail.smtp.port", "587");
+        properties.put("mail.smtp.auth", "true");
+        properties.put("mail.smtp.starttls.enable", "true");
+
+        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication("dat33112@gmail.com", "cdct hlco ymoj wklg"); // Use a secure method for this
+            }
+        });
+
+        try {
+            Message mimeMessage = new MimeMessage(session);
+            mimeMessage.setFrom(new InternetAddress(from));
+            mimeMessage.setRecipients(Message.RecipientType.TO, InternetAddress.parse(recipient));
+            mimeMessage.setSubject(subject);
+            mimeMessage.setText(messageContent);
+            Transport.send(mimeMessage);
+            return true;
+        } catch (MessagingException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     private void handleReset(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.sendRedirect("signup.jsp");
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

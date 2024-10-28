@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.util.Date;
+
 /**
  *
  * @author PC
@@ -13,7 +15,29 @@ public class Blog {
     private int id;
     private String title;
     private String content;
-    private Person staff;
+    private int staffID;
+    private Date datePosted;
+    private String authorName;
+    private String image;
+
+    public Blog(int id, String title, String content, int staffID, Date datePosted, String authorName, String image) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.staffID = staffID;
+        this.datePosted = datePosted;
+        this.authorName = authorName;
+        this.image = image;
+    }
+
+    // Getter and setter for image
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
 
     public int getId() {
         return id;
@@ -39,12 +63,28 @@ public class Blog {
         this.content = content;
     }
 
-    public Person getStaff() {
-        return staff;
+    public int getStaffID() {
+        return staffID;
     }
 
-    public void setStaff(Person staff) {
-        this.staff = staff;
+    public void setStaffID(int staffID) {
+        this.staffID = staffID;
+    }
+
+    public Date getDatePosted() {
+        return datePosted;
+    }
+
+    public void setDatePosted(Date datePosted) {
+        this.datePosted = datePosted;
+    }
+
+    public String getAuthorName() {
+        return authorName;
+    }
+
+    public void setAuthorName(String authorName) {
+        this.authorName = authorName;
     }
 
 }

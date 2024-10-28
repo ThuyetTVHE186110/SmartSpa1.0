@@ -1,0 +1,53 @@
+/* Styles for the invalid input field */
+.input_field.invalid {
+    border-color: red; /* Red border for invalid input */
+    background-color: #ffe6e6; /* Light red background for visibility */
+}
+
+/* Styles for valid input field */
+.input_field.valid {
+    border-color: green; /* Green border for valid input */
+}
+
+/* Styles for the error message */
+.error-message {
+    color: red;
+    font-size: 0.875em;
+    margin-top: 5px;
+    display: none; /* Initially hide the error message */
+}
+
+
+.input_container {
+    position: relative;
+}
+
+.input_wrapper {
+    display: flex;
+    align-items: center; /* Center the input and button vertically */
+}
+
+.input_field {
+    width: 90%; /* Chiều rộng của trường nhập liệu */
+    border: 2px solid #ccc; /* Định nghĩa viền với độ dày 2px và màu xám nhạt */
+    outline: none; /* Loại bỏ viền mặc định khi trường được chọn */
+    transition: border-color 0.3s ease; /* Hiệu ứng chuyển tiếp cho viền */
+}
+
+.show_password {
+    position: absolute;
+    right: 40px; /* Adjust this value to set how far from the right edge you want it */
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    padding: 0; /* Remove default padding */
+    height: 100%; /* Make the button height the same as input field */
+    display: flex;
+    align-items: center; /* Center the icon vertically */
+    z-index: 1; /* Ensure it appears above the input field */
+}
+
+.show_password svg {
+    width: 24px; /* Icon width */
+    height: 24px; /* Icon height */
+}

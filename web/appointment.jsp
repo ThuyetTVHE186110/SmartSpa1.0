@@ -6,6 +6,8 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page import="model.Account" %> <!-- Add this line to import the Account class -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -70,38 +72,8 @@
         <!-- Topbar End -->
 
 
-        <!-- Navbar Start -->
-        <div class="container-fluid p-0">
-            <nav class="navbar navbar-expand-lg bg-white navbar-light py-3 py-lg-0 px-lg-5">
-                <a href="." class="navbar-brand ml-lg-3">
-                    <h1 class="m-0 text-primary"><span class="text-dark">SPA</span> Center</h1>
-                </a>
-                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse justify-content-between px-lg-3" id="navbarCollapse">
-                    <div class="navbar-nav m-auto py-0">
-                        <a href="." class="nav-item nav-link">Home</a>
-                        <a href="about.html" class="nav-item nav-link">About</a>
-                        <a href="product" class="nav-item nav-link">Product</a>
-                        <a href="services" class="nav-item nav-link">Services</a>
-                        <a href="price.html" class="nav-item nav-link">Pricing</a>
-                        <div class="nav-item dropdown">
-                            <a href="#" class="nav-link dropdown-toggle active" data-toggle="dropdown">Pages</a>
-                            <div class="dropdown-menu rounded-0 m-0">
-                                <a href="appointment" class="dropdown-item active">Appointment</a>
-                                <a href="opening.html" class="dropdown-item">Open Hours</a>
-                                <a href="team.html" class="dropdown-item">Our Team</a>
-                                <a href="feedback" class="dropdown-item">Testimonial</a>
-                            </div>
-                        </div>
-                        <a href="contact.html" class="nav-item nav-link">Contact</a>
-                    </div>
-                    <a href="#appointment" class="btn btn-primary d-none d-lg-block">Book Now</a>
-                </div>
-            </nav>
-        </div>
-        <!-- Navbar End -->
+        <!-- Include the Navbar -->
+        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
 
 
         <!-- Header Start -->
@@ -197,7 +169,7 @@
                 <div class="row">
                     <div class="col-lg-6" style="min-height: 500px;">
                         <div class="position-relative h-100">
-                            <img class="position-absolute w-100 h-100" src="img/opening.jpg" style="object-fit: cover;">
+                            <img class="position-absolute w-100 h-100" src="img/opening.jpg" alt="Opening Image" style="object-fit: cover;">
                         </div>
                     </div>
                     <div class="col-lg-6 pt-5 pb-lg-5">
@@ -283,7 +255,6 @@
                         <p class="m-0 text-white">&copy; <a href="#">Your Site Name</a>. All Rights Reserved.</p>
                     </div>
                     <div class="col-md-6 text-center text-md-right">
-                        <p class="m-0 text-white">Designed by <a href="https://htmlcodex.com">HTML Codex</a></p>
                     </div>
                 </div>
             </div>

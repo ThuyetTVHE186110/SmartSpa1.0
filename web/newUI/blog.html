@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Blushed Beauty Bar</title>
+    <link rel="stylesheet" href="./assets/css/styles.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+</head>
+
+<body>
+    <!-- Navbar Section -->
+    <header>
+        <nav class="navbar">
+            <div class="logo">
+                <img src="./assets/img/logo.png" alt="Blushed Beauty Bar Logo">
+            </div>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><a href="appointments.html">Appointments</a></li>
+                <li><a href="profile.html" class="profile-link"><i class="fas fa-user"></i></a></li>
+                <li><a href="booking.html" class="book-now-btn">Book Now</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Blog Hero Section -->
+    <section class="blog-hero">
+        <div class="hero-content">
+            <h1>Beauty Blog</h1>
+            <p>Tips, tricks, and beauty inspiration</p>
+        </div>
+    </section>
+
+    <!-- Blog Content Section -->
+    <section class="blog-content">
+        <div class="blog-container">
+            <!-- Featured Post -->
+            <article class="featured-post" data-aos="fade-up">
+                <div class="post-image">
+                    <img src="./assets/img/featured-blog.jpg" alt="Featured Blog Post">
+                    <div class="post-category">Featured</div>
+                </div>
+                <div class="post-content">
+                    <div class="post-meta">
+                        <span class="post-date">June 15, 2023</span>
+                        <span class="post-author">By Sarah Johnson</span>
+                    </div>
+                    <h2>The Ultimate Guide to Lash Extensions: Everything You Need to Know</h2>
+                    <p>Discover the secrets to achieving the perfect lash extensions and how to maintain them for
+                        lasting beauty...</p>
+                    <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                </div>
+            </article>
+
+            <!-- Blog Grid -->
+            <div class="blog-grid">
+                <!-- Blog Post 1 -->
+                <article class="blog-post" data-aos="fade-up">
+                    <div class="post-image">
+                        <img src="./assets/img/blog-1.jpg" alt="Skincare Routine">
+                        <div class="post-category">Skincare</div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-date">June 10, 2023</span>
+                        </div>
+                        <h3>10 Essential Steps for Your Morning Skincare Routine</h3>
+                        <p>Learn how to build the perfect morning skincare routine for glowing, healthy skin...</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Blog Post 2 -->
+                <article class="blog-post" data-aos="fade-up" data-aos-delay="100">
+                    <div class="post-image">
+                        <img src="./assets/img/blog-2.jpg" alt="Makeup Tips">
+                        <div class="post-category">Makeup</div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-date">June 8, 2023</span>
+                        </div>
+                        <h3>Summer Makeup Trends You Need to Try</h3>
+                        <p>Stay on top of the hottest makeup trends this summer with our expert tips...</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Blog Post 3 -->
+                <article class="blog-post" data-aos="fade-up" data-aos-delay="200">
+                    <div class="post-image">
+                        <img src="./assets/img/blog-3.jpg" alt="Microblading Guide">
+                        <div class="post-category">Microblading</div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-date">June 5, 2023</span>
+                        </div>
+                        <h3>Microblading vs. Traditional Brow Techniques</h3>
+                        <p>Compare different eyebrow enhancement methods to find what's right for you...</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Blog Post 4 -->
+                <article class="blog-post" data-aos="fade-up" data-aos-delay="300">
+                    <div class="post-image">
+                        <img src="./assets/img/blog-4.jpg" alt="Self Care Tips">
+                        <div class="post-category">Self Care</div>
+                    </div>
+                    <div class="post-content">
+                        <div class="post-meta">
+                            <span class="post-date">June 1, 2023</span>
+                        </div>
+                        <h3>Creating Your Perfect Self-Care Routine</h3>
+                        <p>Discover how to build a sustainable self-care routine that works for you...</p>
+                        <a href="#" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+            </div>
+
+            <!-- Pagination -->
+            <div class="pagination">
+                <a href="#" class="active">1</a>
+                <a href="#">2</a>
+                <a href="#">3</a>
+                <span>...</span>
+                <a href="#">10</a>
+                <a href="#" class="next">Next <i class="fas fa-chevron-right"></i></a>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <aside class="blog-sidebar">
+            <!-- Search Widget -->
+            <div class="sidebar-widget search-widget">
+                <form class="search-form">
+                    <input type="search" placeholder="Search blog...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </form>
+            </div>
+
+            <!-- Categories Widget -->
+            <div class="sidebar-widget categories-widget">
+                <h3>Categories</h3>
+                <ul>
+                    <li><a href="#">Skincare <span>(12)</span></a></li>
+                    <li><a href="#">Makeup <span>(8)</span></a></li>
+                    <li><a href="#">Lash Extensions <span>(15)</span></a></li>
+                    <li><a href="#">Microblading <span>(6)</span></a></li>
+                    <li><a href="#">Self Care <span>(10)</span></a></li>
+                </ul>
+            </div>
+
+            <!-- Recent Posts Widget -->
+            <div class="sidebar-widget recent-posts-widget">
+                <h3>Recent Posts</h3>
+                <ul>
+                    <li>
+                        <img src="./assets/img/recent-1.jpg" alt="Recent Post">
+                        <div class="post-info">
+                            <h4><a href="#">Summer Skincare Essentials</a></h4>
+                            <span>June 12, 2023</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="./assets/img/recent-2.jpg" alt="Recent Post">
+                        <div class="post-info">
+                            <h4><a href="#">Natural Makeup Tutorial</a></h4>
+                            <span>June 8, 2023</span>
+                        </div>
+                    </li>
+                    <li>
+                        <img src="./assets/img/recent-3.jpg" alt="Recent Post">
+                        <div class="post-info">
+                            <h4><a href="#">Lash Care Tips</a></h4>
+                            <span>June 5, 2023</span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </aside>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <!-- Your existing footer content -->
+    </footer>
+
+    <script>
+        AOS.init();
+
+        // Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Close menu when a link is clicked
+        document.querySelectorAll('.nav-links a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                hamburger.classList.remove('active');
+            });
+        });
+    </script>
+</body>
+
+</html>
