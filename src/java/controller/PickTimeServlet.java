@@ -95,70 +95,60 @@ public class PickTimeServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            String name = request.getParameter("name");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            Appointment appointment = new Appointment();
-            AppointmentDAO appointmentDAO = new AppointmentDAO();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("h:mm a");
-            String appointmentDateStr = request.getParameter("appointmentDate");
-            String appointmentTimeStr = request.getParameter("appointmentTime");
-
-            // Parse the date using the formatter
-            LocalDate appointmentDate = LocalDate.parse(appointmentDateStr, formatter);
-            appointment.setAppointmentDate(appointmentDate);
-            LocalTime appointmentTime = LocalTime.parse(appointmentTimeStr, formatter1);
-            appointment.setAppointmentTime(appointmentTime);
-
-            //Get serviceID
-            String serviceIDStr = request.getParameter("serviceID");
-            int serviceID = Integer.parseInt(serviceIDStr);
-            Service service = new Service();
-            service.setId(serviceID);
-
-            Person customer = new Person();
-            customer.setName(name);
-            customer.setEmail(email);
-            customer.setPhone(phone);
-
-            PersonDAO personDAO = new PersonDAO();
-            Person existCustomer = personDAO.existCheck(customer);
-            if (existCustomer == null) {
-                personDAO.addPerson(customer);
-                int max = personDAO.maxID();
-                customer.setId(max);
-                appointment.setPerson(customer);
-            } else {
-                appointment.setPerson(existCustomer);
-            }
-            appointment.setCreatedDate(LocalDateTime.now());
-            appointment.setStatus("Scheduled");
-
-            appointmentDAO.addAppointment(appointment);
-
-            //Add bảng trung gian
-            AppointmentServiceDAO aSDAO = new AppointmentServiceDAO();
-            int maxID = appointmentDAO.getMaxAppointmentID();
-            aSDAO.addAppointmentService(maxID, service);
-            response.sendRedirect("appointment");
-        } catch (SQLException ex) {
-            Logger.getLogger(PickTimeServlet.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
+//    @Override
+//    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+//            throws ServletException, IOException {
+//        try {
+//            String name = request.getParameter("name");
+//            String email = request.getParameter("email");
+//            String phone = request.getParameter("phone");
+//            Appointment appointment = new Appointment();
+//            AppointmentDAO appointmentDAO = new AppointmentDAO();
+//            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+//            DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("h:mm a");
+//            String appointmentDateStr = request.getParameter("appointmentDate");
+//            String appointmentTimeStr = request.getParameter("appointmentTime");
+//
+//            // Parse the date using the formatter
+//            LocalDate appointmentDate = LocalDate.parse(appointmentDateStr, formatter);
+//            appointment.setAppointmentDate(appointmentDate);
+//            LocalTime appointmentTime = LocalTime.parse(appointmentTimeStr, formatter1);
+//            appointment.setAppointmentTime(appointmentTime);
+//
+//            //Get serviceID
+//            String serviceIDStr = request.getParameter("serviceID");
+//            int serviceID = Integer.parseInt(serviceIDStr);
+//            Service service = new Service();
+//            service.setId(serviceID);
+//
+//            Person customer = new Person();
+//            customer.setName(name);
+//            customer.setEmail(email);
+//            customer.setPhone(phone);
+//
+//            PersonDAO personDAO = new PersonDAO();
+//            Person existCustomer = personDAO.existCheck(customer);
+//            if (existCustomer == null) {
+//                personDAO.addPerson(customer);
+//                int max = personDAO.maxID();
+//                customer.setId(max);
+//                appointment.setPerson(customer);
+//            } else {
+//                appointment.setPerson(existCustomer);
+//            }
+//            appointment.setCreatedDate(LocalDateTime.now());
+//            appointment.setStatus("Scheduled");
+//
+//            appointmentDAO.addAppointment(appointment);
+//
+//            //Add bảng trung gian
+//            AppointmentServiceDAO aSDAO = new AppointmentServiceDAO();
+//            int maxID = appointmentDAO.getMaxAppointmentID();
+//            aSDAO.addAppointmentService(maxID, service);
+//            response.sendRedirect("appointment");
+//        } catch (SQLException ex) {
+//            Logger.getLogger(PickTimeServlet.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+//    }
 
 }

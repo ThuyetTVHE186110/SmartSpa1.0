@@ -162,50 +162,50 @@ public class PersonDAO extends DBContext {
         return list;
     }
     
-    public Person getPersonByEmail(String email) {
-        PreparedStatement stm = null;
-        ResultSet rs = null;
-
-        try (Connection connection = getConnection()) { // Use getConnection from DBContext
-            String query = "select * from Person where Email = ?";
-            stm = connection.prepareStatement(query);
-            stm.setString(1, email);
-            rs = stm.executeQuery();
-
-            if (rs.next()) {
-                Person person = new Person();
-                person.setId(rs.getInt(1));
-                person.setName(rs.getString(2));
-                if (rs.getDate(3) != null) {
-                    person.setDateOfBirth(rs.getDate(3));
-                }
-                // Lấy giá trị của cột gender (kiểu CHAR)
-                String gender = rs.getString("gender");
-                if (gender != null && gender.length() > 0) {
-                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
-                }
-                person.setPhone(rs.getString(5));
-                person.setEmail(rs.getString(6));
-                person.setAddress(rs.getString(7));
-                return person;
-            }
-        } catch (SQLException e) {
-            System.out.println("Error while retrieving persons: " + e.getMessage());
-        } finally {
-            // Close the ResultSet and PreparedStatement if they are not null
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stm != null) {
-                    stm.close();
-                }
-            } catch (SQLException e) {
-                System.out.println("Error closing resources: " + e.getMessage());
-            }
-        }
-        return null;
-    }
+//    public Person getPersonByEmail(String email) {
+//        PreparedStatement stm = null;
+//        ResultSet rs = null;
+//
+//        try (Connection connection = getConnection()) { // Use getConnection from DBContext
+//            String query = "select * from Person where Email = ?";
+//            stm = connection.prepareStatement(query);
+//            stm.setString(1, email);
+//            rs = stm.executeQuery();
+//
+//            if (rs.next()) {
+//                Person person = new Person();
+//                person.setId(rs.getInt(1));
+//                person.setName(rs.getString(2));
+//                if (rs.getDate(3) != null) {
+//                    person.setDateOfBirth(rs.getDate(3));
+//                }
+//                // Lấy giá trị của cột gender (kiểu CHAR)
+//                String gender = rs.getString("gender");
+//                if (gender != null && gender.length() > 0) {
+//                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
+//                }
+//                person.setPhone(rs.getString(5));
+//                person.setEmail(rs.getString(6));
+//                person.setAddress(rs.getString(7));
+//                return person;
+//            }
+//        } catch (SQLException e) {
+//            System.out.println("Error while retrieving persons: " + e.getMessage());
+//        } finally {
+//            // Close the ResultSet and PreparedStatement if they are not null
+//            try {
+//                if (rs != null) {
+//                    rs.close();
+//                }
+//                if (stm != null) {
+//                    stm.close();
+//                }
+//            } catch (SQLException e) {
+//                System.out.println("Error closing resources: " + e.getMessage());
+//            }
+//        }
+//        return null;
+//    }
 
     public Person getPersonByPhone(String phone) {
         PreparedStatement stm = null;

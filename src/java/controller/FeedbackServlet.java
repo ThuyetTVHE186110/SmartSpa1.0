@@ -62,10 +62,8 @@ public class FeedbackServlet extends HttpServlet {
             throws ServletException, IOException {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
         ArrayList<Feedback> feedback = feedbackDAO.getFeedback();
-
         request.setAttribute("feedback", feedback);
-
-        request.getRequestDispatcher("newUI/services.jsp").forward(request, response);
+        request.getRequestDispatcher("/services.jsp").forward(request, response);
     }
 
     /**
