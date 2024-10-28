@@ -7,6 +7,8 @@ package model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -20,19 +22,21 @@ public class Appointment {
     private LocalDateTime createdDate;
     private String status;
     private String note;
-    private Person person;
+    private Person customer;
+    private List<AppointmentService> services;
 
     public Appointment() {
     }
 
-    public Appointment(int id, LocalDate appointmentDate, LocalTime appointmentTime, LocalDateTime createdDate, String status, String note, Person person) {
+    public Appointment(int id, LocalDate appointmentDate, LocalTime appointmentTime, LocalDateTime createdDate, String status, String note, Person customer, List<AppointmentService> services) {
         this.id = id;
         this.appointmentDate = appointmentDate;
         this.appointmentTime = appointmentTime;
         this.createdDate = createdDate;
         this.status = status;
         this.note = note;
-        this.person = person;
+        this.customer = customer;
+        this.services = services != null ? new ArrayList<>(services) : new ArrayList<>();
     }
 
     public int getId() {
@@ -59,6 +63,14 @@ public class Appointment {
         this.appointmentTime = appointmentTime;
     }
 
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
+    }
+
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -75,21 +87,20 @@ public class Appointment {
         this.note = note;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public Person getCustomer() {
+        return customer;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-    
-    public Person getPerson() {
-        return person;
+    public void setCustomer(Person customer) {
+        this.customer = customer;
     }
 
-    public void setPerson(Person person) {
-        this.person = person;
+    public List<AppointmentService> getServices() {
+        return services;
     }
 
-    
+    public void setServices(List<AppointmentService> services) {
+        this.services = services != null ? new ArrayList<>(services) : new ArrayList<>();
+    }
+
 }

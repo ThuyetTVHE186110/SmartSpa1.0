@@ -93,6 +93,10 @@
         <servlet-class>controller.ErrorServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>BookingServlet</servlet-name>
+        <servlet-class>controller.BookingServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>CustomerProfileServlet</servlet-name>
         <servlet-class>controller.CustomerProfileServlet</servlet-class>
     </servlet>
@@ -215,6 +219,10 @@
     <servlet-mapping>
         <servlet-name>ErrorServlet</servlet-name>
         <url-pattern>/error</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>BookingServlet</servlet-name>
+        <url-pattern>/booking</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>CustomerProfileServlet</servlet-name>

@@ -201,7 +201,7 @@
                                         <c:forEach items="${requestScope.appointmentList}" var="appointment">
                                             <tr>
                                                 <th scope="row">${appointment.id}</th>
-                                                <td>${appointment.person.name}</td>
+                                                <td>${appointment.customer.name}</td>
                                                 <td> 
                                                     ${appointment.appointmentDate} ${appointment.appointmentTime}
                                                 </td>
@@ -239,8 +239,8 @@
                                                         <button type="button" class="btn btn-primary btn-sm edit-button" data-bs-toggle="modal"
                                                                 data-bs-target="#editAppointmentModal"
                                                                 data-appointment-id="${appointment.id}"
-                                                                data-name="${appointment.person.name}"
-                                                                data-person-id="${appointment.person.id}"
+                                                                data-name="${appointment.customer.name}"
+                                                                data-person-id="${appointment.customer.id}"
                                                                 data-services="${serviceIds}" 
                                                                 data-date="${appointment.appointmentDate}"
                                                                 data-time="${appointment.appointmentTime}"

@@ -21,10 +21,6 @@ import java.sql.Statement;
  */
 public class PersonDAO extends DBContext {
 
-    public PersonDAO() {
-        //Write something here
-    }
-
     public List<Person> getAll() {
         List<Person> list = new ArrayList<>();
         PreparedStatement stm = null;
@@ -116,50 +112,101 @@ public class PersonDAO extends DBContext {
         return null;
     }
 
-//    public Person getPersonByEmail(String email) {
-//        PreparedStatement stm = null;
-//        ResultSet rs = null;
-//
-//        try (Connection connection = getConnection()) { // Use getConnection from DBContext
-//            String query = "select * from Person where Email = ?";
-//            stm = connection.prepareStatement(query);
-//            stm.setString(1, email);
-//            rs = stm.executeQuery();
-//
-//            if (rs.next()) {
-//                Person person = new Person();
-//                person.setId(rs.getInt(1));
-//                person.setName(rs.getString(2));
-//                if (rs.getDate(3) != null) {
-//                    person.setDateOfBirth(rs.getDate(3));
-//                }
-//                // Lấy giá trị của cột gender (kiểu CHAR)
-//                String gender = rs.getString("gender");
-//                if (gender != null && gender.length() > 0) {
-//                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
-//                }
-//                person.setPhone(rs.getString(5));
-//                person.setEmail(rs.getString(6));
-//                person.setAddress(rs.getString(7));
-//                return person;
-//            }
-//        } catch (SQLException e) {
-//            System.out.println("Error while retrieving persons: " + e.getMessage());
-//        } finally {
-//            // Close the ResultSet and PreparedStatement if they are not null
-//            try {
-//                if (rs != null) {
-//                    rs.close();
-//                }
-//                if (stm != null) {
-//                    stm.close();
-//                }
-//            } catch (SQLException e) {
-//                System.out.println("Error closing resources: " + e.getMessage());
-//            }
-//        }
-//        return null;
-//    }
+    public List<Person> getPersonByRole(String role) {
+        List<Person> list = new ArrayList<>();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try (Connection connection = getConnection()) { // Use getConnection from DBContext
+            String strSelect = "select * from person p "
+                    + "join Account a on p.ID = a.PersonID "
+                    + "join role r on r.ID = a.RoleID "
+                    + "where r.Name like ?";
+            stm = connection.prepareStatement(strSelect);
+            stm.setString(1, role);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Person person = new Person();
+                person.setId(rs.getInt(1));
+                person.setName(rs.getString(2));
+                if (rs.getDate(3) != null) {
+                    person.setDateOfBirth(rs.getDate(3));
+                }
+                // Lấy giá trị của cột gender (kiểu CHAR)
+                String gender = rs.getString("gender");
+                if (gender != null && gender.length() > 0) {
+                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
+                }
+                person.setPhone(rs.getString(5));
+                person.setEmail(rs.getString(6));
+                person.setAddress(rs.getString(7));
+                list.add(person);
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while retrieving persons: " + e.getMessage());
+        } finally {
+            // Close the ResultSet and PreparedStatement if they are not null
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+
+        return list;
+    }
+    
+    public Person getPersonByEmail(String email) {
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try (Connection connection = getConnection()) { // Use getConnection from DBContext
+            String query = "select * from Person where Email = ?";
+            stm = connection.prepareStatement(query);
+            stm.setString(1, email);
+            rs = stm.executeQuery();
+
+            if (rs.next()) {
+                Person person = new Person();
+                person.setId(rs.getInt(1));
+                person.setName(rs.getString(2));
+                if (rs.getDate(3) != null) {
+                    person.setDateOfBirth(rs.getDate(3));
+                }
+                // Lấy giá trị của cột gender (kiểu CHAR)
+                String gender = rs.getString("gender");
+                if (gender != null && gender.length() > 0) {
+                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
+                }
+                person.setPhone(rs.getString(5));
+                person.setEmail(rs.getString(6));
+                person.setAddress(rs.getString(7));
+                return person;
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while retrieving persons: " + e.getMessage());
+        } finally {
+            // Close the ResultSet and PreparedStatement if they are not null
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException e) {
+                System.out.println("Error closing resources: " + e.getMessage());
+            }
+        }
+        return null;
+    }
+
     public Person getPersonByPhone(String phone) {
         PreparedStatement stm = null;
         ResultSet rs = null;
@@ -567,8 +614,10 @@ public class PersonDAO extends DBContext {
 
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
-        int max = testDAO.maxID();
-        System.out.println(max);
+        List<Person> tList = testDAO.getPersonByRole("staff");
+        for (Person person : tList) {
+            System.out.println(person.getName());
+        }
     }
 
 }

@@ -1,4 +1,4 @@
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %> 
 <%@ page import="model.Person" %>  <!-- Import Person class -->
@@ -31,26 +31,12 @@
                             <input type="checkbox" checked data-staff="all">
                             <span>All Staff</span>
                         </label>
-                        <label class="staff-checkbox">
-                            <input type="checkbox" data-staff="sarah">
-                            <span>Sarah Johnson</span>
-                        </label>
-                        <label class="staff-checkbox">
-                            <input type="checkbox" data-staff="emily">
-                            <span>Emily Davis</span>
-                        </label>
-                        <label class="staff-checkbox">
-                            <input type="checkbox" data-staff="lauren">
-                            <span>Lauren Smith</span>
-                        </label>
-                        <label class="staff-checkbox">
-                            <input type="checkbox" data-staff="jessica">
-                            <span>Jessica Chen</span>
-                        </label>
-                        <label class="staff-checkbox">
-                            <input type="checkbox" data-staff="rachel">
-                            <span>Rachel Thompson</span>
-                        </label>
+                        <c:forEach items="${requestScope.staffList}" var="staff">
+                            <label class="staff-checkbox">
+                                <input type="checkbox" data-staff="${staff.id}">
+                                <span>${staff.name}</span>
+                            </label>
+                        </c:forEach>
                     </div>
                 </div>
 
@@ -60,7 +46,7 @@
                         <div class="calendar-header">
                             <div class="calendar-nav">
                                 <button class="prev-month"><i class="fas fa-chevron-left"></i></button>
-                                <h3 class="current-month">March 2024</h3>
+                                <h3 class="current-month"></h3>
                                 <button class="next-month"><i class="fas fa-chevron-right"></i></button>
                             </div>
                             <div class="view-toggle">
@@ -82,27 +68,31 @@
                         <div class="details-content">
                             <div class="detail-item">
                                 <span class="label">Client</span>
-                                <span class="value" data-field="client">Jane Smith</span>
+                                <span class="value" data-field="client"></span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Service</span>
-                                <span class="value" data-field="service">Classic Lash Extensions</span>
+                                <span class="value" data-field="service"></span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Date</span>
-                                <span class="value" data-field="date">March 15, 2024</span>
+                                <span class="value" data-field="date"></span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Time</span>
-                                <span class="value" data-field="time">2:00 PM - 4:30 PM</span>
+                                <span class="value" data-field="time"></span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Staff</span>
-                                <span class="value" data-field="staff">Jessica Chen</span>
+                                <span class="value" data-field="staff"></span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="label">Status</span>
+                                <span class="value" data-field="status"></span>
                             </div>
                             <div class="detail-item">
                                 <span class="label">Notes</span>
-                                <span class="value" data-field="notes">First-time client, consultation needed</span>
+                                <span class="value" data-field="notes"></span>
                             </div>
                             <div class="detail-actions">
                                 <button class="edit-btn">Edit Appointment</button>
@@ -136,23 +126,18 @@
                             <label>Select Service</label>
                             <select required>
                                 <option value="">Choose a service...</option>
-                                <option value="classic-full">Classic Full Set ($150)</option>
-                                <option value="hybrid-full">Hybrid Full Set ($170)</option>
-                                <option value="volume-full">Volume Full Set ($185)</option>
-                                <option value="classic-fill">Classic Fill ($65-$105)</option>
-                                <option value="hybrid-fill">Hybrid Fill ($80-$130)</option>
-                                <option value="volume-fill">Volume Fill ($85-$140)</option>
+                                <c:forEach items="${requestScope.serviceList}" var="service">
+                                    <option value="${service.id}">${service.name} ($${service.price})</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="form-group">
                             <label>Select Staff</label>
                             <select required>
                                 <option value="">Choose a staff member...</option>
-                                <option value="sarah">Sarah Johnson</option>
-                                <option value="emily">Emily Davis</option>
-                                <option value="lauren">Lauren Smith</option>
-                                <option value="jessica">Jessica Chen</option>
-                                <option value="rachel">Rachel Thompson</option>
+                                <c:forEach items="${requestScope.staffList}" var="staff">
+                                    <option value="${staff.id}">${staff.name}</option>
+                                </c:forEach>
                             </select>
                         </div>
                         <div class="form-row">
@@ -272,197 +257,199 @@
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
         <!-- Move this script section right after the FullCalendar JS scripts and before the main script -->
         <script>
-                                AOS.init();
+                                var events = []; // Initialize an empty array
+                                // Use JSP to loop through appointments and add each one to the events array
+            <c:forEach var="appointment" items="${appointmentList}">
+                                var start = "${appointment.appointmentDate}T${appointment.appointmentTime}";
+                                    var end = "${appointment.appointmentDate}T15:00";
+                                    var note = "${appointment.note}";
+                                    var status = "${appointment.status}";
+                                    var services = [];
+                                    var staffs = [];
+                <c:forEach var="info" items="${appointment.services}">
+                                    var service = "${info.service.name}";
+                                    services.push(service);
+                                    var staff = "${info.staff.name}";
+                                    if (staff && staff.trim().length > 0) {
+                                        staffs.push(staff);
+                                    }
+                </c:forEach>
+                                    console.log("Services: ", services);
+                                    console.log("Staffs: ", staffs);
+                                    events.push({
+                                        title: "${appointment.customer.name}",
+                                        start: start,
+                                        end: end,
+                                        staff: staffs,
+                                        color: '#B38886',
+                                        extendedProps: {
+                                            client: '${appointment.customer.name}',
+                                            staff: staffs,
+                                            service: services,
+                                            status: status,
+                                            notes: note
+                                        }
+                                    });
+            </c:forEach>;
 
-                                // Initialize FullCalendar
-                                document.addEventListener('DOMContentLoaded', function () {
-                                    const calendarEl = document.getElementById('calendar');
-                                    const calendar = new FullCalendar.Calendar(calendarEl, {
-                                        initialView: 'dayGridMonth',
-                                        headerToolbar: false,
-                                        events: [
-                                            {
-                                                title: 'Classic Lash Extensions - Jane Smith',
-                                                start: '2024-03-15T14:00:00',
-                                                end: '2024-03-15T16:30:00',
-                                                staff: 'jessica',
-                                                color: '#B38886',
-                                                extendedProps: {
-                                                    client: 'Jane Smith',
-                                                    service: 'Classic Lash Extensions',
-                                                    staff: 'Jessica Chen',
-                                                    notes: 'First-time client, consultation needed'
-                                                }
-                                            }
-                                        ],
-                                        eventClick: function (info) {
-                                            // Update the details content with event information
-                                            const event = info.event;
-
-                                            // Update the details content
-                                            document.querySelector('.detail-item .value[data-field="client"]').textContent = event.extendedProps.client;
-                                            document.querySelector('.detail-item .value[data-field="service"]').textContent = event.extendedProps.service;
-                                            document.querySelector('.detail-item .value[data-field="date"]').textContent = event.start.toLocaleDateString();
-                                            document.querySelector('.detail-item .value[data-field="time"]').textContent =
-                                                    `${event.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - 
-            ${event.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
-                            document.querySelector('.detail-item .value[data-field="staff"]').textContent = event.extendedProps.staff;
-                            document.querySelector('.detail-item .value[data-field="notes"]').textContent = event.extendedProps.notes;
-                        }
-                    });
-                    calendar.render();
-
-                    // View toggle functionality
-                    document.querySelectorAll('.view-btn').forEach(btn => {
-                        btn.addEventListener('click', () => {
-                            document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-                            btn.classList.add('active');
-                            const view = btn.dataset.view;
-                            calendar.changeView(
-                                    view === 'month' ? 'dayGridMonth' :
-                                    view === 'week' ? 'timeGridWeek' : 'timeGridDay'
-                                    );
-                        });
-                    });
-
-                    // Month navigation
-                    document.querySelector('.prev-month').addEventListener('click', () => {
-                        calendar.prev();
-                        updateMonthTitle();
-                    });
-
-                    document.querySelector('.next-month').addEventListener('click', () => {
-                        calendar.next();
-                        updateMonthTitle();
-                    });
-
-                    function updateMonthTitle() {
-                        const date = calendar.getDate();
-                        document.querySelector('.current-month').textContent =
-                                date.toLocaleString('default', {month: 'long', year: 'numeric'});
+                                    console.log(events); // Check if events are correctly added
+        </script>
+        <script>
+            AOS.init();
+            // Initialize FullCalendar
+            document.addEventListener('DOMContentLoaded', function () {
+                const calendarEl = document.getElementById('calendar');
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    headerToolbar: false,
+                    events: events,
+                    eventClick: function (info) {
+                        // Update the details content with event information
+                        const event = info.event;
+                        // Update the details content
+                        document.querySelector('.detail-item .value[data-field="client"]').textContent = event.extendedProps.client;
+                        document.querySelector('.detail-item .value[data-field="service"]').textContent = event.extendedProps.service;
+                        document.querySelector('.detail-item .value[data-field="date"]').textContent = event.start.toLocaleDateString();
+                        document.querySelector('.detail-item .value[data-field="time"]').textContent =
+                                new Date(event.start).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'}) + " - " +
+                                new Date(event.end).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'});
+                        document.querySelector('.detail-item .value[data-field="staff"]').textContent = event.extendedProps.staff;
+                        document.querySelector('.detail-item .value[data-field="status"]').textContent = event.extendedProps.status;
+                        document.querySelector('.detail-item .value[data-field="notes"]').textContent = event.extendedProps.notes;
                     }
-                    updateMonthTitle();
-
-                    // Modal functionality
-                    const quickBookBtn = document.getElementById('quickBookBtn');
-                    const bookingModal = document.getElementById('bookingModal');
-
-                    quickBookBtn.addEventListener('click', () => {
-                        bookingModal.classList.add('active');
-                        document.body.style.overflow = 'hidden';
+                });
+                calendar.render();
+                // View toggle functionality
+                document.querySelectorAll('.view-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+                        btn.classList.add('active');
+                        const view = btn.dataset.view;
+                        calendar.changeView(
+                                view === 'month' ? 'dayGridMonth' :
+                                view === 'week' ? 'timeGridWeek' : 'timeGridDay'
+                                );
                     });
-
-                    // Form submission handling
-                    document.getElementById('quickBookForm').addEventListener('submit', function (e) {
-                        e.preventDefault();
-                        alert('Appointment booked successfully!');
+                });
+                // Month navigation
+                document.querySelector('.prev-month').addEventListener('click', () => {
+                    calendar.prev();
+                    updateMonthTitle();
+                });
+                document.querySelector('.next-month').addEventListener('click', () => {
+                    calendar.next();
+                    updateMonthTitle();
+                });
+                function updateMonthTitle() {
+                    const date = calendar.getDate();
+                    document.querySelector('.current-month').textContent =
+                            date.toLocaleString('default', {month: 'long', year: 'numeric'});
+                }
+                updateMonthTitle();
+                // Modal functionality
+                const quickBookBtn = document.getElementById('quickBookBtn');
+                const bookingModal = document.getElementById('bookingModal');
+                quickBookBtn.addEventListener('click', () => {
+                    bookingModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
+                });
+                // Form submission handling
+                document.getElementById('quickBookForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    alert('Appointment booked successfully!');
+                    bookingModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+                // Close modal when clicking outside
+                bookingModal.addEventListener('click', (e) => {
+                    if (e.target === bookingModal) {
+                        bookingModal.classList.remove('active');
+                        document.body.style.overflow = '';
+                    }
+                });
+                // Close modal button
+                const closeModalBtn = document.querySelector('.close-modal');
+                if (closeModalBtn) {
+                    closeModalBtn.addEventListener('click', () => {
                         bookingModal.classList.remove('active');
                         document.body.style.overflow = '';
                     });
+                }
+            }
+            );
+            // Hamburger menu functionality
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            hamburger.addEventListener('click', () => {
+                navLinks.classList.toggle('active');
+                hamburger.classList.toggle('active');
+            });
+            // Add this to your existing script section
+            document.addEventListener('DOMContentLoaded', function () {
+                // Get modal elements
+                const editModal = document.getElementById('editAppointmentModal');
+                const editBtn = document.querySelector('.edit-btn');
+                const closeEditBtn = document.getElementById('closeEditModal');
+                const cancelEditBtn = document.getElementById('cancelEdit');
+                const editForm = document.getElementById('editAppointmentForm');
+                // Function to populate form with current appointment details
+                function populateEditForm(appointmentDetails) {
+                    document.getElementById('editClientName').value = appointmentDetails.client;
+                    document.getElementById('editService').value = appointmentDetails.service.toLowerCase().replace(/ /g, '-');
+                    document.getElementById('editStaff').value = appointmentDetails.staff.toLowerCase().split(' ')[0];
+                    document.getElementById('editDate').value = appointmentDetails.date;
+                    document.getElementById('editTime').value = appointmentDetails.time.split(' - ')[0];
+                    document.getElementById('editNotes').value = appointmentDetails.notes;
+                }
 
-                    // Close modal when clicking outside
-                    bookingModal.addEventListener('click', (e) => {
-                        if (e.target === bookingModal) {
-                            bookingModal.classList.remove('active');
-                            document.body.style.overflow = '';
-                        }
-                    });
-
-                    // Close modal button
-                    const closeModalBtn = document.querySelector('.close-modal');
-                    if (closeModalBtn) {
-                        closeModalBtn.addEventListener('click', () => {
-                            bookingModal.classList.remove('active');
-                            document.body.style.overflow = '';
-                        });
-                    }
+                // Open edit modal
+                editBtn.addEventListener('click', () => {
+                    // Get current appointment details from the details panel
+                    const appointmentDetails = {
+                        client: document.querySelector('.value[data-field="client"]').textContent,
+                        service: document.querySelector('.value[data-field="service"]').textContent,
+                        staff: document.querySelector('.value[data-field="staff"]').textContent,
+                        date: document.querySelector('.value[data-field="date"]').textContent,
+                        time: document.querySelector('.value[data-field="time"]').textContent,
+                        notes: document.querySelector('.value[data-field="notes"]').textContent
+                    };
+                    // Populate form with current details
+                    populateEditForm(appointmentDetails);
+                    // Show modal
+                    editModal.classList.add('active');
+                    document.body.style.overflow = 'hidden';
                 });
+                // Close modal functions
+                function closeEditModal() {
+                    editModal.classList.remove('active');
+                    document.body.style.overflow = '';
+                    editForm.reset();
+                }
 
-                // Hamburger menu functionality
-                const hamburger = document.querySelector('.hamburger');
-                const navLinks = document.querySelector('.nav-links');
-
-                hamburger.addEventListener('click', () => {
-                    navLinks.classList.toggle('active');
-                    hamburger.classList.toggle('active');
-                });
-
-                // Add this to your existing script section
-                document.addEventListener('DOMContentLoaded', function () {
-                    // Get modal elements
-                    const editModal = document.getElementById('editAppointmentModal');
-                    const editBtn = document.querySelector('.edit-btn');
-                    const closeEditBtn = document.getElementById('closeEditModal');
-                    const cancelEditBtn = document.getElementById('cancelEdit');
-                    const editForm = document.getElementById('editAppointmentForm');
-
-                    // Function to populate form with current appointment details
-                    function populateEditForm(appointmentDetails) {
-                        document.getElementById('editClientName').value = appointmentDetails.client;
-                        document.getElementById('editService').value = appointmentDetails.service.toLowerCase().replace(/ /g, '-');
-                        document.getElementById('editStaff').value = appointmentDetails.staff.toLowerCase().split(' ')[0];
-                        document.getElementById('editDate').value = appointmentDetails.date;
-                        document.getElementById('editTime').value = appointmentDetails.time.split(' - ')[0];
-                        document.getElementById('editNotes').value = appointmentDetails.notes;
-                    }
-
-                    // Open edit modal
-                    editBtn.addEventListener('click', () => {
-                        // Get current appointment details from the details panel
-                        const appointmentDetails = {
-                            client: document.querySelector('.value[data-field="client"]').textContent,
-                            service: document.querySelector('.value[data-field="service"]').textContent,
-                            staff: document.querySelector('.value[data-field="staff"]').textContent,
-                            date: document.querySelector('.value[data-field="date"]').textContent,
-                            time: document.querySelector('.value[data-field="time"]').textContent,
-                            notes: document.querySelector('.value[data-field="notes"]').textContent
-                        };
-
-                        // Populate form with current details
-                        populateEditForm(appointmentDetails);
-
-                        // Show modal
-                        editModal.classList.add('active');
-                        document.body.style.overflow = 'hidden';
-                    });
-
-                    // Close modal functions
-                    function closeEditModal() {
-                        editModal.classList.remove('active');
-                        document.body.style.overflow = '';
-                        editForm.reset();
-                    }
-
-                    closeEditBtn.addEventListener('click', closeEditModal);
-                    cancelEditBtn.addEventListener('click', closeEditModal);
-
-                    // Close modal when clicking outside
-                    editModal.addEventListener('click', (e) => {
-                        if (e.target === editModal) {
-                            closeEditModal();
-                        }
-                    });
-
-                    // Handle form submission
-                    editForm.addEventListener('submit', function (e) {
-                        e.preventDefault();
-
-                        // Update appointment details in the details panel
-                        document.querySelector('.value[data-field="client"]').textContent = document.getElementById('editClientName').value;
-                        document.querySelector('.value[data-field="service"]').textContent = document.getElementById('editService').options[document.getElementById('editService').selectedIndex].text;
-                        document.querySelector('.value[data-field="staff"]').textContent = document.getElementById('editStaff').options[document.getElementById('editStaff').selectedIndex].text;
-                        document.querySelector('.value[data-field="date"]').textContent = document.getElementById('editDate').value;
-                        document.querySelector('.value[data-field="time"]').textContent = document.getElementById('editTime').value;
-                        document.querySelector('.value[data-field="notes"]').textContent = document.getElementById('editNotes').value;
-
-                        // Show success message
-                        alert('Appointment updated successfully!');
-
-                        // Close modal
+                closeEditBtn.addEventListener('click', closeEditModal);
+                cancelEditBtn.addEventListener('click', closeEditModal);
+                // Close modal when clicking outside
+                editModal.addEventListener('click', (e) => {
+                    if (e.target === editModal) {
                         closeEditModal();
-                    });
+                    }
                 });
+                // Handle form submission
+                editForm.addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    // Update appointment details in the details panel
+                    document.querySelector('.value[data-field="client"]').textContent = document.getElementById('editClientName').value;
+                    document.querySelector('.value[data-field="service"]').textContent = document.getElementById('editService').options[document.getElementById('editService').selectedIndex].text;
+                    document.querySelector('.value[data-field="staff"]').textContent = document.getElementById('editStaff').options[document.getElementById('editStaff').selectedIndex].text;
+                    document.querySelector('.value[data-field="date"]').textContent = document.getElementById('editDate').value;
+                    document.querySelector('.value[data-field="time"]').textContent = document.getElementById('editTime').value;
+                    document.querySelector('.value[data-field="notes"]').textContent = document.getElementById('editNotes').value;
+                    // Show success message
+                    alert('Appointment updated successfully!');
+                    // Close modal
+                    closeEditModal();
+                });
+            });
         </script>
     </body>
-
 </html>
