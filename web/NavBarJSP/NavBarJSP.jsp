@@ -41,7 +41,7 @@
         <ul class="nav-links">
             <li><a href="index" class="active">Home</a></li>
             <li><a href="services">Services</a></li>
-            <li><a href="product.jsp">Product</a></li>
+            <li><a href="product">Product</a></li>
             <li><a href="contact.jsp">Contact</a></li>
             <li><a href="about.jsp">About</a></li>
             <li><a href="blog">Blog</a></li>

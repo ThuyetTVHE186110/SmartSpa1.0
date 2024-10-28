@@ -5,7 +5,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -22,37 +21,44 @@ public class ProductDAO extends DBContext {
     }
 
     public List<Product> getAllProducts() {
-        List<Product> products = new ArrayList<>();
-        String sql = "SELECT * FROM Product";
+    List<Product> products = new ArrayList<>();
+    String sql = "SELECT p.*, c.Name AS CategoryName\n" +
+"                 FROM Product p \n" +
+"                 JOIN Category c ON p.CategoryID = c.ID";
 
-        try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+    try (Connection connection = getConnection(); 
+         PreparedStatement pstmt = connection.prepareStatement(sql); 
+         ResultSet rs = pstmt.executeQuery()) {
 
-            while (rs.next()) {
-                Product product = new Product();
-                product.setId(rs.getInt("ID"));
-                product.setName(rs.getString("Name"));
-                product.setPrice(rs.getInt("Price"));
-                product.setImage(rs.getString("Image"));
-                product.setQuantity(rs.getInt("Quantity"));
-                product.setBranchName(rs.getString("BranchName"));
-                product.setDescription(rs.getString("Description"));
-                products.add(product);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while (rs.next()) {
+            Product product = new Product();
+            product.setId(rs.getInt("ID"));
+            product.setName(rs.getString("Name"));
+            product.setPrice(rs.getInt("Price"));
+            product.setImage(rs.getString("Image"));
+            product.setQuantity(rs.getInt("Quantity"));
+            product.setBranchName(rs.getString("BranchName"));
+            product.setDescription(rs.getString("Description"));
+            product.setCategory(rs.getString("CategoryName"));
+            product.setStatus(rs.getString("Status"));
+            products.add(product);
         }
-        return products;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return products;
+}
 
     public Product getProductByID(int productID) {
         Product product = null;
         try (Connection connection = DBContext.getConnection()) {
-            String sql = "SELECT p.*, d.DiscountPercent, s.Name as SupplierName, s.Address as SupplierAddress, c.Name as CategoryName\n"
-                    + "FROM Product p\n"
-                    + "LEFT JOIN Discount d ON p.DiscountID = d.DiscountID\n"
-                    + "INNER JOIN Supplier s ON p.SupplierID = s.ID\n"
-                    + "INNER JOIN Category c ON p.CategoryID = c.ID\n"
-                    + "WHERE p.ID = ?";
+            String sql = """
+                         SELECT p.*, d.DiscountPercent, s.Name as SupplierName, s.Address as SupplierAddress, c.Name as CategoryName
+                         FROM Product p
+                         LEFT JOIN Discount d ON p.DiscountID = d.DiscountID
+                         INNER JOIN Supplier s ON p.SupplierID = s.ID
+                         INNER JOIN Category c ON p.CategoryID = c.ID
+                         WHERE p.ID = ?""";
 
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.setInt(1, productID);
@@ -178,7 +184,7 @@ public class ProductDAO extends DBContext {
         // Không cần finally để đóng pstmt và connection vì chúng đã được quản lý bởi try-with-resources
     }
 
-    public void updateProduct(int productId, String name, String description, int price, int quantity, String image, int categoryId, int supplierId, int discountId, String branchName) {
+    public void updateProduct(int productId, String name, String description, int price, int quantity, String image, int categoryId, int supplierId, int discountId, String branchName,String status) {
         String sql = "UPDATE Product\n"
                 + "SET Name = ?,\n"
                 + "    Price = ?,\n"
@@ -188,7 +194,8 @@ public class ProductDAO extends DBContext {
                 + "    CategoryID = ?,\n"
                 + "    BranchName = ?,\n"
                 + "    Image = ?,\n"
-                + "    Description = ?\n"
+                + "    Description = ?,\n"
+                + "    Status = ?\n"
                 + "WHERE ID = ?";
         try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
@@ -201,7 +208,8 @@ public class ProductDAO extends DBContext {
             pstmt.setString(7, branchName);
             pstmt.setString(8, image);
             pstmt.setString(9, description);  // Set description at the 9th position
-            pstmt.setInt(10, productId);
+             pstmt.setString(10, status);
+            pstmt.setInt(11, productId);
             pstmt.executeUpdate();
 
         } catch (SQLException e) {

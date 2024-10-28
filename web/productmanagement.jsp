@@ -94,6 +94,7 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Price</th>
                                             <th scope="col">Quantity</th>
+                                            <th scope="col">Status</th>
                                             <th scope="col" style="width: 15%;">Actions</th>
                                         </tr>
                                     </thead>
@@ -106,6 +107,19 @@
                                                 <td>${product.description}</td>
                                                 <td>${product.price}</td>
                                                 <td>${product.quantity}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${product.status == 'Available'}">
+                                                            <span class="badge bg-success">Available</span>
+                                                        </c:when>
+                                                        <c:when test="${product.status == 'UnAvailable'}">
+                                                            <span class="badge bg-danger">UnAvailable</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badge bg-secondary">Unknown</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" 
                                                             data-bs-toggle="modal" 
@@ -273,6 +287,15 @@
                                 <label for="branchName" class="form-label">Branch Name</label>
                                 <input type="text" class="form-control" id="branchName" name="branchName" required minlength="3">
                             </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Available">Available</option>
+                                    <option value="UnAvailable">UnAvailable</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -310,10 +333,20 @@
                                                                         form.querySelector('input[name="supplierId"]').value = product.supplierId;
                                                                         form.querySelector('input[name="discountId"]').value = product.discountId;
                                                                         form.querySelector('input[name="branchName"]').value = product.branchName;
+                                                                        var statusSelect = form.querySelector('select[name="status"]');
+                                                                        statusSelect.value = product.status;
+                                                                        if (!statusSelect.value) {
+                                                                            Array.from(statusSelect.options).forEach(option => {
+                                                                                if (option.text === product.status) {
+                                                                                    option.selected = true;
+                                                                                }
+                                                                            });
+                                                                        }
+
                                                                         // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
                                                                     })
                                                                     .catch(error => console.error('Error fetching product details:', error));
-                                                            x
+
                                                         });
 
         </script>
