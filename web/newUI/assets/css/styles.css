@@ -4305,7 +4305,7 @@ footer {
 
 /* Blog Page Styles */
 .blog-hero {
-    background-image: url('../img/blog-hero.jpg');
+    background-image: url('newUI/assets/img/main_background.png');
     background-size: cover;
     background-position: center;
     height: 50vh;
