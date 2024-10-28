@@ -52,7 +52,7 @@
                     <li><a href="contact.jsp">Contact</a></li>
                     <li><a href="appointment1.jsp">Appointments</a></li>
                     <li><a href="about.jsp">About</a></li>
-                    <li><a href="blog.jsp">Blog</a></li>
+                    <li><a href="blog">Blog</a></li>
                     <li> <%
                             // Check if the user is logged in
                             Account loggedInAccount = (Account) session.getAttribute("account");

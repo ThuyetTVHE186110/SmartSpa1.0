@@ -23,7 +23,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
-    
+
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -62,8 +62,8 @@
                 <div class="profile-nav">
                     <button class="profile-nav-btn active" data-tab="appointments">Appointments</button>
                     <button class="profile-nav-btn" data-tab="history">History</button>
-                    <button class="profile-nav-btn" data-tab="preferences">Preferences</button>
-                    <button class="profile-nav-btn" data-tab="settings">Settings</button>
+                    <button class="profile-nav-btn" data-tab="settings">Account Information</button>
+                    <button class="profile-nav-btn" data-tab="preferences">Change Password</button>
                 </div>
 
                 <!-- Profile Content -->
@@ -109,40 +109,67 @@
                     </div>
 
                     <!-- Preferences Tab -->
+                    <!-- Preferences Tab -->
                     <div class="profile-tab" id="preferences">
-                        <h2>Service Preferences</h2>
-                        <form class="preferences-form">
+                        <h2>Change Your Password</h2>
+                        <form class="preferences-form" action="customerProfile" method="post" onsubmit="return validatePassword()">
+                            <!-- Password Update Section -->
+                            <h3>Change Password</h3>
+
+
+                            <!-- Password -->
                             <div class="form-group">
-                                <label>Preferred Lash Style</label>
-                                <select>
-                                    <option>Natural</option>
-                                    <option>Dramatic</option>
-                                    <option>Cat Eye</option>
-                                    <option>Doll Eye</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Preferred Artist</label>
-                                <select>
-                                    <option>No Preference</option>
-                                    <option>Jessica Chen</option>
-                                    <option>Sarah Johnson</option>
-                                </select>
-                            </div>
-                            <div class="form-group">
-                                <label>Appointment Reminders</label>
-                                <div class="checkbox-group">
-                                    <label>
-                                        <input type="checkbox" checked> Email
-                                    </label>
-                                    <label>
-                                        <input type="checkbox" checked> SMS
-                                    </label>
+                                <label>Current Password</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="password" id="password_field" name="password" class="form-control" required oninput="validatePassword()">
+                                    <button type="button" class="show_password" onclick="togglePassword('password_field')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                        <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                        <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                              d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                        </path>
+                                        </svg>
+                                    </button>
                                 </div>
                             </div>
-                            <button type="submit" class="save-preferences-btn">Save Preferences</button>
+
+                            <!-- New Password -->
+                            <div class="form-group">
+                                <label>New Password</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="password" name="newPassword" id="newPassword" required minlength="8" maxlength="20" required oninput="validatePassword()">
+                                    <button type="button" class="show_password" onclick="togglePassword('newPassword')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                        <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                        <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                              d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                        </path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <span id="password_error" style="color: red; display: none;"></span>
+
+                            <!-- Confirm New Password -->
+                            <div class="form-group">
+                                <label>Confirm New Password</label>
+                                <div style="display: flex; align-items: center;">
+                                    <input type="password" name="confirmNewPassword" id="confirmNewPassword" required minlength="8" maxlength="20" required oninput="validatePassword()">
+                                    <button type="button" class="show_password" onclick="togglePassword('confirmNewPassword')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
+                                        <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
+                                        <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
+                                              d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
+                                        </path>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <span id="confirm_password_error" style="color: red; display: none;"></span>
+
+                            <button type="submit" class="save-preferences-btn">Save Changes</button>
                         </form>
                     </div>
+
+
+
 
                     <!-- Settings Tab -->
                     <div class="profile-tab" id="settings">
@@ -186,27 +213,7 @@
                                 <label>Email</label>
                                 <input type="email" name="email" id="email_field" value="<%= person.getEmail() %>" required oninput="validateEmail(this)">
                             </div>
-                            <div id="email_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi email -->
-
-
-
-                            <!-- Password -->
-                            <div class="form-group">
-                                <label>Password</label>
-                                <div style="display: flex; align-items: center;">
-                                    <input type="password" id="password_field" name="password" class="form-control" value ="<%= account.getPassword() %>" required oninput="validatePassword()">
-                                    <button type="button" class="show_password" onclick="togglePassword('password_field')" style="background:none; border:none; cursor:pointer; margin-left: 5px;">
-                                        <svg fill="none" viewBox="0 0 24 24" height="24" width="24" xmlns="http://www.w3.org/2000/svg" class="icon">
-                                        <path stroke-linecap="round" stroke-width="2" stroke="#141B34"
-                                              d="M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c-1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z">
-                                        </path>
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-                            <div id="password_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi mật khẩu -->
-
-
+                            <div id="email_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi email -->           
                             <!-- Submit Button -->
                             <button type="submit" class="save-settings-btn">Save Changes</button>
                         </form>
@@ -220,23 +227,22 @@
             <!-- [Previous footer code remains the same] -->
         </footer>
         <script>
+            // Validate password and confirmation fields in change password form
             function validatePassword() {
-                const passwordField = document.getElementById('password_field');
-                const confirmPasswordField = document.getElementById('confirm_password_field');
+                const passwordField = document.getElementById('newPassword');
+                const confirmPasswordField = document.getElementById('confirmNewPassword');
                 const passwordError = document.getElementById('password_error');
                 const confirmPasswordError = document.getElementById('confirm_password_error');
 
                 const password = passwordField.value;
                 const confirmPassword = confirmPasswordField.value;
-
                 const passwordCriteria = /^(?=.*[0-9])(?=.*[!@#$%^&*])[A-Z].{4,19}$/;
-                let isValid = true;
 
-                passwordError.style.display = 'none';
-                confirmPasswordError.style.display = 'none';
+                let isValid = true;
+                [passwordError, confirmPasswordError].forEach(error => error.style.display = 'none');
 
                 // Check password complexity
-                if (!password.match(passwordCriteria)) {
+                if (!passwordCriteria.test(password)) {
                     passwordError.innerText = "Password must start with an uppercase letter, be at least 5 characters long, contain at least one digit, and one special character.";
                     passwordError.style.display = 'block';
                     isValid = false;
@@ -252,43 +258,56 @@
                 return isValid;
             }
 
-            function validateEmail(input) {
-                const emailError = document.getElementById('email_error');
-                const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                const isValid = emailPattern.test(input.value);
-
-                if (!isValid) {
-                    input.classList.add('invalid');
-                    emailError.style.display = 'block';
-                } else {
-                    input.classList.remove('invalid');
-                    emailError.style.display = 'none';
-                }
-                return isValid;
-            }
-
+            // Toggle the visibility of password fields
             function togglePassword(fieldId) {
                 const passwordField = document.getElementById(fieldId);
-                const button = event.currentTarget;
-                const path = button.querySelector('path');
+                const iconPath = event.currentTarget.querySelector('svg path');
 
-                if (passwordField.type === 'password') {
-                    passwordField.type = 'text';
-                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11 2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
-                } else {
-                    passwordField.type = 'password';
-                    path.setAttribute('d', 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z');
-                }
+                const isPasswordHidden = passwordField.type === 'password';
+                passwordField.type = isPasswordHidden ? 'text' : 'password';
+
+                // Set icon based on visibility
+                iconPath.setAttribute(
+                        'd',
+                        isPasswordHidden
+                        ? 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0 2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11 2.5-2.5S13.39 9 12 9z'
+                        : 'M12 4.5C6.5 4.5 2 12 2 12s4.5 7.5 10 7.5 10-7.5 10-7.5-4.5-7.5-10-7.5zM12 17.5c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zM12 9c1.39 0-2.5 1.11-2.5 2.5S10.61 14 12 14s2.5-1.11-2.5 2.5S13.39 9 12 9z'
+                        );
             }
 
+            // Validate password matching in simple form submission
             function validateForm() {
-                const isEmailValid = validateEmail(document.getElementById('email_field'));
-                const isPasswordValid = validatePassword();
+                const [newPassword, confirmNewPassword] = [
+                    document.querySelector('input[name="newPassword"]').value,
+                    document.querySelector('input[name="confirmNewPassword"]').value
+                ];
 
-                return isEmailValid && isPasswordValid;
+                if (newPassword !== confirmNewPassword) {
+                    alert("New passwords do not match.");
+                    return false;
+                }
+                return true;
             }
         </script>
 
+
+        <% 
+            String successMessage = (String) session.getAttribute("successMessage");
+            String errorMessage = (String) request.getAttribute("errorMessage");
+
+            if (successMessage != null) {
+        %>
+        <div class="alert alert-success"><%= successMessage %></div>
+        <%
+                session.removeAttribute("successMessage");
+            }
+
+            if (errorMessage != null) {
+        %>
+        <div class="alert alert-danger"><%= errorMessage %></div>
+        <%
+            }
+        %>
         <script>
             AOS.init();
 
@@ -315,7 +334,8 @@
                     btn.classList.add('active');
                     document.getElementById(btn.dataset.tab).classList.add('active');
                 });
-            });
+            }
+            );
 
 
         </script>
