@@ -29,6 +29,12 @@ public class BlogManagementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
+
+        // Redirect to error page if session is null or account is not in session
+        if (session == null || session.getAttribute("account") == null) {
+            response.sendRedirect("error"); // Custom error page
+            return;
+        }
         Account account = (Account) session.getAttribute("account");
 
         if (account == null || account.getRole() != 3) {

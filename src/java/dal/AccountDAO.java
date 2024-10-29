@@ -67,6 +67,7 @@ public class AccountDAO {
         }
         return account;  // Return null if no account is found
     }
+   
 
     public boolean updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
@@ -247,5 +248,7 @@ public class AccountDAO {
             stmt.executeUpdate();
         }
     }
-
+    
+    
+    
 }
