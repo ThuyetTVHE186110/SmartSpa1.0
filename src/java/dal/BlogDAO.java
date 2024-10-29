@@ -222,39 +222,53 @@ public class BlogDAO {
 
     public void createBlog(Blog blog) throws SQLException {
         String sql = """
-                INSERT INTO Blog (Title, Content, StaffID, DatePosted, Image, Description, Category, AuthorBio, AuthorImage)
-                VALUES (?, ?, ?, GETDATE(), ?, ?, ?, ?, ?)
-                """;
+            INSERT INTO Blog (Title, Content, StaffID, DatePosted, Image, Description, Category, AuthorImage)
+            VALUES (?, ?, ?, GETDATE(), ?, ?, ?, ?)
+            """;
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, blog.getTitle());
             stmt.setString(2, blog.getContent());
-            stmt.setInt(3, blog.getStaffID());
+            stmt.setInt(3, blog.getStaffID()); // StaffID is used to link with the author
             stmt.setString(4, blog.getImage());
             stmt.setString(5, blog.getDescription());
             stmt.setString(6, blog.getCategory());
-            stmt.setString(7, blog.getAuthorBio());
-            stmt.setString(8, blog.getAuthorImage());
+            stmt.setString(7, blog.getAuthorImage()); // Set author image
+
             stmt.executeUpdate();
         }
     }
 
     public void updateBlog(Blog blog) throws SQLException {
         String sql = """
-                UPDATE Blog
-                SET Title = ?, Content = ?, Image = ?, Description = ?, Category = ?, AuthorBio = ?, AuthorImage = ?
-                WHERE ID = ?
-                """;
+            UPDATE Blog
+            SET Title = ?, 
+                Content = ?, 
+                Description = ?, 
+                Category = ?, 
+                Image = ?, 
+                AuthorImage = ?, 
+                DatePosted = ?, 
+                Views = ?, 
+                CommentsCount = ?
+            WHERE ID = ?
+            """;
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, blog.getTitle());
             stmt.setString(2, blog.getContent());
-            stmt.setString(3, blog.getImage());
-            stmt.setString(4, blog.getDescription());
-            stmt.setString(5, blog.getCategory());
-            stmt.setString(6, blog.getAuthorBio());
-            stmt.setString(7, blog.getAuthorImage());
-            stmt.setInt(8, blog.getId());
+            stmt.setString(3, blog.getDescription());
+            stmt.setString(4, blog.getCategory());
+            stmt.setString(5, blog.getImage());
+            stmt.setString(6, blog.getAuthorImage());
+
+            // Convert java.util.Date to java.sql.Date
+            stmt.setDate(7, new java.sql.Date(blog.getDatePosted().getTime()));
+
+            stmt.setInt(8, blog.getViews());
+            stmt.setInt(9, blog.getCommentsCount());
+            stmt.setInt(10, blog.getId());
+
             stmt.executeUpdate();
         }
     }
@@ -349,6 +363,51 @@ public class BlogDAO {
             }
         }
         return relatedPosts;
+    }
+
+    public List<Blog> getBlogsByStaffID(int staffID) throws SQLException {
+        List<Blog> blogs = new ArrayList<>();
+        String sql = """
+        SELECT b.ID,
+                       b.Title,
+                       b.Content,
+                       b.DatePosted,
+                       b.Image,
+                       b.Views,
+                       b.CommentsCount,
+                       b.Category,
+                       b.Description,
+                       p.Name AS AuthorName,  -- Use the name from Person table as AuthorName
+                       b.AuthorImage
+                FROM Blog b
+                JOIN Person p ON b.StaffID = p.ID
+                WHERE b.StaffID = ?
+                ORDER BY b.DatePosted DESC
+    """;
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, staffID);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Blog blog = new Blog();
+                    blog.setId(rs.getInt("ID"));
+                    blog.setTitle(rs.getString("Title"));
+                    blog.setContent(rs.getString("Content"));
+                    blog.setDatePosted(rs.getDate("DatePosted"));
+                    blog.setImage(rs.getString("Image"));
+                    blog.setDescription(rs.getString("Description"));  // Retrieve description here
+                    blog.setViews(rs.getInt("Views"));
+                    blog.setCommentsCount(rs.getInt("CommentsCount"));
+                    blog.setCategory(rs.getString("Category"));
+                    blog.setAuthorName(rs.getString("AuthorName"));
+                    blog.setAuthorImage(rs.getString("AuthorImage"));
+
+                    blogs.add(blog);
+                }
+            }
+        }
+        return blogs;
     }
 
 }
