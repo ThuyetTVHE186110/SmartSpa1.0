@@ -22,6 +22,25 @@
         }
     }
 %>
+<style>
+    .table td {
+        white-space: normal; /* Allow text to wrap */
+        max-width: 300px; /* Optional: set a max width to control column width */
+        vertical-align: top; /* Align content to the top of the cell */
+        padding: 10px 5px; /* Add padding for readability */
+    }
+
+    .table .content-preview, .table .description-preview {
+        max-height: 150px; /* Optional: limit the height of content preview */
+        overflow-y: auto; /* Add vertical scroll if content exceeds the height */
+    }
+
+    /* Increase row height */
+    .table tr {
+        height: auto; /* Let rows grow based on content */
+    }
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -90,12 +109,12 @@
                                     <thead>
                                         <tr>
                                             <th scope="col">ID</th>
-                                            <th scope="col">Author Image</th>
                                             <th scope="col">Author</th>
+                                            <th scope="col">Name</th>
                                             <th scope="col">Title</th>
                                             <th scope="col">Content</th>
                                             <th scope="col">Description</th>
-                                            <th scope="col">Date Posted</th>
+                                            <th scope="col">Date</th>
                                             <th scope="col">Views</th>
                                             <th scope="col">Comments</th>
                                             <th scope="col">Category</th>
@@ -121,13 +140,16 @@
                                                 <!-- Blog Title -->
                                                 <td>${blog.title}</td>
 
-                                                <!-- Blog Content Preview -->
-                                                <td>${fn:substring(blog.content, 0, 50)}...</td>
+                                                <!-- Blog Content Preview with More Height -->
+                                                <td class="content-preview">
+                                                    ${fn:substring(blog.content, 0, 200)}... <!-- Show more characters in the preview -->
+                                                </td>
 
-                                                <td>
+                                                <!-- Blog Description Preview with More Height -->
+                                                <td class="description-preview">
                                                     <c:choose>
                                                         <c:when test="${not empty blog.description}">
-                                                            ${fn:substring(blog.description, 0, 50)}...
+                                                            ${fn:substring(blog.description, 0, 200)}... <!-- Show more characters in the preview -->
                                                         </c:when>
                                                         <c:otherwise>
                                                             No description available.
@@ -155,37 +177,36 @@
                                                 </td>
 
                                                 <!-- Actions: Edit and Delete -->
-                                                <td>
-                                                    <!-- Edit Button to open modal with blog details -->
-                                                    <a href="javascript:void(0);"
-                                                       class="btn btn-primary btn-sm"
+                                                <td class="action-buttons">
+                                                    <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm"
                                                        onclick="openEditBlogModal(
-                                                                       '${blog.id}',
-                                                                       '${fn:escapeXml(blog.title)}',
-                                                                       '${fn:escapeXml(blog.content)}',
-                                                                       '${blog.datePosted}',
-                                                                       '${fn:escapeXml(blog.image)}',
-                                                                       '${fn:substring(fn:escapeXml(blog.description), 0, 500)}',
-                                                                       '${blog.views}',
-                                                                       '${blog.commentsCount}',
-                                                                       '${fn:escapeXml(blog.category)}',
-                                                                       '${fn:escapeXml(blog.authorName)}',
-                                                                       '${fn:escapeXml(blog.authorImage)}'
-                                                                       )">Edit</a>
+                                   '${blog.id}',
+                                   '${fn:escapeXml(blog.title)}',
+                                   '${fn:escapeXml(blog.content)}',
+                                   '${blog.datePosted}',
+                                   '${fn:escapeXml(blog.image)}',
+                                   '${fn:substring(fn:escapeXml(blog.description), 0, 500)}',
+                                   '${blog.views}',
+                                   '${blog.commentsCount}',
+                                   '${fn:escapeXml(blog.category)}',
+                                   '${fn:escapeXml(blog.authorName)}',
+                                   '${fn:escapeXml(blog.authorImage)}'
+                                   )">
+                                                        <i class="bi bi-pencil-square"></i> Edit
+                                                    </a>
 
-
-
-
-                                                    <!-- Delete Form -->
                                                     <form action="blogManagement" method="post" style="display:inline;">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="id" value="${blog.id}">
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">Delete</button>
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">
+                                                            <i class="bi bi-trash"></i> Delete
+                                                        </button>
                                                     </form>
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
+
                                 </table>
 
 

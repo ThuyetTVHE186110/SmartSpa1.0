@@ -71,7 +71,7 @@
 
             <button class="button-submit" type="submit" name = "signin">Sign In</button>
             <!-- Sign Up Option -->
-            <button class="button-submit" type="button" onclick="window.location.href = 'login.jsp';">
+            <button class="button-submit" type="button" onclick="window.location.href = 'login';">
                 Login as a Customer
             </button>
 
