@@ -173,24 +173,23 @@
 
             <li class="nav-item dropdown pe-3">
                 <%
-    Account account = (Account) session.getAttribute("account");
-    Person person = null;
-    String displayName = "Guest";
+                    Account account = (Account) session.getAttribute("account");
+                    Person person = null;
+                    String displayName = "Guest";
 
-    if (account != null) {
-        person = account.getPersonInfo();
-        displayName = person != null ? person.getName() : "Guest";
-    }
+                    if (account != null) {
+                        person = account.getPersonInfo();
+                        displayName = person != null ? person.getName() : "Guest";
+                    }
                 %>
                 <a class="nav-link nav-profile d-flex align-items-center pe-0" href="#" data-bs-toggle="dropdown">
-                    <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
-                ? "img/" + person.getImage() 
-                : "img/default-avatar.jpg" %>" alt="Profile" class="rounded-circle">
-                    <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName %></span>                        </a><!-- End Profile Iamge Icon -->
-
+                    <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                            ? "img/" + person.getImage()
+                            : "img/default-avatar.jpg"%>" alt="Profile" class="rounded-circle">
+                    <span class="d-none d-md-block dropdown-toggle ps-2"><%= displayName%></span>                           </a><!-- End Profile Iamge Icon -->
                 <ul class="dropdown-menu dropdown-menu-end dropdown-menu-arrow profile">
                     <li class="dropdown-header">
-                        <h6><%= (displayName != null) ? displayName : "Guest" %></h6>
+                        <h6><%= (displayName != null) ? displayName : "Guest"%></h6>
                     </li>
                     <li>
                         <hr class="dropdown-divider">

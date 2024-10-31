@@ -13,7 +13,7 @@
         // Get the account object from session
         Account account = (Account) session.getAttribute("account");
 
-        if (account.getRole() == 1) {
+        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
             // Allow access to the page (do nothing and let the JSP render)
         } else {
             // Set an error message and redirect to an error page
@@ -22,6 +22,25 @@
         }
     }
 %>
+<style>
+    .table td {
+        white-space: normal; /* Allow text to wrap */
+        max-width: 300px; /* Optional: set a max width to control column width */
+        vertical-align: top; /* Align content to the top of the cell */
+        padding: 10px 5px; /* Add padding for readability */
+    }
+
+    .table .content-preview, .table .description-preview {
+        max-height: 150px; /* Optional: limit the height of content preview */
+        overflow-y: auto; /* Add vertical scroll if content exceeds the height */
+    }
+
+    /* Increase row height */
+    .table tr {
+        height: auto; /* Let rows grow based on content */
+    }
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -86,42 +105,141 @@
 
                                 </div>
                                 <!-- Table with stripped rows -->
-                                <table class="table datatable">
+                                <table class="table table-striped">
                                     <thead>
                                         <tr>
                                             <th scope="col">ID</th>
+                                            <th scope="col">Author</th>
+                                            <th scope="col">Name</th>
                                             <th scope="col">Title</th>
                                             <th scope="col">Content</th>
-                                            <th scope="col">Author</th>
+                                            <th scope="col">Description</th>
                                             <th scope="col">Date</th>
+                                            <th scope="col">Views</th>
+                                            <th scope="col">Comments</th>
+                                            <th scope="col">Category</th>
+                                            <th scope="col">Image</th>
                                             <th scope="col">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <!-- Iterate over the 'accounts' list passed from the servlet -->
                                         <c:forEach var="blog" items="${blogs}">
                                             <tr>
                                                 <td>${blog.id}</td>
-                                                <td>${blog.title}</td>
-                                                <td>${fn:substring(blog.content, 0, 50)}...</td> <!-- Truncate content for preview -->
-                                                <td>${blog.authorName}</td>
-                                                <td><fmt:formatDate value="${blog.datePosted}" pattern="yyyy-MM-dd" /></td>
+
+                                                <!-- Display Author Image with Fallback -->
                                                 <td>
-                                                    <!-- Edit Button -->
-                                                    <a href="javascript:void(0);" class="btn btn-primary btn-sm" onclick="openEditBlogModal(${blog.id}, '${blog.title}', '${blog.content}', '${blog.authorName}', '${blog.datePosted}', '${blog.image}')">Edit</a>
+                                                    <img src="${pageContext.request.contextPath}/newUI/assets/img/${blog.authorImage}" 
+                                                         alt="${blog.authorName}" width="50" height="50" style="border-radius: 50%;" 
+                                                         onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/newUI/assets/img/default-author.jpg';">
+                                                </td>
 
+                                                <!-- Author Name -->
+                                                <td>${blog.authorName}</td>
 
-                                                    <!-- Delete Form -->
+                                                <!-- Blog Title -->
+                                                <td>${blog.title}</td>
+
+                                                <!-- Blog Content Preview with More Height -->
+                                                <td class="content-preview">
+                                                    ${fn:substring(blog.content, 0, 200)}... <!-- Show more characters in the preview -->
+                                                </td>
+
+                                                <!-- Blog Description Preview with More Height -->
+                                                <td class="description-preview">
+                                                    <c:choose>
+                                                        <c:when test="${not empty blog.description}">
+                                                            ${fn:substring(blog.description, 0, 200)}... <!-- Show more characters in the preview -->
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            No description available.
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
+
+                                                <!-- Date Posted -->
+                                                <td><fmt:formatDate value="${blog.datePosted}" pattern="yyyy-MM-dd" /></td>
+
+                                                <!-- Views Count -->
+                                                <td>${blog.views}</td>
+
+                                                <!-- Comments Count -->
+                                                <td>${blog.commentsCount}</td>
+
+                                                <!-- Category -->
+                                                <td>${blog.category}</td>
+
+                                                <!-- Blog Image with Fallback -->
+                                                <td>
+                                                    <img src="${pageContext.request.contextPath}/newUI/assets/img/${blog.image}" 
+                                                         alt="${blog.title}" width="50" 
+                                                         onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/newUI/assets/img/default-blog.jpg';">
+                                                </td>
+
+                                                <!-- Actions: Edit and Delete -->
+                                                <td class="action-buttons">
+                                                    <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm"
+                                                       onclick="openEditBlogModal(
+                                   '${blog.id}',
+                                   '${fn:escapeXml(blog.title)}',
+                                   '${fn:escapeXml(blog.content)}',
+                                   '${blog.datePosted}',
+                                   '${fn:escapeXml(blog.image)}',
+                                   '${fn:substring(fn:escapeXml(blog.description), 0, 500)}',
+                                   '${blog.views}',
+                                   '${blog.commentsCount}',
+                                   '${fn:escapeXml(blog.category)}',
+                                   '${fn:escapeXml(blog.authorName)}',
+                                   '${fn:escapeXml(blog.authorImage)}'
+                                   )">
+                                                        <i class="bi bi-pencil-square"></i> Edit
+                                                    </a>
+
                                                     <form action="blogManagement" method="post" style="display:inline;">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="id" value="${blog.id}">
-                                                        <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">Delete</button>
+                                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">
+                                                            <i class="bi bi-trash"></i> Delete
+                                                        </button>
                                                     </form>
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
+
                                 </table>
+
+
+                                <%
+                                    String successMessage = (String) session.getAttribute("successMessage");
+                                    String errorMessage = (String) request.getAttribute("errorMessage");
+
+                                    if (successMessage != null) {
+                                %>
+                                <div class="alert alert-success"><%= successMessage%></div>
+                                <%
+                                        session.removeAttribute("successMessage"); // Remove after displaying
+                                    }
+
+                                    if (errorMessage != null) {
+                                %>
+                                <div class="alert alert-danger"><%= errorMessage%></div>
+                                <%
+                                    }
+                                %>
+
+                                <script>
+                                    setTimeout(function ()
+
+                                    {
+                                        const successAlert = document.querySelector('.alert-success');
+                                        const errorAlert = document.querySelector('.alert-danger');
+                                        if (successAlert)
+                                            successAlert.style.display = 'none';
+                                        if (errorAlert)
+                                            errorAlert.style.display = 'none';
+                                    }, 5000); // Auto-dismiss after 5 seconds
+                                </script>
 
                                 <!-- End Table with stripped rows -->
 
@@ -129,7 +247,7 @@
                                 <div class="text-center mt-3">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
                                             data-bs-target="#addAccountModal">
-                                        <i class="bi bi-plus-circle me-1"></i> Add New Account
+                                        <i class="bi bi-plus-circle me-1"></i> Add New Blog
                                     </button>
                                 </div>
 
@@ -164,107 +282,160 @@
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New Account</h5>
+                        <h5 class="modal-title">Add New Blog</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
                         <!-- Add Account Form -->
-                        <form class="row g-3">
-                            <div class="col-12">
-                                <label for="inputName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="inputName">
+                        <form action="blogManagement" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="action" value="add">
+
+                            <div class="mb-3">
+                                <label for="inputTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="inputTitle" name="title" required>
                             </div>
-                            <div class="col-12">
-                                <label for="inputEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="inputEmail">
+
+                            <div class="mb-3">
+                                <label for="inputContent" class="form-label">Content</label>
+                                <textarea class="form-control" id="inputContent" name="content" rows="5" required></textarea>
                             </div>
-                            <div class="col-12">
-                                <label for="inputPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="inputPassword">
+
+                            <div class="mb-3">
+                                <label for="inputDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="inputDescription" name="description" rows="3"></textarea>
                             </div>
-                            <div class="col-12">
-                                <label for="inputRole" class="form-label">Role</label>
-                                <select id="inputRole" class="form-select">
-                                    <option selected>Choose...</option>
-                                    <option>Admin</option>
-                                    <option>Manager</option>
-                                    <option>Staff</option>
-                                </select>
+
+                            <div class="mb-3">
+                                <label for="inputCategory" class="form-label">Category</label>
+                                <input type="text" class="form-control" id="inputCategory" name="category">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="inputImage" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="inputImage" name="image">
+                                <img id="imagePreview" src="#" alt="Image Preview" style="display:none; margin-top:10px; max-width:100px;">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Add Blog</button>
                             </div>
                         </form>
                         <!-- End Add Account Form -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Add Account</button>
                     </div>
                 </div>
             </div>
         </div><!-- End Add Account Modal-->
 
         <!-- Edit Blog Modal -->
-        <div class="modal fade" id="editBlogModal" tabindex="-1">
-            <div class="modal-dialog modal-dialog-centered">
+        <!-- Edit Blog Modal -->
+        <div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Edit Blog</h5>
+                        <h5 class="modal-title" id="editBlogModalLabel">Edit Blog</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Edit Blog Form -->
-                        <form id="editBlogForm" class="row g-3" method="post" enctype="multipart/form-data">
-                            <div class="col-12">
-                                <label for="editTitle" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="editTitle" name="title" required>
+                        <form action="blogManagement" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="action" value="edit">
+                            <input type="hidden" id="editBlogId" name="id">
+
+                            <div class="mb-3">
+                                <label for="editBlogTitle" class="form-label">Title</label>
+                                <input type="text" class="form-control" id="editBlogTitle" name="title" required>
                             </div>
-                            <div class="col-12">
-                                <label for="editContent" class="form-label">Content</label>
-                                <textarea class="form-control" id="editContent" name="content" rows="4" required></textarea>
+
+                            <div class="mb-3">
+                                <label for="editBlogContent" class="form-label">Content</label>
+                                <textarea class="form-control" id="editBlogContent" name="content" rows="5" required></textarea>
                             </div>
-                            <div class="col-12">
-                                <label for="editAuthor" class="form-label">Author</label>
-                                <input type="text" class="form-control" id="editAuthor" name="author" readonly>
+
+                            <div class="mb-3">
+                                <label for="editBlogDatePosted" class="form-label">Date Posted</label>
+                                <input type="date" class="form-control" id="editBlogDatePosted" name="datePosted" required>
                             </div>
-                            <div class="col-12">
-                                <label for="editDate" class="form-label">Date</label>
-                                <input type="date" class="form-control" id="editDate" name="datePosted" required>
+
+                            <div class="mb-3">
+                                <label for="editBlogDescription" class="form-label">Description</label>
+                                <textarea class="form-control" id="editBlogDescription" name="description" rows="3"></textarea>
                             </div>
-                            <div class="col-12">
-                                <label for="editImage" class="form-label">Current Image</label>
-                                <img id="currentImagePreview" src="" alt="Current Blog Image" style="width: 100%; max-height: 200px; object-fit: cover; margin-bottom: 10px;">
-                                <input type="file" class="form-control" id="editImage" name="image">
+
+                            <div class="mb-3">
+                                <label for="editBlogCategory" class="form-label">Category</label>
+                                <input type="text" class="form-control" id="editBlogCategory" name="category">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editBlogViews" class="form-label">Views</label>
+                                <input type="number" class="form-control" id="editBlogViews" name="views" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editBlogCommentsCount" class="form-label">Comments Count</label>
+                                <input type="number" class="form-control" id="editBlogCommentsCount" name="commentsCount" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editBlogAuthorName" class="form-label">Author</label>
+                                <input type="text" class="form-control" id="editBlogAuthorName" name="authorName" readonly>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editBlogImage" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="editBlogImage" name="image">
+                                <img id="editBlogImagePreview" src="#" alt="Image Preview" style="margin-top: 10px; max-width: 100px;">
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="editBlogAuthorImage" class="form-label">Author Image</label>
+                                <input type="file" class="form-control" id="editBlogAuthorImageInput" name="authorImage">
+                                <img id="editBlogAuthorImage" src="#" alt="Author Image Preview" style="margin-top: 10px; max-width: 100px;">
+                            </div>
+
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="submit" class="btn btn-primary">Save Changes</button>
                             </div>
                         </form>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" form="editBlogForm" class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- End Edit Blog Modal -->
+
+
+
 
         <!-- End Edit Blog Modal -->
         <script>
-                                                            function openEditBlogModal(id, title, content, authorName, datePosted, image) {
-                                                                const imagePath = image ? `newUI/assets/img/${image}` : 'newUI/assets/img/default-blog.jpg';
-                                                                document.getElementById("editTitle").value = title;
-                                                                document.getElementById("editContent").value = content;
-                                                                document.getElementById("editAuthor").value = authorName;
-                                                                document.getElementById("editDate").value = datePosted;
-                                                                document.getElementById("currentImagePreview").src = imagePath;
+                                    // Function to open and populate the Edit Blog Modal
+                                    function openEditBlogModal(id, title, content, datePosted, image, description, views, commentsCount, category, authorName, authorImage)
+                                    {
+                                        // Populate the form fields in the modal
+                                        document.getElementById('editBlogId').value = id;
+                                        document.getElementById('editBlogTitle').value = title;
+                                        document.getElementById('editBlogContent').value = content;
+                                        document.getElementById('editBlogDatePosted').value = datePosted;
+                                        document.getElementById('editBlogDescription').value = description;
+                                        document.getElementById('editBlogViews').value = views;
+                                        document.getElementById('editBlogCommentsCount').value = commentsCount;
+                                        document.getElementById('editBlogCategory').value = category;
+                                        document.getElementById('editBlogAuthorName').value = authorName;
 
-                                                                // Set form action to update blog by ID
-                                                                document.getElementById("editBlogForm").action = `/updateBlog?id=${id}`;
+                                        // Display image previews if available
+                                        const blogImagePreview = document.getElementById('editBlogImagePreview');
+                                        blogImagePreview.src = image ? `${window.location.origin}/newUI/assets/img/${image}` : '#';
+                                                blogImagePreview.style.display = image ? 'block' : 'none';
 
-                                                                // Open the modal
-                                                                new bootstrap.Modal(document.getElementById("editBlogModal")).show();
-                                                            }
+                                                const authorImagePreview = document.getElementById('editBlogAuthorImage');
+                                                authorImagePreview.src = authorImage ? `${window.location.origin}/newUI/assets/img/${authorImage}` : '#';
+                                                        authorImagePreview.style.display = authorImage ? 'block' : 'none';
 
-// Function to handle saving blog changes (AJAX or form submission)
-                                                            function saveBlogChanges() {
-                                                                document.getElementById("editBlogForm").submit(); // Or use AJAX to submit form data
-                                                            }
+                                                        // Show the modal
+                                                        new bootstrap.Modal(document.getElementById('editBlogModal')).show();
+                                                    }
+
 
         </script>
 

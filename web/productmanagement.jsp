@@ -9,12 +9,12 @@
         // Get the account object from session
         Account account = (Account) session.getAttribute("account");
 
-        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+        if (account.getRole() == 1 || account.getRole() == 2) {
             // Allow access to the page (do nothing and let the JSP render)
         } else {
             // Set an error message and redirect to an error page
             request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
-            request.getRequestDispatcher("error").forward(request, response);
+            request.getRequestDispatcher("roleError").forward(request, response);
         }
     }
 %>

@@ -53,6 +53,11 @@ public class Blog {
         this(id, title, content, staffID, datePosted, authorName, image, null, 0, 0, null, null, null);
     }
 
+    public Blog(int id, String title, String content, Date datePosted, String authorName,
+            String image, int views, int commentsCount, String category) {
+        // Initialize fields here
+    }
+
     // Getters and Setters for all fields
     public int getId() {
         return id;

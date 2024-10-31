@@ -48,16 +48,29 @@
             <li><a href="blog">Blog</a></li>
             <li>
                 <%
-                            // Check if the user is logged in
-                            Account loggedInAccount = (Account) session.getAttribute("account");
-                             if (loggedInAccount != null) {
-                                Person loggedInPerson = loggedInAccount.getPersonInfo();
-                                String personName = (loggedInPerson != null) ? loggedInPerson.getName() : "User";
+                    // Kiểm tra xem người dùng đã đăng nhập hay chưa
+                    Account loggedInAccount = (Account) session.getAttribute("account");
+                    if (loggedInAccount != null) {
+                        Person loggedInPerson = loggedInAccount.getPersonInfo();
+                        String personName = (loggedInPerson != null) ? loggedInPerson.getName() : "User";
+                        int roleID = loggedInAccount.getRole();  // Lấy roleID của tài khoản
+
+                        // Xác định đường dẫn dựa trên roleID
+                        String profileLink = (roleID == 4) ? "customerProfile" : "userProfile";
                 %>
-                <a href="customerProfile" class="nav-item nav-link">Welcome, <%= personName %>!</a>
+
+                <!-- Hiển thị đường dẫn phù hợp cho người dùng đã đăng nhập -->
+                <a href="<%= profileLink%>" class="nav-item nav-link">Welcome, <%= personName%>!</a>
                 <a href="LogoutServlet" class="book-now-btn nav-item nav-link">Logout</a>
+
                 <% } else { %>
-                <a href="login" class="profile-link"><i class="fas fa-user"></i></a><% } %></li>
+
+                <!-- Hiển thị nút đăng nhập nếu chưa đăng nhập -->
+                <a href="login" class="profile-link"><i class="fas fa-user"></i></a>
+
+                <% }%>
+            </li>
+
             </li>
             <li><a href="booking" class="book-now-btn">Book Now</a></li>
         </ul>

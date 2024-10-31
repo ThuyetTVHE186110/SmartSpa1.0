@@ -85,6 +85,7 @@ public class LoginServlet extends HttpServlet {
         if (account != null) {
             // Get the user's role
             int roleID = account.getRole();  // Use `account.getRoleID()`
+            String roleName = account.getRoleName();
             if ("admin".equals(userType)) {
                 // Admin or Staff login: only roleID 1, 2, or 3 are allowed
                 if (roleID == 1 || roleID == 2 || roleID == 3) {
@@ -92,6 +93,7 @@ public class LoginServlet extends HttpServlet {
                     HttpSession session = request.getSession();
                     session.setAttribute("account", account);
                     session.setAttribute("loggedIn", true);
+                    session.setAttribute("roleName", roleName);
                     session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
 
                     // Handle "Remember Me" functionality for admin login
@@ -116,7 +118,7 @@ public class LoginServlet extends HttpServlet {
                     // Kiểm tra person có null không trước khi lưu vào session
                     if (person != null) {
                         session.setAttribute("person", person);  // Lưu person vào session
-                    }                
+                    }
                     // Redirect to the admin/staff dashboard
                     response.sendRedirect("dashboard");
                 } else {
@@ -131,6 +133,7 @@ public class LoginServlet extends HttpServlet {
                     HttpSession session = request.getSession();
                     session.setAttribute("account", account);
                     session.setAttribute("loggedIn", true);
+                    session.setAttribute("roleName", roleName);
                     session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
 
                     // Handle "Remember Me" functionality for customer login
@@ -149,7 +152,6 @@ public class LoginServlet extends HttpServlet {
 
                     // Set success message for customer
                     session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-
                     // Redirect to the customer dashboard or index
                     response.sendRedirect("index");
                 } else {
