@@ -304,7 +304,6 @@
                                 <label for="editStatus" class="form-label">Status</label>
                                 <select id="editStatus" class="form-select">
                                     <option>Active</option>
-                                    <option>Pending</option>
                                     <option>Suspended</option>
                                 </select>
                             </div>
