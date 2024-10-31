@@ -1,0 +1,210 @@
+<%-- 
+    Document   : checkout
+    Created on : Oct 29, 2024, 10:18:47 AM
+    Author     : Asus
+--%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Blushed Beauty Bar</title>
+    <link rel="stylesheet" href="./newUI/assets/css/styles.css">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    
+</head>
+
+<body>
+    <!-- Include the Navbar -->
+        <jsp:include page="NavBarJSP/NavBarJSP.jsp" />
+
+    <!-- Simplified Checkout Section -->
+    <section class="checkout-section">
+        <div class="checkout-container">
+            <h1>Checkout</h1>
+
+            <div class="checkout-content">
+                <!-- Left Column - Customer Information -->
+                <div class="checkout-form">
+                    <h2>Customer Information</h2>
+                    <form id="checkout-form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name</label>
+                                <input type="text" id="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name</label>
+                                <input type="text" id="lastName" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="phone">Phone</label>
+                            <input type="tel" id="phone" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="address">Shipping Address</label>
+                            <textarea id="address" required></textarea>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" id="proceed-to-payment" class="payment-btn">
+                                Proceed to Payment
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right Column - Order Summary -->
+                <div class="order-summary">
+                    <h2>Order Summary</h2>
+                    <div class="cart-items" id="cart-items">
+                        <!-- Cart items will be dynamically populated -->
+                    </div>
+                    <div class="summary-totals">
+                        <div class="summary-row">
+                            <span>Subtotal</span>
+                            <span id="subtotal">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Shipping</span>
+                            <span id="shipping">$5.99</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Tax</span>
+                            <span id="tax">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>Total</span>
+                            <span id="total">$0.00</span>
+                        </div>
+                    </div>
+                    <div class="promo-code">
+                        <input type="text" placeholder="Enter promo code">
+                        <button>Apply</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Section -->
+    <footer>
+        <!-- [Previous footer code remains the same] -->
+    </footer>
+
+    <script>
+        AOS.init();
+
+        // Hamburger menu functionality
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+            hamburger.classList.toggle('active');
+        });
+
+        // Cart and PayOS Integration
+        document.addEventListener('DOMContentLoaded', function () {
+            // Load cart items from localStorage or your cart system
+            loadCartItems();
+
+            // Handle payment button click
+            document.getElementById('proceed-to-payment').addEventListener('click', async (e) => {
+                e.preventDefault();
+
+                // Validate form
+                const form = document.getElementById('checkout-form');
+                if (!form.checkValidity()) {
+                    form.reportValidity();
+                    return;
+                }
+
+                // Collect customer information
+                const customerInfo = {
+                    firstName: document.getElementById('firstName').value,
+                    lastName: document.getElementById('lastName').value,
+                    email: document.getElementById('email').value,
+                    phone: document.getElementById('phone').value,
+                    address: document.getElementById('address').value
+                };
+
+                try {
+                    // Create order in your backend
+                    const orderResponse = await createOrder(customerInfo);
+
+                    // Initialize PayOS checkout
+                    const payOS = new PayOS({
+                        clientId: 'YOUR_PAYOS_CLIENT_ID',
+                        secretKey: 'YOUR_PAYOS_SECRET_KEY'
+                    });
+
+                    // Start PayOS checkout process
+                    await payOS.checkout({
+                        amount: calculateTotal(), // Your total amount in VND
+                        orderId: orderResponse.orderId,
+                        description: 'Order from Blushed Beauty Bar',
+                        customerInfo: {
+                            name: `${customerInfo.firstName} ${customerInfo.lastName}`,
+                            email: customerInfo.email,
+                            phone: customerInfo.phone
+                        },
+                        successCallback: handlePaymentSuccess,
+                        cancelCallback: handlePaymentCancel,
+                        errorCallback: handlePaymentError
+                    });
+                } catch (error) {
+                    console.error('Payment error:', error);
+                    alert('An error occurred during checkout. Please try again.');
+                }
+            });
+        });
+
+        // Helper functions
+        function loadCartItems() {
+            // Implement your cart loading logic here
+            // This should populate the #cart-items element and update totals
+        }
+
+        function calculateTotal() {
+            // Implement your total calculation logic here
+            // Return the total amount in VND
+        }
+
+        async function createOrder(customerInfo) {
+            // Implement your order creation logic here
+            // This should call your backend API to create an order
+            // Return the order details including orderId
+        }
+
+        function handlePaymentSuccess(response) {
+            // Handle successful payment
+            console.log('Payment successful:', response);
+            // Redirect to success page or show success message
+            window.location.href = '/order-confirmation.html';
+        }
+
+        function handlePaymentCancel() {
+            // Handle payment cancellation
+            console.log('Payment cancelled');
+            alert('Payment was cancelled. Please try again.');
+        }
+
+        function handlePaymentError(error) {
+            // Handle payment error
+            console.error('Payment error:', error);
+            alert('An error occurred during payment. Please try again.');
+        }
+    </script>
+</body>
+
+</html>
