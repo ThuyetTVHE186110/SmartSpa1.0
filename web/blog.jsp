@@ -55,6 +55,7 @@
                                         <h2>${blog.title}</h2>
                                         <p>${fn:substring(blog.content, 0, 150)}...</p>
                                         <a href="blogDetails?id=${blog.id}" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+
                                     </div>
                                 </article>
                             </c:if>     
@@ -127,17 +128,17 @@
                 </c:choose>
 
 
-<!--                 Categories Widget 
-                <div class="sidebar-widget categories-widget">
-                    <h3>Categories</h3>
-                    <ul>
-                        <li><a href="#">Skincare <span>(12)</span></a></li>
-                        <li><a href="#">Makeup <span>(8)</span></a></li>
-                        <li><a href="#">Lash Extensions <span>(15)</span></a></li>
-                        <li><a href="#">Microblading <span>(6)</span></a></li>
-                        <li><a href="#">Self Care <span>(10)</span></a></li>
-                    </ul>
-                </div>-->
+                <!--                 Categories Widget 
+                                <div class="sidebar-widget categories-widget">
+                                    <h3>Categories</h3>
+                                    <ul>
+                                        <li><a href="#">Skincare <span>(12)</span></a></li>
+                                        <li><a href="#">Makeup <span>(8)</span></a></li>
+                                        <li><a href="#">Lash Extensions <span>(15)</span></a></li>
+                                        <li><a href="#">Microblading <span>(6)</span></a></li>
+                                        <li><a href="#">Self Care <span>(10)</span></a></li>
+                                    </ul>
+                                </div>-->
 
                 <!-- Recent Posts Widget -->
                 <div class="sidebar-widget recent-posts-widget">

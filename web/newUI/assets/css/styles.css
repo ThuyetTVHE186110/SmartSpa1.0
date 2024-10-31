@@ -2878,7 +2878,7 @@ footer {
 
 /* Products Page Styles */
 .products-hero {
-    background-image: url('../img/products-hero.jpg');
+    background-image: url('../img/main_background.png');
     background-size: cover;
     background-position: center;
     height: 50vh;
@@ -4305,7 +4305,7 @@ footer {
 
 /* Blog Page Styles */
 .blog-hero {
-    background-image: url('newUI/assets/img/main_background.png');
+    background-image: url('../img/main_background.png');
     background-size: cover;
     background-position: center;
     height: 50vh;
@@ -5065,6 +5065,7 @@ footer {
 }
 
 /* Related Posts Styles */
+/* Related Posts Styles */
 .related-posts {
     margin-top: 60px;
 }
@@ -5081,6 +5082,8 @@ footer {
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    padding-bottom: 20px;
 }
 
 .related-post img {
@@ -5090,10 +5093,32 @@ footer {
 }
 
 .related-post h3 {
-    padding: 20px;
+    padding: 15px 20px 5px 20px;
     font-size: 1.1rem;
     color: #4E4E4E;
+    margin: 0;
 }
+
+.related-post .post-author {
+    display: block;
+    font-size: 0.9rem;
+    color: #ff69b4; /* Light pink color for consistency */
+    margin-top: 5px;
+    font-weight: 500;
+}
+
+.related-post .read-more {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #ff69b4; /* Matches the pink theme color */
+    text-decoration: none;
+}
+
+.related-post .read-more:hover {
+    text-decoration: underline;
+}
+
 
 /* Responsive Styles */
 @media (max-width: 768px) {

@@ -20,6 +20,7 @@ public class Product {
     private String branchName;
     private String image;
     private String description;
+    private String status;
 
     public Product() {
     }
@@ -104,7 +105,12 @@ public class Product {
         this.description = description;
     }
 
-   
-    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 
 }
