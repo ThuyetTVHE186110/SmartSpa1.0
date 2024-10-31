@@ -148,45 +148,6 @@
                                                             data-status="${account.status}">
                                                         View
                                                     </button>
-                                                    <script>
-                                                        document.addEventListener("DOMContentLoaded", function () {
-                                                            const viewButtons = document.querySelectorAll(".view-account-btn");
-
-                                                            viewButtons.forEach(button => {
-                                                                button.addEventListener("click", function () {
-                                                                    // Get data attributes from the clicked button
-                                                                    const id = button.getAttribute("data-id");
-                                                                    const name = button.getAttribute("data-name");
-                                                                    const email = button.getAttribute("data-email");
-                                                                    const role = button.getAttribute("data-role");
-                                                                    const status = button.getAttribute("data-status");
-
-                                                                    // Set modal fields with the account details
-                                                                    document.getElementById("editName").value = name;
-                                                                    document.getElementById("editEmail").value = email;
-                                                                    document.getElementById("editRole").value = role;
-                                                                    document.getElementById("editStatus").value = status;
-
-                                                                    // You could also store the ID somewhere in the modal to use later for saving changes
-                                                                    document.getElementById("editAccountModal").setAttribute("data-id", id);
-                                                                });
-                                                            });
-                                                        });
-                                                    </script>
-                                                    <script>
-                                                        document.querySelector("#editAccountModal .btn-primary").addEventListener("click", function () {
-                                                            const modal = document.getElementById("editAccountModal");
-                                                            const accountId = modal.getAttribute("data-id");
-
-                                                            const updatedName = document.getElementById("editName").value;
-                                                            const updatedEmail = document.getElementById("editEmail").value;
-                                                            const updatedRole = document.getElementById("editRole").value;
-                                                            const updatedStatus = document.getElementById("editStatus").value;
-
-                                                            // Perform AJAX request to update account (if server setup for this)
-                                                            // Alternatively, submit a form or send this data to the backend to save
-                                                        });
-                                                    </script>
                                                     <button type="button" class="btn btn-danger btn-sm">Delete</button>
                                                 </td>
                                             </tr>
@@ -283,28 +244,39 @@
                     </div>
                     <div class="modal-body">
                         <!-- Edit Account Form -->
-                        <form class="row g-3">
-                            <div class="col-12">
-                                <label for="editName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="editName" value="Brandon Jacob">
+                        <form id="editAccountForm" class="row g-3" method="post" action="accountManagement">
+                            <input type="hidden" name="action" value="update">
+                            <input type="hidden" id="editAccountId" name="id"> <!-- Account ID -->
+
+                            <div class="mb-3">
+                                <label for="editPersonName" class="form-label">Full Name</label>
+                                <input type="text" class="form-control" id="editPersonName" name="name" required>
                             </div>
-                            <div class="col-12">
-                                <label for="editEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="editEmail" value="brandon@example.com">
+
+                            <div class="mb-3">
+                                <label for="editUsername" class="form-label">Username</label>
+                                <input type="text" class="form-control" id="editUsername" name="username" required>
                             </div>
-                            <div class="col-12">
+
+                            <div class="mb-3">
+                                <label for="editPassword" class="form-label">Password</label>
+                                <input type="password" class="form-control" id="editPassword" name="password">
+                            </div>
+
+                            <div class="mb-3">
                                 <label for="editRole" class="form-label">Role</label>
-                                <select id="editRole" class="form-select">
-                                    <option>Admin</option>
-                                    <option>Manager</option>
-                                    <option>Staff</option>
+                                <select id="editRole" name="role" class="form-select">
+                                    <option value="1">Admin</option>
+                                    <option value="2">Manager</option>
+                                    <option value="3">Staff</option>
                                 </select>
                             </div>
-                            <div class="col-12">
+
+                            <div class="mb-3">
                                 <label for="editStatus" class="form-label">Status</label>
-                                <select id="editStatus" class="form-select">
-                                    <option>Active</option>
-                                    <option>Suspended</option>
+                                <select id="editStatus" name="status" class="form-select">
+                                    <option value="Active">Active</option>
+                                    <option value="Suspended">Suspended</option>
                                 </select>
                             </div>
                         </form>
@@ -312,11 +284,45 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Save Changes</button>
+                        <button type="submit" form="editAccountForm" class="btn btn-primary">Save Changes</button>
                     </div>
                 </div>
             </div>
-        </div><!-- End Edit Account Modal-->
+        </div>
+
+        <script>
+                                            document.addEventListener("DOMContentLoaded", function () {
+                                                const viewButtons = document.querySelectorAll(".view-account-btn");
+
+                                                viewButtons.forEach(button => {
+                                                    button.addEventListener("click", function () {
+                                                        const id = button.getAttribute("data-id");
+                                                        const name = button.getAttribute("data-name");
+                                                        const username = button.getAttribute("data-email"); // Email as username
+                                                        const role = button.getAttribute("data-role");
+                                                        const status = button.getAttribute("data-status");
+
+                                                        // Set modal fields
+                                                        document.getElementById("editAccountId").value = id;
+                                                        document.getElementById("editPersonName").value = name;
+                                                        document.getElementById("editUsername").value = username;
+                                                        document.getElementById("editStatus").value = status;
+
+                                                        // Set role dropdown by value
+                                                        const roleDropdown = document.getElementById("editRole");
+                                                        roleDropdown.value = role;
+
+                                                        // Debugging: Log to console
+                                                        console.log("ID:", id, "Name:", name, "Username:", username, "Role:", role, "Status:", status);
+
+                                                        // Ensure the correct role is selected in dropdown
+                                                        Array.from(roleDropdown.options).forEach(option => {
+                                                            option.selected = option.text === role;
+                                                        });
+                                                    });
+                                                });
+                                            });
+        </script>
 
     </body>
 

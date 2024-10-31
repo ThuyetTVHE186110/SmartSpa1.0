@@ -67,7 +67,6 @@ public class AccountDAO {
         }
         return account;  // Return null if no account is found
     }
-   
 
     public boolean updatePassword(String email, String newPassword) throws SQLException {
         String sql = "UPDATE Account SET Password = ? WHERE Username = ?";
@@ -151,43 +150,44 @@ public class AccountDAO {
     public List<Account> getAllStaffAccounts() {
         List<Account> accounts = new ArrayList<>();
 
-        // SQL truy vấn để lấy thông tin tài khoản, bao gồm tên, username, và tên vai trò
-        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
+        // SQL query to retrieve account information including person name, username, role name, and status
+        String sql = "SELECT a.ID AS accountId, p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
                 + "JOIN Role r ON a.RoleID = r.ID "
-                + "WHERE a.RoleID IN (2, 3)";
+                + "WHERE a.RoleID IN (2, 3)"; // Only fetch roles for staff and manager
+
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                // Tạo đối tượng Person
+                // Create the Person object
                 Person person = new Person();
-                person.setName(rs.getString("personName"));  // Lấy tên người từ cột personName
-                person.setEmail(rs.getString("Email"));  // Lấy email của người
+                person.setName(rs.getString("personName"));  // Set the name of the person
+                person.setEmail(rs.getString("Email"));       // Set the email of the person
 
-                // Tạo đối tượng Account
+                // Create the Account object
                 Account account = new Account();
-                account.setUsername(rs.getString("Username"));  // Lấy username
-                account.setPersonInfo(person);  // Gán đối tượng Person vào Account
+                account.setId(rs.getInt("accountId"));         // Set account ID
+                account.setUsername(rs.getString("Username")); // Set username
+                account.setPersonInfo(person);                 // Link the Person object to the Account
 
-                // Lấy tên role và gán vào Account
-                String roleName = rs.getString("roleName");  // Lấy tên vai trò từ bảng Role
-                account.setRoleName(roleName);  // Gán roleName vào account
+                // Set role name and status
+                account.setRoleName(rs.getString("roleName")); // Set role name
                 String status = rs.getString("Status");
                 if (status == null) {
-                    status = "Unknown";  // hoặc gán giá trị mặc định như "Inactive"
+                    status = "Unknown"; // Assign a default value if status is null
                 }
                 account.setStatus(status);
 
-                // Thêm tài khoản vào danh sách
+                // Add account to the list
                 accounts.add(account);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return accounts;  // Trả về danh sách các tài khoản
+        return accounts;  // Return the list of accounts
     }
 
     private Connection getConnection() throws SQLException {
@@ -248,7 +248,45 @@ public class AccountDAO {
             stmt.executeUpdate();
         }
     }
-    
-    
-    
+
+    public void updateAccountDetails(int accountId, String username, String password, String status, int roleId, String personName) throws SQLException {
+        String updateAccountSQL = """
+        UPDATE Account 
+        SET Username = ?, Password = ?, Status = ?, RoleID = ?
+        WHERE ID = ?
+    """;
+
+        String updatePersonSQL = """
+        UPDATE Person 
+        SET Name = ?
+        WHERE ID = (SELECT PersonID FROM Account WHERE ID = ?)
+    """;
+
+        try (Connection conn = DBContext.getConnection()) {
+            conn.setAutoCommit(false);  // Start transaction
+
+            // Update Account table
+            try (PreparedStatement accountStmt = conn.prepareStatement(updateAccountSQL)) {
+                accountStmt.setString(1, username);
+                accountStmt.setString(2, password);
+                accountStmt.setString(3, status);
+                accountStmt.setInt(4, roleId);
+                accountStmt.setInt(5, accountId);
+                accountStmt.executeUpdate();
+            }
+
+            // Update Person table (update name based on PersonID linked to the Account ID)
+            try (PreparedStatement personStmt = conn.prepareStatement(updatePersonSQL)) {
+                personStmt.setString(1, personName);
+                personStmt.setInt(2, accountId);
+                personStmt.executeUpdate();
+            }
+
+            conn.commit();  // Commit transaction
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
 }
