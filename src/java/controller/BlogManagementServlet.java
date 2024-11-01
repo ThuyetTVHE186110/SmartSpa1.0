@@ -38,7 +38,7 @@ public class BlogManagementServlet extends HttpServlet {
         Account account = (Account) session.getAttribute("account");
 
         if (account == null || account.getRole() != 3) {
-            response.sendRedirect("login");
+            response.sendRedirect("roleError");
             return;
         }
 
@@ -62,13 +62,13 @@ public class BlogManagementServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("login");
             return;
         }
 
         Account account = (Account) session.getAttribute("account");
         if (account.getRole() != 3) { // Assuming role 3 is for staff members
-            response.sendRedirect("error.jsp");
+            response.sendRedirect("roleError");
             return;
         }
 

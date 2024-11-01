@@ -63,37 +63,88 @@ public class AccountManagementServlet extends HttpServlet {
         String action = request.getParameter("action");
         AccountDAO accountDAO = new AccountDAO();
 
+        // Pagination parameters
+        int page = 1; // Default page
+        int recordsPerPage = 10; // Default records per page
+        if (request.getParameter("page") != null) {
+            page = Integer.parseInt(request.getParameter("page"));
+        }
+
         try {
             if ("update".equals(action)) {
                 int accountId = Integer.parseInt(request.getParameter("id"));
                 String username = request.getParameter("username");
-                String password = request.getParameter("password");
+                String newPassword = request.getParameter("newPassword");
+                String confirmPassword = request.getParameter("confirmPassword");
                 String status = request.getParameter("status");
-                int roleId = Integer.parseInt(request.getParameter("role"));  // Ensure role ID is parsed correctly
+                int roleId = Integer.parseInt(request.getParameter("role"));
                 String personName = request.getParameter("name");
 
-                // Call the DAO method to update the account details
-                accountDAO.updateAccountDetails(accountId, username, password, status, roleId, personName);
+                // Check if newPassword and confirmPassword match (only if newPassword is provided)
+                if (newPassword != null && !newPassword.isEmpty()) {
+                    if (!newPassword.equals(confirmPassword)) {
+                        request.setAttribute("errorMessage", "Passwords do not match.");
+                        request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
+                        return;
+                    }
+                } else {
+                    // If newPassword is empty, retain the existing password
+                    newPassword = accountDAO.getCurrentPassword(accountId);
+                }
 
-                // Refresh data
-                List<Account> accounts = accountDAO.getAllStaffAccounts();
-                request.setAttribute("accounts", accounts);
+                // Proceed with the update if passwords match
+                accountDAO.updateAccountDetails(accountId, username, newPassword, status, roleId, personName);
+                Account updatedAccount = accountDAO.getAccountById(accountId);
 
-                // Set a success message and forward to account management JSP
+                // Replace the existing session attribute with the updated account information
+                session.setAttribute("account", updatedAccount);
+                session.setAttribute("person", updatedAccount.getPersonInfo());
+
+                // Set success message
                 session.setAttribute("successMessage", "Account updated successfully.");
-                request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
-                return;
+            } else if ("add".equals(action)) {
+                // Add account logic
+                String username = request.getParameter("username");
+                String password = request.getParameter("password");
+                String confirmPassword = request.getParameter("confirmPassword");
+                int roleId = Integer.parseInt(request.getParameter("role"));
+                String personName = request.getParameter("name");
+
+                // Check if passwords match
+                if (!password.equals(confirmPassword)) {
+                    request.setAttribute("errorMessage", "Passwords do not match.");
+                    request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
+                    return;
+                }
+
+                // Insert the new account into the database
+                accountDAO.addAccount(username, password, roleId, personName);
+
+                // Set success message
+                session.setAttribute("successMessage", "Account added successfully.");
             }
-            response.sendRedirect("accountManagement.jsp");
+
+            // Retrieve paginated accounts and calculate total pages
+            int totalRecords = accountDAO.getTotalStaffAccounts(); // Get the total number of accounts
+            int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+            List<Account> accounts = accountDAO.getPaginatedStaffAccounts(page, recordsPerPage);
+
+            // Set attributes for pagination
+            request.setAttribute("accounts", accounts);
+            request.setAttribute("currentPage", page);
+            request.setAttribute("totalPages", totalPages);
+
+            // Forward to account management JSP
+            request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
+
         } catch (NumberFormatException e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "Invalid input format. Please check the entered data.");
             request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred while updating the account. Please try again.");
+            request.setAttribute("errorMessage", "An error occurred while processing the account. Please try again.");
             request.getRequestDispatcher("accountManagement.jsp").forward(request, response);
         }
     }
-
 }
