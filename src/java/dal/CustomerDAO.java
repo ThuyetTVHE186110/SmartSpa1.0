@@ -28,6 +28,9 @@ public class CustomerDAO extends DBContext {
             PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             while(rs.next()){
+                Person person = new Person();
+                person.setId(rs.getInt(1));
+                person.setName(rs.getString(2));
                 
             }
         } catch (Exception e) {
