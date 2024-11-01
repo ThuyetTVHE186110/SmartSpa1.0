@@ -75,13 +75,35 @@
                 });
             }
         </script>
+        <script>
+            function filterAccounts() {
+                const selectedRole = document.getElementById("roleFilter").value.toLowerCase();
+                const selectedStatus = document.getElementById("statusFilter").value.toLowerCase();
+                const rows = document.querySelectorAll(".account-row");
+
+                rows.forEach(row => {
+                    const role = row.getAttribute("data-role").toLowerCase();
+                    const status = row.getAttribute("data-status").toLowerCase();
+
+                    const matchesRole = selectedRole === "all" || role === selectedRole;
+                    const matchesStatus = selectedStatus === "all" || status === selectedStatus;
+
+                    if (matchesRole && matchesStatus) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+        </script>
+
         <main id="main" class="main">
 
             <div class="pagetitle">
                 <h1>Account Management</h1>
                 <nav>
                     <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="dashboard.jsp">Home</a></li>
+                        <li class="breadcrumb-item"><a href="dashboard">Home</a></li>
                         <li class="breadcrumb-item active">Account</li>
                     </ol>
                 </nav>
@@ -99,76 +121,117 @@
                                         <label for="roleFilter" class="form-label">Filter by Role:</label>
                                         <select id="roleFilter" class="form-select" onchange="filterAccounts()">
                                             <option value="all">All Roles</option>
+                                            <option value="Admin">Admin</option>
                                             <option value="Manager">Manager</option>
                                             <option value="Staff">Staff</option>
                                         </select>
                                     </div>
+                                    <!-- Status Filter -->
+                                    <div class="col-md-4">
+                                        <label for="statusFilter" class="form-label">Filter by Status:</label>
+                                        <select name="statusFilter" id="statusFilter" class="form-select" onchange="filterAccounts()">
+                                            <option value="All">All</option>
+                                            <option value="Active">Active</option>
+                                            <option value="Suspended">Suspended</option>
+                                        </select>
+                                    </div>
                                 </div>
-                                <!-- Table with stripped rows -->
-                                <table class="table datatable">
-                                    <thead>
-                                        <tr>
-                                            <th scope="col">ID</th>
-                                            <th scope="col">Name</th>
-                                            <th scope="col">Email</th>
-                                            <th scope="col">Role</th>
-                                            <th scope="col">Status</th>
-                                            <th scope="col">Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <!-- Iterate over the 'accounts' list passed from the servlet -->
-                                        <c:forEach var="account" items="${accounts}" varStatus="status">
-                                            <tr class="account-row" data-role="${account.roleName}">
-                                                <th scope="row">${status.index + 1}</th>  <!-- Auto-incremented index -->
-                                                <td>${account.personInfo.name}</td>  <!-- Display person's name -->
-                                                <td>${account.personInfo.email}</td>  <!-- Display person's email -->
-                                                <td>${account.roleName}</td>  <!-- Display role name -->
-                                                <td>
-                                                    <c:choose>
-                                                        <c:when test="${account.status == 'Active'}">
-                                                            <span class="badge bg-success">Active</span>
-                                                        </c:when>
-                                                        <c:when test="${account.status == 'Suspended'}">
-                                                            <span class="badge bg-danger">Suspended</span>
-                                                        </c:when>
-                                                        <c:otherwise>
-                                                            <span class="badge bg-secondary">Unknown</span>
-                                                        </c:otherwise>
-                                                    </c:choose>
-                                                </td>
-                                                <td>
-                                                    <!-- Buttons for actions such as edit and delete -->
-                                                    <button type="button" class="btn btn-primary btn-sm view-account-btn"
-                                                            data-bs-toggle="modal" data-bs-target="#editAccountModal"
-                                                            data-id="${account.id}"
-                                                            data-name="${account.personInfo.name}"
-                                                            data-email="${account.personInfo.email}"
-                                                            data-role="${account.roleName}"
-                                                            data-status="${account.status}">
-                                                        View
-                                                    </button>
-                                                    <button type="button" class="btn btn-danger btn-sm">Delete</button>
-                                                </td>
-                                            </tr>
-                                        </c:forEach>
-                                    </tbody>
-                                </table>
-
-                                <!-- End Table with stripped rows -->
-
-
-                                <div class="text-center mt-3">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addAccountModal">
-                                        <i class="bi bi-plus-circle me-1"></i> Add New Account
-                                    </button>
-                                </div>
-
                             </div>
-                        </div>
+                            <!-- Table with stripped rows -->
+                            <table class="table datatable">
+                                <thead>
+                                    <tr>
+                                        <th scope="col">ID</th>
+                                        <th scope="col">Name</th>
+                                        <th scope="col">Email</th>
+                                        <th scope="col">Role</th>
+                                        <th scope="col">Status</th>
+                                        <th scope="col">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Iterate over the 'accounts' list passed from the servlet -->
+                                    <c:forEach var="account" items="${accounts}" varStatus="status">
+                                        <tr class="account-row" data-role="${account.roleName}" data-status="${account.status}">
+                                            <th scope="row">${status.index + 1}</th>  <!-- Auto-incremented index -->
+                                            <td>${account.personInfo.name}</td>  <!-- Display person's name -->
+                                            <td>${account.personInfo.email}</td>  <!-- Display person's email -->
+                                            <td>${account.roleName}</td>  <!-- Display role name -->
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${account.status == 'Active'}">
+                                                        <span class="badge bg-success">Active</span>
+                                                    </c:when>
+                                                    <c:when test="${account.status == 'Suspended'}">
+                                                        <span class="badge bg-danger">Suspended</span>
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <span class="badge bg-secondary">Unknown</span>
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+                                            <td>
+                                                <!-- Buttons for actions such as edit and delete -->
+                                                <button type="button" class="btn btn-primary btn-sm view-account-btn"
+                                                        data-bs-toggle="modal" data-bs-target="#editAccountModal"
+                                                        data-id="${account.id}"
+                                                        data-name="${account.personInfo.name}"
+                                                        data-email="${account.personInfo.email}"
+                                                        data-role="${account.roleName}"
+                                                        data-status="${account.status}">
+                                                    View
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    </c:forEach>
 
+                                </tbody>
+                            </table>
+                            <!-- Pagination Controls -->
+                            <c:if test="${totalPages > 1}">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <!-- Previous Button -->
+                                        <c:if test="${currentPage > 1}">
+                                            <li class="page-item">
+                                                <a class="page-link" href="accountManagement?page=${currentPage - 1}" aria-label="Previous">
+                                                    <span aria-hidden="true">&laquo;</span>
+                                                </a>
+                                            </li>
+                                        </c:if>
+
+                                        <!-- Page Numbers -->
+                                        <c:forEach var="i" begin="1" end="${totalPages}">
+                                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                                <a class="page-link" href="accountManagement?page=${i}">${i}</a>
+                                            </li>
+                                        </c:forEach>
+
+                                        <!-- Next Button -->
+                                        <c:if test="${currentPage < totalPages}">
+                                            <li class="page-item">
+                                                <a class="page-link" href="accountManagement?page=${currentPage + 1}" aria-label="Next">
+                                                    <span aria-hidden="true">&raquo;</span>
+                                                </a>
+                                            </li>
+                                        </c:if>
+                                    </ul>
+                                </nav>
+                            </c:if>
+
+                            <!-- End Table with stripped rows -->
+
+
+                            <div class="text-center mt-3">
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                        data-bs-target="#addAccountModal">
+                                    <i class="bi bi-plus-circle me-1"></i> Add New Account
+                                </button>
+                            </div>
+
+                        </div>
                     </div>
+
                 </div>
             </section>
 
@@ -201,26 +264,31 @@
                     </div>
                     <div class="modal-body">
                         <!-- Add Account Form -->
-                        <form class="row g-3">
+                        <form id="addAccountForm" class="row g-3" action="accountManagement" method="post">
+                            <input type="hidden" name="action" value="add">
                             <div class="col-12">
                                 <label for="inputName" class="form-label">Full Name</label>
-                                <input type="text" class="form-control" id="inputName">
+                                <input type="text" class="form-control" id="inputName" name="name" required>
                             </div>
                             <div class="col-12">
-                                <label for="inputEmail" class="form-label">Email</label>
-                                <input type="email" class="form-control" id="inputEmail">
+                                <label for="inputEmail" class="form-label">Email (Username)</label>
+                                <input type="email" class="form-control" id="inputEmail" name="username" required>
                             </div>
                             <div class="col-12">
                                 <label for="inputPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="inputPassword">
+                                <input type="password" class="form-control" id="inputPassword" name="password" required>
+                            </div>
+                            <div class="col-12">
+                                <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
                             </div>
                             <div class="col-12">
                                 <label for="inputRole" class="form-label">Role</label>
-                                <select id="inputRole" class="form-select">
-                                    <option selected>Choose...</option>
-                                    <option>Admin</option>
-                                    <option>Manager</option>
-                                    <option>Staff</option>
+                                <select id="inputRole" name="role" class="form-select" required>
+                                    <option value="">Choose...</option>
+                                    <option value="1">Admin</option>
+                                    <option value="2">Manager</option>
+                                    <option value="3">Staff</option>
                                 </select>
                             </div>
                         </form>
@@ -228,11 +296,13 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Add Account</button>
+                        <button type="submit" form="addAccountForm" class="btn btn-primary">Add Account</button>
                     </div>
                 </div>
             </div>
-        </div><!-- End Add Account Modal-->
+        </div>
+        <!-- End Add Account Modal -->
+
 
         <!-- Edit Account Modal -->
         <div class="modal fade" id="editAccountModal" tabindex="-1">
@@ -258,9 +328,15 @@
                                 <input type="text" class="form-control" id="editUsername" name="username" required>
                             </div>
 
-                            <div class="mb-3">
-                                <label for="editPassword" class="form-label">Password</label>
-                                <input type="password" class="form-control" id="editPassword" name="password">
+                            <div class="col-12">
+                                <label for="newPassword" class="form-label">New Password</label>
+                                <input type="password" class="form-control" id="newPassword" name="newPassword">
+                                <button type="button" onclick="togglePasswordVisibility('newPassword')">Show</button>
+                            </div>
+                            <div class="col-12">
+                                <label for="confirmPassword" class="form-label">Confirm New Password</label>
+                                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
+                                <button type="button" onclick="togglePasswordVisibility('confirmPassword')">Show</button>
                             </div>
 
                             <div class="mb-3">
@@ -291,38 +367,103 @@
         </div>
 
         <script>
-                                            document.addEventListener("DOMContentLoaded", function () {
-                                                const viewButtons = document.querySelectorAll(".view-account-btn");
+            document.addEventListener("DOMContentLoaded", function () {
+                const viewButtons = document.querySelectorAll(".view-account-btn");
 
-                                                viewButtons.forEach(button => {
-                                                    button.addEventListener("click", function () {
-                                                        const id = button.getAttribute("data-id");
-                                                        const name = button.getAttribute("data-name");
-                                                        const username = button.getAttribute("data-email"); // Email as username
-                                                        const role = button.getAttribute("data-role");
-                                                        const status = button.getAttribute("data-status");
+                viewButtons.forEach(button => {
+                    button.addEventListener("click", function () {
+                        const id = button.getAttribute("data-id");
+                        const name = button.getAttribute("data-name");
+                        const username = button.getAttribute("data-email");
+                        const role = button.getAttribute("data-role");
+                        const status = button.getAttribute("data-status");
 
-                                                        // Set modal fields
-                                                        document.getElementById("editAccountId").value = id;
-                                                        document.getElementById("editPersonName").value = name;
-                                                        document.getElementById("editUsername").value = username;
-                                                        document.getElementById("editStatus").value = status;
+                        // Set modal fields
+                        document.getElementById("editAccountId").value = id;
+                        document.getElementById("editPersonName").value = name;
+                        document.getElementById("editUsername").value = username;
+                        document.getElementById("editStatus").value = status;
 
-                                                        // Set role dropdown by value
-                                                        const roleDropdown = document.getElementById("editRole");
-                                                        roleDropdown.value = role;
+                        // Set role dropdown by value
+                        const roleDropdown = document.getElementById("editRole");
+                        roleDropdown.value = role;
 
-                                                        // Debugging: Log to console
-                                                        console.log("ID:", id, "Name:", name, "Username:", username, "Role:", role, "Status:", status);
+                        // Debugging: Log to console
+                        console.log("ID:", id, "Name:", name, "Username:", username, "Role:", role, "Status:", status);
 
-                                                        // Ensure the correct role is selected in dropdown
-                                                        Array.from(roleDropdown.options).forEach(option => {
-                                                            option.selected = option.text === role;
-                                                        });
-                                                    });
-                                                });
-                                            });
+                        // Ensure the correct role is selected in dropdown
+                        Array.from(roleDropdown.options).forEach(option => {
+                            option.selected = option.text === role;
+                        });
+                    });
+                });
+            });
+
+            function togglePasswordVisibility(inputId) {
+                const input = document.getElementById(inputId);
+                const button = input.nextElementSibling;
+                if (input.type === "password") {
+                    input.type = "text";
+                    button.textContent = "Hide";
+                } else {
+                    input.type = "password";
+                    button.textContent = "Show";
+                }
+            }
+
+            document.getElementById("editAccountForm").addEventListener("submit", function (event) {
+                const newPassword = document.getElementById("newPassword").value;
+                const confirmPassword = document.getElementById("confirmPassword").value;
+
+                if (newPassword !== confirmPassword) {
+                    event.preventDefault(); // Stop form submission
+                    alert("Passwords do not match. Please make sure both fields are identical.");
+                }
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const viewButtons = document.querySelectorAll(".view-account-btn");
+                const newPasswordField = document.getElementById("newPassword");
+                const confirmPasswordField = document.getElementById("confirmPassword");
+
+                viewButtons.forEach(button => {
+                    button.addEventListener("click", function () {
+                        // Clear new password fields
+                        newPasswordField.value = "";
+                        confirmPasswordField.value = "";
+                    });
+                });
+            });
         </script>
+        <%-- Success and Error Message Display --%>
+        <script>
+            setTimeout(function () {
+                const successAlert = document.querySelector('.alert-success');
+                const errorAlert = document.querySelector('.alert-danger');
+                if (successAlert)
+                    successAlert.style.display = 'none';
+                if (errorAlert)
+                    errorAlert.style.display = 'none';
+            }, 5000); // Auto-dismiss after 5 seconds
+        </script>
+
+        <%
+            String successMessage = (String) session.getAttribute("successMessage");
+            String errorMessage = (String) request.getAttribute("errorMessage");
+
+            if (successMessage != null) {
+        %>
+        <div class="alert alert-success"><%= successMessage%></div>
+        <%
+                session.removeAttribute("successMessage");
+            }
+
+            if (errorMessage != null) {
+        %>
+        <div class="alert alert-danger"><%= errorMessage%></div>
+        <%
+            }
+        %>
 
     </body>
 
