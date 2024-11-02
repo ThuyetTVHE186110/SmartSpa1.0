@@ -12,7 +12,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 /**
  *
  * @author Dell Alienware
@@ -67,7 +66,10 @@ public class AddProduct extends HttpServlet {
 
         String image = request.getParameter("image"); // Cần xử lý upload file
         String branchName = request.getParameter("branchName");
-
+        String status = request.getParameter("status");
+        String ingredient = request.getParameter("ingredient");
+        String howToUse = request.getParameter("howToUse");
+        String benefit = request.getParameter("benefit");
         // Tạo đối tượng ProductDAO và gọi phương thức addProduct
         ProductDAO productDAO = new ProductDAO();
         System.out.println(name);
@@ -79,12 +81,11 @@ public class AddProduct extends HttpServlet {
         System.out.println(supplierId);
         System.out.println(discountId);
         System.out.println(branchName);
-        productDAO.addProduct(name, description, price, quantity, image, categoryId, supplierId, discountId, branchName);
+        productDAO.updateProduct(discountId, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
         System.out.println("ass");
-        
+
         // Chuyển hướng đến danh sách sản phẩm
         response.sendRedirect("productlist");
-
 
     }
 
@@ -99,7 +100,7 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
     }
 
     @Override
