@@ -569,11 +569,7 @@ public class PersonDAO extends DBContext {
         return success;
     }
 
-    public static void main(String[] args) {
-        PersonDAO testDAO = new PersonDAO();
-        Person person = testDAO.getPersonByAccount("dat33112@gmail.com","Hello@123");
-        System.out.println(person.getId());
-    }
+    
 
     public Person getPersonByAccount(String username, String password) {
         String sql = "SELECT p.* FROM Person p " +
@@ -656,4 +652,14 @@ public class PersonDAO extends DBContext {
         return null;
     }
 
+      public static void main(String args[]){
+        PersonDAO o = new PersonDAO();
+        List<Person> p = o.getPersonByRole("customer");
+          for (Person person : p) {
+              System.out.println(person.getPhone());
+          }
+        
+    
+}
+    
 }
