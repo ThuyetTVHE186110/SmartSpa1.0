@@ -81,7 +81,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Customer</h5>
                                 <p>Manage customers from this panel.</p>
-
+                                
                                 <!-- Table with stripped rows -->
                                 <table class="table datatable">
                                     <thead>
