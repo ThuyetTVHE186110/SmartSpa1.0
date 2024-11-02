@@ -49,23 +49,23 @@ public class AccountDAO {
 
                     // Create a Person object from the ResultSet
                     person = new Person();
-                    person.setId(rs.getInt(6));  // Person.ID
-                    person.setName(rs.getString(7));  // Person.Name
-                    person.setDateOfBirth(rs.getDate(8));  // Person.DateOfBirth
+                    person.setId(rs.getInt(6)); // Person.ID
+                    person.setName(rs.getString(7)); // Person.Name
+                    person.setDateOfBirth(rs.getDate(8)); // Person.DateOfBirth
 
                     // Check Gender safely
                     String genderStr = rs.getString(9);
                     char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';
                     person.setGender(gender);
 
-                    person.setPhone(rs.getString(10));  // Person.Phone
-                    person.setEmail(rs.getString(11));  // Person.Email
-                    person.setAddress(rs.getString(12));  // Person.Address
+                    person.setPhone(rs.getString(10)); // Person.Phone
+                    person.setEmail(rs.getString(11)); // Person.Email
+                    person.setAddress(rs.getString(12)); // Person.Address
                     person.setImage(rs.getString("Image")); // Person.Image
 
                     // Create an Account object from the ResultSet
                     account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
-                    account.setStatus(status);  // Set status in Account object
+                    account.setStatus(status); // Set status in Account object
                 }
             }
         } catch (SQLException e) {
@@ -73,7 +73,7 @@ public class AccountDAO {
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "Database error", e);
         }
 
-        return account;  // Return the Account object if found and active, otherwise null
+        return account; // Return the Account object if found and active, otherwise null
     }
 
     public boolean updatePassword(String email, String newPassword) throws SQLException {
@@ -104,7 +104,7 @@ public class AccountDAO {
                 // Lấy giá trị của cột gender (kiểu CHAR)
                 String gender = rs.getString("gender");
                 if (gender != null && gender.length() > 0) {
-                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
+                    person.setGender(gender.charAt(0)); // Lấy ký tự đầu tiên
                 }
                 person.setPhone(rs.getString(5));
                 person.setEmail(rs.getString(6));
@@ -158,7 +158,8 @@ public class AccountDAO {
     public List<Account> getAllStaffAccounts() {
         List<Account> accounts = new ArrayList<>();
 
-        // SQL query to retrieve account information including person name, username, role name, and status
+        // SQL query to retrieve account information including person name, username,
+        // role name, and status
         String sql = "SELECT a.ID AS accountId, p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
@@ -171,14 +172,14 @@ public class AccountDAO {
             while (rs.next()) {
                 // Create the Person object
                 Person person = new Person();
-                person.setName(rs.getString("personName"));  // Set the name of the person
-                person.setEmail(rs.getString("Email"));       // Set the email of the person
+                person.setName(rs.getString("personName")); // Set the name of the person
+                person.setEmail(rs.getString("Email")); // Set the email of the person
 
                 // Create the Account object
                 Account account = new Account();
-                account.setId(rs.getInt("accountId"));         // Set account ID
+                account.setId(rs.getInt("accountId")); // Set account ID
                 account.setUsername(rs.getString("Username")); // Set username
-                account.setPersonInfo(person);                 // Link the Person object to the Account
+                account.setPersonInfo(person); // Link the Person object to the Account
 
                 // Set role name and status
                 account.setRoleName(rs.getString("roleName")); // Set role name
@@ -195,7 +196,7 @@ public class AccountDAO {
             e.printStackTrace();
         }
 
-        return accounts;  // Return the list of accounts
+        return accounts; // Return the list of accounts
     }
 
     private Connection getConnection() throws SQLException {
@@ -206,10 +207,10 @@ public class AccountDAO {
         String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, p.ID AS PersonID, p.Name, p.Email, p.Phone, p.Address "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
-                + "WHERE a.ID = ?";  // Tìm theo Account ID
+                + "WHERE a.ID = ?"; // Tìm theo Account ID
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, accountId);  // Gán giá trị accountId vào câu SQL
+            ps.setInt(1, accountId); // Gán giá trị accountId vào câu SQL
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -223,17 +224,17 @@ public class AccountDAO {
 
                     // Tạo đối tượng Account
                     Account account = new Account();
-                    account.setId(rs.getInt("ID"));  // Lấy ID của Account từ DB
+                    account.setId(rs.getInt("ID")); // Lấy ID của Account từ DB
                     account.setUsername(rs.getString("Username"));
                     account.setPassword(rs.getString("Password"));
                     account.setRole(rs.getInt("RoleID"));
-                    account.setPersonInfo(person);  // Liên kết với đối tượng Person
+                    account.setPersonInfo(person); // Liên kết với đối tượng Person
 
-                    return account;  // Trả về đối tượng Account đã hoàn thiện
+                    return account; // Trả về đối tượng Account đã hoàn thiện
                 }
             }
         }
-        return null;  // Nếu không tìm thấy Account theo ID
+        return null; // Nếu không tìm thấy Account theo ID
     }
 
     public boolean isEmailAvailable(String email) throws SQLException {
@@ -257,7 +258,8 @@ public class AccountDAO {
         }
     }
 
-    public void updateAccountDetails(int accountId, String username, String password, String status, int roleId, String personName) throws SQLException {
+    public void updateAccountDetails(int accountId, String username, String password, String status, int roleId,
+            String personName) throws SQLException {
         String updateAccountSQL = (password != null)
                 ? "UPDATE Account SET Username = ?, Password = ?, Status = ?, RoleID = ? WHERE ID = ?"
                 : "UPDATE Account SET Username = ?, Status = ?, RoleID = ? WHERE ID = ?";
@@ -265,7 +267,7 @@ public class AccountDAO {
         String updatePersonSQL = "UPDATE Person SET Name = ?, Email = ? WHERE ID = (SELECT PersonID FROM Account WHERE ID = ?)";
 
         try (Connection conn = DBContext.getConnection()) {
-            conn.setAutoCommit(false);  // Start transaction
+            conn.setAutoCommit(false); // Start transaction
 
             // Update Account table
             try (PreparedStatement accountStmt = conn.prepareStatement(updateAccountSQL)) {
@@ -288,7 +290,7 @@ public class AccountDAO {
                 personStmt.executeUpdate();
             }
 
-            conn.commit();  // Commit transaction
+            conn.commit(); // Commit transaction
         } catch (SQLException e) {
             e.printStackTrace();
             throw e;
@@ -321,7 +323,7 @@ public class AccountDAO {
             // Insert into Person table
             try (PreparedStatement personStmt = conn.prepareStatement(addPersonSQL, Statement.RETURN_GENERATED_KEYS)) {
                 personStmt.setString(1, personName);
-                personStmt.setString(2, username);  // Email as username
+                personStmt.setString(2, username); // Email as username
                 personStmt.executeUpdate();
 
                 // Retrieve generated Person ID
@@ -418,7 +420,9 @@ public class AccountDAO {
 
     public int getTotalAccountsCount() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM Account WHERE RoleID IN (1, 2, 3)";
-        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("total");
             }
@@ -432,15 +436,15 @@ public class AccountDAO {
         int offset = (page - 1) * recordsPerPage;
 
         String sql = """
-        SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
-               p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
-        FROM Account a
-        JOIN Person p ON a.PersonID = p.ID
-        JOIN Role r ON a.RoleID = r.ID
-        WHERE a.RoleID IN (1, 2, 3)
-        ORDER BY p.Name ASC
-        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-        """;
+                SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
+                       p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
+                FROM Account a
+                JOIN Person p ON a.PersonID = p.ID
+                JOIN Role r ON a.RoleID = r.ID
+                WHERE a.RoleID IN (1, 2, 3)
+                ORDER BY p.Name ASC
+                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """;
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, offset);
@@ -475,13 +479,13 @@ public class AccountDAO {
 
         // Base SQL query with dynamic WHERE clause
         StringBuilder sql = new StringBuilder("""
-        SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
-               p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
-        FROM Account a
-        JOIN Person p ON a.PersonID = p.ID
-        JOIN Role r ON a.RoleID = r.ID
-        WHERE a.RoleID IN (1, 2, 3)
-    """);
+                    SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
+                           p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
+                    FROM Account a
+                    JOIN Person p ON a.PersonID = p.ID
+                    JOIN Role r ON a.RoleID = r.ID
+                    WHERE a.RoleID IN (1, 2, 3)
+                """);
 
         boolean hasCondition = false;
 
@@ -497,7 +501,8 @@ public class AccountDAO {
 
         sql.append(" ORDER BY p.Name ASC");
 
-        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
             int paramIndex = 1;
             if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
@@ -531,5 +536,15 @@ public class AccountDAO {
         }
         return accounts;
     }
-    
+
+    public static void main(String args[]) {
+        AccountDAO accountDAO = new AccountDAO();
+        String username = "dat33112@gmail.com";
+        String password = "Hello@123";
+        Account account = accountDAO.getByUsernamePassword(username, password);
+        PersonDAO personDAO = new PersonDAO();
+        Person person = personDAO.getPersonByAccount(username, password);
+        System.out.println(person.getId());
+    }
+
 }
