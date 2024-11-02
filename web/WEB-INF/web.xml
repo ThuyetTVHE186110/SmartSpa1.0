@@ -137,6 +137,10 @@
         <servlet-class>controller.BlogDetailServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>getAvailableTimes</servlet-name>
+        <servlet-class>controller.Booking.getAvailableTimes</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>PaymentSuccessServlet</servlet-name>
         <servlet-class>controller.PaymentSuccessServlet</servlet-class>
     </servlet>
@@ -275,6 +279,10 @@
     <servlet-mapping>
         <servlet-name>BlogDetailServlet</servlet-name>
         <url-pattern>/blogDetails</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>getAvailableTimes</servlet-name>
+        <url-pattern>/getAvailableTimes</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PaymentSuccessServlet</servlet-name>

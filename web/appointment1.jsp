@@ -1,3 +1,6 @@
+
+
+
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %> 
@@ -260,39 +263,39 @@
                                 var events = []; // Initialize an empty array
                                 // Use JSP to loop through appointments and add each one to the events array
             <c:forEach var="appointment" items="${appointmentList}">
-                                var start = "${appointment.appointmentDate}T${appointment.appointmentTime}";
-                                    var end = "${appointment.appointmentDate}T15:00";
-                                    var note = "${appointment.note}";
-                                    var status = "${appointment.status}";
-                                    var services = [];
-                                    var staffs = [];
+                                var start = "${appointment.start}";
+                                var end = "${appointment.end}";
+                                var note = "${appointment.note}";
+                                var status = "${appointment.status}";
+                                var services = [];
+                                var staffs = [];
                 <c:forEach var="info" items="${appointment.services}">
-                                    var service = "${info.service.name}";
-                                    services.push(service);
-                                    var staff = "${info.staff.name}";
-                                    if (staff && staff.trim().length > 0) {
-                                        staffs.push(staff);
-                                    }
+                                var service = "${info.service.name}";
+                                services.push(service);
+                                var staff = "${info.staff.name}";
+                                if (staff && staff.trim().length > 0) {
+                                    staffs.push(staff);
+                                }
                 </c:forEach>
-                                    console.log("Services: ", services);
-                                    console.log("Staffs: ", staffs);
-                                    events.push({
-                                        title: "${appointment.customer.name}",
-                                        start: start,
-                                        end: end,
+                                console.log("Services: ", services);
+                                console.log("Staffs: ", staffs);
+                                events.push({
+                                    title: "${appointment.customer.name}",
+                                    start: start,
+                                    end: end,
+                                    staff: staffs,
+                                    color: '#B38886',
+                                    extendedProps: {
+                                        client: '${appointment.customer.name}',
                                         staff: staffs,
-                                        color: '#B38886',
-                                        extendedProps: {
-                                            client: '${appointment.customer.name}',
-                                            staff: staffs,
-                                            service: services,
-                                            status: status,
-                                            notes: note
-                                        }
-                                    });
+                                        service: services,
+                                        status: status,
+                                        notes: note
+                                    }
+                                });
             </c:forEach>;
 
-                                    console.log(events); // Check if events are correctly added
+                                console.log(events); // Check if events are correctly added
         </script>
         <script>
             AOS.init();
