@@ -69,7 +69,7 @@ public class CustomerDAO extends DBContext {
         return customerList;
     }
 
-    public void updateEmployee(Person person) {
+    public void updateCustomer(Person person) {
         PreparedStatement stm = null;
         try (Connection connection = getConnection()) {
             String strUpdate = "UPDATE Person SET Name = ?, DateOfBirth = ?, Gender = ?, Phone = ?, Email = ?, Address = ? WHERE Id = ?";
@@ -97,7 +97,7 @@ public class CustomerDAO extends DBContext {
         }
     }
 
-    public void deleteEmployeeByID(String id) {
+    public void deleteCustomerByID(String id) {
         try {
             String sql = "DELETE FROM Account\n"
                     + "WHERE RoleID = 3 AND ID = ?;";
