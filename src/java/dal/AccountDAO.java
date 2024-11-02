@@ -598,15 +598,15 @@ public class AccountDAO {
         return accounts;
     }
 
-//    public static void main(String args[]) {
-//        AccountDAO accountDAO = new AccountDAO();
-//        String username = "dat33112@gmail.com";
-//        String password = "Hello@123";
-//        Account account = accountDAO.getByUsernamePassword(username, password);
-//        PersonDAO personDAO = new PersonDAO();
-//        Person person = personDAO.getPersonByAccount(username, password);
-//        System.out.println(person.getId());
-//    }
+    public static void main(String args[]) {
+        AccountDAO accountDAO = new AccountDAO();
+        String username = "dat33112@gmail.com";
+        String password = "Hello@123";
+        Account account = accountDAO.getByUsernamePassword(username, password);
+        PersonDAO personDAO = new PersonDAO();
+        Person person = personDAO.getPersonByAccount(username, password);
+        System.out.println(person.getId());
+    }
 
     public Account getByUsername(String username) throws SQLException {
         String sql = "SELECT * FROM Account WHERE Username = ?";
@@ -634,14 +634,14 @@ public class AccountDAO {
         return account;
     }
 
-    public static void main(String[] args) {
-        // Chuỗi mật khẩu cần băm
-        String plainPassword = "alchemist";
-
-        // Băm mật khẩu bằng BCrypt
-        String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
-
-        // In ra mật khẩu đã băm
-        System.out.println("Hashed Password: " + hashedPassword);
-    }
+//    public static void main(String[] args) {
+//        // Chuỗi mật khẩu cần băm
+//        String plainPassword = "alchemist";
+//
+//        // Băm mật khẩu bằng BCrypt
+//        String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+//
+//        // In ra mật khẩu đã băm
+//        System.out.println("Hashed Password: " + hashedPassword);
+//    }
 }
