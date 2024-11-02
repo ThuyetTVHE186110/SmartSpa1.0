@@ -571,7 +571,7 @@ public class PersonDAO extends DBContext {
 
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
-        Person person = testDAO.getPersonByID(26);
+        Person person = testDAO.getPersonByAccount("dat33112@gmail.com","Hello@123");
         System.out.println(person.getId());
     }
 

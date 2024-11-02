@@ -136,44 +136,16 @@ public class LoginServlet extends HttpServlet {
                     usernameCookie.setMaxAge(0);
                     response.addCookie(usernameCookie);
                 }
-
-                session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-                response.sendRedirect("index");
-            } else {
-                // Customer login: only roleID 4 is allowed
-                if (roleID == 4) {
-                    // Create session and set session attributes for customer
-                    HttpSession session = request.getSession();
-                    session.setAttribute("account", account);
-                    session.setAttribute("loggedIn", true);
-                    session.setAttribute("roleName", roleName);
-                    session.setMaxInactiveInterval(30 * 60); // Session timeout (30 minutes)
-
-                    // Handle "Remember Me" functionality for customer login
-                    if ("on".equals(rememberMe)) {
-                        Cookie usernameCookie = new Cookie("savedUsername", username);
-                        usernameCookie.setMaxAge(60 * 60 * 24 * 30); // 30 days
-                        usernameCookie.setHttpOnly(true); // Make it HTTP-only
-                        usernameCookie.setSecure(request.isSecure()); // Set Secure flag if HTTPS
-                        response.addCookie(usernameCookie);
-                    } else {
-                        // Delete cookies if "Remember Me" is not checked
-                        Cookie usernameCookie = new Cookie("savedUsername", "");
-                        usernameCookie.setMaxAge(0); // Expire the cookie
-                        response.addCookie(usernameCookie);
-                    }
-                    // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
-                    PersonDAO personDAO = new PersonDAO();
+                PersonDAO personDAO = new PersonDAO();
                     Person person = personDAO.getPersonByAccount(username, password);
                     // Kiểm tra person có null không trước khi lưu vào session
                     if (person != null) {
                         session.setAttribute("person", person);  // Lưu person vào session
                     }
-                    // Set success message for customer
-                    session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-                    // Redirect to the customer dashboard or index
-                    response.sendRedirect("index");
-                } 
+                session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+                response.sendRedirect("index");
+            } else {
+                
                 request.setAttribute("error", "Invalid role or user type.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
