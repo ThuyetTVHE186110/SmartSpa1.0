@@ -26,6 +26,13 @@ import java.util.Random;
  */
 public class SignupServlet extends HttpServlet {
 
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Redirect to the signup page or handle GET requests as needed
+        request.getRequestDispatcher("signup.jsp").forward(request, response);
+    }
+
     /**
      * Handles the HTTP <code>POST</code> method.
      *
