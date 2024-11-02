@@ -416,31 +416,35 @@ public class AccountDAO {
         return 0;
     }
 
-    public List<Account> getStaffForPage(int page, int staffsPerPage) throws SQLException {
-        List<Account> staffs = new ArrayList<>();
+    public int getTotalAccountsCount() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM Account WHERE RoleID IN (1, 2, 3)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+        return 0;
+    }
+
+    // Get paginated list of staff accounts
+    public List<Account> getPaginatedStaffAccounts(int page, int recordsPerPage) throws SQLException {
+        List<Account> accounts = new ArrayList<>();
+        int offset = (page - 1) * recordsPerPage;
+
         String sql = """
-            SELECT a.ID AS AccountID,
-                   a.Username,
-                   a.Status,
-                   r.Name AS RoleName,
-                   p.ID AS PersonID,
-                   p.Name AS PersonName,
-                   p.Email,
-                   p.Phone,
-                   p.Address,
-                   p.Image
-            FROM Account a
-            JOIN Person p ON a.PersonID = p.ID
-            JOIN Role r ON a.RoleID = r.ID
-            WHERE a.RoleID IN (2, 3) 
-            ORDER BY p.Name ASC
-            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-            """;
+        SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
+               p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
+        FROM Account a
+        JOIN Person p ON a.PersonID = p.ID
+        JOIN Role r ON a.RoleID = r.ID
+        WHERE a.RoleID IN (1, 2, 3)
+        ORDER BY p.Name ASC
+        OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+        """;
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
-            int offset = (page - 1) * staffsPerPage;
             stmt.setInt(1, offset);
-            stmt.setInt(2, staffsPerPage);
+            stmt.setInt(2, recordsPerPage);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -459,39 +463,61 @@ public class AccountDAO {
                     account.setRoleName(rs.getString("RoleName"));
                     account.setPersonInfo(person);
 
-                    staffs.add(account);
+                    accounts.add(account);
                 }
             }
         }
-        return staffs;
+        return accounts;
     }
 
-    // Get paginated list of staff accounts
-    public List<Account> getPaginatedStaffAccounts(int page, int recordsPerPage) throws SQLException {
+    public List<Account> getFilteredAccounts(String statusFilter, String roleFilter) throws SQLException {
         List<Account> accounts = new ArrayList<>();
-        int start = (page - 1) * recordsPerPage;
+        StringBuilder sql = new StringBuilder("""
+        SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
+               p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
+        FROM Account a
+        JOIN Person p ON a.PersonID = p.ID
+        JOIN Role r ON a.RoleID = r.ID
+        WHERE a.RoleID IN (1, 2, 3)
+    """);
 
-        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
-                + "FROM Account a "
-                + "JOIN Person p ON a.PersonID = p.ID "
-                + "JOIN Role r ON a.RoleID = r.ID "
-                + "WHERE a.RoleID IN (2, 3) "
-                + "LIMIT ?, ?";
-        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, start);
-            ps.setInt(2, recordsPerPage);
+        // Append filtering conditions
+        if (statusFilter != null && !statusFilter.equals("all")) {
+            sql.append(" AND a.Status = ? ");
+        }
+        if (roleFilter != null && !roleFilter.equals("all")) {
+            sql.append(" AND r.Name = ? ");
+        }
 
-            try (ResultSet rs = ps.executeQuery()) {
+        sql.append(" ORDER BY p.Name ASC ");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+
+            // Set filter parameters
+            if (statusFilter != null && !statusFilter.equals("all")) {
+                stmt.setString(paramIndex++, statusFilter);
+            }
+            if (roleFilter != null && !roleFilter.equals("all")) {
+                stmt.setString(paramIndex++, roleFilter);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     Person person = new Person();
-                    person.setName(rs.getString("personName"));
+                    person.setId(rs.getInt("PersonID"));
+                    person.setName(rs.getString("PersonName"));
                     person.setEmail(rs.getString("Email"));
+                    person.setPhone(rs.getString("Phone"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
 
                     Account account = new Account();
+                    account.setId(rs.getInt("AccountID"));
                     account.setUsername(rs.getString("Username"));
-                    account.setPersonInfo(person);
-                    account.setRoleName(rs.getString("roleName"));
                     account.setStatus(rs.getString("Status"));
+                    account.setRoleName(rs.getString("RoleName"));
+                    account.setPersonInfo(person);
 
                     accounts.add(account);
                 }
@@ -499,4 +525,5 @@ public class AccountDAO {
         }
         return accounts;
     }
+
 }
