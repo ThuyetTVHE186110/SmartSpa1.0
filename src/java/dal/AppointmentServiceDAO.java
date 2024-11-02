@@ -148,9 +148,6 @@ public class AppointmentServiceDAO extends DBContext {
 
     public static void main(String[] args) {
         AppointmentServiceDAO aO = new AppointmentServiceDAO();
-        List<AppointmentService> list = aO.getAllAppointmentServices();
-        for (AppointmentService appointmentService : list) {
-            System.out.println(appointmentService.getAppointmentID());
-        }
+        aO.addAppointmentService(540, 2, 8);
     }
 }

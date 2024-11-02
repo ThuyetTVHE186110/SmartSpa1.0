@@ -4,9 +4,7 @@
  */
 package model;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,8 +15,8 @@ import java.util.List;
 public class Appointment {
 
     private int id;
-    private LocalDate appointmentDate;
-    private LocalTime appointmentTime;
+    private LocalDateTime start;
+    private LocalDateTime end;
     private LocalDateTime createdDate;
     private String status;
     private String note;
@@ -28,10 +26,10 @@ public class Appointment {
     public Appointment() {
     }
 
-    public Appointment(int id, LocalDate appointmentDate, LocalTime appointmentTime, LocalDateTime createdDate, String status, String note, Person customer, List<AppointmentService> services) {
+    public Appointment(int id, LocalDateTime start, LocalDateTime end, LocalDateTime createdDate, String status, String note, Person customer, List<AppointmentService> services) {
         this.id = id;
-        this.appointmentDate = appointmentDate;
-        this.appointmentTime = appointmentTime;
+        this.start = start;
+        this.end = end;
         this.createdDate = createdDate;
         this.status = status;
         this.note = note;
@@ -47,20 +45,20 @@ public class Appointment {
         this.id = id;
     }
 
-    public LocalDate getAppointmentDate() {
-        return appointmentDate;
+    public LocalDateTime getStart() {
+        return start;
     }
 
-    public void setAppointmentDate(LocalDate appointmentDate) {
-        this.appointmentDate = appointmentDate;
+    public void setStart(LocalDateTime start) {
+        this.start = start;
     }
 
-    public LocalTime getAppointmentTime() {
-        return appointmentTime;
+    public LocalDateTime getEnd() {
+        return end;
     }
 
-    public void setAppointmentTime(LocalTime appointmentTime) {
-        this.appointmentTime = appointmentTime;
+    public void setEnd(LocalDateTime end) {
+        this.end = end;
     }
 
     public LocalDateTime getCreatedDate() {

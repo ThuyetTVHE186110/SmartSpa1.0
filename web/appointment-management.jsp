@@ -5,21 +5,21 @@
 <%
     // No need to declare session manually; it's already available in JSP
     // You can directly use session
-    if (session == null || session.getAttribute("account") == null) {
-        // Redirect to login page if session is not found or account is not in session
-        response.sendRedirect("adminLogin.jsp");
-    } else {
-        // Get the account object from session
-        Account account = (Account) session.getAttribute("account");
-
-        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
-            // Allow access to the page (do nothing and let the JSP render)
-        } else {
-            // Set an error message and redirect to an error page
-            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
-            request.getRequestDispatcher("error").forward(request, response);
-        }
-    }
+//    if (session == null || session.getAttribute("account") == null) {
+//        // Redirect to login page if session is not found or account is not in session
+//        response.sendRedirect("adminLogin.jsp");
+//    } else {
+//        // Get the account object from session
+//        Account account = (Account) session.getAttribute("account");
+//
+//        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+//            // Allow access to the page (do nothing and let the JSP render)
+//        } else {
+//            // Set an error message and redirect to an error page
+//            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+//            request.getRequestDispatcher("error").forward(request, response);
+//        }
+//    }
 %>
 
 <!DOCTYPE html>
@@ -203,7 +203,7 @@
                                                 <th scope="row">${appointment.id}</th>
                                                 <td>${appointment.customer.name}</td>
                                                 <td> 
-                                                    ${appointment.appointmentDate} ${appointment.appointmentTime}
+                                                    ${appointment.start} ${appointment.end}
                                                 </td>
                                                 <td>
                                                     <c:set var="size" value="${fn:length(appointmentServicesMap[appointment.id])}" />
@@ -242,8 +242,8 @@
                                                                 data-name="${appointment.customer.name}"
                                                                 data-person-id="${appointment.customer.id}"
                                                                 data-services="${serviceIds}" 
-                                                                data-date="${appointment.appointmentDate}"
-                                                                data-time="${appointment.appointmentTime}"
+                                                                data-date="${appointment.start}"
+                                                                data-time="${appointment.end}"
                                                                 data-status="${appointment.status}"
                                                                 data-note="${appointment.note}">Edit</button>
                                                         <button type="button" class="btn btn-danger btn-sm cancel-appointment" data-bs-toggle="modal" data-bs-target="#cancel-appointment" data-appointment-id="${appointment.id}">Cancel</button>
