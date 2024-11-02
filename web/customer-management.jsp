@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %> <!-- Import your Account model -->
 <%
     // No need to declare session manually; it's already available in JSP
@@ -81,7 +82,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Customer</h5>
                                 <p>Manage customers from this panel.</p>
-                                
+
                                 <!-- Table with stripped rows -->
                                 <table class="table datatable">
                                     <thead>
@@ -242,6 +243,7 @@
                             <div class="col-md-6">
                                 <label for="inputDateOfBirth" class="form-label">Date of Birth</label>
                                 <input type="date" class="form-control" id="inputDateOfBirth" name="dateOfBirth">
+                                <span id="dobError" class="text-danger" style="display:none;">Date of birth cannot exceed current date.</span>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputGender" class="form-label">Gender</label>
@@ -254,6 +256,7 @@
                             <div class="col-md-6">
                                 <label for="inputPhone" class="form-label">Phone</label>
                                 <input type="text" class="form-control" id="inputPhone" name="phone">
+                                <span id="phoneError" class="text-danger" style="display:none;">Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0.</span>
                             </div>
                             <div class="col-md-6">
                                 <label for="inputEmail" class="form-label">Email</label>
@@ -342,6 +345,50 @@
 
     </body>
     <script>
+// ddkien phonne & dob
+                                                        document.querySelector('#editCustomerModal form').addEventListener('submit', function (event) {
+                                                            event.preventDefault();  // Ngăn gửi form để kiểm tra trước
+
+                                                            const phoneInput = document.getElementById('inputPhone');
+                                                            const phoneError = document.getElementById('phoneError');
+                                                            const dobInput = document.getElementById('inputDateOfBirth');
+                                                            const dobError = document.getElementById('dobError');
+
+                                                            let isValid = true;
+
+                                                            // Kiểm tra số điện thoại
+                                                            if (phoneInput.value.length !== 10 || !phoneInput.value.startsWith('0') || !/^\d+$/.test(phoneInput.value)) {
+                                                                phoneError.style.display = 'block';
+                                                                isValid = false;
+                                                            } else {
+                                                                phoneError.style.display = 'none';
+                                                            }
+
+                                                            // Kiểm tra ngày sinh không vượt quá ngày hiện tại
+                                                            const selectedDate = new Date(dobInput.value);
+                                                            const currentDate = new Date();
+
+                                                            if (selectedDate > currentDate) {
+                                                                dobError.style.display = 'block';  // Hiển thị lỗi nếu ngày sinh vượt quá ngày hiện tại
+                                                                isValid = false;
+                                                            } else {
+                                                                dobError.style.display = 'none';
+                                                            }
+
+                                                            // Nếu tất cả dữ liệu hợp lệ, đóng modal và gửi form
+                                                            if (isValid) {
+                                                                const editCustomerModal = new bootstrap.Modal(document.getElementById('editCustomerModal'));
+                                                                editCustomerModal.hide();  // Đóng modal
+
+                                                                // Gửi form để cập nhật dữ liệu
+                                                                this.submit();
+
+                                                                // Hiển thị thông báo thành công
+                                                                const editSuccessModal = new bootstrap.Modal(document.getElementById('editSuccessModal'));
+                                                                editSuccessModal.show();
+                                                            }
+                                                        });
+//****
                                                         function confirmDelete(id) {
                                                             if (confirm("Are you sure you want to delete this customer?")) {
                                                                 // AJAX call to delete feedback

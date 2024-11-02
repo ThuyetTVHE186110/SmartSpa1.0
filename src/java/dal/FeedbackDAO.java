@@ -112,14 +112,7 @@ public class FeedbackDAO extends DBContext {
 //        } catch (Exception e) {
 //        }
 //    }
-    public static void main(String args){
-        FeedbackDAO o= new FeedbackDAO();
-        ArrayList<Feedback> f= o.getFeedback();
-        for (Feedback feedback : f) {
-            System.out.println(feedback.getContent());
-        }
-    
-}
+
 }
 
 
