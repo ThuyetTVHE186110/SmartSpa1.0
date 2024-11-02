@@ -472,6 +472,8 @@ public class AccountDAO {
 
     public List<Account> getFilteredAccounts(String statusFilter, String roleFilter) throws SQLException {
         List<Account> accounts = new ArrayList<>();
+
+        // Base SQL query with dynamic WHERE clause
         StringBuilder sql = new StringBuilder("""
         SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
                p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
@@ -481,24 +483,28 @@ public class AccountDAO {
         WHERE a.RoleID IN (1, 2, 3)
     """);
 
-        // Append filtering conditions
-        if (statusFilter != null && !statusFilter.equals("all")) {
-            sql.append(" AND a.Status = ? ");
-        }
-        if (roleFilter != null && !roleFilter.equals("all")) {
-            sql.append(" AND r.Name = ? ");
+        boolean hasCondition = false;
+
+        if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND a.Status = ?");
+            hasCondition = true;
         }
 
-        sql.append(" ORDER BY p.Name ASC ");
+        if (roleFilter != null && !roleFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND r.Name = ?");
+            hasCondition = true;
+        }
+
+        sql.append(" ORDER BY p.Name ASC");
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
-            int paramIndex = 1;
 
-            // Set filter parameters
-            if (statusFilter != null && !statusFilter.equals("all")) {
+            int paramIndex = 1;
+            if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
                 stmt.setString(paramIndex++, statusFilter);
             }
-            if (roleFilter != null && !roleFilter.equals("all")) {
+
+            if (roleFilter != null && !roleFilter.equalsIgnoreCase("all")) {
                 stmt.setString(paramIndex++, roleFilter);
             }
 

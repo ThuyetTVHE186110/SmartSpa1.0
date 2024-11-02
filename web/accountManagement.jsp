@@ -172,6 +172,7 @@
                                 <thead>
                                     <tr>
                                         <th scope="col">ID</th>
+                                        <th scope="col">Image</th> <!-- New column for image -->
                                         <th scope="col">Name</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Role</th>
@@ -184,6 +185,17 @@
                                     <c:forEach var="account" items="${accounts}" varStatus="status">
                                         <tr class="account-row" data-role="${account.roleName}" data-status="${account.status}">
                                             <th scope="row">${status.index + 1}</th>  <!-- Auto-incremented index -->
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty account.personInfo.image}">
+                                                        <img src="newUI/assets/img/${account.personInfo.image}" alt="Image" style="width: 150px; height: 200px; object-fit: cover;">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="newUI/assets/img/default-avartar.jpg" alt="Default Image" style="width: 150px; height: 200px; object-fit: cover;">
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+
                                             <td>${account.personInfo.name}</td>  <!-- Display person's name -->
                                             <td>${account.personInfo.email}</td>  <!-- Display person's email -->
                                             <td>${account.roleName}</td>  <!-- Display role name -->
