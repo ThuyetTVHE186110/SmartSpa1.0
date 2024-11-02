@@ -150,7 +150,7 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }
         } else {
-            request.setAttribute("error", "Login failed! Invalid username or password, or account is suspended.");
+            request.setAttribute("error", "Login failed! Invalid username or password.");
             request.setAttribute("username", username);
             if ("admin".equals(userType)) {
                 request.getRequestDispatcher("adminLogin.jsp").forward(request, response);

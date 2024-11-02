@@ -28,7 +28,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Profile - Blushed Beauty Bar</title>
-        <link rel="stylesheet" href="newUI//assets/css/styles.css">
+        <link rel="stylesheet" href="newUI/assets/css/styles.css">
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -45,9 +45,9 @@
                     <div class="profile-info">
                         <div class="profile-avatar">
                             <!-- Hiển thị ảnh của người dùng -->
-                            <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
-                                ? "newUI/assets/img/" + person.getImage() 
-                                : "newUI/assets/img/default-avartar.jpg" %>" 
+                            <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                                    ? "newUI/assets/img/" + person.getImage()
+                                    : "newUI/assets/img/default-avartar.jpg"%>" 
                                  alt="Profile Picture">
                             <button class="edit-avatar"><i class="fas fa-camera"></i></button>
                         </div>
@@ -71,48 +71,60 @@
                     <!-- Upcoming Appointments Tab -->
                     <div class="profile-tab active" id="appointments">
                         <h2>Upcoming Appointments</h2>
-                        <div class="appointments-grid">
-                            <div class="appointment-card">
-                                <div class="appointment-date">
-                                    <span class="month">MAR</span>
-                                    <span class="day">15</span>
+                        <form action="customerProfile" method="post">
+                            <input type="hidden" name="currentTab" value="appointments">
+                            <!-- Add your form elements or buttons as needed -->
+                            <div class="appointments-grid">
+                                <div class="appointment-card">
+                                    <div class="appointment-date">
+                                        <span class="month">MAR</span>
+                                        <span class="day">15</span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <h3>Classic Lash Extensions</h3>
+                                        <p><i class="far fa-clock"></i> 2:00 PM - 4:30 PM</p>
+                                        <p><i class="fas fa-user"></i> with Jessica Chen</p>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <button type="submit" class="reschedule-btn">Reschedule</button>
+                                        <button type="submit" class="cancel-btn">Cancel</button>
+                                    </div>
                                 </div>
-                                <div class="appointment-details">
-                                    <h3>Classic Lash Extensions</h3>
-                                    <p><i class="far fa-clock"></i> 2:00 PM - 4:30 PM</p>
-                                    <p><i class="fas fa-user"></i> with Jessica Chen</p>
-                                </div>
-                                <div class="appointment-actions">
-                                    <button class="reschedule-btn">Reschedule</button>
-                                    <button class="cancel-btn">Cancel</button>
-                                </div>
+                                <!-- Add more appointment cards as needed -->
                             </div>
-                            <!-- Add more appointment cards as needed -->
-                        </div>
+                        </form>
                     </div>
+
 
                     <!-- Service History Tab -->
                     <div class="profile-tab" id="history">
                         <h2>Service History</h2>
-                        <div class="history-list">
-                            <div class="history-item">
-                                <div class="history-date">Feb 15, 2024</div>
-                                <div class="history-details">
-                                    <h3>Hybrid Lash Fill</h3>
-                                    <p>Service by Emily Davis</p>
-                                    <p class="price">$95</p>
+                        <form action="customerProfile" method="post">
+                            <input type="hidden" name="currentTab" value="history">
+                            <!-- Add your form elements or buttons as needed -->
+                            <div class="history-list">
+                                <div class="history-item">
+                                    <div class="history-date">Feb 15, 2024</div>
+                                    <div class="history-details">
+                                        <h3>Hybrid Lash Fill</h3>
+                                        <p>Service by Emily Davis</p>
+                                        <p class="price">$95</p>
+                                    </div>
+                                    <button type="submit" class="book-again-btn">Book Again</button>
                                 </div>
-                                <button class="book-again-btn">Book Again</button>
+                                <!-- Add more history items as needed -->
                             </div>
-                            <!-- Add more history items as needed -->
-                        </div>
+                        </form>
                     </div>
+
 
                     <!-- Preferences Tab -->
                     <!-- Preferences Tab -->
                     <div class="profile-tab" id="preferences">
                         <h2>Change Your Password</h2>
                         <form class="preferences-form" action="customerProfile" method="post" onsubmit="return validatePassword()">
+                            <input type="hidden" name="action" value="changePassword">
+                            <input type="hidden" id="currentTab" name="currentTab" value="preferences">
                             <!-- Password Update Section -->
                             <h3>Change Password</h3>
 
@@ -176,42 +188,43 @@
                         <h2>Account Settings</h2>
                         <!-- Form cập nhật thông tin -->
                         <form class="settings-form" action="customerProfile" method="post" onsubmit="return validateForm()">
+                            <input type="hidden" id="currentTab" name="currentTab" value="settings">
                             <!-- Full Name -->
                             <div class="form-group">
                                 <label>Full Name</label>
-                                <input type="text" name="fullName" value="<%= person.getName() %>" required>
+                                <input type="text" name="fullName" value="<%= person.getName()%>" required>
                             </div>
 
                             <!-- Date of Birth -->
                             <div class="form-group">
                                 <label>Date of Birth</label>
-                                <input type="date" name="dateOfBirth" value="<%= person.getDateOfBirth() != null ? person.getDateOfBirth().toString() : "" %>" required>
+                                <input type="date" name="dateOfBirth" value="<%= person.getDateOfBirth() != null ? person.getDateOfBirth().toString() : ""%>" required>
                             </div>
 
                             <!-- Gender -->
                             <div class="form-group">
                                 <label>Gender</label>
                                 <select name="gender" required>
-                                    <option value="M" <%= (person.getGender() == 'M') ? "selected" : "" %>>Male</option>
-                                    <option value="F" <%= (person.getGender() == 'F') ? "selected" : "" %>>Female</option>
-                                    <option value="O" <%= (person.getGender() == 'O') ? "selected" : "" %>>Other</option>
+                                    <option value="M" <%= (person.getGender() == 'M') ? "selected" : ""%>>Male</option>
+                                    <option value="F" <%= (person.getGender() == 'F') ? "selected" : ""%>>Female</option>
+                                    <option value="O" <%= (person.getGender() == 'O') ? "selected" : ""%>>Other</option>
                                 </select>
                             </div>
 
                             <!-- Phone -->
                             <div class="form-group">
                                 <label>Phone</label>
-                                <input type="tel" name="phone" value="<%= person.getPhone() %>" required>
+                                <input type="tel" name="phone" value="<%= person.getPhone()%>" required>
                             </div>
                             <!-- Address -->
                             <div class="form-group">
                                 <label>Address</label>
-                                <input type="text" name="address" value="<%= person.getAddress() %>" required>
+                                <input type="text" name="address" value="<%= person.getAddress()%>" required>
                             </div>
                             <!-- Email -->
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" name="email" id="email_field" value="<%= person.getEmail() %>" required oninput="validateEmail(this)">
+                                <input type="email" name="email" id="email_field" value="<%= person.getEmail()%>" required oninput="validateEmail(this)">
                             </div>
                             <div id="email_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi email -->           
                             <!-- Submit Button -->
@@ -288,26 +301,36 @@
                 }
                 return true;
             }
+
+            function setTabForSubmit(tabName) {
+                document.getElementById('currentTab').value = tabName;
+            }
         </script>
 
 
-        <% 
+        <%
             String successMessage = (String) session.getAttribute("successMessage");
-            String errorMessage = (String) request.getAttribute("errorMessage");
+            String errorMessage = (String) request.getAttribute("error");
 
             if (successMessage != null) {
         %>
-        <div class="alert alert-success"><%= successMessage %></div>
+        <div class="message-container success">
+            <%= successMessage%>
+        </div>
         <%
                 session.removeAttribute("successMessage");
             }
 
             if (errorMessage != null) {
         %>
-        <div class="alert alert-danger"><%= errorMessage %></div>
+        <div class="message-container error">
+            <%= errorMessage%>
+        </div>
         <%
             }
         %>
+
+
         <script>
             AOS.init();
 
@@ -320,25 +343,53 @@
                 hamburger.classList.toggle('active');
             });
 
-            // Profile tab navigation
+            // Profile tab navigation with event listener for tab switching
             const profileNavBtns = document.querySelectorAll('.profile-nav-btn');
             const profileTabs = document.querySelectorAll('.profile-tab');
 
+            document.addEventListener('DOMContentLoaded', () => {
+                const urlParams = new URLSearchParams(window.location.search);
+                const currentTab = urlParams.get('tab') || 'appointments';
+
+                // Set the active tab based on URL parameter
+                profileNavBtns.forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.tab === currentTab);
+                });
+                profileTabs.forEach(tab => {
+                    tab.classList.toggle('active', tab.id === currentTab);
+                });
+            });
+
+            // Maintain tab state when a tab button is clicked
             profileNavBtns.forEach(btn => {
                 btn.addEventListener('click', () => {
-                    // Remove active class from all buttons and tabs
+                    const tabName = btn.dataset.tab;
+                    const currentUrl = new URL(window.location);
+                    currentUrl.searchParams.set('tab', tabName);
+                    window.history.replaceState({}, '', currentUrl); // Update the URL without reloading
+
+                    // Update tab active states
                     profileNavBtns.forEach(b => b.classList.remove('active'));
                     profileTabs.forEach(tab => tab.classList.remove('active'));
 
-                    // Add active class to clicked button and corresponding tab
                     btn.classList.add('active');
-                    document.getElementById(btn.dataset.tab).classList.add('active');
+                    document.getElementById(tabName).classList.add('active');
                 });
-            }
-            );
+            });
 
-
+            // Auto-hide success and error messages
+            setTimeout(() => {
+                const messageContainers = document.querySelectorAll('.message-container');
+                messageContainers.forEach(container => {
+                    container.style.transition = 'opacity 0.5s ease';
+                    container.style.opacity = '0';
+                    setTimeout(() => container.remove(), 500); // Remove after fade-out
+                });
+            }, 4000); // Adjust time (milliseconds) as needed
         </script>
+
+
+
     </body>
 
 </html>

@@ -64,23 +64,23 @@ public class BlogDAO {
         List<Blog> recentBlogs = new ArrayList<>();
         String sql = """
                 SELECT TOP 3 b.ID,
-                             b.Title,
-                             b.Content,
-                             b.StaffID,
-                             b.DatePosted,
-                             p.Name AS AuthorName,
-                             b.Image,
-                             b.Description,
-                             b.Views,
-                             b.CommentsCount,
-                             b.Category,
-                             b.AuthorBio,
-                             b.AuthorImage
-                FROM Blog b
-                JOIN Person p ON b.StaffID = p.ID
-                JOIN Account a ON a.PersonID = p.ID
-                WHERE a.RoleID = 3
-                ORDER BY b.DatePosted DESC
+                                             b.Title,
+                                             b.Content,
+                                             b.StaffID,
+                                             b.DatePosted,
+                                             p.Name AS AuthorName,
+                                             b.Image,
+                                             b.Description,
+                                             b.Views,
+                                             b.CommentsCount,
+                                             b.Category,
+                                             b.AuthorBio,
+                                             b.AuthorImage
+                                FROM Blog b
+                                JOIN Person p ON b.StaffID = p.ID
+                                JOIN Account a ON a.PersonID = p.ID
+                                WHERE a.RoleID in (1,2,3)
+                                ORDER BY b.DatePosted DESC
                 """;
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
