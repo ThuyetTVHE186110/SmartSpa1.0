@@ -235,7 +235,7 @@
                                 <ul class="pagination justify-content-center">
                                     <c:if test="${currentPage > 1}">
                                         <li class="page-item">
-                                            <a class="page-link" href="accountManagement?page=${currentPage - 1}" aria-label="Previous">
+                                            <a class="page-link" href="accountManagement?page=${currentPage - 1}&roleFilter=${param.roleFilter}&statusFilter=${param.statusFilter}" aria-label="Previous">
                                                 <span aria-hidden="true">&laquo;</span>
                                             </a>
                                         </li>
@@ -243,13 +243,13 @@
 
                                     <c:forEach var="i" begin="1" end="${totalPages}">
                                         <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                            <a class="page-link" href="accountManagement?page=${i}">${i}</a>
+                                            <a class="page-link" href="accountManagement?page=${i}&roleFilter=${param.roleFilter}&statusFilter=${param.statusFilter}">${i}</a>
                                         </li>
                                     </c:forEach>
 
                                     <c:if test="${currentPage < totalPages}">
                                         <li class="page-item">
-                                            <a class="page-link" href="accountManagement?page=${currentPage + 1}" aria-label="Next">
+                                            <a class="page-link" href="accountManagement?page=${currentPage + 1}&roleFilter=${param.roleFilter}&statusFilter=${param.statusFilter}" aria-label="Next">
                                                 <span aria-hidden="true">&raquo;</span>
                                             </a>
                                         </li>
@@ -459,6 +459,16 @@
                         newPasswordField.value = "";
                         confirmPasswordField.value = "";
                     });
+                });
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const addAccountModal = document.getElementById('addAccountModal');
+                const addAccountForm = document.getElementById('addAccountForm');
+
+                // Clear form fields when the modal is shown
+                addAccountModal.addEventListener('show.bs.modal', function () {
+                    addAccountForm.reset(); // This will clear all input fields in the form
                 });
             });
         </script>
