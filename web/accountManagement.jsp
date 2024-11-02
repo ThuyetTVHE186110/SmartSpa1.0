@@ -20,6 +20,23 @@
         }
     }
 %>
+<style>
+    .filter-container {
+        display: flex;
+        gap: 20px; /* Space between the filter groups */
+        align-items: center; /* Center the elements vertically */
+    }
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .filter-group label {
+        display: inline-block;
+        margin-bottom: 5px;
+    }
+</style>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -117,31 +134,45 @@
                             <div class="card-body">
                                 <h5 class="card-title">Account Details</h5>
                                 <div class="row mb-3">
-                                    <div class="col-md-4">
-                                        <label for="roleFilter" class="form-label">Filter by Role:</label>
-                                        <select id="roleFilter" class="form-select" onchange="filterAccounts()">
-                                            <option value="all">All Roles</option>
-                                            <option value="Admin">Admin</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Staff">Staff</option>
-                                        </select>
-                                    </div>
-                                    <!-- Status Filter -->
-                                    <div class="col-md-4">
-                                        <label for="statusFilter" class="form-label">Filter by Status:</label>
-                                        <select name="statusFilter" id="statusFilter" class="form-select" onchange="filterAccounts()">
-                                            <option value="All">All</option>
-                                            <option value="Active">Active</option>
-                                            <option value="Suspended">Suspended</option>
-                                        </select>
-                                    </div>
+                                    <!-- Filter Form -->
+                                    <form id="filterForm" action="accountManagement" method="get" class="filter-container">
+                                        <div class="filter-group">
+                                            <label for="roleFilter">Role:</label>
+                                            <select id="roleFilter" name="roleFilter" class="form-select" onchange="submitFilterForm()">
+                                                <option value="all" ${roleFilter == null || roleFilter == 'all' ? 'selected' : ''}>All Roles</option>
+                                                <option value="Admin" ${roleFilter == 'Admin' ? 'selected' : ''}>Admin</option>
+                                                <option value="Manager" ${roleFilter == 'Manager' ? 'selected' : ''}>Manager</option>
+                                                <option value="Staff" ${roleFilter == 'Staff' ? 'selected' : ''}>Staff</option>
+                                            </select>
+                                        </div>
+
+                                        <div class="filter-group">
+                                            <label for="statusFilter">Status:</label>
+                                            <select id="statusFilter" name="statusFilter" class="form-select" onchange="submitFilterForm()">
+                                                <option value="all" ${statusFilter == null || statusFilter == 'all' ? 'selected' : ''}>All</option>
+                                                <option value="Active" ${statusFilter == 'Active' ? 'selected' : ''}>Active</option>
+                                                <option value="Suspended" ${statusFilter == 'Suspended' ? 'selected' : ''}>Suspended</option>
+                                            </select>
+                                        </div>
+                                    </form>
+
+
+                                    <script>
+                                        function submitFilterForm() {
+                                            // Submit the form to apply filters and retain the selected filter states
+                                            document.getElementById('filterForm').submit();
+                                        }
+                                    </script>
+
+
                                 </div>
                             </div>
                             <!-- Table with stripped rows -->
                             <table class="table datatable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
+                                        <th scope="col">No</th>
+                                        <th scope="col">Image</th> <!-- New column for image -->
                                         <th scope="col">Name</th>
                                         <th scope="col">Email</th>
                                         <th scope="col">Role</th>
@@ -154,6 +185,17 @@
                                     <c:forEach var="account" items="${accounts}" varStatus="status">
                                         <tr class="account-row" data-role="${account.roleName}" data-status="${account.status}">
                                             <th scope="row">${status.index + 1}</th>  <!-- Auto-incremented index -->
+                                            <td>
+                                                <c:choose>
+                                                    <c:when test="${not empty account.personInfo.image}">
+                                                        <img src="newUI/assets/img/${account.personInfo.image}" alt="Image" style="width: 150px; height: 200px; object-fit: cover;">
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        <img src="newUI/assets/img/default-avartar.jpg" alt="Default Image" style="width: 150px; height: 200px; object-fit: cover;">
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </td>
+
                                             <td>${account.personInfo.name}</td>  <!-- Display person's name -->
                                             <td>${account.personInfo.email}</td>  <!-- Display person's email -->
                                             <td>${account.roleName}</td>  <!-- Display role name -->
@@ -187,37 +229,6 @@
 
                                 </tbody>
                             </table>
-                            <!-- Pagination Controls -->
-                            <c:if test="${totalPages > 1}">
-                                <nav aria-label="Page navigation">
-                                    <ul class="pagination justify-content-center">
-                                        <!-- Previous Button -->
-                                        <c:if test="${currentPage > 1}">
-                                            <li class="page-item">
-                                                <a class="page-link" href="accountManagement?page=${currentPage - 1}" aria-label="Previous">
-                                                    <span aria-hidden="true">&laquo;</span>
-                                                </a>
-                                            </li>
-                                        </c:if>
-
-                                        <!-- Page Numbers -->
-                                        <c:forEach var="i" begin="1" end="${totalPages}">
-                                            <li class="page-item ${i == currentPage ? 'active' : ''}">
-                                                <a class="page-link" href="accountManagement?page=${i}">${i}</a>
-                                            </li>
-                                        </c:forEach>
-
-                                        <!-- Next Button -->
-                                        <c:if test="${currentPage < totalPages}">
-                                            <li class="page-item">
-                                                <a class="page-link" href="accountManagement?page=${currentPage + 1}" aria-label="Next">
-                                                    <span aria-hidden="true">&raquo;</span>
-                                                </a>
-                                            </li>
-                                        </c:if>
-                                    </ul>
-                                </nav>
-                            </c:if>
 
                             <!-- End Table with stripped rows -->
 
@@ -230,6 +241,34 @@
                             </div>
 
                         </div>
+                        <!-- Pagination Controls -->
+                        <c:if test="${totalPages > 1}">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <c:if test="${currentPage > 1}">
+                                        <li class="page-item">
+                                            <a class="page-link" href="accountManagement?page=${currentPage - 1}&roleFilter=${param.roleFilter}&statusFilter=${param.statusFilter}" aria-label="Previous">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    </c:if>
+
+                                    <c:forEach var="i" begin="1" end="${totalPages}">
+                                        <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                            <a class="page-link" href="accountManagement?page=${i}&roleFilter=${param.roleFilter}&statusFilter=${param.statusFilter}">${i}</a>
+                                        </li>
+                                    </c:forEach>
+
+                                    <c:if test="${currentPage < totalPages}">
+                                        <li class="page-item">
+                                            <a class="page-link" href="accountManagement?page=${currentPage + 1}&roleFilter=${param.roleFilter}&statusFilter=${param.statusFilter}" aria-label="Next">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    </c:if>
+                                </ul>
+                            </nav>
+                        </c:if>
                     </div>
 
                 </div>
@@ -291,6 +330,7 @@
                                     <option value="3">Staff</option>
                                 </select>
                             </div>
+                           
                         </form>
                         <!-- End Add Account Form -->
                     </div>
@@ -432,6 +472,16 @@
                         newPasswordField.value = "";
                         confirmPasswordField.value = "";
                     });
+                });
+            });
+
+            document.addEventListener("DOMContentLoaded", function () {
+                const addAccountModal = document.getElementById('addAccountModal');
+                const addAccountForm = document.getElementById('addAccountForm');
+
+                // Clear form fields when the modal is shown
+                addAccountModal.addEventListener('show.bs.modal', function () {
+                    addAccountForm.reset(); // This will clear all input fields in the form
                 });
             });
         </script>

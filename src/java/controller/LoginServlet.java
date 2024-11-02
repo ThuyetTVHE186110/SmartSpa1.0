@@ -5,6 +5,7 @@
 package controller;
 
 import dal.AccountDAO;
+import dal.PersonDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;
@@ -13,6 +14,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Account;
+import model.Person;
 
 /**
  *
@@ -94,6 +96,14 @@ public class LoginServlet extends HttpServlet {
                 session.setAttribute("roleName", roleName);
                 session.setMaxInactiveInterval(30 * 60);
 
+                   
+                    // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
+                    PersonDAO personDAO = new PersonDAO();
+                    Person person = personDAO.getPersonByAccount(username, password);
+                    // Kiểm tra person có null không trước khi lưu vào session
+                    if (person != null) {
+                        session.setAttribute("person", person);  // Lưu person vào session
+                    }
                 if ("on".equals(rememberMe)) {
                     Cookie usernameCookie = new Cookie("savedUsername", username);
                     usernameCookie.setMaxAge(60 * 60 * 24 * 30);
@@ -126,10 +136,16 @@ public class LoginServlet extends HttpServlet {
                     usernameCookie.setMaxAge(0);
                     response.addCookie(usernameCookie);
                 }
-
+                PersonDAO personDAO = new PersonDAO();
+                    Person person = personDAO.getPersonByAccount(username, password);
+                    // Kiểm tra person có null không trước khi lưu vào session
+                    if (person != null) {
+                        session.setAttribute("person", person);  // Lưu person vào session
+                    }
                 session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
                 response.sendRedirect("index");
             } else {
+                
                 request.setAttribute("error", "Invalid role or user type.");
                 request.getRequestDispatcher("login.jsp").forward(request, response);
             }

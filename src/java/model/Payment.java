@@ -4,6 +4,8 @@
  */
 package model;
 
+import java.util.Date;
+
 /**
  *
  * @author Asus
@@ -16,6 +18,8 @@ public class Payment {
     private String status;
     private String orderCode;
     private String description;
+    private int personId;
+    private Date createdAt;
 
     public Payment() {
     }
@@ -80,5 +84,21 @@ public class Payment {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getPersonId() {
+        return personId;
+    }
+
+    public void setPersonId(int personId) {
+        this.personId = personId;
+    }
+
+    public Date getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Date createdAt) {
+        this.createdAt = createdAt;
     }
 }
