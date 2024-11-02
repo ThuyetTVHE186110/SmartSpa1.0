@@ -39,7 +39,7 @@
                     </a>
                     <ul id="manager-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                         <li>
-                            <a href="service-management.jsp">
+                            <a href="servicemanagement">
                                 <i class="bi bi-circle"></i><span>Service Management</span>
                             </a>
                         </li>

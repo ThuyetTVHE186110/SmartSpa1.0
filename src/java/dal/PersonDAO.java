@@ -20,7 +20,7 @@ import java.sql.Statement;
  * @author ADMIN
  */
 public class PersonDAO extends DBContext {
-
+    
     public List<Person> getAll() {
         List<Person> list = new ArrayList<>();
         PreparedStatement stm = null;
@@ -162,50 +162,7 @@ public class PersonDAO extends DBContext {
         return list;
     }
     
-//    public Person getPersonByEmail(String email) {
-//        PreparedStatement stm = null;
-//        ResultSet rs = null;
-//
-//        try (Connection connection = getConnection()) { // Use getConnection from DBContext
-//            String query = "select * from Person where Email = ?";
-//            stm = connection.prepareStatement(query);
-//            stm.setString(1, email);
-//            rs = stm.executeQuery();
-//
-//            if (rs.next()) {
-//                Person person = new Person();
-//                person.setId(rs.getInt(1));
-//                person.setName(rs.getString(2));
-//                if (rs.getDate(3) != null) {
-//                    person.setDateOfBirth(rs.getDate(3));
-//                }
-//                // Lấy giá trị của cột gender (kiểu CHAR)
-//                String gender = rs.getString("gender");
-//                if (gender != null && gender.length() > 0) {
-//                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
-//                }
-//                person.setPhone(rs.getString(5));
-//                person.setEmail(rs.getString(6));
-//                person.setAddress(rs.getString(7));
-//                return person;
-//            }
-//        } catch (SQLException e) {
-//            System.out.println("Error while retrieving persons: " + e.getMessage());
-//        } finally {
-//            // Close the ResultSet and PreparedStatement if they are not null
-//            try {
-//                if (rs != null) {
-//                    rs.close();
-//                }
-//                if (stm != null) {
-//                    stm.close();
-//                }
-//            } catch (SQLException e) {
-//                System.out.println("Error closing resources: " + e.getMessage());
-//            }
-//        }
-//        return null;
-//    }
+    
 
     public Person getPersonByPhone(String phone) {
         PreparedStatement stm = null;
@@ -614,10 +571,89 @@ public class PersonDAO extends DBContext {
 
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
-        List<Person> tList = testDAO.getPersonByRole("staff");
-        for (Person person : tList) {
-            System.out.println(person.getName());
+        Person person = testDAO.getPersonByAccount("dat33112@gmail.com","Hello@123");
+        System.out.println(person.getId());
+    }
+
+    public Person getPersonByAccount(String username, String password) {
+        String sql = "SELECT p.* FROM Person p " +
+                    "INNER JOIN Account a ON p.ID = a.PersonID " +
+                    "WHERE a.Username = ? AND a.Password = ? AND a.Status = 'Active'";
+                
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, username);
+            ps.setString(2, password);
+            
+            System.out.println("Executing query for username: " + username);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                Person person = new Person();
+                person.setId(rs.getInt("ID"));
+                person.setName(rs.getString("Name"));
+                person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                String gender = rs.getString("Gender");
+                if (gender != null && gender.length() > 0) {
+                    person.setGender(gender.charAt(0));
+                }
+                person.setPhone(rs.getString("Phone"));
+                person.setEmail(rs.getString("Email"));
+                person.setAddress(rs.getString("Address"));
+                person.setImage(rs.getString("Image"));
+                
+                System.out.println("Found person with ID: " + person.getId());
+                return person;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting person by account: " + e.getMessage());
+            e.printStackTrace();
         }
+        
+        System.out.println("No person found for username: " + username);
+        return null;
+    }
+
+    public Person login(String username, String password) {
+        String sql = "SELECT p.* FROM Person p " +
+                     "INNER JOIN Account a ON p.ID = a.PersonID " +
+                     "WHERE a.Username = ? AND a.Password = ?";
+                 
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, username);
+            ps.setString(2, password);
+            
+            System.out.println("Executing login query for username: " + username);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("ID"));
+                    person.setName(rs.getString("Name"));
+                    person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                    String gender = rs.getString("Gender");
+                    if (gender != null && gender.length() > 0) {
+                        person.setGender(gender.charAt(0));
+                    }
+                    person.setPhone(rs.getString("Phone"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
+                    
+                    System.out.println("Found person with ID: " + person.getId() + ", Name: " + person.getName());
+                    return person;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in login: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        System.out.println("No person found for username: " + username);
+        return null;
     }
 
 }

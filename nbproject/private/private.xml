@@ -3,7 +3,24 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Study/Term%205/SWP391/SmartSpa1.0/web/appointmentManagement.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PickTimeServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PaymentCallbackServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/OrderServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/appointment-management.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/appointment.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/PaymentDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/ServiceServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/contact.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/model/Payment.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/BlogDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/addService.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/adminLogin.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/blog.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/checkout.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/appointment1.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/model/CreatePaymentLinkRequestBody.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/newUI/assets/css/styles.css</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/newUI/checkout.html</file>
         </group>
     </open-files>
 </project-private>
