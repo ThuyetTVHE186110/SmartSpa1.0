@@ -4,7 +4,7 @@
  */
 package controller;
 
-import dal.EmployeeDAO;
+import dal.CustomerDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -20,8 +20,8 @@ import model.Person;
  *
  * @author admin
  */
-@WebServlet(name = "EmployeeController", urlPatterns = {"/employee-management"})
-public class EmployeeManagementServlet extends HttpServlet {
+@WebServlet(name = "CustomerController", urlPatterns = {"/customer-management"})
+public class CustomerManagementServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,12 +35,12 @@ public class EmployeeManagementServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-        EmployeeDAO employeeDAO = new EmployeeDAO();
+        CustomerDAO customerDAO = new CustomerDAO();
 
-        List<Person> employeeList = employeeDAO.getAllEmployee();
-        System.out.println(employeeList.get(0).getId());
-        request.setAttribute("employeeList", employeeList);
-        request.getRequestDispatcher("employee-management.jsp").forward(request, response);
+        List<Person> customerList = customerDAO.getAllCustomer();
+        System.out.println(customerList.get(0).getId());
+        request.setAttribute("customerList", customerList);
+        request.getRequestDispatcher("customer-management.jsp").forward(request, response);
     }
 
     
@@ -77,17 +77,17 @@ public class EmployeeManagementServlet extends HttpServlet {
         person.setAddress(address);
 
         // Cập nhật nhân viên
-        EmployeeDAO employeeDAO = new EmployeeDAO();
-        employeeDAO.updateEmployee(person);
+        CustomerDAO customerDAO = new CustomerDAO();
+        customerDAO.updateCustomer(person);
 
         // Chuyển hướng đến trang danh sách nhân viên sau khi cập nhật
-        response.sendRedirect("employee-management");
+        response.sendRedirect("customer-management");
 //        if (action.equals("delete")) {
-//            // Delete employee
+//            // Delete customer
 //            String action = request.getParameter("action");
 //            String id = request.getParameter("id");
-//            employeeDAO.deleteEmployeeByID(id);
-//            response.sendRedirect("employee-management?action=viewAll");
+//            customerDAO.deleteCustomerByID(id);
+//            response.sendRedirect("customer-management?action=viewAll");
 //        }
         
     }

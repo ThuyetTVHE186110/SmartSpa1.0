@@ -26,10 +26,12 @@ public class ProductDetailServlet extends HttpServlet {
         int productID = Integer.parseInt(request.getParameter("id"));
         ProductDAO productDAO = new ProductDAO();
         Product products = productDAO.getProductByID(productID);
-        
+        String benefits = products.getBenefit().replace(",", "</li><li>");
+        request.setAttribute("benefits", benefits);
+
         // Gửi thông tin sinh viên và danh sách sở thích đến trang JSP
         request.setAttribute("product", products);
-        request.getRequestDispatcher("productDetail.jsp").forward(request, response);
+        request.getRequestDispatcher("product-detail.jsp").forward(request, response);
     }
 
     @Override

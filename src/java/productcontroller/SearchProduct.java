@@ -39,7 +39,7 @@ public class SearchProduct extends HttpServlet {
             int index = Integer.parseInt(request.getParameter("index"));
             ProductDAO productDAO= new ProductDAO();
             int count = productDAO.count(txtSearch);
-            int pageSize=3;
+            int pageSize=6;
             int endPage=0;
             endPage = count / pageSize;
             if(count % pageSize !=0){
