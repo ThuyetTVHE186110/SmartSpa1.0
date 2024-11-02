@@ -116,16 +116,16 @@ public class AppointmentManagementServlet extends HttpServlet {
                     String editAppointment = request.getParameter("appointmentID");
                     int editID = Integer.parseInt(editAppointment);
                     String editDatetemp = request.getParameter("editDate");
-                    LocalDate editDate = LocalDate.parse(editDatetemp);
+                    LocalDateTime editStart = LocalDateTime.parse(editDatetemp);
                     String editTimetemp = request.getParameter("editTime");
-                    LocalTime editTime = LocalTime.parse(editTimetemp);
+                    LocalDateTime editEnd = LocalDateTime.parse(editTimetemp);
                     String editStatus = request.getParameter("editStatus");
                     String editNote = request.getParameter("editNote");
                     String personIDtp = request.getParameter("personID");
                     int personID = Integer.parseInt(personIDtp);
                     Person person = personDAO.getPersonByID(personID);
-                    Appointment appointment = new Appointment(editID, editDate, editTime, LocalDateTime.MAX, editStatus, editNote, person, appointmentServiceList);
-                    appointmentDAO.updateAppointment(appointment);
+                    Appointment appointment = new Appointment(editID, editStart, editEnd, LocalDateTime.MAX, editStatus, editNote, person, appointmentServiceList);
+//                    appointmentDAO.updateAppointment(appointment);
                     doGet(request, response);
                     break;
                 case "today":
