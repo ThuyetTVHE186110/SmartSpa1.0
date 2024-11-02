@@ -11,10 +11,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Account;
 import model.Person;
+import org.mindrot.jbcrypt.BCrypt;
+import security.PasswordUtil;
 
 /**
  *
@@ -22,6 +25,59 @@ import model.Person;
  */
 public class AccountDAO {
 
+//    public Account getByUsernamePassword(String username, String password) {
+//        Account account = null;
+//        Person person = null;
+//
+//        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, a.Status, "
+//                + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address, p.Image "
+//                + "FROM Account a "
+//                + "JOIN Person p ON a.PersonID = p.ID "
+//                + "WHERE a.Username = ? AND a.Password = ?";
+//
+//        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+//            // Set the parameters for the prepared statement
+//            ps.setString(1, username);
+//            ps.setString(2, password);
+//
+//            // Execute the query
+//            try (ResultSet rs = ps.executeQuery()) {
+//                if (rs.next()) {
+//                    // Check account status
+//                    String status = rs.getString("Status");
+//                    if (!"Active".equalsIgnoreCase(status)) {
+//                        // Return null if account status is not Active
+//                        return null;
+//                    }
+//
+//                    // Create a Person object from the ResultSet
+//                    person = new Person();
+//                    person.setId(rs.getInt(6)); // Person.ID
+//                    person.setName(rs.getString(7)); // Person.Name
+//                    person.setDateOfBirth(rs.getDate(8)); // Person.DateOfBirth
+//
+//                    // Check Gender safely
+//                    String genderStr = rs.getString(9);
+//                    char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';
+//                    person.setGender(gender);
+//
+//                    person.setPhone(rs.getString(10)); // Person.Phone
+//                    person.setEmail(rs.getString(11)); // Person.Email
+//                    person.setAddress(rs.getString(12)); // Person.Address
+//                    person.setImage(rs.getString("Image")); // Person.Image
+//
+//                    // Create an Account object from the ResultSet
+//                    account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
+//                    account.setStatus(status); // Set status in Account object
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "Database error", e);
+//        }
+//
+//        return account; // Return the Account object if found and active, otherwise null
+//    }
     public Account getByUsernamePassword(String username, String password) {
         Account account = null;
         Person person = null;
@@ -30,12 +86,11 @@ public class AccountDAO {
                 + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address, p.Image "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
-                + "WHERE a.Username = ? AND a.Password = ?";
+                + "WHERE a.Username = ?";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            // Set the parameters for the prepared statement
+            // Set the parameter for the prepared statement
             ps.setString(1, username);
-            ps.setString(2, password);
 
             // Execute the query
             try (ResultSet rs = ps.executeQuery()) {
@@ -44,6 +99,15 @@ public class AccountDAO {
                     String status = rs.getString("Status");
                     if (!"Active".equalsIgnoreCase(status)) {
                         // Return null if account status is not Active
+                        return null;
+                    }
+
+                    // Get the hashed password from the database
+                    String hashedPassword = rs.getString(3);
+
+                    // Check if the provided password matches the hashed password
+                    if (!PasswordUtil.checkPassword(password, hashedPassword)) {
+                        // Return null if the password does not match
                         return null;
                     }
 
@@ -64,7 +128,7 @@ public class AccountDAO {
                     person.setImage(rs.getString("Image")); // Person.Image
 
                     // Create an Account object from the ResultSet
-                    account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
+                    account = new Account(rs.getInt(1), rs.getString(2), hashedPassword, rs.getInt(4), person);
                     account.setStatus(status); // Set status in Account object
                 }
             }
@@ -420,9 +484,7 @@ public class AccountDAO {
 
     public int getTotalAccountsCount() throws SQLException {
         String sql = "SELECT COUNT(*) AS total FROM Account WHERE RoleID IN (1, 2, 3)";
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt("total");
             }
@@ -501,8 +563,7 @@ public class AccountDAO {
 
         sql.append(" ORDER BY p.Name ASC");
 
-        try (Connection conn = DBContext.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
 
             int paramIndex = 1;
             if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
@@ -537,14 +598,50 @@ public class AccountDAO {
         return accounts;
     }
 
-    public static void main(String args[]) {
-        AccountDAO accountDAO = new AccountDAO();
-        String username = "dat33112@gmail.com";
-        String password = "Hello@123";
-        Account account = accountDAO.getByUsernamePassword(username, password);
-        PersonDAO personDAO = new PersonDAO();
-        Person person = personDAO.getPersonByAccount(username, password);
-        System.out.println(person.getId());
+//    public static void main(String args[]) {
+//        AccountDAO accountDAO = new AccountDAO();
+//        String username = "dat33112@gmail.com";
+//        String password = "Hello@123";
+//        Account account = accountDAO.getByUsernamePassword(username, password);
+//        PersonDAO personDAO = new PersonDAO();
+//        Person person = personDAO.getPersonByAccount(username, password);
+//        System.out.println(person.getId());
+//    }
+
+    public Account getByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM Account WHERE Username = ?";
+        Account account = null;
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Construct the Account object using the data from the ResultSet
+                    account = new Account();
+                    account.setId(rs.getInt("ID"));
+                    account.setUsername(rs.getString("Username"));
+                    account.setPassword(rs.getString("Password"));
+                    account.setRole(rs.getInt("RoleID"));
+                    account.setStatus(rs.getString("Status"));
+
+                    // Populate any other necessary fields
+                    // e.g., account.setPersonID(rs.getInt("PersonID")); if needed
+                }
+            }
+        }
+
+        return account;
     }
 
+    public static void main(String[] args) {
+        // Chuỗi mật khẩu cần băm
+        String plainPassword = "alchemist";
+
+        // Băm mật khẩu bằng BCrypt
+        String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+
+        // In ra mật khẩu đã băm
+        System.out.println("Hashed Password: " + hashedPassword);
+    }
 }

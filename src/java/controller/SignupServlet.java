@@ -19,6 +19,7 @@ import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Properties;
 import java.util.Random;
+import security.PasswordUtil;
 
 /**
  *
@@ -71,6 +72,8 @@ public class SignupServlet extends HttpServlet {
             request.getRequestDispatcher("signup.jsp").forward(request, response);
             return;
         }
+
+        String hashedPassword = PasswordUtil.hashPassword(password);
 
         // SQL query to check if the phone or email already exists in Person or Account
         String checkEmailPhoneSql = "SELECT Person.Phone, Person.Email, Account.Username "
@@ -131,7 +134,7 @@ public class SignupServlet extends HttpServlet {
                 HttpSession session = request.getSession();
                 session.setAttribute("otp", otp);
                 session.setAttribute("email", email);
-                session.setAttribute("password", password);
+                session.setAttribute("password", hashedPassword);
                 session.setAttribute("roleID", roleID);
                 session.setAttribute("name", name);
                 session.setAttribute("phone", phone);
