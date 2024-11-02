@@ -114,7 +114,7 @@ public class LoginServlet extends HttpServlet {
                     session.setAttribute("successMessage", "Admin/Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
                     // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
                     PersonDAO personDAO = new PersonDAO();
-                    Person person = personDAO.getPersonById(account.getPersonInfo().getId());
+                    Person person = personDAO.getPersonByAccount(username, password);
                     // Kiểm tra person có null không trước khi lưu vào session
                     if (person != null) {
                         session.setAttribute("person", person);  // Lưu person vào session
@@ -149,7 +149,13 @@ public class LoginServlet extends HttpServlet {
                         usernameCookie.setMaxAge(0); // Expire the cookie
                         response.addCookie(usernameCookie);
                     }
-
+                    // Lấy thông tin Person từ PersonDAO dựa trên PersonID trong Account
+                    PersonDAO personDAO = new PersonDAO();
+                    Person person = personDAO.getPersonByAccount(username, password);
+                    // Kiểm tra person có null không trước khi lưu vào session
+                    if (person != null) {
+                        session.setAttribute("person", person);  // Lưu person vào session
+                    }
                     // Set success message for customer
                     session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
                     // Redirect to the customer dashboard or index

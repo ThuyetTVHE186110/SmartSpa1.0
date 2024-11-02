@@ -248,7 +248,15 @@ public class AccountDAO {
             stmt.executeUpdate();
         }
     }
-    
+    public static void main(String args[]){
+        AccountDAO accountDAO=new AccountDAO();
+        String username="dat33112@gmail.com";
+        String password="Hello@123";
+        Account account = accountDAO.getByUsernamePassword(username, password);
+        PersonDAO personDAO = new PersonDAO();
+        Person person = personDAO.getPersonByAccount(username, password);
+        System.out.println(person.getId());
+    }
     
     
 }

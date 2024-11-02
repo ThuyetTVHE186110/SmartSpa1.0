@@ -20,7 +20,7 @@ import java.sql.Statement;
  * @author ADMIN
  */
 public class PersonDAO extends DBContext {
-
+    
     public List<Person> getAll() {
         List<Person> list = new ArrayList<>();
         PreparedStatement stm = null;
@@ -614,10 +614,89 @@ public class PersonDAO extends DBContext {
 
     public static void main(String[] args) {
         PersonDAO testDAO = new PersonDAO();
-        List<Person> tList = testDAO.getPersonByRole("staff");
-        for (Person person : tList) {
-            System.out.println(person.getName());
+        Person person = testDAO.getPersonByID(26);
+        System.out.println(person.getId());
+    }
+
+    public Person getPersonByAccount(String username, String password) {
+        String sql = "SELECT p.* FROM Person p " +
+                    "INNER JOIN Account a ON p.ID = a.PersonID " +
+                    "WHERE a.Username = ? AND a.Password = ? AND a.Status = 'Active'";
+                
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, username);
+            ps.setString(2, password);
+            
+            System.out.println("Executing query for username: " + username);
+            ResultSet rs = ps.executeQuery();
+            
+            if (rs.next()) {
+                Person person = new Person();
+                person.setId(rs.getInt("ID"));
+                person.setName(rs.getString("Name"));
+                person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                String gender = rs.getString("Gender");
+                if (gender != null && gender.length() > 0) {
+                    person.setGender(gender.charAt(0));
+                }
+                person.setPhone(rs.getString("Phone"));
+                person.setEmail(rs.getString("Email"));
+                person.setAddress(rs.getString("Address"));
+                person.setImage(rs.getString("Image"));
+                
+                System.out.println("Found person with ID: " + person.getId());
+                return person;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting person by account: " + e.getMessage());
+            e.printStackTrace();
         }
+        
+        System.out.println("No person found for username: " + username);
+        return null;
+    }
+
+    public Person login(String username, String password) {
+        String sql = "SELECT p.* FROM Person p " +
+                     "INNER JOIN Account a ON p.ID = a.PersonID " +
+                     "WHERE a.Username = ? AND a.Password = ?";
+                 
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            
+            ps.setString(1, username);
+            ps.setString(2, password);
+            
+            System.out.println("Executing login query for username: " + username);
+            
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("ID"));
+                    person.setName(rs.getString("Name"));
+                    person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                    String gender = rs.getString("Gender");
+                    if (gender != null && gender.length() > 0) {
+                        person.setGender(gender.charAt(0));
+                    }
+                    person.setPhone(rs.getString("Phone"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
+                    
+                    System.out.println("Found person with ID: " + person.getId() + ", Name: " + person.getName());
+                    return person;
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in login: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        System.out.println("No person found for username: " + username);
+        return null;
     }
 
 }

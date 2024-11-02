@@ -12,8 +12,8 @@ public class PaymentDAO extends DBContext {
 
     // Method to save payment information
     public void savePayment(Payment payment) {
-        String sql = "INSERT INTO payments (transaction_id, order_code, amount, currency, status, description) " +
-                    "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO payments (transaction_id, order_code, amount, currency, status, description, PersonID) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = DBContext.getConnection(); 
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, payment.getTransactionId());
@@ -22,8 +22,10 @@ public class PaymentDAO extends DBContext {
             stmt.setString(4, payment.getCurrency());
             stmt.setString(5, payment.getStatus());
             stmt.setString(6, payment.getDescription());
+            stmt.setInt(7, payment.getPersonId());
+            
             stmt.executeUpdate();
-            System.out.println("Payment saved successfully: " + payment.getTransactionId());
+            System.out.println("Payment saved successfully for order: " + payment.getOrderCode());
         } catch (SQLException e) {
             System.err.println("Error saving payment: " + e.getMessage());
             e.printStackTrace();
@@ -103,16 +105,36 @@ public class PaymentDAO extends DBContext {
         }
     }
 
+    // Add method to get payments by person ID
+    public List<Payment> getPaymentsByPersonId(int personId) {
+        List<Payment> payments = new ArrayList<>();
+        String sql = "SELECT * FROM payments WHERE PersonID = ? ORDER BY created_at DESC";
+        
+        try (Connection conn = DBContext.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, personId);
+            ResultSet rs = stmt.executeQuery();
+            
+            while (rs.next()) {
+                payments.add(mapPayment(rs));
+            }
+        } catch (SQLException e) {
+            System.err.println("Error getting payments: " + e.getMessage());
+            throw new RuntimeException("Error retrieving payments", e);
+        }
+        return payments;
+    }
+
     // Helper method to map ResultSet to Payment object
     private Payment mapPayment(ResultSet rs) throws SQLException {
         Payment payment = new Payment();
         payment.setId(rs.getInt("id"));
-        payment.setTransactionId(rs.getString("transaction_id"));
         payment.setOrderCode(rs.getString("order_code"));
         payment.setAmount(rs.getFloat("amount"));
         payment.setCurrency(rs.getString("currency"));
         payment.setStatus(rs.getString("status"));
         payment.setDescription(rs.getString("description"));
+        payment.setPersonId(rs.getInt("PersonID"));
         return payment;
     }
 

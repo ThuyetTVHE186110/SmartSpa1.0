@@ -219,6 +219,28 @@ public class ProductDAO extends DBContext {
 
     }
 
+    public Product getProductById(int id) {
+        String sql = "SELECT * FROM Product WHERE ID = ?";
+        try (Connection conn = getConnection();
+             PreparedStatement st = conn.prepareStatement(sql)) {
+            st.setInt(1, id);
+            ResultSet rs = st.executeQuery();
+            if (rs.next()) {
+                Product product = new Product();
+                product.setId(rs.getInt("ID"));
+                product.setName(rs.getString("Name"));
+                product.setPrice(rs.getInt("Price"));
+                product.setQuantity(rs.getInt("Quantity"));
+                product.setImage(rs.getString("Image"));
+                // Set other properties as needed
+                return product;
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error getting product by ID", e);
+        }
+        return null;
+    }
+
     public static void main(String[] args) {
         ProductDAO productDAO = new ProductDAO();
         logger.log(Level.INFO, "First product: {0}", productDAO.getAllProducts().get(0));
