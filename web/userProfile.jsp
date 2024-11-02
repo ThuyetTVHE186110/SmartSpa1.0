@@ -21,20 +21,6 @@
         }
     }
 %>
-<style>
-    /* Đảm bảo khung ảnh là hình tròn */
-    .profile-avatar {
-        width: 150px; /* Kích thước vuông cho avatar */
-        height: 150px;
-        border-radius: 50%; /* Khung tròn */
-        overflow: hidden; /* Ẩn phần vượt quá để ảnh có dạng tròn */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid #ddd; /* Viền cho ảnh avatar */
-    }
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -118,12 +104,8 @@
 
                                 <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
                                         ? "img/" + person.getImage()
-                                        : "img/default-avatar.jpg"%>" alt="Profile Picturea" class="rounded-circle">
-                                <h2><%= (displayName != null) ? displayName : "Guest"%></h2>
-                                <!--                                <div class="social-links mt-2">
-                                                                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                                                                </div>-->
-                            </div>
+                                        : "img/default-avatar.jpg"%>" alt="Profile Picturea" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                <h2><%= (displayName != null) ? displayName : "Guest"%></h2>                            </div>
                         </div>
 
                     </div>

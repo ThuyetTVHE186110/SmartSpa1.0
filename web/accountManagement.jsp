@@ -137,7 +137,7 @@
                                     <!-- Filter Form -->
                                     <form id="filterForm" action="accountManagement" method="get" class="filter-container">
                                         <div class="filter-group">
-                                            <label for="roleFilter">Filter by Role:</label>
+                                            <label for="roleFilter">Role:</label>
                                             <select id="roleFilter" name="roleFilter" class="form-select" onchange="submitFilterForm()">
                                                 <option value="all" ${roleFilter == null || roleFilter == 'all' ? 'selected' : ''}>All Roles</option>
                                                 <option value="Admin" ${roleFilter == 'Admin' ? 'selected' : ''}>Admin</option>
@@ -147,7 +147,7 @@
                                         </div>
 
                                         <div class="filter-group">
-                                            <label for="statusFilter">Filter by Status:</label>
+                                            <label for="statusFilter">Status:</label>
                                             <select id="statusFilter" name="statusFilter" class="form-select" onchange="submitFilterForm()">
                                                 <option value="all" ${statusFilter == null || statusFilter == 'all' ? 'selected' : ''}>All</option>
                                                 <option value="Active" ${statusFilter == 'Active' ? 'selected' : ''}>Active</option>
@@ -171,7 +171,7 @@
                             <table class="table datatable">
                                 <thead>
                                     <tr>
-                                        <th scope="col">ID</th>
+                                        <th scope="col">No</th>
                                         <th scope="col">Image</th> <!-- New column for image -->
                                         <th scope="col">Name</th>
                                         <th scope="col">Email</th>
@@ -330,6 +330,7 @@
                                     <option value="3">Staff</option>
                                 </select>
                             </div>
+                           
                         </form>
                         <!-- End Add Account Form -->
                     </div>
