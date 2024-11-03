@@ -101,11 +101,48 @@
                         <div class="card">
                             <div class="card-body">
                                 <h5 class="card-title">Blog Details</h5>
+                                <!-- Filter Dropdowns -->
                                 <div class="row mb-3">
+                                    <div class="col-md-6">
+                                        <form action="blogManagement" method="get">
+                                            <label for="categoryFilter" class="form-label">Filter by Category:</label>
+                                            <select id="categoryFilter" name="category" class="form-select" onchange="this.form.submit()">
+                                                <option value="all">All</option>
+                                                <c:forEach var="category" items="${categories}">
+                                                    <option value="${category}" ${param.category == category ? 'selected' : ''}>${category}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </form>
+                                    </div>
 
+                                    <div class="col-md-6">
+                                        <form action="blogManagement" method="get">
+                                            <label for="filter">Filter Blogs:</label>
+                                            <select name="filter" class="form-select" id="filter" onchange="this.form.submit()">
+                                                <option value="myBlogs" ${param.filter == 'myBlogs' ? 'selected' : ''}>My Blogs</option>
+                                                <option value="all" ${param.filter == 'all' ? 'selected' : ''}>All Blogs</option>
+                                            </select>
+                                        </form>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <form action="blogManagement" method="get">
+                                            <div class="input-group mb-3">
+                                                <input type="text" class="form-control" placeholder="Search by Author, Name, Title, Content, or Description" name="search" value="${param.search}">
+                                                <button class="btn btn-outline-secondary" type="submit">Search</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                    <script>
+                                        function sortBlogs() {
+                                            const sortOrder = document.getElementById('sortOrder').value;
+                                            const urlParams = new URLSearchParams(window.location.search);
+                                            urlParams.set('sortOrder', sortOrder);
+                                            window.location.search = urlParams.toString();
+                                        }
+                                    </script>
                                 </div>
                                 <!-- Table with stripped rows -->
-                                <table class="table table-striped">
+                                <table class="table table-striped table-responsive">
                                     <thead>
                                         <tr>
                                             <th scope="col">ID</th>
@@ -130,26 +167,27 @@
                                                 <!-- Display Author Image with Fallback -->
                                                 <td>
                                                     <img src="${pageContext.request.contextPath}/newUI/assets/img/${blog.authorImage}" 
-                                                         alt="${blog.authorName}" width="50" height="50" style="border-radius: 50%;" 
+                                                         alt="${fn:escapeXml(blog.authorName)}" width="50" height="50" style="border-radius: 50%;" 
+                                                         title="${fn:escapeXml(blog.authorName)}"
                                                          onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/newUI/assets/img/default-author.jpg';">
                                                 </td>
 
                                                 <!-- Author Name -->
-                                                <td>${blog.authorName}</td>
+                                                <td>${fn:escapeXml(blog.authorName)}</td>
 
                                                 <!-- Blog Title -->
-                                                <td>${blog.title}</td>
+                                                <td title="${fn:escapeXml(blog.title)}">${fn:escapeXml(blog.title)}</td>
 
-                                                <!-- Blog Content Preview with More Height -->
-                                                <td class="content-preview">
-                                                    ${fn:substring(blog.content, 0, 200)}... <!-- Show more characters in the preview -->
+                                                <!-- Blog Content Preview -->
+                                                <td class="content-preview" title="${fn:escapeXml(blog.content)}">
+                                                    ${fn:substring(blog.content, 0, 200)}...
                                                 </td>
 
-                                                <!-- Blog Description Preview with More Height -->
+                                                <!-- Blog Description Preview -->
                                                 <td class="description-preview">
                                                     <c:choose>
                                                         <c:when test="${not empty blog.description}">
-                                                            ${fn:substring(blog.description, 0, 200)}... <!-- Show more characters in the preview -->
+                                                            ${fn:substring(blog.description, 0, 200)}...
                                                         </c:when>
                                                         <c:otherwise>
                                                             No description available.
@@ -167,47 +205,58 @@
                                                 <td>${blog.commentsCount}</td>
 
                                                 <!-- Category -->
-                                                <td>${blog.category}</td>
+                                                <td>${fn:escapeXml(blog.category)}</td>
 
                                                 <!-- Blog Image with Fallback -->
                                                 <td>
                                                     <img src="${pageContext.request.contextPath}/newUI/assets/img/${blog.image}" 
-                                                         alt="${blog.title}" width="50" 
+                                                         alt="${fn:escapeXml(blog.title)}" width="50" 
+                                                         title="${fn:escapeXml(blog.title)}"
                                                          onerror="this.onerror=null;this.src='${pageContext.request.contextPath}/newUI/assets/img/default-blog.jpg';">
                                                 </td>
 
                                                 <!-- Actions: Edit and Delete -->
                                                 <td class="action-buttons">
-                                                    <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm"
-                                                       onclick="openEditBlogModal(
-                                   '${blog.id}',
-                                   '${fn:escapeXml(blog.title)}',
-                                   '${fn:escapeXml(blog.content)}',
-                                   '${blog.datePosted}',
-                                   '${fn:escapeXml(blog.image)}',
-                                   '${fn:substring(fn:escapeXml(blog.description), 0, 500)}',
-                                   '${blog.views}',
-                                   '${blog.commentsCount}',
-                                   '${fn:escapeXml(blog.category)}',
-                                   '${fn:escapeXml(blog.authorName)}',
-                                   '${fn:escapeXml(blog.authorImage)}'
-                                   )">
-                                                        <i class="bi bi-pencil-square"></i> Edit
-                                                    </a>
-
-                                                    <form action="blogManagement" method="post" style="display:inline;">
-                                                        <input type="hidden" name="action" value="delete">
-                                                        <input type="hidden" name="id" value="${blog.id}">
-                                                        <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to delete this blog?');">
-                                                            <i class="bi bi-trash"></i> Delete
-                                                        </button>
-                                                    </form>
+                                                    <c:if test="${!viewOnly}">
+                                                        <a href="javascript:void(0);" class="btn btn-outline-primary btn-sm"
+                                                           title="Edit ${fn:escapeXml(blog.title)}"
+                                                           onclick="openEditBlogModal(
+                                                                           '${blog.id}',
+                                                                           '${fn:escapeXml(blog.title)}',
+                                                                           '${fn:escapeXml(blog.content)}',
+                                                                           '${blog.datePosted}',
+                                                                           '${fn:escapeXml(blog.image)}',
+                                                                           '${fn:substring(fn:escapeXml(blog.description), 0, 500)}',
+                                                                           '${blog.views}',
+                                                                           '${blog.commentsCount}',
+                                                                           '${fn:escapeXml(blog.category)}',
+                                                                           '${fn:escapeXml(blog.authorName)}',
+                                                                           '${fn:escapeXml(blog.authorImage)}'
+                                                                           )">
+                                                            <i class="bi bi-pencil-square"></i>
+                                                        </a>
+                                                        <form action="blogManagement" method="post" style="display:inline;">
+                                                            <input type="hidden" name="action" value="delete">
+                                                            <input type="hidden" name="id" value="${blog.id}">
+                                                            <button type="submit" class="btn btn-outline-danger btn-sm" 
+                                                                    title="Delete ${fn:escapeXml(blog.title)}" 
+                                                                    onclick="return confirm('Are you sure you want to delete this blog?');">
+                                                                <i class="bi bi-trash"></i>
+                                                            </button>
+                                                        </form>
+                                                    </c:if>
+                                                    <c:if test="${viewOnly}">
+                                                        <a href="${pageContext.request.contextPath}/blogDetails?id=${blog.id}" class="btn btn-outline-info btn-sm" class="btn btn-outline-secondary btn-sm" 
+                                                           title="View ${fn:escapeXml(blog.title)}">
+                                                            <i class="bi bi-eye"></i>
+                                                        </a>
+                                                    </c:if>
                                                 </td>
                                             </tr>
                                         </c:forEach>
                                     </tbody>
-
                                 </table>
+
 
 
                                 <%
@@ -277,7 +326,7 @@
         <!-- Template Main JS File -->
         <script src="assets/js/main.js"></script>
 
-        <!-- Add  Modal -->
+        <!-- Add Modal -->
         <div class="modal fade" id="addAccountModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -286,7 +335,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Add Account Form -->
+                        <!-- Add Blog Form -->
                         <form action="blogManagement" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="action" value="add">
 
@@ -307,7 +356,11 @@
 
                             <div class="mb-3">
                                 <label for="inputCategory" class="form-label">Category</label>
-                                <input type="text" class="form-control" id="inputCategory" name="category">
+                                <select class="form-select" id="inputCategory" name="category" required>
+                                    <c:forEach var="category" items="${categories}">
+                                        <option value="${category}">${category}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
                             <div class="mb-3">
@@ -321,11 +374,12 @@
                                 <button type="submit" class="btn btn-primary">Add Blog</button>
                             </div>
                         </form>
-                        <!-- End Add Account Form -->
+                        <!-- End Add Blog Form -->
                     </div>
                 </div>
             </div>
-        </div><!-- End Add Account Modal-->
+        </div><!-- End Add Account Modal -->
+
 
         <!-- Edit Blog Modal -->
         <div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogModalLabel" aria-hidden="true">
@@ -342,27 +396,27 @@
 
                             <div class="mb-3">
                                 <label for="editBlogTitle" class="form-label">Title</label>
-                                <input type="text" class="form-control" id="editBlogTitle" name="title" required>
+                                <input type="text" class="form-control" id="editBlogTitle" name="title" required readonly>
                             </div>
 
                             <div class="mb-3">
                                 <label for="editBlogContent" class="form-label">Content</label>
-                                <textarea class="form-control" id="editBlogContent" name="content" rows="5" required></textarea>
+                                <textarea class="form-control" id="editBlogContent" name="content" rows="5" required readonly></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="editBlogDatePosted" class="form-label">Date Posted</label>
-                                <input type="date" class="form-control" id="editBlogDatePosted" name="datePosted" required>
+                                <input type="date" class="form-control" id="editBlogDatePosted" name="datePosted" required readonly>
                             </div>
 
                             <div class="mb-3">
                                 <label for="editBlogDescription" class="form-label">Description</label>
-                                <textarea class="form-control" id="editBlogDescription" name="description" rows="3"></textarea>
+                                <textarea class="form-control" id="editBlogDescription" name="description" rows="3" readonly></textarea>
                             </div>
 
                             <div class="mb-3">
                                 <label for="editBlogCategory" class="form-label">Category</label>
-                                <input type="text" class="form-control" id="editBlogCategory" name="category">
+                                <input type="text" class="form-control" id="editBlogCategory" name="category" readonly>
                             </div>
 
                             <div class="mb-3">
@@ -382,25 +436,26 @@
 
                             <div class="mb-3">
                                 <label for="editBlogImage" class="form-label">Image</label>
-                                <input type="file" class="form-control" id="editBlogImage" name="image">
+                                <input type="file" class="form-control" id="editBlogImage" name="image" disabled>
                                 <img id="editBlogImagePreview" src="#" alt="Image Preview" style="margin-top: 10px; max-width: 100px;">
                             </div>
 
                             <div class="mb-3">
                                 <label for="editBlogAuthorImage" class="form-label">Author Image</label>
-                                <input type="file" class="form-control" id="editBlogAuthorImageInput" name="authorImage">
+                                <input type="file" class="form-control" id="editBlogAuthorImageInput" name="authorImage" disabled>
                                 <img id="editBlogAuthorImage" src="#" alt="Author Image Preview" style="margin-top: 10px; max-width: 100px;">
                             </div>
 
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                <button type="submit" class="btn btn-primary">Save Changes</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary" id="saveChangesButton">Save Changes</button>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
         <!-- End Edit Blog Modal -->
 
 
@@ -409,34 +464,75 @@
         <!-- End Edit Blog Modal -->
         <script>
                                     // Function to open and populate the Edit Blog Modal
-                                    function openEditBlogModal(id, title, content, datePosted, image, description, views, commentsCount, category, authorName, authorImage)
-                                    {
-                                        // Populate the form fields in the modal
-                                        document.getElementById('editBlogId').value = id;
+                                    function openEditBlogModal(blogId, title, content, datePosted, image, description, views, commentsCount, category, authorName, authorImage, viewOnly) {
+                                        document.getElementById('editBlogId').value = blogId;
                                         document.getElementById('editBlogTitle').value = title;
                                         document.getElementById('editBlogContent').value = content;
                                         document.getElementById('editBlogDatePosted').value = datePosted;
                                         document.getElementById('editBlogDescription').value = description;
+                                        document.getElementById('editBlogCategory').value = category;
                                         document.getElementById('editBlogViews').value = views;
                                         document.getElementById('editBlogCommentsCount').value = commentsCount;
-                                        document.getElementById('editBlogCategory').value = category;
                                         document.getElementById('editBlogAuthorName').value = authorName;
+                                        document.getElementById('editBlogImagePreview').src = image ? `path/to/images/${image}` : 'path/to/default-image.jpg';
+                                        document.getElementById('editBlogAuthorImage').src = authorImage ? `path/to/images/${authorImage}` : 'path/to/default-author.jpg';
 
-                                        // Display image previews if available
-                                        const blogImagePreview = document.getElementById('editBlogImagePreview');
-                                        blogImagePreview.src = image ? `${window.location.origin}/newUI/assets/img/${image}` : '#';
-                                                blogImagePreview.style.display = image ? 'block' : 'none';
+                                        const inputs = document.querySelectorAll('#editBlogModal input, #editBlogModal textarea');
+                                        const saveButton = document.getElementById('saveChangesButton');
 
-                                                const authorImagePreview = document.getElementById('editBlogAuthorImage');
-                                                authorImagePreview.src = authorImage ? `${window.location.origin}/newUI/assets/img/${authorImage}` : '#';
-                                                        authorImagePreview.style.display = authorImage ? 'block' : 'none';
+                                        if (viewOnly) {
+                                            inputs.forEach(input => input.setAttribute('readonly', true));
+                                            document.getElementById('editBlogImage').disabled = true;
+                                            document.getElementById('editBlogAuthorImageInput').disabled = true;
+                                            saveButton.style.display = 'none'; // Hide save button when viewing
+                                        } else {
+                                            inputs.forEach(input => input.removeAttribute('readonly'));
+                                            document.getElementById('editBlogImage').disabled = false;
+                                            document.getElementById('editBlogAuthorImageInput').disabled = false;
+                                            saveButton.style.display = 'inline-block'; // Show save button when editing
+                                        }
 
-                                                        // Show the modal
-                                                        new bootstrap.Modal(document.getElementById('editBlogModal')).show();
-                                                    }
+                                        new bootstrap.Modal(document.getElementById('editBlogModal')).show();
+                                    }
+
 
 
         </script>
+        <script>
+            function filterBlogs() {
+                const selectedCategory = document.getElementById("categoryFilter").value;
+                const rows = document.querySelectorAll(".blog-row");
+
+                rows.forEach(row => {
+                    const category = row.getAttribute("data-category");
+                    if (selectedCategory === "all" || category === selectedCategory) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+        </script>
+        <script>
+            function filterBlogs() {
+                const selectedRole = document.getElementById("roleFilter").value;
+                const selectedAuthor = document.getElementById("authorFilter").value;
+                const rows = document.querySelectorAll(".account-row");
+
+                rows.forEach(row => {
+                    const role = row.getAttribute("data-role");
+                    const author = row.getAttribute("data-author");
+
+                    if ((selectedRole === "all" || role === selectedRole) &&
+                            (selectedAuthor === "all" || author === selectedAuthor)) {
+                        row.style.display = "";
+                    } else {
+                        row.style.display = "none";
+                    }
+                });
+            }
+        </script>
+
 
     </body>
 
