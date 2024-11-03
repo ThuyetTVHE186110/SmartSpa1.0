@@ -20,7 +20,7 @@ import java.sql.Statement;
  * @author ADMIN
  */
 public class PersonDAO extends DBContext {
-    
+
     public List<Person> getAll() {
         List<Person> list = new ArrayList<>();
         PreparedStatement stm = null;
@@ -161,8 +161,6 @@ public class PersonDAO extends DBContext {
 
         return list;
     }
-    
-    
 
     public Person getPersonByPhone(String phone) {
         PreparedStatement stm = null;
@@ -209,6 +207,39 @@ public class PersonDAO extends DBContext {
         return null;
     }
 
+    public boolean deletePersonAndAccountById(int personId) {
+        String deleteAccountSql = "DELETE FROM Account WHERE PersonID = ?";
+        String deletePersonSql = "DELETE FROM Person WHERE ID = ?";
+        
+        try (Connection connection = getConnection()) {
+            connection.setAutoCommit(false); // Bắt đầu giao dịch
+
+            try (PreparedStatement accountStmt = connection.prepareStatement(deleteAccountSql);
+                 PreparedStatement personStmt = connection.prepareStatement(deletePersonSql)) {
+                
+                // Xóa tài khoản liên kết
+                accountStmt.setInt(1, personId);
+                accountStmt.executeUpdate();
+
+                // Xóa người dùng
+                personStmt.setInt(1, personId);
+                int rowsAffected = personStmt.executeUpdate();
+                
+                connection.commit(); // Cam kết giao dịch nếu tất cả đều thành công
+                return rowsAffected > 0;
+            } catch (SQLException e) {
+                connection.rollback(); // Quay lại nếu có lỗi xảy ra
+                e.printStackTrace();
+                return false;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    
+
     public List<Person> getPersonByName(String name) {
         List<Person> list = new ArrayList<>();
         PreparedStatement stm = null;
@@ -217,7 +248,7 @@ public class PersonDAO extends DBContext {
         try (Connection connection = getConnection()) { // Use getConnection from DBContext
             String strSelect = "SELECT * FROM Person Like ?";
             stm = connection.prepareStatement(strSelect);
-            stm.setString(1, name);
+            stm.setString(1, "%" + name + "%");
             rs = stm.executeQuery();
 
             while (rs.next()) {
@@ -569,22 +600,19 @@ public class PersonDAO extends DBContext {
         return success;
     }
 
-    
-
     public Person getPersonByAccount(String username, String password) {
-        String sql = "SELECT p.* FROM Person p " +
-                    "INNER JOIN Account a ON p.ID = a.PersonID " +
-                    "WHERE a.Username = ? AND a.Password = ? AND a.Status = 'Active'";
-                
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT p.* FROM Person p "
+                + "INNER JOIN Account a ON p.ID = a.PersonID "
+                + "WHERE a.Username = ? AND a.Password = ? AND a.Status = 'Active'";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, username);
             ps.setString(2, password);
-            
+
             System.out.println("Executing query for username: " + username);
             ResultSet rs = ps.executeQuery();
-            
+
             if (rs.next()) {
                 Person person = new Person();
                 person.setId(rs.getInt("ID"));
@@ -598,7 +626,7 @@ public class PersonDAO extends DBContext {
                 person.setEmail(rs.getString("Email"));
                 person.setAddress(rs.getString("Address"));
                 person.setImage(rs.getString("Image"));
-                
+
                 System.out.println("Found person with ID: " + person.getId());
                 return person;
             }
@@ -606,24 +634,23 @@ public class PersonDAO extends DBContext {
             System.err.println("Error getting person by account: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         System.out.println("No person found for username: " + username);
         return null;
     }
 
     public Person login(String username, String password) {
-        String sql = "SELECT p.* FROM Person p " +
-                     "INNER JOIN Account a ON p.ID = a.PersonID " +
-                     "WHERE a.Username = ? AND a.Password = ?";
-                 
-        try (Connection conn = getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            
+        String sql = "SELECT p.* FROM Person p "
+                + "INNER JOIN Account a ON p.ID = a.PersonID "
+                + "WHERE a.Username = ? AND a.Password = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
             ps.setString(1, username);
             ps.setString(2, password);
-            
+
             System.out.println("Executing login query for username: " + username);
-            
+
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Person person = new Person();
@@ -638,7 +665,7 @@ public class PersonDAO extends DBContext {
                     person.setEmail(rs.getString("Email"));
                     person.setAddress(rs.getString("Address"));
                     person.setImage(rs.getString("Image"));
-                    
+
                     System.out.println("Found person with ID: " + person.getId() + ", Name: " + person.getName());
                     return person;
                 }
@@ -647,19 +674,22 @@ public class PersonDAO extends DBContext {
             System.err.println("Error in login: " + e.getMessage());
             e.printStackTrace();
         }
-        
+
         System.out.println("No person found for username: " + username);
         return null;
     }
 
-      public static void main(String args[]){
+    public static void main(String args[]) {
         PersonDAO o = new PersonDAO();
         List<Person> p = o.getPersonByRole("customer");
-          for (Person person : p) {
-              System.out.println(person.getPhone());
-          }
-        
-    
-}
-    
+        for (Person person : p) {
+            System.out.println(person.getPhone());
+        }
+
+    }
+
+    public void updateEmployee(Person person) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }
