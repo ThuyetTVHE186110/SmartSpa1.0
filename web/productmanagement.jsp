@@ -108,7 +108,9 @@
                                         <c:forEach items="${productList}" var="product">
                                             <tr>
                                                 <th scope="row">${product.id}</th>
-                                                <td><img src="${pageContext.request.contextPath}/img/${product.image}" alt="${product.name}" width="50" height="50"></td>
+                                                <td><img src="<c:out value=" ${product.image}" />"
+                                                         alt="${product.name}" width="50" height="50">
+                                                </td>
                                                 <td>${product.name}</td>
                                                 <td>${product.description}</td>
                                                 <td>${product.price}</td>
@@ -194,7 +196,7 @@
                     </div>
                     <div class="modal-body">
                         <!-- Add Product Form -->
-                        <form action="${pageContext.request.contextPath}/addproduct" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/addproduct" method="post" enctype="multipart/form-data" class="row g-3">
                             <div class="col-12">
                                 <label for="name" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
@@ -211,9 +213,17 @@
                                 <label for="quantity" class="form-label">Quantity</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" required>
                             </div>
-                            <div class="col-12">
-                                <label for="image" class="form-label">Product Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Image <span
+                                        class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="file" name="file" required
+                                       accept=".jpg,.jpeg,.png">
+                                <div class="invalid-feedback">
+                                    Please select an image file (JPG or PNG only).
+                                </div>
+                                <div class="form-text">
+                                    Maximum file size: 5MB
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="categoryId" class="form-label">Category ID</label>
@@ -275,7 +285,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action="${pageContext.request.contextPath}/updateproduct" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/updateproduct" method="post" enctype="multipart/form-data" class="row g-3">
                             <input type="hidden" name="id" value="">
                             <!-- Other form fields remain the same -->
                             <div class="col-12">
@@ -294,9 +304,16 @@
                                 <label for="quantity" class="form-label">Quantity</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" value="" required min="1">
                             </div>
-                            <div class="col-12">
-                                <label for="image" class="form-label">Product Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Image</label> <!-- Changed id to "file" -->
+                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png">
+                                <div class="invalid-feedback">
+                                    Please select an image file (JPG or PNG only).
+                                </div>
+                                <div class="form-text">
+                                    Current image: ${material.image}<br>
+                                    Leave empty to keep current image. Maximum file size: 5MB
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="categoryId" class="form-label">Category ID</label>

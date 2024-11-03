@@ -83,7 +83,7 @@
                             <div class="card-body">
                                 <h5 class="card-title">Materials</h5>
                                 <p>Manage materials from this panel.</p>
-                                <form action="materiallist" method="get class="mb-3">
+                                <form action="materialmanagement" method="get class="mb-3">
                                     <div class="input-group">
                                         <input type="text" name="search" class="form-control" placeholder="Search materials" value="${param.search}">
                                         <button class="btn btn-primary" type="submit">Search</button>
@@ -107,7 +107,9 @@
                                         <c:forEach items="${materialList}" var="material">
                                             <tr>
                                                 <th scope="row">${material.id}</th>
-                                                <td><img src="${pageContext.request.contextPath}/img/${material.image}" alt="${material.name}" width="50" height="50"></td>
+                                                <td><img src="<c:out value=" ${material.image}" />"
+                                                         alt="${material.name}" width="50" height="50">
+                                                </td>
                                                 <td>${material.name}</td>
                                                 <td>${material.description}</td>
                                                 <td>${material.price}</td>
@@ -192,7 +194,7 @@
                     </div>
                     <div class="modal-body">
                         <!-- Add Material Form -->
-                        <form action="${pageContext.request.contextPath}/addmaterial" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/addmaterial" method="post" enctype="multipart/form-data" class="row g-3">
                             <div class="col-12">
                                 <label for="name" class="form-label">Material Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
@@ -203,12 +205,20 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" required>
+                                <input type="number" class="form-control" id="price" name="price" required min="0.01" step="0.01">
                             </div>
 
-                            <div class="col-12">
-                                <label for="image" class="form-label">Material Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Image <span
+                                        class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="file" name="file" required
+                                       accept=".jpg,.jpeg,.png">
+                                <div class="invalid-feedback">
+                                    Please select an image file (JPG or PNG only).
+                                </div>
+                                <div class="form-text">
+                                    Maximum file size: 5MB
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -226,7 +236,7 @@
                                 </select>
                             </div>
 
-                            <div class="modal-footer" href="addmaterial">
+                            <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Add Material</button>
                             </div>
@@ -249,8 +259,9 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action="${pageContext.request.contextPath}/updatematerial" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/updatematerial" method="post" enctype="multipart/form-data" class="row g-3">
                             <input type="hidden" name="id" value="">
+                            <input type="hidden" name="currentImage" value="${material.image}"> <!-- Add this line -->
                             <!-- Other form fields remain the same -->
                             <div class="col-12">
                                 <label for="name" class="form-label">Material Name</label>
@@ -265,9 +276,16 @@
                                 <input type="number" class="form-control" id="price" name="price" value="" required min="0.01" step="0.01">
                             </div>
 
-                            <div class="col-12">
-                                <label for="image" class="form-label">Material Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Image</label> <!-- Changed id to "file" -->
+                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png">
+                                <div class="invalid-feedback">
+                                    Please select an image file (JPG or PNG only).
+                                </div>
+                                <div class="form-text">
+                                    Current image: ${material.image}<br>
+                                    Leave empty to keep current image. Maximum file size: 5MB
+                                </div>
                             </div>
 
                             <div class="col-md-6">
@@ -299,6 +317,21 @@
         </div><!-- End Edit Material Modal-->
 
         <script>
+                                                        function previewImage(event) {
+                                                            const imagePreview = document.getElementById('imagePreview');
+                                                            const file = event.target.files[0];
+                                                            if (file) {
+                                                                const reader = new FileReader();
+                                                                reader.onload = function (e) {
+                                                                    imagePreview.src = e.target.result;
+                                                                    imagePreview.style.display = 'block';
+                                                                };
+                                                                reader.readAsDataURL(file);
+                                                            } else {
+                                                                imagePreview.src = '';
+                                                                imagePreview.style.display = 'none';
+                                                            }
+                                                        }
                                                         var editMaterialModal = document.getElementById('editMaterialModal');
                                                         editMaterialModal.addEventListener('show.bs.modal', function (event) {
                                                             // Lấy nút đã kích hoạt modal (nút Edit)
@@ -330,7 +363,7 @@
                                                                                 }
                                                                             });
                                                                         }
-                                           
+
                                                                         // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
                                                                     })
                                                                     .catch(error => console.error('Error fetching material details:', error));

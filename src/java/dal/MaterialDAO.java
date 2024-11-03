@@ -94,36 +94,36 @@ public class MaterialDAO extends DBContext {
     }
 
     public List<Material> search(String txtSearch, int index) {
-        List<Material> materialList = new ArrayList<>();
-        String sql = "SELECT * FROM ("
-                + "SELECT ROW_NUMBER() OVER (ORDER BY p.ID ASC) AS r, p.*"
-                + "FROM Material p "
-                + "WHERE p.Name LIKE ?) AS x "
-                + "WHERE r BETWEEN ? AND ?";
-        try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, "%" + txtSearch + "%");
-            pstmt.setString(2, "%" + txtSearch + "%");
-            pstmt.setInt(3, (index - 1) * 6 + 1);  // Bắt đầu phân trang
-            pstmt.setInt(4, index * 6);  // Kết thúc phân trang
+    List<Material> materialList = new ArrayList<>();
+    String sql = "SELECT * FROM ("
+            + "SELECT ROW_NUMBER() OVER (ORDER BY p.ID ASC) AS r, p.* "
+            + "FROM Material p "
+            + "WHERE p.Name LIKE ?) AS x "
+            + "WHERE r BETWEEN ? AND ?";
+    try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        pstmt.setString(1, "%" + txtSearch + "%");
+        pstmt.setInt(2, (index - 1) * 6 + 1);  // Start of pagination
+        pstmt.setInt(3, index * 6);  // End of pagination
 
-            ResultSet rs = pstmt.executeQuery();
+        ResultSet rs = pstmt.executeQuery();
 
-            while (rs.next()) {
-                Material material = new Material();
-                material.setId(rs.getInt("ID"));
-                material.setName(rs.getString("Name"));
-                material.setPrice(rs.getInt("Price"));
-                material.setImage(rs.getString("Image"));
-                material.setDescription(rs.getString("Description"));
-                material.setStatus(rs.getString("Status"));
-                materialList.add(material);
-            }
-            return materialList;
-        } catch (SQLException e) {
-            e.printStackTrace();
+        while (rs.next()) {
+            Material material = new Material();
+            material.setId(rs.getInt("ID"));
+            material.setName(rs.getString("Name"));
+            material.setPrice(rs.getInt("Price"));
+            material.setImage(rs.getString("Image"));
+            material.setDescription(rs.getString("Description"));
+            material.setStatus(rs.getString("Status"));
+            materialList.add(material);
         }
-        return null;
+        return materialList;
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+    return null;
+}
+
 
     public void deleteMaterial(int materialID) throws SQLException {
         String deleteMaterial = "DELETE FROM Material WHERE ID = ?";
