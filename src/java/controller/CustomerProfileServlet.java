@@ -2,8 +2,10 @@ package controller;
 
 import dal.AccountDAO;
 import dal.PersonDAO;
+import dal.PaymentDAO;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -11,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.Account;
 import model.Person;
+import model.Payment;
 
 public class CustomerProfileServlet extends HttpServlet {
 
@@ -98,12 +101,18 @@ public class CustomerProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Display the profile page with the current information
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
             response.sendRedirect("login");
             return;
         }
+
+        // Get payment history
+        Account account = (Account) session.getAttribute("account");
+        Person person = account.getPersonInfo();
+        PaymentDAO paymentDAO = new PaymentDAO();
+        List<Payment> payments = paymentDAO.getPaymentsByPersonId(person.getId());
+        request.setAttribute("payments", payments);
 
         // Forward to customerProfile.jsp
         request.getRequestDispatcher("customerProfile.jsp").forward(request, response);

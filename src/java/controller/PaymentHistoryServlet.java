@@ -14,7 +14,7 @@ import dal.PaymentDAO;
 import model.Payment;
 import model.Person;
 
-@WebServlet("/payment-history")
+
 public class PaymentHistoryServlet extends HttpServlet {
     private final PaymentDAO paymentDAO = new PaymentDAO();
 
