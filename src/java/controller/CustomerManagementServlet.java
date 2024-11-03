@@ -26,15 +26,6 @@ import model.Person;
 @WebServlet(name = "CustomerController", urlPatterns = {"/customer-management"})
 public class CustomerManagementServlet extends HttpServlet {
 
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
@@ -55,25 +46,70 @@ public class CustomerManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        String action = request.getParameter("action");
+        String personIdParam = request.getParameter("id");
+        PersonDAO personDAO = new PersonDAO();
+        if (personIdParam != null) {
+            // Xử lý xóa khách hàng
+            int personId = Integer.parseInt(personIdParam);
 
-        // Lấy thông tin từ request
-        int id = Integer.parseInt(request.getParameter("id"));
+            boolean isDeleted = personDAO.deletePersonAndAccountById(personId);
+            if (isDeleted) {
+                request.setAttribute("message", "Person and related account deleted successfully.");
+            } else {
+                request.setAttribute("message", "Failed to delete person and related account. Please try again.");
+            }
+        } else {
+            request.setAttribute("message", "Invalid person ID.");
+        }
+        List<Person> customerList = personDAO.getPersonByRole("customer");
+        request.setAttribute("customerList", customerList);
+
+        // Xử lý cập nhật thông tin khách hàng
+        String idStr = request.getParameter("id");
         String name = request.getParameter("name");
-
-        // Chuyển đổi dateOfBirth từ chuỗi sang java.sql.Date
-        java.sql.Date dateOfBirth = java.sql.Date.valueOf(request.getParameter("dateOfBirth"));
-
-        char gender = request.getParameter("gender").charAt(0);
+        String dateOfBirthStr = request.getParameter("dateOfBirth");
+        String genderStr = request.getParameter("gender");
         String phone = request.getParameter("phone");
         String email = request.getParameter("email");
         String address = request.getParameter("address");
 
-        // Kiểm tra điều kiện cho phone
-//        if (phone.length() != 10 || !phone.startsWith("0") || !phone.matches("\\d+")) {
-//            request.setAttribute("errorMessage", "Số điện thoại phải gồm 10 chữ số và bắt đầu bằng số 0.");
-//            request.getRequestDispatcher("customer-management.jsp").forward(request, response);
-//            return;
-//        }
+        // Kiểm tra các trường nhập trống
+        if (idStr == null || idStr.trim().isEmpty()
+                || name == null || name.trim().isEmpty()
+                || dateOfBirthStr == null || dateOfBirthStr.trim().isEmpty()
+                || genderStr == null || genderStr.trim().isEmpty()
+                || phone == null || phone.trim().isEmpty()
+                || email == null || email.trim().isEmpty()
+                || address == null || address.trim().isEmpty()) {
+
+            request.setAttribute("errorMessage", "Vui lòng điền đầy đủ tất cả các trường.");
+            request.getRequestDispatcher("customer-management.jsp").forward(request, response);
+            return;
+        }
+
+        // Chuyển đổi dateOfBirth từ chuỗi sang java.sql.Date
+        java.sql.Date dateOfBirth;
+        try {
+            dateOfBirth = java.sql.Date.valueOf(dateOfBirthStr);
+        } catch (IllegalArgumentException e) {
+            request.setAttribute("errorMessage", "Ngày sinh không hợp lệ. Vui lòng nhập lại.");
+            request.getRequestDispatcher("customer-management.jsp").forward(request, response);
+            return;
+        }
+
+        // Kiểm tra ID là số nguyên hợp lệ
+        int id;
+        try {
+            id = Integer.parseInt(idStr);
+        } catch (NumberFormatException e) {
+            request.setAttribute("errorMessage", "ID không hợp lệ.");
+            request.getRequestDispatcher("customer-management.jsp").forward(request, response);
+            return;
+        }
+
+        // Lấy giới tính
+        char gender = genderStr.charAt(0);
 
         // Tạo đối tượng Person và thiết lập thông tin
         Person person = new Person();
@@ -86,23 +122,17 @@ public class CustomerManagementServlet extends HttpServlet {
         person.setAddress(address);
 
         // Cập nhật nhân viên
-        PersonDAO personDAO = new PersonDAO();
         try {
             personDAO.updatePerson(person);
         } catch (SQLException ex) {
             Logger.getLogger(CustomerManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
+            request.setAttribute("errorMessage", "Có lỗi xảy ra trong quá trình cập nhật. Vui lòng thử lại.");
+            request.getRequestDispatcher("customer-management.jsp").forward(request, response);
+            return;
         }
 
         // Chuyển hướng đến trang danh sách nhân viên sau khi cập nhật
         response.sendRedirect("customer-management");
-//        if (action.equals("delete")) {
-//            // Delete customer
-//            String action = request.getParameter("action");
-//            String id = request.getParameter("id");
-//            customerDAO.deleteCustomerByID(id);
-//            response.sendRedirect("customer-management?action=viewAll");
-//        }
-
     }
 
     /**

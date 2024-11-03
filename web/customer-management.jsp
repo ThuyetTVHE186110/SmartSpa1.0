@@ -82,7 +82,17 @@
                             <div class="card-body">
                                 <h5 class="card-title">Customer</h5>
                                 <p>Manage customers from this panel.</p>
+                                <!-- Search Bar and Filter Menu -->
+                                <div class="d-flex justify-content-between mb-3">
+                                    <input style="width: 30% !important" type="text" class="form-control w-50" id="searchCustomer" placeholder="Search for customers..." onkeyup="filterTable()">
 
+                                    <select class="form-select w-25" id="genderFilter" onchange="filterTable()">
+                                        <option value="">Filter by Gender</option>
+                                        <option value="M">Male</option>
+                                        <option value="F">Female</option>
+
+                                    </select>
+                                </div>
                                 <!-- Table with stripped rows -->
                                 <table class="table datatable">
                                     <thead>
@@ -137,13 +147,9 @@
                                     </tbody>
                                 </table>
                                 <!-- End Table with stripped rows -->
+                                <!-- Add pagination controls below the table -->
+                                <div id="paginationControls" class="mt-3 d-flex justify-content-center"></div>
 
-                                <div class="text-center mt-3">
-                                    <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addCustomerModal">
-                                        <i class="bi bi-plus-circle me-1"></i> Add New Customer
-                                    </button>
-                                </div>
 
                             </div>
                         </div>
@@ -345,6 +351,115 @@
 
     </body>
     <script>
+                                                        //Phân trang
+                                                        document.addEventListener('DOMContentLoaded', function () {
+                                                            const rowsPerPage = 5;
+                                                            const table = document.querySelector('.datatable tbody');
+                                                            const rows = table.getElementsByTagName('tr');
+                                                            const paginationControls = document.getElementById('paginationControls');
+                                                            let currentPage = 1;
+                                                            const totalPages = Math.ceil(rows.length / rowsPerPage);
+
+                                                            function displayPage(page) {
+                                                                currentPage = page;
+                                                                for (let i = 0; i < rows.length; i++) {
+                                                                    rows[i].style.display = 'none';
+                                                                }
+
+                                                                const start = (page - 1) * rowsPerPage;
+                                                                const end = Math.min(start + rowsPerPage, rows.length);
+
+                                                                for (let i = start; i < end; i++) {
+                                                                    rows[i].style.display = '';
+                                                                }
+
+                                                                renderPaginationControls();
+                                                            }
+
+                                                            function renderPaginationControls() {
+                                                                paginationControls.innerHTML = '';
+
+                                                                // Add "Previous" button
+                                                                const prevButton = document.createElement('button');
+                                                                prevButton.textContent = 'Previous';
+                                                                prevButton.classList.add('btn', 'btn-secondary', 'm-1');
+                                                                prevButton.disabled = currentPage === 1; // Disable if on the first page
+                                                                prevButton.addEventListener('click', function () {
+                                                                    if (currentPage > 1) {
+                                                                        displayPage(currentPage - 1);
+                                                                    }
+                                                                });
+                                                                paginationControls.appendChild(prevButton);
+
+                                                                // Add page number buttons
+                                                                for (let i = 1; i <= totalPages; i++) {
+                                                                    const button = document.createElement('button');
+                                                                    button.textContent = i;
+                                                                    button.classList.add('btn', 'btn-secondary', 'm-1');
+                                                                    if (i === currentPage) {
+                                                                        button.classList.add('active');
+                                                                    }
+
+                                                                    button.addEventListener('click', function () {
+                                                                        displayPage(i);
+                                                                    });
+
+                                                                    paginationControls.appendChild(button);
+                                                                }
+
+                                                                // Add "Next" button
+                                                                const nextButton = document.createElement('button');
+                                                                nextButton.textContent = 'Next';
+                                                                nextButton.classList.add('btn', 'btn-secondary', 'm-1');
+                                                                nextButton.disabled = currentPage === totalPages; // Disable if on the last page
+                                                                nextButton.addEventListener('click', function () {
+                                                                    if (currentPage < totalPages) {
+                                                                        displayPage(currentPage + 1);
+                                                                    }
+                                                                });
+                                                                paginationControls.appendChild(nextButton);
+                                                            }
+
+                                                            displayPage(1); // Display the first page by default
+                                                        });
+
+
+
+                                                        //Search và Lọc
+                                                        function filterTable() {
+                                                            const input = document.getElementById('searchCustomer').value.toLowerCase();
+                                                            const genderFilter = document.getElementById('genderFilter').value;
+                                                            const table = document.querySelector('.datatable tbody');
+                                                            const rows = table.getElementsByTagName('tr');
+
+                                                            for (let i = 0; i < rows.length; i++) {
+                                                                const cells = rows[i].getElementsByTagName('td');
+                                                                let match = false;
+                                                                let genderMatch = true;
+
+                                                                for (let j = 0; j < cells.length; j++) {
+                                                                    if (cells[j]) {
+                                                                        const cellText = cells[j].textContent || cells[j].innerText;
+
+                                                                        // Check for text match
+                                                                        if (cellText.toLowerCase().indexOf(input) > -1) {
+                                                                            match = true;
+                                                                        }
+
+                                                                        // Check for gender match
+                                                                        if (j == 3 && genderFilter) { // Assuming gender is in the 4th cell (index 3)
+                                                                            if (cells[j].textContent.trim() !== genderFilter) {
+                                                                                genderMatch = false;
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+
+                                                                // Display the row if both conditions are met
+                                                                rows[i].style.display = (match && genderMatch) ? '' : 'none';
+                                                            }
+                                                        }
+
 // ddkien phonne & dob
                                                         document.querySelector('#editCustomerModal form').addEventListener('submit', function (event) {
                                                             event.preventDefault();  // Ngăn gửi form để kiểm tra trước
