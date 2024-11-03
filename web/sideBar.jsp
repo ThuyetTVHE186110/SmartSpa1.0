@@ -53,8 +53,8 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="employee-management" class="active">
-                                    <i class="bi bi-circle"></i><span>Staff Management</span>
+                                <a href="customer-management" class="active">
+                                    <i class="bi bi-circle"></i><span>Customer Management</span>
                                 </a>
                             </li>
                             <li>
@@ -66,12 +66,12 @@
                         </ul>
                     </li><!-- End Manager Nav -->
 
-                    <!-- Staff Section -->
+                    <!-- Customer Section -->
                     <li class="nav-item">
-                        <a class="nav-link collapsed" data-bs-target="#staff-nav" data-bs-toggle="collapse" href="#">
-                            <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
+                        <a class="nav-link collapsed" data-bs-target="#customer-nav" data-bs-toggle="collapse" href="#">
+                            <i class="bi bi-people"></i><span>Customer</span><i class="bi bi-chevron-down ms-auto"></i>
                         </a>
-                        <ul id="staff-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
+                        <ul id="customer-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                             <li>
                                 <a href="appointmentManagement.jsp">
                                     <i class="bi bi-circle"></i><span>Appointment Management</span>
@@ -93,7 +93,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li><!-- End Staff Nav -->
+                    </li><!-- End Customer Nav -->
 
 
 

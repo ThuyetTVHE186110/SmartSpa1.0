@@ -124,12 +124,14 @@ public class EditProduct extends HttpServlet {
         String image = request.getParameter("image"); // Handle file upload if needed
         String branchName = request.getParameter("branchName");
         String status = request.getParameter("status");
-
+        String ingredient = request.getParameter("ingredient");
+        String howToUse = request.getParameter("howToUse");
+        String benefit = request.getParameter("benefit");
         // Create ProductDAO object and call updateProduct method
         ProductDAO productDAO = new ProductDAO();
-        productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName,status);
+        productDAO.updateProduct(discountId, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
         response.sendRedirect("productlist");
-        
+
     }
 
     /**
@@ -201,10 +203,12 @@ public class EditProduct extends HttpServlet {
         String image = request.getParameter("image"); // Handle file upload if needed
         String branchName = request.getParameter("branchName");
         String status = request.getParameter("status");
-
+        String ingredient = request.getParameter("ingredient");
+        String howToUse = request.getParameter("howToUse");
+        String benefit = request.getParameter("benefit");
         // Create ProductDAO object and call updateProduct method
         ProductDAO productDAO = new ProductDAO();
-        productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName,status);
+        productDAO.updateProduct(discountId, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
         response.sendRedirect("productlist");
     }
 

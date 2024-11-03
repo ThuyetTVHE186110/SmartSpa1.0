@@ -277,7 +277,7 @@
         <!-- Template Main JS File -->
         <script src="assets/js/main.js"></script>
 
-        <!-- Add Account Modal -->
+        <!-- Add  Modal -->
         <div class="modal fade" id="addAccountModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
@@ -327,7 +327,6 @@
             </div>
         </div><!-- End Add Account Modal-->
 
-        <!-- Edit Blog Modal -->
         <!-- Edit Blog Modal -->
         <div class="modal fade" id="editBlogModal" tabindex="-1" aria-labelledby="editBlogModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">

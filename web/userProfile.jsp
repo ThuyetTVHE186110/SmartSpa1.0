@@ -76,7 +76,7 @@
             String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
 
             // Lấy đường dẫn hình ảnh từ person
-%>
+        %>
         <jsp:include page="headerHTML.jsp" />
 
         <!-- ======= Sidebar ======= -->
@@ -180,20 +180,21 @@
                                             <div class="row mb-3">
                                                 <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                     <img id="previewImage" src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                                                    <img id="previewImage" src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
                                                             ? "img/" + person.getImage()
                                                             : "img/default-avatar.jpg"%>" alt="Profile">
                                                     <div class="pt-2">
                                                         <!-- Image upload input -->
                                                         <label class="btn btn-primary btn-sm" title="Upload new profile image">
                                                             <i class="bi bi-upload"></i> Upload
-                                                            <input type="file" name="profileImage" style="display: none;" onchange="previewSelectedImage(event)">
+                                                            <input type="file" name="profileImage" id="profileImageInput" style="display: none;" accept="image/*" onchange="previewSelectedImage(event)">
                                                         </label>
                                                         <!-- Image delete input -->
                                                         <button type="button" onclick="deleteProfileImage()" class="btn btn-danger btn-sm" title="Remove my profile image">
                                                             <i class="bi bi-trash"></i> Delete
                                                         </button>
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -379,16 +380,20 @@
                     const previewImage = document.getElementById('previewImage');
                     previewImage.src = 'img/default-avartar.jpg';
 
-                    // Đặt giá trị deleteImage để xác định yêu cầu xóa
+                    // Add deleteImage hidden input to the form
                     const deleteForm = document.getElementById('deleteImageForm');
-                    const deleteInput = document.createElement('input');
-                    deleteInput.setAttribute('type', 'hidden');
-                    deleteInput.setAttribute('name', 'deleteImage');
-                    deleteInput.setAttribute('value', 'true');
-                    deleteForm.appendChild(deleteInput);
+                    if (!document.querySelector('input[name="deleteImage"]')) {
+                        const deleteInput = document.createElement('input');
+                        deleteInput.setAttribute('type', 'hidden');
+                        deleteInput.setAttribute('name', 'deleteImage');
+                        deleteInput.setAttribute('value', 'true');
+                        deleteForm.appendChild(deleteInput);
+                    }
 
-                    deleteForm.submit(); // Submit form để xóa ảnh
+                    deleteForm.submit(); // Submit form to remove image
                 }
+
+
             </script>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {

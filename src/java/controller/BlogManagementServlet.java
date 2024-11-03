@@ -16,12 +16,10 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 
-import com.google.gson.Gson;
 
 import model.Account;
 import model.Blog;
 import dal.BlogDAO;
-import java.util.Date;
 
 @MultipartConfig
 public class BlogManagementServlet extends HttpServlet {
@@ -37,10 +35,10 @@ public class BlogManagementServlet extends HttpServlet {
         }
         Account account = (Account) session.getAttribute("account");
 
-        if (account == null || account.getRole() != 3) {
-            response.sendRedirect("roleError");
-            return;
-        }
+//        if (account == null || account.getRole() != 3) {
+//            response.sendRedirect("roleError");
+//            return;
+//        }
 
         BlogDAO blogDAO = new BlogDAO();
         List<Blog> blogs;
@@ -67,10 +65,10 @@ public class BlogManagementServlet extends HttpServlet {
         }
 
         Account account = (Account) session.getAttribute("account");
-        if (account.getRole() != 3) { // Assuming role 3 is for staff members
-            response.sendRedirect("roleError");
-            return;
-        }
+//        if (account.getRole() != 3) { // Assuming role 3 is for staff members
+//            response.sendRedirect("roleError");
+//            return;
+//        }
 
         BlogDAO blogDAO = new BlogDAO();
         String action = request.getParameter("action");

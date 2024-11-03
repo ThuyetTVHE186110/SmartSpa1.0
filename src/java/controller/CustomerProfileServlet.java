@@ -30,27 +30,38 @@ public class CustomerProfileServlet extends HttpServlet {
         Account account = (Account) session.getAttribute("account");
         Person person = account.getPersonInfo();
         String action = request.getParameter("action");
+        String currentTab = request.getParameter("currentTab"); // Get the current tab parameter
 
         try {
             if ("changePassword".equals(action)) {
-                // Handle password change
-                String currentPassword = request.getParameter("currentPassword");
+                String currentPassword = request.getParameter("password");
                 String newPassword = request.getParameter("newPassword");
+                String confirmNewPassword = request.getParameter("confirmNewPassword");
 
-                if (!account.getPassword().equals(currentPassword)) {
-                    request.setAttribute("error", "Current password is incorrect.");
+                if (!newPassword.equals(confirmNewPassword)) {
+                    request.setAttribute("errorMessage", "New passwords do not match.");
+                    request.setAttribute("currentTab", "preferences");
                     request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
                     return;
                 }
 
-                // Update password if valid
+                if (!account.getPassword().equals(currentPassword)) {
+                    request.setAttribute("errorMessage", "Current password is incorrect.");
+                    request.setAttribute("currentTab", "preferences");
+                    request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+                    return;
+                }
+
                 AccountDAO accountDAO = new AccountDAO();
-                accountDAO.updatePassword(account.getUsername(), newPassword);
-                account.setPassword(newPassword);  // Update password in session
-
-                request.setAttribute("successMessage", "Password changed successfully.");
-                response.sendRedirect("customerProfile");
-
+                if (accountDAO.updatePassword(account.getUsername(), newPassword)) {
+                    account.setPassword(newPassword);
+                    session.setAttribute("successMessage", "Password changed successfully.");
+                    response.sendRedirect("customerProfile?tab=preferences");
+                } else {
+                    request.setAttribute("errorMessage", "Failed to update password.");
+                    request.setAttribute("currentTab", "preferences");
+                    request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+                }
             } else {
                 // Handle profile update
                 String fullName = request.getParameter("fullName");
@@ -61,24 +72,22 @@ public class CustomerProfileServlet extends HttpServlet {
                 String address = request.getParameter("address");
 
                 person.setName(fullName);
-                // Check if dateOfBirth is valid before setting
                 if (dateOfBirth != null && !dateOfBirth.isEmpty()) {
                     try {
                         person.setDateOfBirth(java.sql.Date.valueOf(dateOfBirth));
                     } catch (IllegalArgumentException e) {
-                        request.setAttribute("error", "Invalid date format. Please enter a valid date.");
+                        request.setAttribute("errorMessage", "Invalid date format. Please enter a valid date.");
+                        request.setAttribute("currentTab", "settings");
                         request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
                         return;
                     }
                 } else {
-                    // Handle the case where dateOfBirth might be optional or not provided
                     person.setDateOfBirth(null);
                 }
-                // Set gender only if it is not null and not empty
                 if (gender != null && !gender.isEmpty()) {
                     person.setGender(gender.charAt(0));
                 } else {
-                    person.setGender('U'); // Default 'U' for unknown or retain the current gender if null isn't intended to reset
+                    person.setGender('U');
                 }
                 person.setPhone(phone);
                 person.setEmail(email);
@@ -88,12 +97,14 @@ public class CustomerProfileServlet extends HttpServlet {
                 personDAO.updatePerson(person);
                 session.setAttribute("person", person);
 
-                request.setAttribute("successMessage", "Profile updated successfully.");
-                response.sendRedirect("customerProfile");
+                session.setAttribute("successMessage", "Profile updated successfully.");
+                response.sendRedirect("customerProfile?tab=" + (currentTab != null ? java.net.URLEncoder.encode(currentTab, "UTF-8") : "settings"));
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("error", "An error occurred while updating your information.");
+            request.setAttribute("errorMessage", "An error occurred while updating your information.");
+            request.setAttribute("currentTab", currentTab);
             request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
         }
     }
@@ -103,7 +114,7 @@ public class CustomerProfileServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login");
+            response.sendRedirect("login.jsp");
             return;
         }
 
@@ -114,7 +125,6 @@ public class CustomerProfileServlet extends HttpServlet {
         List<Payment> payments = paymentDAO.getPaymentsByPersonId(person.getId());
         request.setAttribute("payments", payments);
 
-        // Forward to customerProfile.jsp
         request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
     }
 }

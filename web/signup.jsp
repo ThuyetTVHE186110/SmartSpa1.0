@@ -29,7 +29,7 @@
                 </svg>
                 <input placeholder="Your Full Name" title="Input your full name" name="txtName" type="text" class="input_field"
                        id="name_field" maxlength="50" required value="<%= request.getAttribute("txtName") != null ? request.getAttribute("txtName") : "" %>" 
-                       oninput="this.value = this.value.trim()">
+                       >
             </div>
 
             <!-- Phone Field -->
