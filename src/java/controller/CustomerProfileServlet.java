@@ -130,9 +130,6 @@ public class CustomerProfileServlet extends HttpServlet {
 //        commingup.get(0).getStart().toLocalTime();
         request.setAttribute("coming-up", commingup);
         // Forward to customerProfile.jsp
-        // Get payment history
-        Account account = (Account) session.getAttribute("account");
-        Person person = account.getPersonInfo();
         PaymentDAO paymentDAO = new PaymentDAO();
         List<Payment> payments = paymentDAO.getPaymentsByPersonId(person.getId());
         request.setAttribute("payments", payments);
