@@ -9,11 +9,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
-import java.util.List;
 import model.Service;
 
-@WebServlet(name = "ServiceServlet", urlPatterns = {"/services"})
-public class ServiceServlet extends HttpServlet {
+@WebServlet(name = "ServiceDetailServlet", urlPatterns = {"/service-detail"})
+public class ServiceDetailServlet extends HttpServlet {
    
     private ServiceDAO serviceDAO;
 
@@ -26,37 +25,14 @@ public class ServiceServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        
         try {
-            if ("detail".equals(action)) {
-                showServiceDetail(request, response);
-            } else {
-                listServices(request, response);
-            }
+            showServiceDetail(request, response);
         } catch (SQLException ex) {
-            request.setAttribute("errorMessage", "Error loading services: " + ex.getMessage());
-            request.getRequestDispatcher("service.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "Error loading service details: " + ex.getMessage());
+            response.sendRedirect("services");
         }
     }
 
-    // List all services
-    private void listServices(HttpServletRequest request, HttpServletResponse response)
-            throws SQLException, IOException, ServletException {
-        // Get services by category
-        List<Service> extensionServices = serviceDAO.getServicesByCategory("Extensions");
-        List<Service> liftsAndTints = serviceDAO.getServicesByCategory("Lifts & Tints");
-        
-        // Set attributes
-        request.setAttribute("extensionServices", extensionServices);
-        request.setAttribute("liftsAndTints", liftsAndTints);
-        
-        // Forward to JSP
-        RequestDispatcher dispatcher = request.getRequestDispatcher("service.jsp");
-        dispatcher.forward(request, response);
-    }
-
-    // Show service detail
     private void showServiceDetail(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, ServletException, IOException {
         try {
@@ -75,13 +51,21 @@ public class ServiceServlet extends HttpServlet {
             }
 
             request.setAttribute("service", service);
-            request.getRequestDispatcher("servicedetails.jsp").forward(request, response);
+            RequestDispatcher dispatcher = request.getRequestDispatcher("servicedetails.jsp");
+            dispatcher.forward(request, response);
+            
         } catch (NumberFormatException e) {
             request.setAttribute("errorMessage", "Invalid service ID format");
-            listServices(request, response);
+            response.sendRedirect("services");
         } catch (ServletException e) {
             request.setAttribute("errorMessage", e.getMessage());
-            listServices(request, response);
+            response.sendRedirect("services");
         }
     }
-}
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendRedirect("services");
+    }
+} 

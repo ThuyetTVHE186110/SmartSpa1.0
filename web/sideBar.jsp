@@ -73,7 +73,7 @@
                         </a>
                         <ul id="customer-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                             <li>
-                                <a href="appointmentManagement.jsp">
+                                <a href="appointment-management">
                                     <i class="bi bi-circle"></i><span>Appointment Management</span>
                                 </a>
                             </li>
