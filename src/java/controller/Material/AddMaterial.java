@@ -2,10 +2,12 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package productcontroller;
 
-import dal.ProductDAO;
+package controller.Material;
+
+import dal.MaterialDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -14,12 +16,12 @@ import jakarta.servlet.http.HttpServletResponse;
 
 /**
  *
- * @author Dell Alienware
+ * @author hotdo
  */
-@WebServlet(name = "AddProduct", urlPatterns = {"/addproduct"})
-public class AddProduct extends HttpServlet {
-
-    @Override
+@WebServlet(name="AddMaterial", urlPatterns={"/addmaterial"})
+public class AddMaterial extends HttpServlet {
+   
+  @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String name = request.getParameter("name");
@@ -27,10 +29,7 @@ public class AddProduct extends HttpServlet {
 
         // Khởi tạo các biến với giá trị mặc định
         int price = 0;
-        int quantity = 0;
-        int categoryId = 0;
         int supplierId = 0;
-        int discountId = 0;
 
         // Kiểm tra và chuyển đổi các tham số, nếu có giá trị
         try {
@@ -39,25 +38,11 @@ public class AddProduct extends HttpServlet {
                 price = Integer.parseInt(priceParam);
             }
 
-            String quantityParam = request.getParameter("quantity");
-            if (quantityParam != null) {
-                quantity = Integer.parseInt(quantityParam);
-            }
-
-            String categoryIdParam = request.getParameter("categoryId");
-            if (categoryIdParam != null) {
-                categoryId = Integer.parseInt(categoryIdParam);
-            }
-
             String supplierIdParam = request.getParameter("supplierId");
             if (supplierIdParam != null) {
                 supplierId = Integer.parseInt(supplierIdParam);
             }
 
-            String discountIdParam = request.getParameter("discountId");
-            if (discountIdParam != null) {
-                discountId = Integer.parseInt(discountIdParam);
-            }
         } catch (NumberFormatException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
@@ -65,27 +50,19 @@ public class AddProduct extends HttpServlet {
         }
 
         String image = request.getParameter("image"); // Cần xử lý upload file
-        String branchName = request.getParameter("branchName");
         String status = request.getParameter("status");
-        String ingredient = request.getParameter("ingredient");
-        String howToUse = request.getParameter("howToUse");
-        String benefit = request.getParameter("benefit");
-        // Tạo đối tượng ProductDAO và gọi phương thức addProduct
-        ProductDAO productDAO = new ProductDAO();
+        // Tạo đối tượng MaterialDAO và gọi phương thức addMaterial
+        MaterialDAO productDAO = new MaterialDAO();
         System.out.println(name);
         System.out.println(description);
         System.out.println(price);
-        System.out.println(quantity);
         System.out.println(image);
-        System.out.println(categoryId);
         System.out.println(supplierId);
-        System.out.println(discountId);
-        System.out.println(branchName);
-        productDAO.updateProduct(discountId, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
+        productDAO.addMaterial(name, description, price, image, supplierId, status);
         System.out.println("ass");
 
         // Chuyển hướng đến danh sách sản phẩm
-        response.sendRedirect("productlist");
+        response.sendRedirect("materialmanagement");
 
     }
 
@@ -109,3 +86,4 @@ public class AddProduct extends HttpServlet {
     }// </editor-fold>
 
 }
+

@@ -2,10 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package productcontroller;
+package controller.Material;
 
-import com.google.gson.Gson;
-import dal.ProductDAO;
+import dal.MaterialDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -13,14 +12,14 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import model.Product;
+import model.Material;
 
 /**
  *
  * @author hotdo
  */
-@WebServlet(name = "ProductDetail", urlPatterns = {"/detail"})
-public class EditProductDetail extends HttpServlet {
+@WebServlet(name = "UpdateMaterial", urlPatterns = {"/updatematerial"})
+public class UpdateMaterial extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -39,10 +38,10 @@ public class EditProductDetail extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet ProductDetail</title>");
+            out.println("<title>Servlet UpdateMaterial</title>");
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet ProductDetail at " + request.getContextPath() + "</h1>");
+            out.println("<h1>Servlet UpdateMaterial at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
@@ -62,7 +61,7 @@ public class EditProductDetail extends HttpServlet {
             throws ServletException, IOException {
         String idParam = request.getParameter("id");
         if (idParam == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Product ID is required");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Material ID is required");
             return;
         }
 
@@ -70,19 +69,39 @@ public class EditProductDetail extends HttpServlet {
         try {
             id = Integer.parseInt(idParam);
         } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Product ID format");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Material ID format");
             return;
         }
 
-        ProductDAO productDAO = new ProductDAO();
-        Product product = productDAO.getProductByID(id);
+        String name = request.getParameter("name");
+        String description = request.getParameter("description");
 
-        // Trả về dữ liệu sản phẩm dưới dạng JSON
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        PrintWriter out = response.getWriter();
-        out.print(new Gson().toJson(product));
-        out.flush();
+        // Initialize variables with default values
+        int price = 0;
+        int supplierId = 0;
+
+        // Check and parse parameters, if present
+        try {
+            String priceParam = request.getParameter("price");
+            if (priceParam != null && !priceParam.isEmpty()) {
+                price = Integer.parseInt(priceParam);
+            }
+            String supplierIdParam = request.getParameter("supplierId");
+            if (supplierIdParam != null && !supplierIdParam.isEmpty()) {
+                supplierId = Integer.parseInt(supplierIdParam);
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
+            return;
+        }
+
+        String image = request.getParameter("image"); // Handle file upload if needed
+        String status = request.getParameter("status");
+        // Create MaterialDAO object and call updateMaterial method
+        MaterialDAO materialDAO = new MaterialDAO();
+        materialDAO.updateMaterial(id, name, description, price, image, supplierId, status);
+        response.sendRedirect("materialmanagement");
+
     }
 
     /**
@@ -96,7 +115,7 @@ public class EditProductDetail extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        
     }
 
     /**

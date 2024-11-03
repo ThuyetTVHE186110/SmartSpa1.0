@@ -27,7 +27,7 @@
         <meta charset="utf-8">
         <meta content="width=device-width, initial-scale=1.0" name="viewport">
 
-        <title>Product Management - NiceAdmin</title>
+        <title>Material Management - NiceAdmin</title>
         <meta content="" name="description">
         <meta content="" name="keywords">
 
@@ -65,12 +65,12 @@
         <main id="main" class="main">
 
             <div class="pagetitle">
-                <h1>Product Management</h1>
+                <h1>Material Management</h1>
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="index.html">Home</a></li>
                         <li class="breadcrumb-item">Manager</li>
-                        <li class="breadcrumb-item active">Product Management</li>
+                        <li class="breadcrumb-item active">Material Management</li>
                     </ol>
                 </nav>
             </div><!-- End Page Title -->
@@ -81,11 +81,11 @@
 
                         <div class="card">
                             <div class="card-body">
-                                <h5 class="card-title">Products</h5>
-                                <p>Manage products from this panel.</p>
-                                <form action="productlist" method="get class="mb-3">
+                                <h5 class="card-title">Materials</h5>
+                                <p>Manage materials from this panel.</p>
+                                <form action="materiallist" method="get class="mb-3">
                                     <div class="input-group">
-                                        <input type="text" name="search" class="form-control" placeholder="Search products" value="${param.search}">
+                                        <input type="text" name="search" class="form-control" placeholder="Search materials" value="${param.search}">
                                         <button class="btn btn-primary" type="submit">Search</button>
                                     </div>
                                 </form>
@@ -96,29 +96,27 @@
                                         <tr>
                                             <th scope="col">ID</th>
                                             <th scope="col">Image</th>
-                                            <th scope="col">Product Name</th>
+                                            <th scope="col">Material Name</th>
                                             <th scope="col">Description</th>
                                             <th scope="col">Price</th>
-                                            <th scope="col">Quantity</th>
                                             <th scope="col">Status</th>
                                             <th scope="col" style="width: 15%;">Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <c:forEach items="${productList}" var="product">
+                                        <c:forEach items="${materialList}" var="material">
                                             <tr>
-                                                <th scope="row">${product.id}</th>
-                                                <td><img src="${pageContext.request.contextPath}/img/${product.image}" alt="${product.name}" width="50" height="50"></td>
-                                                <td>${product.name}</td>
-                                                <td>${product.description}</td>
-                                                <td>${product.price}</td>
-                                                <td>${product.quantity}</td>
+                                                <th scope="row">${material.id}</th>
+                                                <td><img src="${pageContext.request.contextPath}/img/${material.image}" alt="${material.name}" width="50" height="50"></td>
+                                                <td>${material.name}</td>
+                                                <td>${material.description}</td>
+                                                <td>${material.price}</td>
                                                 <td>
                                                     <c:choose>
-                                                        <c:when test="${product.status == 'Available'}">
+                                                        <c:when test="${material.status == 'Available'}">
                                                             <span class="badge bg-success">Available</span>
                                                         </c:when>
-                                                        <c:when test="${product.status == 'UnAvailable'}">
+                                                        <c:when test="${material.status == 'UnAvailable'}">
                                                             <span class="badge bg-danger">UnAvailable</span>
                                                         </c:when>
                                                         <c:otherwise>
@@ -129,11 +127,11 @@
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" 
                                                             data-bs-toggle="modal" 
-                                                            data-bs-target="#editProductModal" 
-                                                            data-id="${product.id}">
+                                                            data-bs-target="#editMaterialModal" 
+                                                            data-id="${material.id}">
                                                         Edit
                                                     </button>
-                                                    <a href="deleteproduct?productID=${product.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this product?');">Delete</a>
+                                                    <a href="deletematerial?materialID=${material.id}" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this material?');">Delete</a>
                                                 </td>
                                             </tr>
 
@@ -144,8 +142,8 @@
 
                                 <div class="text-center mt-3">
                                     <button type="button" class="btn btn-primary" data-bs-toggle="modal"
-                                            data-bs-target="#addProductModal">
-                                        <i class="bi bi-plus-circle me-1"></i> Add New Product
+                                            data-bs-target="#addMaterialModal">
+                                        <i class="bi bi-plus-circle me-1"></i> Add New Material
                                     </button>
                                 </div>
 
@@ -184,19 +182,19 @@
         <!-- Template Main JS File -->
         <script src="assets/js/main.js"></script>
 
-        <!-- Add Product Modal -->
-        <div class="modal fade" id="addProductModal" tabindex="-1">
+        <!-- Add Material Modal -->
+        <div class="modal fade" id="addMaterialModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Add New Product</h5>
+                        <h5 class="modal-title">Add New Material</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <!-- Add Product Form -->
-                        <form action="${pageContext.request.contextPath}/addproduct" method="get" enctype="multipart/form-data" class="row g-3">
+                        <!-- Add Material Form -->
+                        <form action="${pageContext.request.contextPath}/addmaterial" method="get" enctype="multipart/form-data" class="row g-3">
                             <div class="col-12">
-                                <label for="name" class="form-label">Product Name</label>
+                                <label for="name" class="form-label">Material Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
                             </div>
                             <div class="col-12">
@@ -207,30 +205,17 @@
                                 <label for="price" class="form-label">Price</label>
                                 <input type="number" class="form-control" id="price" name="price" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="quantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" required>
-                            </div>
+
                             <div class="col-12">
-                                <label for="image" class="form-label">Product Image</label>
+                                <label for="image" class="form-label">Material Image</label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="categoryId" class="form-label">Category ID</label>
-                                <input type="number" class="form-control" id="categoryId" name="categoryId" required>
-                            </div>
+
                             <div class="col-md-6">
                                 <label for="supplierId" class="form-label">Supplier ID</label>
                                 <input type="number" class="form-control" id="supplierId" name="supplierId" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="discountId" class="form-label">Discount ID</label>
-                                <input type="number" class="form-control" id="discountId" name="discountId" required>
-                            </div>
-                            <div class="col-md-6">
-                                <label for="branchName" class="form-label">Branch Name</label>
-                                <input type="text" class="form-control" id="branchName" name="branchName" required>
-                            </div>
+
                             <div class="col-md-6">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" id="status" name="status" required>
@@ -240,46 +225,35 @@
                                     <option value="Unknown">Unknown</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label for="ingredient" class="form-label">Ingredient</label>
-                                <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="howToUse" class="form-label">How To Use</label>
-                                <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="benefit" class="form-label">Benefit</label>
-                                <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
-                            </div>
-                            <div class="modal-footer" href="addproduct">
+
+                            <div class="modal-footer" href="addmaterial">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Add Product</button>
+                                <button type="submit" class="btn btn-primary">Add Material</button>
                             </div>
                         </form>
-                        <!-- End Add Product Form -->
+                        <!-- End Add Material Form -->
                     </div>
                 </div>
             </div>
         </div>
-        <!-- End Add Product Modal -->
+        <!-- End Add Material Modal -->
 
-        <!-- Edit Product Modal -->
+        <!-- Edit Material Modal -->
 
-        <div class="modal fade" id="editProductModal" tabindex="-1">
+        <div class="modal fade" id="editMaterialModal" tabindex="-1">
             <div class="modal-dialog modal-dialog-centered">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Update Product</h5>
+                        <h5 class="modal-title">Update Material</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
 
                     <div class="modal-body">
-                        <form action="${pageContext.request.contextPath}/updateproduct" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/updatematerial" method="get" enctype="multipart/form-data" class="row g-3">
                             <input type="hidden" name="id" value="">
                             <!-- Other form fields remain the same -->
                             <div class="col-12">
-                                <label for="name" class="form-label">Product Name</label>
+                                <label for="name" class="form-label">Material Name</label>
                                 <input type="text" class="form-control" id="name" name="name" value="" required minlength="3">
                             </div>
                             <div class="col-12">
@@ -290,30 +264,18 @@
                                 <label for="price" class="form-label">Price</label>
                                 <input type="number" class="form-control" id="price" name="price" value="" required min="0.01" step="0.01">
                             </div>
-                            <div class="col-md-6">
-                                <label for="quantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" value="" required min="1">
-                            </div>
+
                             <div class="col-12">
-                                <label for="image" class="form-label">Product Image</label>
+                                <label for="image" class="form-label">Material Image</label>
                                 <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="categoryId" class="form-label">Category ID</label>
-                                <input type="number" class="form-control" id="categoryId" name="categoryId" value="" required min="1">
-                            </div>
+
                             <div class="col-md-6">
                                 <label for="supplierId" class="form-label">Supplier ID</label>
                                 <input type="number" class="form-control" id="supplierId" name="supplierId" required min="1">
                             </div>
-                            <div class="col-md-6">
-                                <label for="discountId" class="form-label">Discount ID</label>
-                                <input type="number" class="form-control" id="discountId" name="discountId" min="1">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="branchName" class="form-label">Branch Name</label>
-                                <input type="text" class="form-control" id="branchName" name="branchName" required minlength="3">
-                            </div>
+
+
                             <div class="col-md-6">
                                 <label for="status" class="form-label">Status</label>
                                 <select class="form-select" id="status" name="status" required>
@@ -323,70 +285,55 @@
                                     <option value="Unknown">Unknown</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
-                                <label for="ingredient" class="form-label">Ingredient</label>
-                                <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="howToUse" class="form-label">How To Use</label>
-                                <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
-                            </div>
-                            <div class="col-md-6">
-                                <label for="benefit" class="form-label">Benefit</label>
-                                <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
-                            </div>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
                             </div>
                         </form>
 
-                        <!-- End Edit Product Form -->
+                        <!-- End Edit Material Form -->
                     </div>
                 </div>
             </div>
-        </div><!-- End Edit Product Modal-->
+        </div><!-- End Edit Material Modal-->
 
         <script>
-                                                        var editProductModal = document.getElementById('editProductModal');
-                                                        editProductModal.addEventListener('show.bs.modal', function (event) {
+                                                        var editMaterialModal = document.getElementById('editMaterialModal');
+                                                        editMaterialModal.addEventListener('show.bs.modal', function (event) {
                                                             // Lấy nút đã kích hoạt modal (nút Edit)
                                                             var button = event.relatedTarget;
                                                             // Lấy giá trị id từ thuộc tính data-id của nút
-                                                            var productId = button.getAttribute('data-id');
+                                                            var materialId = button.getAttribute('data-id');
                                                             // Gửi yêu cầu AJAX tới server để lấy chi tiết sản phẩm
-                                                            fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
+                                                            fetch('${pageContext.request.contextPath}/materialinformation?id=' + materialId)
                                                                     .then(response => response.json())  // Parse dữ liệu JSON
-                                                                    .then(product => {
+                                                                    .then(material => {
                                                                         // Tìm form và cập nhật action URL với id sản phẩm
-                                                                        var form = editProductModal.querySelector('form');
-                                                                        form.action = form.action.split('?')[0] + "?id=" + productId;
+                                                                        var form = editMaterialModal.querySelector('form');
+                                                                        form.action = form.action.split('?')[0] + "?id=" + materialId;
 
                                                                         // Cập nhật giá trị cho các trường trong modal
-                                                                        form.querySelector('input[name="id"]').value = product.id;
-                                                                        form.querySelector('input[name="name"]').value = product.name;
-                                                                        form.querySelector('textarea[name="description"]').value = product.description;
-                                                                        form.querySelector('input[name="price"]').value = product.price;
-                                                                        form.querySelector('input[name="quantity"]').value = product.quantity;
-                                                                        form.querySelector('input[name="categoryId"]').value = product.categoryId;
-                                                                        form.querySelector('input[name="supplierId"]').value = product.supplierId;
-                                                                        form.querySelector('input[name="discountId"]').value = product.discountId;
-                                                                        form.querySelector('input[name="branchName"]').value = product.branchName;
+                                                                        form.querySelector('input[name="id"]').value = material.id;
+                                                                        form.querySelector('input[name="name"]').value = material.name;
+                                                                        form.querySelector('textarea[name="description"]').value = material.description;
+                                                                        form.querySelector('input[name="price"]').value = material.price;
+
+                                                                        form.querySelector('input[name="supplierId"]').value = material.supplierId;
+
                                                                         var statusSelect = form.querySelector('select[name="status"]');
-                                                                        statusSelect.value = product.status;
+                                                                        statusSelect.value = material.status;
                                                                         if (!statusSelect.value) {
                                                                             Array.from(statusSelect.options).forEach(option => {
-                                                                                if (option.text === product.status) {
+                                                                                if (option.text === material.status) {
                                                                                     option.selected = true;
                                                                                 }
                                                                             });
                                                                         }
-                                                                        form.querySelector('input[name="ingredient"]').value = product.ingredient;
-                                                                        form.querySelector('input[name="howToUse"]').value = product.howToUse;
-                                                                        form.querySelector('input[name="benefit"]').value = product.benefit;
+                                           
                                                                         // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
                                                                     })
-                                                                    .catch(error => console.error('Error fetching product details:', error));
+                                                                    .catch(error => console.error('Error fetching material details:', error));
 
                                                         });
 

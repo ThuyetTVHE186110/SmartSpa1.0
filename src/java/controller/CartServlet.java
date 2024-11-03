@@ -64,7 +64,7 @@ public class CartServlet extends HttpServlet {
                     int productId = Integer.parseInt(request.getParameter("productId"));
                     System.out.println("Adding product ID: " + productId + " to cart for person ID: " + person.getId());
                     
-                    Product product = productDAO.getProductById(productId);
+                    Product product = productDAO.getProductByID(productId);
                     if (product == null) {
                         throw new RuntimeException("Product not found: " + productId);
                     }

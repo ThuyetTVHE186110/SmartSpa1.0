@@ -53,6 +53,11 @@
                                 </a>
                             </li>
                             <li>
+                                <a href="materialmanagement">
+                                    <i class="bi bi-circle"></i><span>Material Management</span>
+                                </a>
+                            </li>
+                            <li>
                                 <a href="customer-management" class="active">
                                     <i class="bi bi-circle"></i><span>Customer Management</span>
                                 </a>

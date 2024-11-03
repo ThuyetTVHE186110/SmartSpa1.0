@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package productcontroller;
+package controller.Product;
 
 import dal.ProductDAO;
 import java.io.IOException;
@@ -19,7 +19,7 @@ import model.Product;
  * @author hotdo
  */
 @WebServlet(name = "UpdateProduct", urlPatterns = {"/updateproduct"})
-public class EditProduct extends HttpServlet {
+public class UpdateProduct extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -59,13 +59,6 @@ public class EditProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-//        int productID = Integer.parseInt(request.getParameter("id"));
-//        ProductDAO productDAO = new ProductDAO();
-//        Product products = productDAO.getProductByID(productID);
-//
-//        // Gửi thông tin sinh viên và danh sách sở thích đến trang JSP
-//        request.setAttribute("product", products);
-//        request.getRequestDispatcher("productlist").forward(request, response);
         String idParam = request.getParameter("id");
         if (idParam == null) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Product ID is required");
@@ -129,7 +122,7 @@ public class EditProduct extends HttpServlet {
         String benefit = request.getParameter("benefit");
         // Create ProductDAO object and call updateProduct method
         ProductDAO productDAO = new ProductDAO();
-        productDAO.updateProduct(discountId, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
+        productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
         response.sendRedirect("productlist");
 
     }
@@ -208,7 +201,7 @@ public class EditProduct extends HttpServlet {
         String benefit = request.getParameter("benefit");
         // Create ProductDAO object and call updateProduct method
         ProductDAO productDAO = new ProductDAO();
-        productDAO.updateProduct(discountId, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
+        productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
         response.sendRedirect("productlist");
     }
 
