@@ -2,9 +2,9 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package productcontroller;
+package controller.Material;
 
-import dal.ProductDAO;
+import dal.MaterialDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -19,46 +19,46 @@ import java.util.logging.Logger;
  *
  * @author Dell Alienware
  */
-@WebServlet(name = "DeleteProduct", urlPatterns = {"/deleteproduct"})
-public class DeleteProduct extends HttpServlet {
+@WebServlet(name = "DeleteMaterial", urlPatterns = {"/deletematerial"})
+public class DeleteMaterial extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-         String productIdParam = request.getParameter("productID");
+         String materialIdParam = request.getParameter("materialID");
 
-    // Kiểm tra xem productID có null hay không
-    if (productIdParam == null || productIdParam.isEmpty()) {
+    // Kiểm tra xem materialID có null hay không
+    if (materialIdParam == null || materialIdParam.isEmpty()) {
         // Xử lý lỗi: thông báo cho người dùng hoặc ghi log
-        request.setAttribute("errorMessage", "Product ID is required.");
-        request.getRequestDispatcher("productmanagement.jsp").forward(request, response);
+        request.setAttribute("errorMessage", "Material ID is required.");
+        request.getRequestDispatcher("materialmanagement.jsp").forward(request, response);
         return; // Dừng thực hiện nếu có lỗi
     }
 
-    int productID;
+    int materialID;
     try {
-        productID = Integer.parseInt(productIdParam);
+        materialID = Integer.parseInt(materialIdParam);
     } catch (NumberFormatException e) {
         // Xử lý lỗi: không thể chuyển đổi thành số
-        request.setAttribute("errorMessage", "Invalid Product ID format.");
-        request.getRequestDispatcher("productmanagement.jsp").forward(request, response);
+        request.setAttribute("errorMessage", "Invalid Material ID format.");
+        request.getRequestDispatcher("materialmanagement.jsp").forward(request, response);
         return; // Dừng thực hiện nếu có lỗi
     }
 
     // Xóa sản phẩm từ cơ sở dữ liệu
-    ProductDAO productDAO = new ProductDAO();
+    MaterialDAO materialDAO = new MaterialDAO();
     try {
-        productDAO.deleteProduct(productID);
+        materialDAO.deleteMaterial(materialID);
     } catch (SQLException ex) {
-        Logger.getLogger(DeleteProduct.class.getName()).log(Level.SEVERE, null, ex);
+        Logger.getLogger(DeleteMaterial.class.getName()).log(Level.SEVERE, null, ex);
         // Xử lý lỗi SQL
-        request.setAttribute("errorMessage", "Error deleting product. Please try again.");
-        request.getRequestDispatcher("productmanagement.jsp").forward(request, response);
+        request.setAttribute("errorMessage", "Error deleting material. Please try again.");
+        request.getRequestDispatcher("materialmanagement.jsp").forward(request, response);
         return; // Dừng thực hiện nếu có lỗi
     }
 
     // Chuyển hướng trở lại trang quản lý sản phẩm sau khi xóa
-    response.sendRedirect("productlist");
+    response.sendRedirect("materialmanagement");
     }
 
     /**

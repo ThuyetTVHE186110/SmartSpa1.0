@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-package productcontroller;
+package controller.Product;
 
 import com.google.gson.Gson;
 import dal.ProductDAO;
@@ -19,8 +19,8 @@ import model.Product;
  *
  * @author hotdo
  */
-@WebServlet(name = "ProductDetail", urlPatterns = {"/detail"})
-public class EditProductDetail extends HttpServlet {
+@WebServlet(name = "ProductInformation", urlPatterns = {"/productinformation"})
+public class ProductInformation extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
