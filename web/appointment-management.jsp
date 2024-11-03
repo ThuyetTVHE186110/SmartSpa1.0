@@ -221,7 +221,16 @@
                                                         </div>
                                                     </c:if>
                                                 </td>
-                                                <td></td>
+                                                <td>
+                                                    <c:set var="size" value="${fn:length(appointment.services)}" />
+                                                    <c:set var="count" value="0" />
+                                                    <c:set var="staffs" value="" />
+                                                    <c:forEach items="${appointment.services}" var="service">
+                                                        <c:set var="count" value="${count + 1}" />
+                                                        <c:set var="staff" value="${staffs}${service.staff.name}," />
+                                                        ${service.staff.name}<c:if test="${count < size}">,</c:if>
+                                                    </c:forEach>
+                                                </td>
                                                 <td>
                                                     <span class="badge
                                                           <c:if test="${appointment.status == 'Success'}">bg-success</c:if>
@@ -356,7 +365,7 @@
                             <h5 class="modal-title">Edit Appointment</h5>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div class="modal-body" >
                             <div class="row g-3">
                                 <div class="col-12">
                                     <label for="editCustomerName" class="form-label">Customer Name</label>
@@ -377,7 +386,9 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label for="editTime" class="form-label">Time</label>
-                                    <input type="time" class="form-control" id="editTime" name="editTime">
+                                    <div id="timeOptions">
+                                        <!-- Time slots will be populated here via JavaScript -->
+                                    </div>
                                 </div>
                                 <div class="col-12">
                                     <label for="editStatus" class="form-label">Status</label>
@@ -390,7 +401,7 @@
                                 </div>
                                 <div class="col-12">
                                     <label for="editNote" class="form-label">Note</label>
-                                    <input type="text" class="form-control" name="editNote">
+                                    <input type="text" class="form-control" id="editNote" name="editNote">
                                 </div>
                             </div>
                         </div>
@@ -440,7 +451,7 @@
                     </div>
                     <div class="modal-body">
                         <form action="appointment-management" method="post">
-                            <input type="hidden" name="action" value="remove">
+                            <input type="hidden" name="action" value="cancel">
                             <input type="hidden" name="appointmentID" id="appointmentId">
                             <p>Are you sure to cancel this appointment? </p>
                             <button type="submit" class="btn btn-danger">Cancel</button>
@@ -460,13 +471,46 @@
                                                 console.log(serviceMap);
         </script>
         <script>
-
+//            document.getElementById("editDate").addEventListener("change", getAvailableTimes);
+//            document.getElementById("editStaff").addEventListener("change", getAvailableTimes);
+//
+//            async function getAvailableTimes() {
+//                const date = document.getElementById("editDate").value;
+//                const staffId = document.getElementById("editStaff").value;
+//
+//                if (date && staffId) {
+//                    try {
+//                        const response = await fetch(`getAvailableTimes?date=${date}&staffId=${staffId}`);
+//                        const availableSlots = await response.json();
+//
+//                        const timeOptionsDiv = document.getElementById("timeOptions");
+//                        timeOptionsDiv.innerHTML = ""; // Clear previous options
+//
+//                        // Create radio buttons for each available time slot
+//                        availableSlots.forEach(slot => {
+//                            const label = document.createElement("label");
+//                            label.classList.add("time-option");
+//
+//                            const input = document.createElement("input");
+//                            input.type = "radio";
+//                            input.name = "editTime";
+//                            input.value = slot;
+//
+//                            label.appendChild(input);
+//                            label.appendChild(document.createTextNode(slot));
+//                            timeOptionsDiv.appendChild(label);
+//                        });
+//                    } catch (error) {
+//                        console.error("Error fetching available times:", error);
+//                    }
+//                }
+//            }
             $('#editAppointmentModal').on('show.bs.modal', function (event) {
                 var button = $(event.relatedTarget); // Button that triggered the modal
                 var personID = button.data('person-id');
                 var appointmentID = button.data('appointment-id');
                 var name = button.data('name');
-                console.log("person-id", personID);
+                console.log("person-id", name);
                 // Lấy dữ liệu các dịch vụ và loại bỏ dấu phẩy cuối cùng nếu có
                 var services = button.data('services').replace(/,\s*$/, '').split(',');
                 console.log("Services:", services); // Kiểm tra chuỗi services đã chia tách

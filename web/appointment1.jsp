@@ -267,6 +267,17 @@
                                 var end = "${appointment.end}";
                                 var note = "${appointment.note}";
                                 var status = "${appointment.status}";
+                                var color;
+                                switch (status) {
+                                    case "Cancelled":
+                                        color = '#FF0000'; // Màu đỏ cho trạng thái "cancelled"
+                                        break;
+                                    case "In Processing":
+                                        color = '#4CAF50'; // Màu xanh lá cho trạng thái "confirmed"
+                                        break;
+                                    default:
+                                        color = '#rgb(108 117 125)'; // Màu mặc định nếu trạng thái không khớp
+                                }
                                 var services = [];
                                 var staffs = [];
                 <c:forEach var="info" items="${appointment.services}">
@@ -284,7 +295,7 @@
                                     start: start,
                                     end: end,
                                     staff: staffs,
-                                    color: '#B38886',
+                                    color: color,
                                     extendedProps: {
                                         client: '${appointment.customer.name}',
                                         staff: staffs,

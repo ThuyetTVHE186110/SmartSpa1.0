@@ -1,6 +1,7 @@
 package controller;
 
 import dal.AccountDAO;
+import dal.AppointmentDAO;
 import dal.PersonDAO;
 import dal.PaymentDAO;
 import java.io.IOException;
@@ -11,7 +12,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import model.Account;
+import model.Appointment;
 import model.Person;
 import model.Payment;
 
@@ -117,7 +120,16 @@ public class CustomerProfileServlet extends HttpServlet {
             response.sendRedirect("login.jsp");
             return;
         }
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        Account account = (Account) session.getAttribute("account");
+        Person person = account.getPersonInfo();
+        List<Appointment> history = appointmentDAO.getHistoryCustomer(person.getId());
+        request.setAttribute("history", history);
 
+        List<Appointment> commingup = appointmentDAO.getCommingCustomer(person.getId());
+//        commingup.get(0).getStart().toLocalTime();
+        request.setAttribute("coming-up", commingup);
+        // Forward to customerProfile.jsp
         // Get payment history
         Account account = (Account) session.getAttribute("account");
         Person person = account.getPersonInfo();
