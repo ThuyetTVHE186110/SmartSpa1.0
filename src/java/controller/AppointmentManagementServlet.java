@@ -105,11 +105,12 @@ public class AppointmentManagementServlet extends HttpServlet {
                     request.setAttribute("searchTerm", searchTerm);
                     appointments = appointmentDAO.getByCustomer(searchTerm);
                     break;
-                case "remove":
+                case "cancel":
                     String delAppointment = request.getParameter("appointmentID");
                     int appointmentID = Integer.parseInt(delAppointment);
-                    asdao.deleteAppointmentServiceByAppointmentID(appointmentID);
-                    appointmentDAO.deleteAppointment(appointmentID);
+                    Appointment appointment = appointmentDAO.getAppointmentByID(appointmentID);
+                    appointment.setStatus("Cancelled");
+                    appointmentDAO.updateAppointment(appointment);
                     doGet(request, response);
                     break;
                 case "edit":
@@ -124,7 +125,7 @@ public class AppointmentManagementServlet extends HttpServlet {
                     String personIDtp = request.getParameter("personID");
                     int personID = Integer.parseInt(personIDtp);
                     Person person = personDAO.getPersonByID(personID);
-                    Appointment appointment = new Appointment(editID, editStart, editEnd, LocalDateTime.MAX, editStatus, editNote, person, appointmentServiceList);
+//                    Appointment appointment = new Appointment(editID, editStart, editEnd, LocalDateTime.MAX, editStatus, editNote, person, appointmentServiceList);
 //                    appointmentDAO.updateAppointment(appointment);
                     doGet(request, response);
                     break;
