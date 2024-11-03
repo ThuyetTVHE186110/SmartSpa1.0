@@ -46,26 +46,8 @@ public class CustomerManagementServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String action = request.getParameter("action");
-        String personIdParam = request.getParameter("id");
-        PersonDAO personDAO = new PersonDAO();
-        if (personIdParam != null) {
-            // Xử lý xóa khách hàng
-            int personId = Integer.parseInt(personIdParam);
-
-            boolean isDeleted = personDAO.deletePersonAndAccountById(personId);
-            if (isDeleted) {
-                request.setAttribute("message", "Person and related account deleted successfully.");
-            } else {
-                request.setAttribute("message", "Failed to delete person and related account. Please try again.");
-            }
-        } else {
-            request.setAttribute("message", "Invalid person ID.");
-        }
-        List<Person> customerList = personDAO.getPersonByRole("customer");
-        request.setAttribute("customerList", customerList);
-
-        // Xử lý cập nhật thông tin khách hàng
+       
+//         Xử lý cập nhật thông tin khách hàng
         String idStr = request.getParameter("id");
         String name = request.getParameter("name");
         String dateOfBirthStr = request.getParameter("dateOfBirth");
@@ -122,6 +104,7 @@ public class CustomerManagementServlet extends HttpServlet {
         person.setAddress(address);
 
         // Cập nhật nhân viên
+        PersonDAO personDAO = new PersonDAO();
         try {
             personDAO.updatePerson(person);
         } catch (SQLException ex) {
