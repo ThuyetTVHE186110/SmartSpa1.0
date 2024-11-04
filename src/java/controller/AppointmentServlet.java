@@ -28,6 +28,9 @@ import model.Appointment;
 import model.Person;
 import model.Service;
 import com.google.gson.Gson;
+import jakarta.servlet.http.HttpSession;
+import model.Account;
+
 /**
  * Appointment Servlet
  *
@@ -47,10 +50,18 @@ public class AppointmentServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                response.sendRedirect("login.jsp");
+                return;
+            }
+            AppointmentDAO appointmentDAO = new AppointmentDAO();
+            Account account = (Account) session.getAttribute("account");
+            Person person = account.getPersonInfo();
             ServiceDAO serviceDAO = new ServiceDAO();
             PersonDAO personDAO = new PersonDAO();
-            AppointmentDAO appointmentDAO = new AppointmentDAO();
-            List<Appointment> appointmentList = appointmentDAO.getAll();
+            
+            List<Appointment> appointmentList = appointmentDAO.getAllByCustomer(person.getId());
             request.setAttribute("appointmentList", appointmentList);
             List<Service> serviceList = serviceDAO.selectAllServices();
             List<Person> staffList = personDAO.getPersonByRole("Staff");

@@ -130,7 +130,7 @@ public class getAvailableTimes extends HttpServlet {
             if (isFree) {
                 availableSlots.add(time.toString());  // Add start time of the available slot
             }
-            time = time.plusMinutes(15);  // Move to the next 15-minute interval
+            time = time.plusMinutes(30);  // Move to the next 15-minute interval
         }
 
         return availableSlots;

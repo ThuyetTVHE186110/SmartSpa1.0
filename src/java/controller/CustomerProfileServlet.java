@@ -6,7 +6,6 @@ import dal.PersonDAO;
 import dal.PaymentDAO;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,6 +34,13 @@ public class CustomerProfileServlet extends HttpServlet {
         String action = request.getParameter("action");
         String currentTab = request.getParameter("currentTab"); // Get the current tab parameter
 
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        if(action.equals("cancel")){
+            int id = Integer.parseInt(request.getParameter("appointmentID"));
+            appointmentDAO.updateStatus("Cancelled", id);
+            doGet(request, response);
+        }
+        
         try {
             if ("changePassword".equals(action)) {
                 String currentPassword = request.getParameter("password");
@@ -127,8 +133,7 @@ public class CustomerProfileServlet extends HttpServlet {
         request.setAttribute("history", history);
 
         List<Appointment> commingup = appointmentDAO.getCommingCustomer(person.getId());
-//        commingup.get(0).getStart().toLocalTime();
-        request.setAttribute("coming-up", commingup);
+        request.setAttribute("commingup", commingup);
         // Forward to customerProfile.jsp
         PaymentDAO paymentDAO = new PaymentDAO();
         List<Payment> payments = paymentDAO.getPaymentsByPersonId(person.getId());
