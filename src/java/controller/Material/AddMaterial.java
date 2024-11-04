@@ -66,7 +66,7 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response)
     String status = request.getParameter("status");
 
     // Handle file upload
-    Part imagePart = request.getPart("image");
+    Part imagePart = request.getPart("file");
     if (imagePart == null || imagePart.getSize() == 0) {
         response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Image part is missing or empty");
         return;

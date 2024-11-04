@@ -58,7 +58,7 @@
                             <div class="product-image">
                                 <img class="img-fluid" src="img/${p.image}" alt="${p.name}">
                                 <div class="product-overlay">
-                                    <a href="producdetail?id=${p.id}" class="quick-view-btn">View
+                                    <a href="productdetail?id=${p.id}" class="quick-view-btn">View
                                         Details</a>
                                 </div>
                             </div>
