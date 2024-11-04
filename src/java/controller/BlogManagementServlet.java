@@ -16,10 +16,10 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 
-
 import model.Account;
 import model.Blog;
 import dal.BlogDAO;
+import java.util.ArrayList;
 
 @MultipartConfig
 public class BlogManagementServlet extends HttpServlet {
@@ -28,30 +28,53 @@ public class BlogManagementServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession(false);
 
-        // Redirect to error page if session is null or account is not in session
+        // Check if session is valid and if the user is logged in
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("error"); // Custom error page
+            response.sendRedirect("error"); // Redirect to a custom error page if session is invalid
             return;
         }
+
         Account account = (Account) session.getAttribute("account");
-
-//        if (account == null || account.getRole() != 3) {
-//            response.sendRedirect("roleError");
-//            return;
-//        }
-
         BlogDAO blogDAO = new BlogDAO();
-        List<Blog> blogs;
+        List<Blog> blogs = new ArrayList<>();
+        List<String> categories;
 
         try {
-            blogs = blogDAO.getBlogsByStaffID(account.getPersonInfo().getId());
-            System.out.println("Blogs size: " + blogs.size()); // Debug line
+            // Retrieve all available categories
+            categories = blogDAO.getAllCategories();
+            request.setAttribute("categories", categories);
 
+            // Retrieve filter, search, and category parameters from the request
+            String filter = request.getParameter("filter");
+            String keyword = request.getParameter("search");
+            String category = request.getParameter("category");      
+
+            if (category != null && !category.equals("all")) {
+                // Filter blogs by selected category
+                blogs = blogDAO.getBlogsByCategory(category);
+                request.setAttribute("viewOnly", true);
+            } else if (keyword != null && !keyword.trim().isEmpty()) {
+                // Search for blogs if a keyword is provided
+                blogs = blogDAO.searchBlogs2(keyword);
+                request.setAttribute("viewOnly", true);
+            } else if ("all".equalsIgnoreCase(filter)) {
+                // Display all blogs if 'all' filter is selected
+                blogs = blogDAO.getAllBlogs();
+                request.setAttribute("viewOnly", true);
+            } else {
+                // Display blogs created by the logged-in user
+                blogs = blogDAO.getBlogsByStaffID(account.getPersonInfo().getId());
+                request.setAttribute("viewOnly", false);
+            }
+
+            // Set attributes for blogs and forward to the JSP page
             request.setAttribute("blogs", blogs);
             request.getRequestDispatcher("blogManagement.jsp").forward(request, response);
+
         } catch (SQLException e) {
+            // Log the error and set an error message attribute
             e.printStackTrace();
-            request.setAttribute("error", "Unable to retrieve blog posts.");
+            request.setAttribute("error", "Unable to retrieve blog posts or categories. Please try again later.");
             request.getRequestDispatcher("blogManagement.jsp").forward(request, response);
         }
     }

@@ -330,7 +330,7 @@
                                     <option value="3">Staff</option>
                                 </select>
                             </div>
-                           
+
                         </form>
                         <!-- End Add Account Form -->
                     </div>
