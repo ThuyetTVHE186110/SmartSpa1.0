@@ -1,10 +1,25 @@
-
-
-
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %> 
 <%@ page import="model.Person" %>  <!-- Import Person class -->
+<%
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa
+    Account account = (Account) session.getAttribute("account");
+    if (account == null) {
+        // Nếu chưa đăng nhập, chuyển hướng tới trang lỗi hoặc login
+        response.sendRedirect("error");
+        return;
+    }
+
+    // Lấy thông tin cá nhân từ đối tượng account
+    Person person = account.getPersonInfo();
+
+    // Kiểm tra quyền hạn (chỉ cho phép customer role)
+    if (account.getRole() != 4) {
+        response.sendRedirect("error");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -275,6 +290,12 @@
                                     case "In Processing":
                                         color = '#4CAF50'; // Màu xanh lá cho trạng thái "confirmed"
                                         break;
+                                    case "pending":
+                                        color = '#FFC107'; // Màu vàng cho trạng thái "pending"
+                                        break;
+                                    case "rescheduled":
+                                        color = '#2196F3'; // Màu xanh dương cho trạng thái "rescheduled"
+                                        break;
                                     default:
                                         color = '#rgb(108 117 125)'; // Màu mặc định nếu trạng thái không khớp
                                 }
@@ -291,7 +312,7 @@
                                 console.log("Services: ", services);
                                 console.log("Staffs: ", staffs);
                                 events.push({
-                                    title: "${appointment.customer.name}",
+                                    title: services,
                                     start: start,
                                     end: end,
                                     staff: staffs,

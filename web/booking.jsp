@@ -2,6 +2,25 @@
 <%@ page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %> 
 <%@ page import="model.Person" %>  <!-- Import Person class -->
+<%
+    // No need to declare session manually; it's already available in JSP
+    // You can directly use session
+    if (session == null || session.getAttribute("account") == null) {
+        // Redirect to login page if session is not found or account is not in session
+        response.sendRedirect("login");
+    } else {
+        // Get the account object from session
+        Account account = (Account) session.getAttribute("account");
+
+        if (account.getRole() == 4) {
+//            response.sendRedirect("booking");
+        } else {
+            // Set an error message and redirect to an error page
+            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+            request.getRequestDispatcher("error").forward(request, response);
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -86,7 +105,6 @@
                         <span class="step-text">Confirmation</span>
                     </div>
                 </div>
-
                 <form id="bookingForm" class="booking-form" data-aos="fade-up" action="booking" method="post">
                     <!-- Step 1: Service Selection -->
                     <div class="form-step active" id="step1">
@@ -141,17 +159,23 @@
                                     <h3>Available Times</h3>
                                     <div class="time-options" id="timeOptions">
                                         <!-- Time slots will be populated via JavaScript -->
-                                        <div class="time-column" id="morningSlots">
+                                        <div class="time-column">
                                             <h4>Morning</h4>
-                                            <!-- Morning slots populated by JavaScript -->
+                                            <div id="morningSlots">
+                                                <!-- Morning slots populated by JavaScript -->
+                                            </div>         
                                         </div>
-                                        <div class="time-column" id="afternoonSlots">
+                                        <div class="time-column">
                                             <h4>Afternoon</h4>
-                                            <!-- Afternoon slots populated by JavaScript -->
+                                            <div id="afternoonSlots">
+                                                <!-- Afternoon slots populated by JavaScript -->
+                                            </div>
                                         </div>
-                                        <div class="time-column" id="eveningSlots">
+                                        <div class="time-column" >
                                             <h4>Evening</h4>
-                                            <!-- Evening slots populated by JavaScript -->
+                                            <div id="eveningSlots">
+                                                <!-- Evening slots populated by JavaScript -->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -169,15 +193,15 @@
                         <div class="personal-details">
                             <div class="form-group">
                                 <label for="name">Full Name</label>
-                                <input type="text" id="name" name="name" required>
+                                <input type="text" id="name" name="name" value="${account.personInfo.name}" required>
                             </div>
                             <div class="form-group">
                                 <label for="email">Email</label>
-                                <input type="email" id="email" name="email" required>
+                                <input type="email" id="email" name="email" value="${account.personInfo.email}" required>
                             </div>
                             <div class="form-group">
                                 <label for="phone">Phone</label>
-                                <input type="tel" id="phone" name="phone" required>
+                                <input type="tel" id="phone" name="phone" value="${account.personInfo.phone}" required>
                             </div>
                             <div class="form-group">
                                 <label for="notes">Special Notes/Requests</label>
@@ -227,56 +251,57 @@
         <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/main.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
         <script>
-                                        async function getAvailableTimes() {
-                                            const staffId = document.getElementById("staff").value;
-                                            const date = document.getElementById("appointmentDate").value;
-                                            const service = document.querySelector('input[name="service"]:checked')?.value;
+                                            var selectedTime = null;
+                                            async function getAvailableTimes() {
+                                                const staffId = document.getElementById("staff").value;
+                                                const date = document.getElementById("appointmentDate").value;
+                                                const service = document.querySelector('input[name="service"]:checked')?.value;
 
-                                            if (staffId && date && service) {
-                                                try {
-                                                    const response = await fetch(`getAvailableTimes?service=` + service + `&staffId=` + staffId + `&date=` + date);
-                                                    const availableSlots = await response.json();
+                                                if (staffId && date && service) {
+                                                    try {
+                                                        const response = await fetch(`getAvailableTimes?service=` + service + `&staffId=` + staffId + `&date=` + date);
+                                                        const availableSlots = await response.json();
 
-                                                    // Clear previous slots
-//                                                    document.getElementById("morningSlots").innerHTML = "";
-//                                                    document.getElementById("afternoonSlots").innerHTML = "";
-//                                                    document.getElementById("eveningSlots").innerHTML = "";
+//                                                     Clear previous slots
+                                                        document.getElementById("morningSlots").innerHTML = "";
+                                                        document.getElementById("afternoonSlots").innerHTML = "";
+                                                        document.getElementById("eveningSlots").innerHTML = "";
 
-                                                    availableSlots.forEach(slot => {
-                                                        const button = document.createElement("button");
-                                                        button.type = "button";
-                                                        button.classList.add("time-slot");
-                                                        button.textContent = slot;
-                                                        button.onclick = () => selectTime(button, slot);
+                                                        availableSlots.forEach(slot => {
+                                                            const button = document.createElement("button");
+                                                            button.type = "button";
+                                                            button.classList.add("time-slot");
+                                                            button.textContent = slot;
+                                                            button.onclick = () => selectTime(button, slot);
 
-                                                        // Categorize by time of day
-                                                        const [hour] = slot.split(":").map(Number);
-                                                        if (hour >= 10 && hour < 12) {
-                                                            document.getElementById("morningSlots").appendChild(button);
-                                                        } else if (hour >= 12 && hour < 16) {
-                                                            document.getElementById("afternoonSlots").appendChild(button);
-                                                        } else if (hour >= 16 && hour < 18) {
-                                                            document.getElementById("eveningSlots").appendChild(button);
-                                                        }
-                                                    });
-                                                } catch (error) {
-                                                    console.error("Error fetching available times:", error);
+                                                            // Categorize by time of day
+                                                            const [hour] = slot.split(":").map(Number);
+                                                            if (hour >= 10 && hour < 12) {
+                                                                document.getElementById("morningSlots").appendChild(button);
+                                                            } else if (hour >= 12 && hour < 16) {
+                                                                document.getElementById("afternoonSlots").appendChild(button);
+                                                            } else if (hour >= 16 && hour < 18) {
+                                                                document.getElementById("eveningSlots").appendChild(button);
+                                                            }
+                                                        });
+                                                    } catch (error) {
+                                                        console.error("Error fetching available times:", error);
+                                                    }
+                                                } else {
+                                                    console.log("Please select staff, date, and service.");
                                                 }
-                                            } else {
-                                                console.log("Please select staff, date, and service.");
                                             }
-                                        }
 
-                                        function selectTime(selectedButton, time) {
-                                            document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
-                                            selectedButton.classList.add('selected');
-                                            // Store the selected time in the variable
-                                            selectedTime = time;
-                                            console.log("Selected time:", selectedTime);  // Log the selected time for debugging
+                                            function selectTime(selectedButton, time) {
+                                                document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
+                                                selectedButton.classList.add('selected');
+                                                // Store the selected time in the variable
+                                                selectedTime = time;
+                                                console.log("Selected time:", selectedTime);  // Log the selected time for debugging
 
-                                            // Optional: Update a hidden input field if you need to submit it with a form
-                                            document.getElementById("selectedTimeInput").value = selectedTime;
-                                        }
+                                                // Optional: Update a hidden input field if you need to submit it with a form
+                                                document.getElementById("selectedTimeInput").value = selectedTime;
+                                            }
         </script>
         <script>
             AOS.init();
@@ -365,11 +390,11 @@
                 document.getElementById('summary-service').textContent = serviceName + " - " + servicePrice + " (" + serviceDuration + ")";
 
                 // Update selected date & time
-                const selectedDate = document.querySelector('.calendar-container .selected-date'); // Assuming you have a selected date element
-                const selectedTime = document.querySelector('.time-options input[name="time"]:checked'); // Assuming time slots have name="time"
-                const summaryDate = selectedDate ? selectedDate.textContent : 'No date selected';
-                const summaryTime = selectedTime ? selectedTime.value : 'No time selected';
-                document.getElementById('summary-datetime').textContent = summaryDate + " at " + summaryTime;
+                const date = document.getElementById("appointmentDate").value;
+//                var selectedTime = selectTime;
+//                const summaryDate = selectedDate.value ? selectedDate.textContent : 'No date selected';
+//                const summaryTime = selectedTime ? selectedTime.value : 'No time selected';
+                document.getElementById('summary-datetime').textContent = date + " at " + selectedTime;
 
                 // Update personal details
                 const name = document.getElementById('name').value;
