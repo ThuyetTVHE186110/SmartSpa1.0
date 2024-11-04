@@ -4,7 +4,6 @@ import dal.ServiceDAO;
 import jakarta.servlet.RequestDispatcher;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -12,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 import model.Service;
 
-@WebServlet(name = "ServiceServlet", urlPatterns = {"/services"})
+
 public class ServiceServlet extends HttpServlet {
    
     private ServiceDAO serviceDAO;

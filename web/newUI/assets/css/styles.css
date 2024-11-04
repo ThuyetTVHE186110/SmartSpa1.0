@@ -1979,7 +1979,7 @@ footer {
 
 /* Service Detail Page Styles */
 .service-detail-hero {
-    background-image: url('../img/lash-detail-hero.jpg');
+    background-image: url('../img/main_background.png');
     background-size: cover;
     background-position: center;
     height: 50vh;
@@ -9492,7 +9492,7 @@ textarea {
     }
 
     /* Responsive Styles */
-    @media (max-width: 768px) {
+    @media(max-width: 768px) {
         .navbar {
             flex-direction: column;
             align-items: flex-start;
