@@ -1,4 +1,4 @@
-package controller;
+package controller.Authentication;
 
 import dal.AccountDAO;  // Import your AccountDAO class
 import jakarta.servlet.ServletException;

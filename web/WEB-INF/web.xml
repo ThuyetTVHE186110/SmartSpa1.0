@@ -2,7 +2,7 @@
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
-        <servlet-class>controller.LoginServlet</servlet-class>
+        <servlet-class>controller.Authentication.LoginServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AppointmentServlet</servlet-name>
@@ -22,7 +22,7 @@
     </servlet>
     <servlet>
         <servlet-name>SignupServlet</servlet-name>
-        <servlet-class>controller.SignupServlet</servlet-class>
+        <servlet-class>controller.Authentication.SignupServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>FeedbackServlet</servlet-name>
@@ -34,15 +34,15 @@
     </servlet>
     <servlet>
         <servlet-name>PasswordForgotServlet</servlet-name>
-        <servlet-class>controller.PasswordForgotServlet</servlet-class>
+        <servlet-class>controller.Authentication.PasswordForgotServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>VerifyOtpServlet</servlet-name>
-        <servlet-class>controller.VerifyOtpServlet</servlet-class>
+        <servlet-class>controller.Authentication.VerifyOtpServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ResetPasswordServlet</servlet-name>
-        <servlet-class>controller.ResetPasswordServlet</servlet-class>
+        <servlet-class>controller.Authentication.ResetPasswordServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>AppointmentManagementServlet</servlet-name>
@@ -54,7 +54,7 @@
     </servlet>
     <servlet>
         <servlet-name>VerifyRegistrationOtpServlet</servlet-name>
-        <servlet-class>controller.VerifyRegistrationOtpServlet</servlet-class>
+        <servlet-class>controller.Authentication.VerifyRegistrationOtpServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>test</servlet-name>
@@ -70,7 +70,7 @@
     </servlet>
     <servlet>
         <servlet-name>LogoutServlet</servlet-name>
-        <servlet-class>controller.LogoutServlet</servlet-class>
+        <servlet-class>controller.Authentication.LogoutServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>FeedbackManagementServlet</servlet-name>
@@ -106,7 +106,7 @@
     </servlet>
     <servlet>
         <servlet-name>RoleErrorServlet</servlet-name>
-        <servlet-class>controller.RoleErrorServlet</servlet-class>
+        <servlet-class>controller.Authentication.RoleErrorServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>UploadProfileImageServlet</servlet-name>

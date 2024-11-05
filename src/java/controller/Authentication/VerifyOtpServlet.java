@@ -48,7 +48,7 @@
 //        }
 //    }
 //}
-package controller;
+package controller.Authentication;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;

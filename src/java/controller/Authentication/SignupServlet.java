@@ -1,4 +1,4 @@
-package controller;
+package controller.Authentication;
 
 import dal.DBContext;
 import java.io.IOException;

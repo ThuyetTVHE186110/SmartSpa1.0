@@ -95,7 +95,7 @@
 //        return "Short description";
 //    }
 //}
-package controller;
+package controller.Authentication;
 
 import java.io.IOException;
 import java.util.Properties;

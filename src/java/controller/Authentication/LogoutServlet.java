@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package controller.Authentication;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -11,30 +11,30 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+
 
 /**
  *
  * @author PC
  */
-public class RoleErrorServlet extends HttpServlet {
+public class LogoutServlet extends HttpServlet {
    
-   @Override
+    
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Set an error message attribute
-        String errorMessage = (String) request.getAttribute("errorMessage");
-        if (errorMessage == null) {
-            errorMessage = "You do not have permission to access this page.";
+        HttpSession session = request.getSession(false); // Get the session, don't create one if it doesn't exist
+        if (session != null) {
+            session.invalidate();  // Invalidate session to log out the user
         }
-
-        // Forward to error page with message
-        request.setAttribute("errorMessage", errorMessage);
-        request.getRequestDispatcher("roleError.jsp").forward(request, response);
+        response.sendRedirect("index");  // Redirect to home page
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        doGet(request, response);
+        doGet(request, response);  // Handle both GET and POST requests
     }
+
 }
