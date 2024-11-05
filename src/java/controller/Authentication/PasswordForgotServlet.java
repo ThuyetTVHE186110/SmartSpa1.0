@@ -116,7 +116,7 @@ public class PasswordForgotServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         // Chuyển hướng đến trang quên mật khẩu
-        response.sendRedirect("ForgotPassword.jsp");
+        request.getRequestDispatcher("ForgotPassword.jsp").forward(request, response);
     }
 
     @Override
@@ -150,7 +150,7 @@ public class PasswordForgotServlet extends HttpServlet {
             // Lưu OTP và email vào session để xác minh sau này
             request.getSession().setAttribute("otp", otp);
             request.getSession().setAttribute("email", email);
-            response.sendRedirect("enterOtp.jsp"); // Chuyển đến trang xác minh OTP
+            response.sendRedirect("verifyOTP"); // Chuyển đến trang xác minh OTP
         } else {
             // Nếu không gửi được email, thông báo lỗi
             request.setAttribute("errorMessage", "Failed to send OTP. Please try again.");
