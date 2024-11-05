@@ -54,7 +54,22 @@ public class FeedbackDAO extends DBContext {
 
         return feedback;
     }
-
+    
+    public int getTotalFeedbacks(){
+        int  count = 0;
+        try {
+            String  sql = "SELECT COUNT(*) AS total FROM feedback";
+            PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while(rs.next()){
+                count = rs.getInt("total");
+            }
+        } catch (SQLException e) {
+             e.printStackTrace();
+        }
+        return count;
+    } 
+    
     public void deleteFeedbackByID(String id) {
         try {
             String sql = "DELETE FROM Feedback WHERE ID=?";
