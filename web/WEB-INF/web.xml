@@ -190,15 +190,15 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>PasswordForgotServlet</servlet-name>
-        <url-pattern>/PasswordForgotServlet</url-pattern>
+        <url-pattern>/forgotPassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>VerifyOtpServlet</servlet-name>
-        <url-pattern>/VerifyOtpServlet</url-pattern>
+        <url-pattern>/verifyOTP</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ResetPasswordServlet</servlet-name>
-        <url-pattern>/ResetPasswordServlet</url-pattern>
+        <url-pattern>/resetPassword</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AppointmentManagementServlet</servlet-name>

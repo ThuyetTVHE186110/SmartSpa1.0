@@ -1,6 +1,6 @@
 package controller.Authentication;
 
-import dal.AccountDAO;  // Import your AccountDAO class
+import dal.AccountDAO;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -8,8 +8,16 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import security.PasswordUtil;
 
 public class ResetPasswordServlet extends HttpServlet {
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        // Chuyển hướng đến trang quên mật khẩu
+        request.getRequestDispatcher("resetPassword.jsp").forward(request, response);
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -48,11 +56,14 @@ public class ResetPasswordServlet extends HttpServlet {
             return;
         }
 
+        // Hash the new password using BCrypt
+        String hashedPassword = PasswordUtil.hashPassword(newPassword);
+
         // Use AccountDAO to update the password
         AccountDAO accountDAO = new AccountDAO();
         boolean isPasswordUpdated;
         try {
-            isPasswordUpdated = accountDAO.updatePassword(email, newPassword);
+            isPasswordUpdated = accountDAO.updatePassword(email, hashedPassword);
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("error", "Database error. Please try again later.");
@@ -70,10 +81,9 @@ public class ResetPasswordServlet extends HttpServlet {
         }
     }
 
-// Helper method to validate the password format
+    // Helper method to validate the password format
     private boolean isPasswordValid(String password) {
         String passwordCriteria = "^(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*])[A-Za-z\\d!@#$%^&*]{8,20}$";
         return password.matches(passwordCriteria);
     }
-
 }
