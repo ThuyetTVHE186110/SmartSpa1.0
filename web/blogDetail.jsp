@@ -28,7 +28,6 @@
                 </div>
                 <h1>${blog.title}</h1>
                 <div class="post-stats">
-                    <span><i class="far fa-clock"></i> Estimated read time here</span>
                     <span><i class="far fa-eye"></i> ${blog.views} views</span>
                     <span><i class="far fa-comment"></i> ${blog.commentsCount} comments</span>
                 </div>
@@ -51,18 +50,10 @@
                     </article>
 
                     <!-- Article Content -->
-                    <article class="post-body" data-aos="fade-up">
-                        <!-- Main Content -->
-                        <article>
-                            <p>${blog.content}</p>
-                        </article>
-
-
-
+                    <article class="post-body" data-aos="fade-up">                     
                         <!-- Call to Action -->
                         <div class="post-cta" data-aos="fade-up">
-                            <h3>Ready to Transform Your Lashes?</h3>
-                            <p>Book your lash extension appointment today and experience the magic!</p>
+                            <h3>Ready to Transform Your Lashes?</h3>                      
                             <a href="booking" class="cta-button">Book Now</a>
                         </div>
                     </article>
