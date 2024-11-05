@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller;
 
 import dal.DBContext;
@@ -21,27 +17,14 @@ import java.util.Properties;
 import java.util.Random;
 import security.PasswordUtil;
 
-/**
- *
- * @author PC
- */
 public class SignupServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Redirect to the signup page or handle GET requests as needed
         request.getRequestDispatcher("signup.jsp").forward(request, response);
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,7 +37,7 @@ public class SignupServlet extends HttpServlet {
         }
     }
 
-    private void handleRegistration(HttpServletRequest request, HttpServletResponse response)
+    protected void handleRegistration(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String email = request.getParameter("txtEmail");
         String password = request.getParameter("txtPassword");
@@ -63,85 +46,52 @@ public class SignupServlet extends HttpServlet {
         String phone = request.getParameter("txtPhone");
         int roleID = 4;
 
-        // Check if passwords match
         if (password == null || confirm == null || !password.equals(confirm)) {
+            retainInput(request, name, phone, email);
             request.setAttribute("error", "Password does not match the confirm password.");
-            request.setAttribute("txtName", name);
-            request.setAttribute("txtPhone", phone);
-            request.setAttribute("txtEmail", email);
             request.getRequestDispatcher("signup.jsp").forward(request, response);
             return;
         }
 
         String hashedPassword = PasswordUtil.hashPassword(password);
-
-        // SQL query to check if the phone or email already exists in Person or Account
-        String checkEmailPhoneSql = "SELECT Person.Phone, Person.Email, Account.Username "
-                + "FROM Person LEFT JOIN Account ON Person.ID = Account.PersonID "
-                + "WHERE Person.Phone = ? OR Person.Email = ? OR Account.Username = ?";
+        String checkEmailPhoneSql = "SELECT Person.Phone, Person.Email, Account.Username FROM Person LEFT JOIN Account ON Person.ID = Account.PersonID WHERE Person.Phone = ? OR Person.Email = ? OR Account.Username = ?";
 
         try (Connection conn = DBContext.getConnection(); PreparedStatement checkStmt = conn.prepareStatement(checkEmailPhoneSql)) {
-
-            // Set parameters to check for phone and email
             checkStmt.setString(1, phone);
             checkStmt.setString(2, email);
             checkStmt.setString(3, email);
 
             try (ResultSet rs = checkStmt.executeQuery()) {
-                boolean phoneExists = false;
-                boolean emailExists = false;
-
+                boolean phoneExists = false, emailExists = false;
                 while (rs.next()) {
-                    String dbPhone = rs.getString("Phone");
-                    String dbEmailPerson = rs.getString("Email");
-                    String dbEmailAccount = rs.getString("Username");
-
-                    if (dbPhone != null && dbPhone.equals(phone)) {
+                    if (phone.equals(rs.getString("Phone"))) {
                         phoneExists = true;
                     }
-
-                    if ((dbEmailPerson != null && dbEmailPerson.equals(email))
-                            || (dbEmailAccount != null && dbEmailAccount.equals(email))) {
+                    if (email.equals(rs.getString("Email")) || email.equals(rs.getString("Username"))) {
                         emailExists = true;
                     }
                 }
 
-                // Nếu số điện thoại đã tồn tại
-                if (phoneExists) {
-                    request.setAttribute("errorMessage", "This phone number is already registered.");
-                    request.setAttribute("txtName", name);
-                    request.setAttribute("txtPhone", phone);
-                    request.setAttribute("txtEmail", email);
-                    request.getRequestDispatcher("signup.jsp").forward(request, response);
-                    return;
-                }
-
-                // Nếu email đã tồn tại
-                if (emailExists) {
-                    request.setAttribute("errorMessage", "This email is already registered.");
-                    request.setAttribute("txtName", name);
-                    request.setAttribute("txtPhone", phone);
-                    request.setAttribute("txtEmail", email);
+                if (phoneExists || emailExists) {
+                    retainInput(request, name, phone, email);
+                    request.setAttribute("errorMessage", phoneExists ? "This phone number is already registered." : "This email is already registered.");
                     request.getRequestDispatcher("signup.jsp").forward(request, response);
                     return;
                 }
             }
 
-            // Lưu thông tin vào session và chờ xác nhận OTP
-            String otp = generateOtp(); // Hàm tạo OTP
+            String otp = generateOtp();
             if (sendOtpEmail(email, otp)) {
-                // Lưu OTP và thông tin người dùng vào session để xác nhận sau khi người dùng nhập đúng OTP
                 HttpSession session = request.getSession();
                 session.setAttribute("otp", otp);
                 session.setAttribute("email", email);
-                session.setAttribute("password", hashedPassword);
+                session.setAttribute("password", hashedPassword);  // Use hashed password
                 session.setAttribute("roleID", roleID);
                 session.setAttribute("name", name);
                 session.setAttribute("phone", phone);
-
-                // Chuyển hướng đến trang OTP để xác nhận
                 response.sendRedirect("OtpConfirmRegistration.jsp");
             } else {
+                retainInput(request, name, phone, email);
                 request.setAttribute("errorMessage", "Failed to send OTP. Please try again.");
                 request.getRequestDispatcher("signup.jsp").forward(request, response);
             }
@@ -153,7 +103,6 @@ public class SignupServlet extends HttpServlet {
         }
     }
 
-// Helper method to retain input values in the form
     private void retainInput(HttpServletRequest request, String name, String phone, String email) {
         request.setAttribute("txtName", name);
         request.setAttribute("txtPhone", phone);
@@ -162,7 +111,7 @@ public class SignupServlet extends HttpServlet {
 
     private String generateOtp() {
         Random random = new Random();
-        int otp = 100000 + random.nextInt(900000); // Generate a 6-digit OTP
+        int otp = 100000 + random.nextInt(900000);
         return String.valueOf(otp);
     }
 
@@ -180,7 +129,7 @@ public class SignupServlet extends HttpServlet {
 
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("dat33112@gmail.com", "cdct hlco ymoj wklg"); // Use a secure method for this
+                return new PasswordAuthentication("dat33112@gmail.com", "cdct hlco ymoj wklg");
             }
         });
 
@@ -202,5 +151,4 @@ public class SignupServlet extends HttpServlet {
             throws ServletException, IOException {
         response.sendRedirect("signup.jsp");
     }
-
 }
