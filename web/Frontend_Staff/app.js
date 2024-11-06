@@ -14,7 +14,7 @@ document.querySelector('nav').addEventListener('click', async (e) => {
 
         try {
             // Load the page content
-            const response = await fetch(`/pages/${targetId}.html`);
+            const response = await fetch(`./pages/${targetId}.html`);
             const content = await response.text();
 
             // Update the main content area
@@ -53,7 +53,7 @@ document.querySelector('nav').addEventListener('click', async (e) => {
 // Function to load page-specific JavaScript
 function loadPageScript(pageId) {
     const script = document.createElement('script');
-    script.src = `/js/pages/${pageId}.js`;
+    script.src = `./js/pages/${pageId}.js`;
     script.type = 'module';
     document.body.appendChild(script);
 }
@@ -141,7 +141,7 @@ function debounce(func, wait) {
 document.addEventListener('DOMContentLoaded', async () => {
     // Load dashboard content by default
     try {
-        const response = await fetch('/pages/dashboard.html');
+        const response = await fetch('SmartSpa1.0/Frontend_Staff/pages/dashboard.html');
         const content = await response.text();
         document.querySelector('main').innerHTML = content;
     } catch (error) {

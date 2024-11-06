@@ -7,7 +7,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import com.google.gson.Gson;
-import dao.SurveyDAO;
+import dal.SurveyDAO;
 import model.Survey;
 import model.Account;
 import java.util.HashMap;
