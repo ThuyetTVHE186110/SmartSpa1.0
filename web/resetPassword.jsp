@@ -11,7 +11,7 @@
 
     <body>
         <div class="backgroundImg"></div>
-        <form class="form form-container" action="ResetPasswordServlet" method="POST" onsubmit="return validateForm()">
+        <form class="form form-container" action="resetPassword" method="POST" onsubmit="return validateForm()">
             <div class="logo_container"></div>
             <div class="title_container">
                 <p class="title">Reset your Password</p>

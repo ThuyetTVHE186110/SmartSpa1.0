@@ -7,7 +7,7 @@
     Account account = (Account) session.getAttribute("account");
     if (account == null) {
         // Nếu chưa đăng nhập, chuyển hướng tới trang lỗi hoặc login
-        response.sendRedirect("error");
+        response.sendRedirect("login");
         return;
     }
 

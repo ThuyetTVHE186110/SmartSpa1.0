@@ -131,7 +131,6 @@
                     </div>
 
                     <!-- Preferences Tab -->
-                    <!-- Preferences Tab -->
                     <div class="profile-tab" id="preferences">
                         <h2>Change Your Password</h2>
                         <form class="preferences-form" action="customerProfile" method="post" onsubmit="return validatePassword()">
