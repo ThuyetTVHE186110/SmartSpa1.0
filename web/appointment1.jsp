@@ -7,12 +7,18 @@
     Account account = (Account) session.getAttribute("account");
     if (account == null) {
         // Nếu chưa đăng nhập, chuyển hướng tới trang lỗi hoặc login
-        response.sendRedirect("error");
+        response.sendRedirect("login");
         return;
     }
 
     // Lấy thông tin cá nhân từ đối tượng account
     Person person = account.getPersonInfo();
+
+    // Kiểm tra quyền hạn (chỉ cho phép customer role)
+    if (account.getRole() != 4) {
+        response.sendRedirect("error");
+        return;
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
