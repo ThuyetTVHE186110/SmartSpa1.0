@@ -13,12 +13,6 @@
 
     // Lấy thông tin cá nhân từ đối tượng account
     Person person = account.getPersonInfo();
-
-    // Kiểm tra quyền hạn (chỉ cho phép customer role)
-    if (account.getRole() != 4) {
-        response.sendRedirect("error");
-        return;
-    }
 %>
 <!DOCTYPE html>
 <html lang="en">
