@@ -3,7 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller;
+package controller.Feedback;
 
 import dal.FeedbackDAO;
 import java.io.IOException;
@@ -47,23 +47,15 @@ public class FeedbackServlet extends HttpServlet {
         }
     }
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     * 
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        FeedbackDAO feedbackDAO = new FeedbackDAO();
+       FeedbackDAO feedbackDAO = new FeedbackDAO();
         ArrayList<Feedback> feedback = feedbackDAO.getFeedback();
+
         request.setAttribute("feedback", feedback);
-        request.getRequestDispatcher("/services.jsp").forward(request, response);
+
+        request.getRequestDispatcher("feedback.jsp").forward(request, response);
     }
 
     /**
