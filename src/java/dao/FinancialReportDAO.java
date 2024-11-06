@@ -3,34 +3,35 @@ package dao;
 import dal.DBContext;
 import java.sql.*;
 import java.util.*;
-import model.FinancialReport;
 import java.time.LocalDate;
 
 public class FinancialReportDAO extends DBContext {
     
+    private static final String CURRENCY = "VND";
+    private static final String COMPLETED_STATUS = "PAID";
+    
     public Map<String, Double> getRevenueByService(String startDate, String endDate) {
         Map<String, Double> revenueByService = new LinkedHashMap<>();
-        String sql = "SELECT s.Name as serviceName, " +
-                    "COALESCE(SUM(ob.TotalAmount), 0) as revenue " +
-                    "FROM Services s " +
-                    "LEFT JOIN Order_Service os ON s.ID = os.ServiceID " +
-                    "LEFT JOIN Orders_Bill ob ON os.OrderID = ob.ID " +
-                    "WHERE (ob.OrderDate BETWEEN ? AND ?) OR ob.OrderDate IS NULL " +
-                    "GROUP BY s.Name " +
+        String sql = "SELECT description, SUM(amount) as revenue " +
+                    "FROM payments " +
+                    "WHERE status = ? " +
+                    "AND created_at BETWEEN ? AND ? " +
+                    "GROUP BY description " +
                     "ORDER BY revenue DESC";
                     
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, startDate != null ? startDate : LocalDate.now().minusMonths(1).toString());
-            ps.setString(2, endDate != null ? endDate : LocalDate.now().toString());
+            ps.setString(1, COMPLETED_STATUS);
+            ps.setString(2, startDate != null ? startDate : LocalDate.now().minusMonths(1).toString());
+            ps.setString(3, endDate != null ? endDate : LocalDate.now().toString());
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
-                String serviceName = rs.getString("serviceName");
+                String description = rs.getString("description");
                 double revenue = rs.getDouble("revenue");
-                if (serviceName != null) {
-                    revenueByService.put(serviceName, revenue);
+                if (description != null) {
+                    revenueByService.put(description, revenue);
                 }
             }
             
@@ -48,23 +49,26 @@ public class FinancialReportDAO extends DBContext {
     public Map<String, Double> getMonthlyRevenue(int year) {
         Map<String, Double> monthlyRevenue = new LinkedHashMap<>();
         
+        // Initialize all months with 0
         for (int i = 1; i <= 12; i++) {
             monthlyRevenue.put(getMonthName(i), 0.0);
         }
         
-        String sql = "SELECT MONTH(OrderDate) as month, " +
-                    "COALESCE(SUM(TotalAmount), 0) as revenue " +
-                    "FROM Orders_Bill " +
-                    "WHERE YEAR(OrderDate) = ? " +
-                    "GROUP BY MONTH(OrderDate) " +
+        String sql = "SELECT MONTH(created_at) as month, " +
+                    "SUM(amount) as revenue " +
+                    "FROM payments " +
+                    "WHERE YEAR(created_at) = ? " +
+                    "AND status = ? " +
+                    "GROUP BY MONTH(created_at) " +
                     "ORDER BY month";
                     
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
             ps.setInt(1, year);
-            ResultSet rs = ps.executeQuery();
+            ps.setString(2, COMPLETED_STATUS);
             
+            ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 int month = rs.getInt("month");
                 double revenue = rs.getDouble("revenue");
@@ -77,42 +81,41 @@ public class FinancialReportDAO extends DBContext {
         return monthlyRevenue;
     }
     
-    private String getMonthName(int month) {
-        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
-                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
-        return months[month - 1];
-    }
-    
     public Map<String, Object> getFinancialSummary(String startDate, String endDate) {
         Map<String, Object> summary = new HashMap<>();
         String sql = "SELECT " +
-                    "COALESCE(SUM(TotalAmount), 0) as totalRevenue, " +
+                    "COALESCE(SUM(amount), 0) as totalRevenue, " +
                     "COUNT(*) as totalTransactions, " +
-                    "COALESCE(AVG(TotalAmount), 0) as averageTransaction " +
-                    "FROM Orders_Bill " +
-                    "WHERE OrderDate BETWEEN ? AND ?";
+                    "COALESCE(AVG(amount), 0) as averageTransaction " +
+                    "FROM payments " +
+                    "WHERE status = ? " +
+                    "AND created_at BETWEEN ? AND ?";
                     
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, startDate != null ? startDate : LocalDate.now().minusMonths(1).toString());
-            ps.setString(2, endDate != null ? endDate : LocalDate.now().toString());
+            ps.setString(1, COMPLETED_STATUS);
+            ps.setString(2, startDate != null ? startDate : LocalDate.now().minusMonths(1).toString());
+            ps.setString(3, endDate != null ? endDate : LocalDate.now().toString());
             
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
                 summary.put("totalRevenue", rs.getDouble("totalRevenue"));
                 summary.put("totalTransactions", rs.getInt("totalTransactions"));
                 summary.put("averageTransaction", rs.getDouble("averageTransaction"));
+                summary.put("currency", CURRENCY);
             } else {
                 summary.put("totalRevenue", 0.0);
                 summary.put("totalTransactions", 0);
                 summary.put("averageTransaction", 0.0);
+                summary.put("currency", CURRENCY);
             }
         } catch (SQLException e) {
             System.err.println("Error getting financial summary: " + e.getMessage());
             summary.put("totalRevenue", 0.0);
             summary.put("totalTransactions", 0);
             summary.put("averageTransaction", 0.0);
+            summary.put("currency", CURRENCY);
         }
         return summary;
     }
@@ -122,19 +125,22 @@ public class FinancialReportDAO extends DBContext {
         String sql = "SELECT TOP " + limit + " " +
                     "p.ID as PersonID, " +
                     "p.Name as customerName, " +
-                    "COUNT(ob.ID) as totalVisits, " +
-                    "COALESCE(SUM(ob.TotalAmount), 0) as totalSpent " +
-                    "FROM Person p " +
-                    "LEFT JOIN Orders_Bill ob ON p.ID = ob.PersonID " +
-                    "WHERE (ob.OrderDate BETWEEN ? AND ?) OR ob.OrderDate IS NULL " +
+                    "COUNT(*) as totalVisits, " +
+                    "COALESCE(SUM(py.amount), 0) as totalSpent " +
+                    "FROM payments py " +
+                    "JOIN Person p ON py.PersonID = p.ID " +
+                    "WHERE py.status = ? " +
+                    "AND py.created_at BETWEEN ? AND ? " +
+                    "AND py.PersonID IS NOT NULL " +
                     "GROUP BY p.ID, p.Name " +
                     "ORDER BY totalSpent DESC";
                     
         try (Connection conn = getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             
-            ps.setString(1, startDate != null ? startDate : LocalDate.now().minusMonths(1).toString());
-            ps.setString(2, endDate != null ? endDate : LocalDate.now().toString());
+            ps.setString(1, COMPLETED_STATUS);
+            ps.setString(2, startDate != null ? startDate : LocalDate.now().minusMonths(1).toString());
+            ps.setString(3, endDate != null ? endDate : LocalDate.now().toString());
             
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -143,6 +149,7 @@ public class FinancialReportDAO extends DBContext {
                 customer.put("customerName", rs.getString("customerName"));
                 customer.put("totalVisits", rs.getInt("totalVisits"));
                 customer.put("totalSpent", rs.getDouble("totalSpent"));
+                customer.put("currency", CURRENCY);
                 topCustomers.add(customer);
             }
             
@@ -152,6 +159,7 @@ public class FinancialReportDAO extends DBContext {
                 defaultCustomer.put("customerName", "No customers yet");
                 defaultCustomer.put("totalVisits", 0);
                 defaultCustomer.put("totalSpent", 0.0);
+                defaultCustomer.put("currency", CURRENCY);
                 topCustomers.add(defaultCustomer);
             }
             
@@ -159,5 +167,11 @@ public class FinancialReportDAO extends DBContext {
             System.err.println("Error getting top customers: " + e.getMessage());
         }
         return topCustomers;
+    }
+    
+    private String getMonthName(int month) {
+        String[] months = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", 
+                          "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+        return months[month - 1];
     }
 } 

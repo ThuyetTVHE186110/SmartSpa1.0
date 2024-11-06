@@ -68,6 +68,12 @@
                                     <span>Payment Management</span>
                                 </a>
                             </li>
+                            <li>
+                                <a class="nav-link" href="financial-report">
+                                    <i class="bi bi-credit-card"></i>
+                                    <span>Financial Report</span>
+                                </a>
+                            </li>
                         </ul>
                     </li><!-- End Manager Nav -->
 
