@@ -9,12 +9,12 @@
         // Get the account object from session
         Account account = (Account) session.getAttribute("account");
 
-        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+        if (account.getRole() == 1 || account.getRole() == 2) {
             // Allow access to the page (do nothing and let the JSP render)
         } else {
             // Set an error message and redirect to an error page
             request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
-            request.getRequestDispatcher("error").forward(request, response);
+            request.getRequestDispatcher("roleError").forward(request, response);
         }
     }
 %>
@@ -83,6 +83,12 @@
                             <div class="card-body">
                                 <h5 class="card-title">Products</h5>
                                 <p>Manage products from this panel.</p>
+                                <form action="productlist" method="get class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" name="search" class="form-control" placeholder="Search products" value="${param.search}">
+                                        <button class="btn btn-primary" type="submit">Search</button>
+                                    </div>
+                                </form>
 
                                 <!-- Table with stripped rows -->
                                 <table class="table datatable">
@@ -94,6 +100,7 @@
                                             <th scope="col">Description</th>
                                             <th scope="col">Price</th>
                                             <th scope="col">Quantity</th>
+                                            <th scope="col">Status</th>
                                             <th scope="col" style="width: 15%;">Actions</th>
                                         </tr>
                                     </thead>
@@ -101,11 +108,26 @@
                                         <c:forEach items="${productList}" var="product">
                                             <tr>
                                                 <th scope="row">${product.id}</th>
-                                                <td><img src="${pageContext.request.contextPath}/img/${product.image}" alt="${product.name}" width="50" height="50"></td>
+                                                <td><img src="<c:out value=" ${product.image}" />"
+                                                         alt="${product.name}" width="50" height="50">
+                                                </td>
                                                 <td>${product.name}</td>
                                                 <td>${product.description}</td>
                                                 <td>${product.price}</td>
                                                 <td>${product.quantity}</td>
+                                                <td>
+                                                    <c:choose>
+                                                        <c:when test="${product.status == 'Available'}">
+                                                            <span class="badge bg-success">Available</span>
+                                                        </c:when>
+                                                        <c:when test="${product.status == 'UnAvailable'}">
+                                                            <span class="badge bg-danger">UnAvailable</span>
+                                                        </c:when>
+                                                        <c:otherwise>
+                                                            <span class="badge bg-secondary">Unknown</span>
+                                                        </c:otherwise>
+                                                    </c:choose>
+                                                </td>
                                                 <td>
                                                     <button type="button" class="btn btn-primary btn-sm" 
                                                             data-bs-toggle="modal" 
@@ -174,7 +196,7 @@
                     </div>
                     <div class="modal-body">
                         <!-- Add Product Form -->
-                        <form action="${pageContext.request.contextPath}/addproduct" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/addproduct" method="post" enctype="multipart/form-data" class="row g-3">
                             <div class="col-12">
                                 <label for="name" class="form-label">Product Name</label>
                                 <input type="text" class="form-control" id="name" name="name" required>
@@ -191,9 +213,17 @@
                                 <label for="quantity" class="form-label">Quantity</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" required>
                             </div>
-                            <div class="col-12">
-                                <label for="image" class="form-label">Product Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Image <span
+                                        class="text-danger">*</span></label>
+                                <input type="file" class="form-control" id="file" name="file" required
+                                       accept=".jpg,.jpeg,.png">
+                                <div class="invalid-feedback">
+                                    Please select an image file (JPG or PNG only).
+                                </div>
+                                <div class="form-text">
+                                    Maximum file size: 5MB
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="categoryId" class="form-label">Category ID</label>
@@ -210,6 +240,27 @@
                             <div class="col-md-6">
                                 <label for="branchName" class="form-label">Branch Name</label>
                                 <input type="text" class="form-control" id="branchName" name="branchName" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Available">Available</option>
+                                    <option value="UnAvailable">UnAvailable</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ingredient" class="form-label">Ingredient</label>
+                                <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="howToUse" class="form-label">How To Use</label>
+                                <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="benefit" class="form-label">Benefit</label>
+                                <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
                             </div>
                             <div class="modal-footer" href="addproduct">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -234,7 +285,7 @@
                     </div>
 
                     <div class="modal-body">
-                        <form action="${pageContext.request.contextPath}/updateproduct" method="get" enctype="multipart/form-data" class="row g-3">
+                        <form action="${pageContext.request.contextPath}/updateproduct" method="post" enctype="multipart/form-data" class="row g-3">
                             <input type="hidden" name="id" value="">
                             <!-- Other form fields remain the same -->
                             <div class="col-12">
@@ -253,9 +304,16 @@
                                 <label for="quantity" class="form-label">Quantity</label>
                                 <input type="number" class="form-control" id="quantity" name="quantity" value="" required min="1">
                             </div>
-                            <div class="col-12">
-                                <label for="image" class="form-label">Product Image</label>
-                                <input type="file" class="form-control" id="image" name="image" accept="image/*" required>
+                            <div class="mb-3">
+                                <label for="file" class="form-label">Image</label> <!-- Changed id to "file" -->
+                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png">
+                                <div class="invalid-feedback">
+                                    Please select an image file (JPG or PNG only).
+                                </div>
+                                <div class="form-text">
+                                    Current image: ${material.image}<br>
+                                    Leave empty to keep current image. Maximum file size: 5MB
+                                </div>
                             </div>
                             <div class="col-md-6">
                                 <label for="categoryId" class="form-label">Category ID</label>
@@ -272,6 +330,27 @@
                             <div class="col-md-6">
                                 <label for="branchName" class="form-label">Branch Name</label>
                                 <input type="text" class="form-control" id="branchName" name="branchName" required minlength="3">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="status" class="form-label">Status</label>
+                                <select class="form-select" id="status" name="status" required>
+                                    <option value="" disabled selected>Select Status</option>
+                                    <option value="Available">Available</option>
+                                    <option value="UnAvailable">UnAvailable</option>
+                                    <option value="Unknown">Unknown</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="ingredient" class="form-label">Ingredient</label>
+                                <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="howToUse" class="form-label">How To Use</label>
+                                <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="benefit" class="form-label">Benefit</label>
+                                <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -293,7 +372,7 @@
                                                             // Lấy giá trị id từ thuộc tính data-id của nút
                                                             var productId = button.getAttribute('data-id');
                                                             // Gửi yêu cầu AJAX tới server để lấy chi tiết sản phẩm
-                                                            fetch('${pageContext.request.contextPath}/detail?id=' + productId)
+                                                            fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
                                                                     .then(response => response.json())  // Parse dữ liệu JSON
                                                                     .then(product => {
                                                                         // Tìm form và cập nhật action URL với id sản phẩm
@@ -310,10 +389,22 @@
                                                                         form.querySelector('input[name="supplierId"]').value = product.supplierId;
                                                                         form.querySelector('input[name="discountId"]').value = product.discountId;
                                                                         form.querySelector('input[name="branchName"]').value = product.branchName;
+                                                                        var statusSelect = form.querySelector('select[name="status"]');
+                                                                        statusSelect.value = product.status;
+                                                                        if (!statusSelect.value) {
+                                                                            Array.from(statusSelect.options).forEach(option => {
+                                                                                if (option.text === product.status) {
+                                                                                    option.selected = true;
+                                                                                }
+                                                                            });
+                                                                        }
+                                                                        form.querySelector('input[name="ingredient"]').value = product.ingredient;
+                                                                        form.querySelector('input[name="howToUse"]').value = product.howToUse;
+                                                                        form.querySelector('input[name="benefit"]').value = product.benefit;
                                                                         // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
                                                                     })
                                                                     .catch(error => console.error('Error fetching product details:', error));
-                                                            x
+
                                                         });
 
         </script>

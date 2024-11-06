@@ -1231,3 +1231,445 @@ h6 {
   font-size: 13px;
   color: #012970;
 }
+
+/* Payment Management Styles */
+.payment-management {
+  padding: 20px 30px;
+}
+
+.payment-management .card {
+  margin-bottom: 30px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0px 0 30px rgba(1, 41, 112, 0.1);
+}
+
+.payment-management .card-title {
+  padding: 20px 0 15px 0;
+  font-size: 18px;
+  font-weight: 500;
+  color: #012970;
+  font-family: "Poppins", sans-serif;
+}
+
+.payment-management .card-body {
+  padding: 20px;
+}
+
+/* Table Header Actions */
+.table-header-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding: 0 15px;
+}
+
+.table-header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.table-header-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.3s ease;
+}
+
+.table-header-btn i {
+  font-size: 16px;
+}
+
+/* Table Styles */
+.payment-management .datatable {
+  width: 100%;
+  background: white;
+  border-radius: 5px;
+}
+
+.payment-management .datatable thead th {
+  color: #012970;
+  font-weight: 600;
+  padding: 15px;
+  border: none;
+  font-size: 14px;
+  background: #f6f6fe;
+  text-align: left;
+}
+
+.payment-management .datatable tbody td {
+  padding: 15px;
+  border-bottom: 1px solid #ebeef4;
+  color: #444444;
+  font-size: 14px;
+  vertical-align: middle;
+}
+
+.payment-management .datatable tbody tr:hover {
+  background-color: #f6f9ff;
+}
+
+/* Status Badge Styles */
+.payment-status {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+  display: inline-block;
+  text-align: center;
+}
+
+.payment-status.completed {
+  background: #e0f8e9;
+  color: #2eca6a;
+}
+
+.payment-status.pending {
+  background: #fff4e5;
+  color: #ff771d;
+}
+
+.payment-status.failed {
+  background: #ffecdf;
+  color: #ff4747;
+}
+
+/* Action Buttons */
+.payment-action {
+  display: flex;
+  gap: 8px;
+}
+
+.payment-action .btn {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.payment-action .btn i {
+  font-size: 14px;
+}
+
+/* Modal Styles */
+.payment-modal .modal-header {
+  background-color: #f6f9ff;
+  border-bottom: 1px solid #ebeef4;
+  padding: 15px 20px;
+}
+
+.payment-modal .modal-title {
+  color: #012970;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.payment-modal .modal-body {
+  padding: 20px;
+}
+
+.payment-modal .form-label {
+  color: #012970;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.payment-modal .form-select,
+.payment-modal .form-control {
+  border: 1px solid #ebeef4;
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+}
+
+/* DataTable Search and Info Styles */
+.datatable-wrapper .datatable-top {
+  padding: 0 15px 15px;
+}
+
+.datatable-wrapper .datatable-bottom {
+  padding: 15px;
+}
+
+.datatable-wrapper .datatable-search {
+  float: right;
+}
+
+.datatable-wrapper .datatable-input {
+  border: 1px solid #ebeef4;
+  border-radius: 4px;
+  padding: 6px 12px;
+  font-size: 14px;
+}
+
+.datatable-wrapper .datatable-info {
+  color: #012970;
+  font-size: 13px;
+}
+
+/* Pagination Styles */
+.datatable-wrapper .datatable-pagination {
+  margin: 0;
+}
+
+.datatable-wrapper .datatable-pagination ul {
+  margin: 2px 0;
+  white-space: nowrap;
+  justify-content: flex-end;
+  gap: 5px;
+}
+
+.datatable-wrapper .datatable-pagination a {
+  padding: 6px 12px;
+  border-radius: 4px;
+  color: #012970;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.datatable-wrapper .datatable-pagination .active a {
+  background-color: #4154f1;
+  color: white;
+}
+
+.datatable-wrapper .datatable-pagination a:hover:not(.active) {
+  background-color: #f6f9ff;
+}
+
+/* Alert Message Styles */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-success {
+  background-color: #e0f8e9;
+  border-color: #d1e7dd;
+  color: #2eca6a;
+}
+
+.alert-danger {
+  background-color: #ffecdf;
+  border-color: #f8d7da;
+  color: #ff4747;
+}
+
+/* Responsive Styles */
+@media (max-width: 768px) {
+  .payment-management {
+    padding: 20px 15px;
+  }
+
+  .table-header-actions {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .table-header-buttons {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+
+  .payment-action {
+    flex-direction: column;
+  }
+
+  .payment-action .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .datatable-wrapper .datatable-top,
+  .datatable-wrapper .datatable-bottom {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .datatable-wrapper .datatable-search {
+    width: 100%;
+  }
+
+  .datatable-wrapper .datatable-input {
+    width: 100%;
+  }
+}
+
+/* Payment Management Specific Styles */
+.payment-management .badge {
+  padding: 8px 12px;
+  font-weight: 500;
+}
+
+.payment-management .table td {
+  vertical-align: middle;
+}
+
+.payment-management .btn-sm {
+  padding: 0.25rem 0.5rem;
+}
+
+.payment-management .form-select {
+  min-width: 140px;
+}
+
+.payment-management .table-responsive {
+  min-height: 400px;
+}
+
+/* Status Badge Colors */
+.badge.bg-success {
+  background-color: #00c292 !important;
+}
+
+.badge.bg-warning {
+  background-color: #fec107 !important;
+  color: #000;
+}
+
+.badge.bg-danger {
+  background-color: #ff5252 !important;
+}
+
+/* Search and Filter Section */
+.payment-management .search-filter-section {
+  background: #f8f9fa;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Table Header Buttons */
+.payment-management .table-header-buttons .btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* Modal Improvements */
+.payment-modal .modal-content {
+  border: none;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.payment-modal .modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.payment-modal .modal-footer {
+  background-color: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+}
+
+/* Add these styles to fix layout issues */
+.dashboard .card {
+  margin-bottom: 24px;
+  border: none;
+  border-radius: 5px;
+  box-shadow: 0 0 20px rgba(1, 41, 112, 0.1);
+}
+
+.dashboard .card-body {
+  padding: 20px;
+}
+
+.dashboard .card-title {
+  padding: 0;
+  margin-bottom: 20px;
+  font-size: 18px;
+  color: #012970;
+}
+
+.dashboard .info-card {
+  padding-bottom: 10px;
+}
+
+.dashboard .info-card h6 {
+  font-size: 28px;
+  color: #012970;
+  font-weight: 700;
+  margin: 0;
+  padding: 0;
+}
+
+.dashboard .card-icon {
+  font-size: 32px;
+  line-height: 0;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  flex-grow: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.dashboard .sales-card .card-icon {
+  color: #4154f1;
+  background: #f6f6fe;
+}
+
+.dashboard .revenue-card .card-icon {
+  color: #2eca6a;
+  background: #e0f8e9;
+}
+
+.dashboard .customers-card .card-icon {
+  color: #ff771d;
+  background: #ffecdf;
+}
+
+/* Fix chart containers */
+#revenueChart,
+#statusChart {
+  min-height: 350px;
+  width: 100%;
+}
+
+/* Fix table layout */
+.dashboard .recent-sales {
+  font-size: 14px;
+}
+
+.dashboard .recent-sales .table thead {
+  background: #f6f6fe;
+}
+
+.dashboard .recent-sales .table thead th {
+  border: 0;
+  padding: 12px;
+}
+
+.dashboard .recent-sales .table tbody td {
+  vertical-align: middle;
+  padding: 12px;
+}
+
+/* Fix responsive issues */
+@media (max-width: 1199px) {
+  .dashboard .info-card {
+    padding-bottom: 15px;
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard .card {
+    margin-bottom: 15px;
+  }
+
+  .dashboard .info-card h6 {
+    font-size: 24px;
+  }
+}

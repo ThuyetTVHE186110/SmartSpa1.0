@@ -31,69 +31,60 @@
                     <section class="services-list">
                         <h2>Extensions</h2>
                         <div class="service-grid">
-                            <div class="service-item" data-aos="fade-up">
-                                <img src="newUI/assets/img/classic-lash.jpg" alt="Classic Lash Extensions">
-                                <div class="service-info">
-                                    <h3>Classic Lash Extensions</h3>
-                                    <p>Full: Starting at $150 | Fill: $65 - $105 and up</p>
-                                    <div class="service-actions">
-                                        <a href="service-detail.html" class="view-details">View Details</a>
-                                        <a href="#" class="book-now">Book Now</a>
+                            <c:forEach items="${extensionServices}" var="service">
+                                <c:if test="${service.status eq 'ACTIVE'}">
+                                    <div class="service-item" data-aos="fade-up">
+                                        <img src="${service.image}" alt="${service.name}">
+                                        <div class="service-info">
+                                            <h3>${service.name}</h3>
+                                            <p>
+                                                <c:choose>
+                                                    <c:when test="${service.price > 0}">
+                                                        Starting at $${service.price}
+                                                    </c:when>
+                                                    <c:otherwise>
+                                                        Price varies
+                                                    </c:otherwise>
+                                                </c:choose>
+                                            </p>
+                                            <p>${service.description}</p>
+                                            <div class="service-actions">
+                                                <a href="service-detail?id=${service.id}" class="view-details">View
+                                                    Details</a>
+                                                <a href="booking?service=${service.id}" class="book-now">Book Now</a>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="service-item" data-aos="fade-up" data-aos-delay="200">
-                                <img src="../assets/img/hybrid-lash.jpg" alt="Hybrid Lash Extensions">
-                                <div class="service-info">
-                                    <h3>Hybrid Lash Extensions</h3>
-                                    <p>Full: Starting at $170 | Fill: $80 - $130 and up</p>
-                                    <div class="service-actions">
-                                        <a href="service-detail.html" class="view-details">View Details</a>
-                                        <a href="#" class="book-now">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="service-item" data-aos="fade-up" data-aos-delay="400">
-                                <img src="./assets/img/volume-lash.jpg" alt="Volume Lash Extensions">
-                                <div class="service-info">
-                                    <h3>Volume Lash Extensions</h3>
-                                    <p>Full: $185 | Fill: $85 - $140</p>
-                                    <div class="service-actions">
-                                        <a href="service-detail.html" class="view-details">View Details</a>
-                                        <a href="#" class="book-now">Book Now</a>
-                                    </div>
-                                </div>
-                            </div>
+                                </c:if>
+                            </c:forEach>
                         </div>
 
                         <h2>Lifts & Tints</h2>
                         <div class="service-grid">
-                            <div class="service-item" data-aos="fade-up">
-                                <img src="./assets/img/lash-lift.jpg" alt="Lash Lift">
-                                <div class="service-info">
-                                    <h3>Lash Lift</h3>
-                                    <p>Starting at $85</p>
-                                    <div class="service-actions">
-                                        <a href="#" class="view-details">View Details</a>
-                                        <a href="#" class="book-now">Book Now</a>
+                            <c:forEach items="${liftsAndTints}" var="service">
+                                <div class="service-item" data-aos="fade-up">
+                                    <img src="${service.image}" alt="${service.name}">
+                                    <div class="service-info">
+                                        <h3>${service.name}</h3>
+                                        <p>
+                                            <c:choose>
+                                                <c:when test="${service.price > 0}">
+                                                    Starting at $${service.price}
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Price varies
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </p>
+                                        <p>${service.description}</p>
+                                        <div class="service-actions">
+                                            <a href="service-detail?id=${service.id}" class="view-details">View
+                                                Details</a>
+                                            <a href="booking?service=${service.id}" class="book-now">Book Now</a>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="service-item" data-aos="fade-up" data-aos-delay="200">
-                                <img src="./assets/img/lash-lift-tint.jpg" alt="Lash Lift & Tint">
-                                <div class="service-info">
-                                    <h3>Lash Lift & Tint</h3>
-                                    <p>Starting at $95</p>
-                                    <div class="service-actions">
-                                        <a href="#" class="view-details">View Details</a>
-                                        <a href="#" class="book-now">Book Now</a>
-                                    </div>
-                                    <button class="slider-control next" aria-label="Next testimonial">&gt;</button>
-                                    <div class="star-decoration bottom-left"></div>
-                                    <div class="star-decoration bottom-right"></div>
-                                </div>
-                                <div class="slider-dots"></div>
-                            </div>
+                            </c:forEach>
                         </div>
                     </section>
 

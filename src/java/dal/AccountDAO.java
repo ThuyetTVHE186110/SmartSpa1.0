@@ -4,17 +4,20 @@
  */
 package dal;
 
-import static dal.DBContext.getConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Account;
 import model.Person;
+import org.mindrot.jbcrypt.BCrypt;
+import security.PasswordUtil;
 
 /**
  *
@@ -22,50 +25,119 @@ import model.Person;
  */
 public class AccountDAO {
 
+//    public Account getByUsernamePassword(String username, String password) {
+//        Account account = null;
+//        Person person = null;
+//
+//        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, a.Status, "
+//                + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address, p.Image "
+//                + "FROM Account a "
+//                + "JOIN Person p ON a.PersonID = p.ID "
+//                + "WHERE a.Username = ? AND a.Password = ?";
+//
+//        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+//            // Set the parameters for the prepared statement
+//            ps.setString(1, username);
+//            ps.setString(2, password);
+//
+//            // Execute the query
+//            try (ResultSet rs = ps.executeQuery()) {
+//                if (rs.next()) {
+//                    // Check account status
+//                    String status = rs.getString("Status");
+//                    if (!"Active".equalsIgnoreCase(status)) {
+//                        // Return null if account status is not Active
+//                        return null;
+//                    }
+//
+//                    // Create a Person object from the ResultSet
+//                    person = new Person();
+//                    person.setId(rs.getInt(6)); // Person.ID
+//                    person.setName(rs.getString(7)); // Person.Name
+//                    person.setDateOfBirth(rs.getDate(8)); // Person.DateOfBirth
+//
+//                    // Check Gender safely
+//                    String genderStr = rs.getString(9);
+//                    char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';
+//                    person.setGender(gender);
+//
+//                    person.setPhone(rs.getString(10)); // Person.Phone
+//                    person.setEmail(rs.getString(11)); // Person.Email
+//                    person.setAddress(rs.getString(12)); // Person.Address
+//                    person.setImage(rs.getString("Image")); // Person.Image
+//
+//                    // Create an Account object from the ResultSet
+//                    account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
+//                    account.setStatus(status); // Set status in Account object
+//                }
+//            }
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "Database error", e);
+//        }
+//
+//        return account; // Return the Account object if found and active, otherwise null
+//    }
     public Account getByUsernamePassword(String username, String password) {
         Account account = null;
         Person person = null;
 
-        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, "
+        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, a.Status, "
                 + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address, p.Image "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
-                + "WHERE a.Username = ? AND a.Password = ?";
+                + "WHERE a.Username = ?";
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-
-            // Set the parameters for the prepared statement
+            // Set the parameter for the prepared statement
             ps.setString(1, username);
-            ps.setString(2, password);
 
             // Execute the query
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
+                    // Check account status
+                    String status = rs.getString("Status");
+                    if (!"Active".equalsIgnoreCase(status)) {
+                        // Return null if account status is not Active
+                        return null;
+                    }
+
+                    // Get the hashed password from the database
+                    String hashedPassword = rs.getString(3);
+
+                    // Check if the provided password matches the hashed password
+                    if (!PasswordUtil.checkPassword(password, hashedPassword)) {
+                        // Return null if the password does not match
+                        return null;
+                    }
+
                     // Create a Person object from the ResultSet
                     person = new Person();
-                    person.setId(rs.getInt(5));  // Person.ID
-                    person.setName(rs.getString(6));  // Person.Name
-                    person.setDateOfBirth(rs.getDate(7));  // Person.DateOfBirth
+                    person.setId(rs.getInt(6)); // Person.ID
+                    person.setName(rs.getString(7)); // Person.Name
+                    person.setDateOfBirth(rs.getDate(8)); // Person.DateOfBirth
 
-                    // Check Gender safely (to avoid StringIndexOutOfBoundsException)
-                    String genderStr = rs.getString(8);
-                    char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';  // 'U' for unknown
+                    // Check Gender safely
+                    String genderStr = rs.getString(9);
+                    char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';
                     person.setGender(gender);
 
-                    person.setPhone(rs.getString(9));  // Person.Phone
-                    person.setEmail(rs.getString(10));  // Person.Email
-                    person.setAddress(rs.getString(11));  // Person.Address
-                    person.setImage(rs.getString("image")); // Lấy đường dẫn ảnh
+                    person.setPhone(rs.getString(10)); // Person.Phone
+                    person.setEmail(rs.getString(11)); // Person.Email
+                    person.setAddress(rs.getString(12)); // Person.Address
+                    person.setImage(rs.getString("Image")); // Person.Image
 
                     // Create an Account object from the ResultSet
-                    account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
+                    account = new Account(rs.getInt(1), rs.getString(2), hashedPassword, rs.getInt(4), person);
+                    account.setStatus(status); // Set status in Account object
                 }
             }
         } catch (SQLException e) {
-            e.printStackTrace();  // Print stack trace for debugging
+            e.printStackTrace();
             Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "Database error", e);
         }
-        return account;  // Return null if no account is found
+
+        return account; // Return the Account object if found and active, otherwise null
     }
 
     public boolean updatePassword(String email, String newPassword) throws SQLException {
@@ -96,7 +168,7 @@ public class AccountDAO {
                 // Lấy giá trị của cột gender (kiểu CHAR)
                 String gender = rs.getString("gender");
                 if (gender != null && gender.length() > 0) {
-                    person.setGender(gender.charAt(0));  // Lấy ký tự đầu tiên
+                    person.setGender(gender.charAt(0)); // Lấy ký tự đầu tiên
                 }
                 person.setPhone(rs.getString(5));
                 person.setEmail(rs.getString(6));
@@ -150,43 +222,45 @@ public class AccountDAO {
     public List<Account> getAllStaffAccounts() {
         List<Account> accounts = new ArrayList<>();
 
-        // SQL truy vấn để lấy thông tin tài khoản, bao gồm tên, username, và tên vai trò
-        String sql = "SELECT p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
+        // SQL query to retrieve account information including person name, username,
+        // role name, and status
+        String sql = "SELECT a.ID AS accountId, p.Name AS personName, p.Email, a.Username, r.Name AS roleName, a.Status "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
                 + "JOIN Role r ON a.RoleID = r.ID "
-                + "WHERE a.RoleID IN (2, 3)";
+                + "WHERE a.RoleID IN (1, 2, 3)"; // Only fetch roles for staff and manager
+
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                // Tạo đối tượng Person
+                // Create the Person object
                 Person person = new Person();
-                person.setName(rs.getString("personName"));  // Lấy tên người từ cột personName
-                person.setEmail(rs.getString("Email"));  // Lấy email của người
+                person.setName(rs.getString("personName")); // Set the name of the person
+                person.setEmail(rs.getString("Email")); // Set the email of the person
 
-                // Tạo đối tượng Account
+                // Create the Account object
                 Account account = new Account();
-                account.setUsername(rs.getString("Username"));  // Lấy username
-                account.setPersonInfo(person);  // Gán đối tượng Person vào Account
+                account.setId(rs.getInt("accountId")); // Set account ID
+                account.setUsername(rs.getString("Username")); // Set username
+                account.setPersonInfo(person); // Link the Person object to the Account
 
-                // Lấy tên role và gán vào Account
-                String roleName = rs.getString("roleName");  // Lấy tên vai trò từ bảng Role
-                account.setRoleName(roleName);  // Gán roleName vào account
+                // Set role name and status
+                account.setRoleName(rs.getString("roleName")); // Set role name
                 String status = rs.getString("Status");
                 if (status == null) {
-                    status = "Unknown";  // hoặc gán giá trị mặc định như "Inactive"
+                    status = "Unknown"; // Assign a default value if status is null
                 }
                 account.setStatus(status);
 
-                // Thêm tài khoản vào danh sách
+                // Add account to the list
                 accounts.add(account);
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
 
-        return accounts;  // Trả về danh sách các tài khoản
+        return accounts; // Return the list of accounts
     }
 
     private Connection getConnection() throws SQLException {
@@ -197,10 +271,10 @@ public class AccountDAO {
         String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, p.ID AS PersonID, p.Name, p.Email, p.Phone, p.Address "
                 + "FROM Account a "
                 + "JOIN Person p ON a.PersonID = p.ID "
-                + "WHERE a.ID = ?";  // Tìm theo Account ID
+                + "WHERE a.ID = ?"; // Tìm theo Account ID
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, accountId);  // Gán giá trị accountId vào câu SQL
+            ps.setInt(1, accountId); // Gán giá trị accountId vào câu SQL
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -214,17 +288,17 @@ public class AccountDAO {
 
                     // Tạo đối tượng Account
                     Account account = new Account();
-                    account.setId(rs.getInt("ID"));  // Lấy ID của Account từ DB
+                    account.setId(rs.getInt("ID")); // Lấy ID của Account từ DB
                     account.setUsername(rs.getString("Username"));
                     account.setPassword(rs.getString("Password"));
                     account.setRole(rs.getInt("RoleID"));
-                    account.setPersonInfo(person);  // Liên kết với đối tượng Person
+                    account.setPersonInfo(person); // Liên kết với đối tượng Person
 
-                    return account;  // Trả về đối tượng Account đã hoàn thiện
+                    return account; // Trả về đối tượng Account đã hoàn thiện
                 }
             }
         }
-        return null;  // Nếu không tìm thấy Account theo ID
+        return null; // Nếu không tìm thấy Account theo ID
     }
 
     public boolean isEmailAvailable(String email) throws SQLException {
@@ -248,4 +322,326 @@ public class AccountDAO {
         }
     }
 
+    public void updateAccountDetails(int accountId, String username, String password, String status, int roleId,
+            String personName) throws SQLException {
+        String updateAccountSQL = (password != null)
+                ? "UPDATE Account SET Username = ?, Password = ?, Status = ?, RoleID = ? WHERE ID = ?"
+                : "UPDATE Account SET Username = ?, Status = ?, RoleID = ? WHERE ID = ?";
+
+        String updatePersonSQL = "UPDATE Person SET Name = ?, Email = ? WHERE ID = (SELECT PersonID FROM Account WHERE ID = ?)";
+
+        try (Connection conn = DBContext.getConnection()) {
+            conn.setAutoCommit(false); // Start transaction
+
+            // Update Account table
+            try (PreparedStatement accountStmt = conn.prepareStatement(updateAccountSQL)) {
+                int paramIndex = 1;
+                accountStmt.setString(paramIndex++, username);
+                if (password != null) {
+                    accountStmt.setString(paramIndex++, password);
+                }
+                accountStmt.setString(paramIndex++, status);
+                accountStmt.setInt(paramIndex++, roleId);
+                accountStmt.setInt(paramIndex, accountId);
+                accountStmt.executeUpdate();
+            }
+
+            // Update Person table
+            try (PreparedStatement personStmt = conn.prepareStatement(updatePersonSQL)) {
+                personStmt.setString(1, personName);
+                personStmt.setString(2, username); // Username should sync with Email
+                personStmt.setInt(3, accountId);
+                personStmt.executeUpdate();
+            }
+
+            conn.commit(); // Commit transaction
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public String getCurrentPassword(int accountId) throws SQLException {
+        String currentPassword = null;
+        String sql = "SELECT Password FROM Account WHERE ID = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, accountId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    currentPassword = rs.getString("Password");
+                }
+            }
+        }
+        return currentPassword;
+    }
+
+    public void addAccount(String username, String password, int roleId, String personName) throws SQLException {
+        String addPersonSQL = "INSERT INTO Person (Name, Email) VALUES (?, ?)";
+        String addAccountSQL = "INSERT INTO Account (Username, Password, RoleID, PersonID) VALUES (?, ?, ?, ?)";
+
+        try (Connection conn = getConnection()) {
+            conn.setAutoCommit(false);
+
+            int personId;
+            // Insert into Person table
+            try (PreparedStatement personStmt = conn.prepareStatement(addPersonSQL, Statement.RETURN_GENERATED_KEYS)) {
+                personStmt.setString(1, personName);
+                personStmt.setString(2, username); // Email as username
+                personStmt.executeUpdate();
+
+                // Retrieve generated Person ID
+                try (ResultSet rs = personStmt.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        personId = rs.getInt(1);
+                    } else {
+                        conn.rollback();
+                        throw new SQLException("Failed to insert person record");
+                    }
+                }
+            }
+
+            // Insert into Account table
+            try (PreparedStatement accountStmt = conn.prepareStatement(addAccountSQL)) {
+                accountStmt.setString(1, username);
+                accountStmt.setString(2, password);
+                accountStmt.setInt(3, roleId);
+                accountStmt.setInt(4, personId);
+                accountStmt.executeUpdate();
+            }
+
+            conn.commit();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    public List<Account> getAccountsByStatus(String status) throws SQLException {
+        List<Account> accounts = new ArrayList<>();
+        String sql;
+
+        // Define the SQL query based on the filter
+        if ("All".equalsIgnoreCase(status)) {
+            sql = "SELECT a.ID, a.Username, a.Status, a.RoleID, "
+                    + "p.ID AS personID, p.Name, p.Email, "
+                    + "r.Name AS roleName "
+                    + "FROM Account a "
+                    + "JOIN Person p ON a.PersonID = p.ID "
+                    + "JOIN Role r ON a.RoleID = r.ID";
+        } else {
+            sql = "SELECT a.ID, a.Username, a.Status, a.RoleID, "
+                    + "p.ID AS personID, p.Name, p.Email, "
+                    + "r.Name AS roleName "
+                    + "FROM Account a "
+                    + "JOIN Person p ON a.PersonID = p.ID "
+                    + "JOIN Role r ON a.RoleID = r.ID "
+                    + "WHERE a.Status = ?";
+        }
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            // Set the status parameter if it's not "All"
+            if (!"All".equalsIgnoreCase(status)) {
+                ps.setString(1, status);
+            }
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("personID"));
+                    person.setName(rs.getString("Name"));
+                    person.setEmail(rs.getString("Email"));
+
+                    Account account = new Account();
+                    account.setId(rs.getInt("ID"));
+                    account.setUsername(rs.getString("Username"));
+                    account.setStatus(rs.getString("Status"));
+                    account.setRole(rs.getInt("RoleID"));
+                    account.setRoleName(rs.getString("roleName"));
+                    account.setPersonInfo(person);
+
+                    accounts.add(account);
+                }
+            }
+        }
+
+        return accounts;
+    }
+
+    public int getTotalStaffAccounts() {
+        String sql = "SELECT COUNT(*) FROM Account a JOIN Role r ON a.RoleID = r.ID WHERE a.RoleID IN (2, 3)";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public int getTotalAccountsCount() throws SQLException {
+        String sql = "SELECT COUNT(*) AS total FROM Account WHERE RoleID IN (1, 2, 3)";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement ps = conn.prepareStatement(sql); ResultSet rs = ps.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt("total");
+            }
+        }
+        return 0;
+    }
+
+    // Get paginated list of staff accounts
+    public List<Account> getPaginatedStaffAccounts(int page, int recordsPerPage) throws SQLException {
+        List<Account> accounts = new ArrayList<>();
+        int offset = (page - 1) * recordsPerPage;
+
+        String sql = """
+                SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
+                       p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
+                FROM Account a
+                JOIN Person p ON a.PersonID = p.ID
+                JOIN Role r ON a.RoleID = r.ID
+                WHERE a.RoleID IN (1, 2, 3)
+                ORDER BY p.Name ASC
+                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """;
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, offset);
+            stmt.setInt(2, recordsPerPage);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("PersonID"));
+                    person.setName(rs.getString("PersonName"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setPhone(rs.getString("Phone"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
+
+                    Account account = new Account();
+                    account.setId(rs.getInt("AccountID"));
+                    account.setUsername(rs.getString("Username"));
+                    account.setStatus(rs.getString("Status"));
+                    account.setRoleName(rs.getString("RoleName"));
+                    account.setPersonInfo(person);
+
+                    accounts.add(account);
+                }
+            }
+        }
+        return accounts;
+    }
+
+    public List<Account> getFilteredAccounts(String statusFilter, String roleFilter) throws SQLException {
+        List<Account> accounts = new ArrayList<>();
+
+        // Base SQL query with dynamic WHERE clause
+        StringBuilder sql = new StringBuilder("""
+                    SELECT a.ID AS AccountID, a.Username, a.Status, r.Name AS RoleName,
+                           p.ID AS PersonID, p.Name AS PersonName, p.Email, p.Phone, p.Address, p.Image
+                    FROM Account a
+                    JOIN Person p ON a.PersonID = p.ID
+                    JOIN Role r ON a.RoleID = r.ID
+                    WHERE a.RoleID IN (1, 2, 3)
+                """);
+
+        boolean hasCondition = false;
+
+        if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND a.Status = ?");
+            hasCondition = true;
+        }
+
+        if (roleFilter != null && !roleFilter.equalsIgnoreCase("all")) {
+            sql.append(" AND r.Name = ?");
+            hasCondition = true;
+        }
+
+        sql.append(" ORDER BY p.Name ASC");
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql.toString())) {
+
+            int paramIndex = 1;
+            if (statusFilter != null && !statusFilter.equalsIgnoreCase("all")) {
+                stmt.setString(paramIndex++, statusFilter);
+            }
+
+            if (roleFilter != null && !roleFilter.equalsIgnoreCase("all")) {
+                stmt.setString(paramIndex++, roleFilter);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("PersonID"));
+                    person.setName(rs.getString("PersonName"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setPhone(rs.getString("Phone"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
+
+                    Account account = new Account();
+                    account.setId(rs.getInt("AccountID"));
+                    account.setUsername(rs.getString("Username"));
+                    account.setStatus(rs.getString("Status"));
+                    account.setRoleName(rs.getString("RoleName"));
+                    account.setPersonInfo(person);
+
+                    accounts.add(account);
+                }
+            }
+        }
+        return accounts;
+    }
+
+    public static void main(String args[]) {
+        AccountDAO accountDAO = new AccountDAO();
+        String username = "dat33112@gmail.com";
+        String password = "Hello@123";
+        Account account = accountDAO.getByUsernamePassword(username, password);
+        PersonDAO personDAO = new PersonDAO();
+        Person person = personDAO.getPersonByAccount(username, password);
+        System.out.println(person.getId());
+    }
+
+    public Account getByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM Account WHERE Username = ?";
+        Account account = null;
+
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, username);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    // Construct the Account object using the data from the ResultSet
+                    account = new Account();
+                    account.setId(rs.getInt("ID"));
+                    account.setUsername(rs.getString("Username"));
+                    account.setPassword(rs.getString("Password"));
+                    account.setRole(rs.getInt("RoleID"));
+                    account.setStatus(rs.getString("Status"));
+
+                    // Populate any other necessary fields
+                    // e.g., account.setPersonID(rs.getInt("PersonID")); if needed
+                }
+            }
+        }
+
+        return account;
+    }
+
+//    public static void main(String[] args) {
+//        // Chuỗi mật khẩu cần băm
+//        String plainPassword = "alchemist";
+//
+//        // Băm mật khẩu bằng BCrypt
+//        String hashedPassword = BCrypt.hashpw(plainPassword, BCrypt.gensalt());
+//
+//        // In ra mật khẩu đã băm
+//        System.out.println("Hashed Password: " + hashedPassword);
+//    }
 }

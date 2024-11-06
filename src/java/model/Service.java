@@ -16,25 +16,31 @@ public class Service {
     private Integer duration;
     private String description;
     private String image;
+    private String category;
+    private String status;
 
     public Service() {
     }
 
-    public Service(int id, String name, Integer price, Integer duration, String description, String image) {
+    public Service(int id, String name, Integer price, Integer duration, String description, String image, String category, String status) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.duration = duration;
         this.description = description;
         this.image = image;
+        this.category = category;
+        this.status = status;
     }
 
-    public Service(String name, Integer price, Integer duration, String description, String image) {
+    public Service(String name, Integer price, Integer duration, String description, String image, String category, String status) {
         this.name = name;
         this.price = price;
         this.duration = duration;
         this.description = description;
         this.image = image;
+        this.category = category;
+        this.status = status;
     }
 
     public int getId() {
@@ -83,6 +89,22 @@ public class Service {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     

@@ -20,7 +20,11 @@ public class Product {
     private String branchName;
     private String image;
     private String description;
-
+    private String status;
+    private String ingredient;
+    private String howToUse;
+    private String benefit;
+    
     public Product() {
     }
 
@@ -104,7 +108,36 @@ public class Product {
         this.description = description;
     }
 
-   
-    
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getIngredient() {
+        return ingredient;
+    }
+
+    public void setIngredient(String ingredient) {
+        this.ingredient = ingredient;
+    }
+
+    public String getHowToUse() {
+        return howToUse;
+    }
+
+    public void setHowToUse(String howToUse) {
+        this.howToUse = howToUse;
+    }
+
+    public String getBenefit() {
+        return benefit;
+    }
+
+    public void setBenefit(String benefit) {
+        this.benefit = benefit;
+    }
 
 }

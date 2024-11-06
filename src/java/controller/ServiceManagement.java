@@ -23,6 +23,10 @@ import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.util.List;
 import model.Service;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.util.ArrayList;
 
 /**
  * ServiceManagement Servlet
@@ -64,6 +68,7 @@ public class ServiceManagement extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         String searchQuery = request.getParameter("search");
+        String statusFilter = request.getParameter("statusFilter");
         int page = 1;
         int recordsPerPage = 10;
         
@@ -73,25 +78,21 @@ public class ServiceManagement extends HttpServlet {
         System.out.println("ServiceManagement doGet - Action: " + action + ", Search: " + searchQuery + ", Page: " + page);
         
         try {
-            if (action == null || action.isEmpty() || action.equals("list")) {
-                listServices(request, response, searchQuery, page, recordsPerPage);
-            } else {
-                switch (action) {
-                    case "new":
-                        showNewForm(request, response);
-                        break;
-                    case "delete":
-                        deleteService(request, response);
-                        break;
-                    case "edit":
-                        showEditForm(request, response);
-                        break;
-                    default:
-                        listServices(request, response, searchQuery, page, recordsPerPage);
-                        break;
-                }
+            switch (action == null ? "list" : action) {
+                case "new":
+                    showNewForm(request, response);
+                    break;
+                case "edit":
+                    showEditForm(request, response);
+                    break;
+                case "updateStatus":
+                    updateServiceStatus(request, response);
+                    break;
+                default:
+                    listServices(request, response, searchQuery, statusFilter, page, recordsPerPage);
+                    break;
             }
-        } catch (SQLException | ServletException ex) {
+        } catch (SQLException ex) {
             System.out.println("Error in ServiceManagement doGet: " + ex.getMessage());
             ex.printStackTrace();
             request.setAttribute("errorMessage", ex.getMessage());
@@ -108,21 +109,19 @@ public class ServiceManagement extends HttpServlet {
             throws ServletException, IOException {
         String action = request.getParameter("action");
         try {
-            if (action == null || action.isEmpty()) {
-                // Default action if no action is specified
-                insertService(request, response);
-            } else {
-                switch (action) {
-                    case "insert":
-                        insertService(request, response);
-                        break;
-                    case "update":
-                        updateService(request, response);
-                        break;
-                    default:
-                        listServices(request, response, null, 1, 10);
-                        break;
-                }
+            switch (action) {
+                case "insert":
+                    insertService(request, response);
+                    break;
+                case "update":
+                    updateService(request, response);
+                    break;
+                case "updateStatus":
+                    updateServiceStatus(request, response);
+                    break;
+                default:
+                    response.sendRedirect("servicemanagement");
+                    break;
             }
         } catch (SQLException ex) {
             throw new ServletException(ex);
@@ -132,31 +131,32 @@ public class ServiceManagement extends HttpServlet {
     /**
      * Lists services with pagination and search functionality.
      */
-    private void listServices(HttpServletRequest request, HttpServletResponse response, String searchQuery, int currentPage, int recordsPerPage)
+    private void listServices(HttpServletRequest request, HttpServletResponse response, 
+            String searchQuery, String statusFilter, int currentPage, int recordsPerPage)
             throws SQLException, ServletException, IOException {
-        List<Service> services;
-        int totalRecords;
-        
-        System.out.println("listServices - SearchQuery: " + searchQuery + ", Page: " + currentPage);
         
         int offset = (currentPage - 1) * recordsPerPage;
-        
+        List<Service> services;
+        int totalRecords;
+
         if (searchQuery != null && !searchQuery.isEmpty()) {
             services = serviceDAO.searchServices(searchQuery, offset, recordsPerPage);
             totalRecords = serviceDAO.getTotalSearchResults(searchQuery);
+        } else if (statusFilter != null && !statusFilter.isEmpty()) {
+            services = serviceDAO.getServicesByStatusPaginated(statusFilter, offset, recordsPerPage);
+            totalRecords = serviceDAO.getTotalServicesByStatus(statusFilter);
         } else {
-            services = serviceDAO.selectAllServices(offset, recordsPerPage);
+            services = serviceDAO.getServicesWithPagination(offset, recordsPerPage);
             totalRecords = serviceDAO.getTotalServices();
         }
-        
+
         int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
-        
-        System.out.println("Total services: " + services.size() + ", Total pages: " + totalPages);
         
         request.setAttribute("services", services);
         request.setAttribute("currentPage", currentPage);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("searchQuery", searchQuery);
+        request.setAttribute("statusFilter", statusFilter);
         
         RequestDispatcher dispatcher = request.getRequestDispatcher("service-management.jsp");
         dispatcher.forward(request, response);
@@ -185,23 +185,11 @@ public class ServiceManagement extends HttpServlet {
     private void insertService(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException, SQLException {
         try {
-            // Debug: Print all parts
-            System.out.println("Received parts:");
-            for (Part part : request.getParts()) {
-                String name = part.getName();
-                String value = request.getParameter(name);
-                System.out.println(name + ": " + value);
-                
-                if ("file".equals(name)) {
-                    System.out.println("File name: " + part.getSubmittedFileName());
-                }
-            }
-
-            // Validate input parameters
             String name = validateAndGetParameter(request, "name", "Service name is required");
             int price = validateAndGetIntParameter(request, "price", "Price must be a valid number");
             int duration = validateAndGetIntParameter(request, "duration", "Duration must be a valid number");
             String description = validateAndGetParameter(request, "description", "Description is required");
+            String category = validateAndGetParameter(request, "category", "Category is required");
 
             // Additional validations
             if (name.length() > 100) {
@@ -219,41 +207,21 @@ public class ServiceManagement extends HttpServlet {
 
             // Handle file upload
             Part filePart = request.getPart("file");
-            String fileName = "";
-            if (filePart != null && filePart.getSize() > 0) {
-                fileName = validateAndGetFileName(filePart);
-                if (!fileName.toLowerCase().endsWith(".jpg") && !fileName.toLowerCase().endsWith(".png")) {
-                    throw new ServletException("Only JPG and PNG files are allowed");
-                }
-                if (filePart.getSize() > 5 * 1024 * 1024) { // 5MB limit
-                    throw new ServletException("File size must be 5MB or less");
-                }
-            } else {
-                throw new ServletException("Image file is required");
-            }
+            String fileName = validateAndGetFileName(filePart);
+            Path filePath = Paths.get(uploadPath, fileName);
+            Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+            String image = "img/" + fileName;
 
-            String image = "";
-            if (!fileName.isEmpty()) {
-                Path filePath = Paths.get(uploadPath, fileName);
-                Files.copy(filePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-                image = "img/" + fileName;
-            }
-
-            // Create and save new service
-            Service newService = new Service(name, price, duration, description, image);
+            // Create and save new service with default ACTIVE status
+            Service newService = new Service(name, price, duration, description, image, category, "ACTIVE");
             serviceDAO.addService(newService);
             
-            // Redirect to the list of services after successful insertion
             response.sendRedirect(request.getContextPath() + "/servicemanagement");
-        } catch (ServletException e) {
-            System.out.println("ServletException: " + e.getMessage());
-            request.setAttribute("errorMessage", e.getMessage());
-            listServices(request, response, null, 1, 10); // Show the list with an error message
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
-            e.printStackTrace(); // Print the full stack trace for debugging
+            e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred while adding the service: " + e.getMessage());
-            listServices(request, response, null, 1, 10); // Show the list with an error message
+            listServices(request, response, null, null, 1, 10);
         }
     }
 
@@ -268,6 +236,7 @@ public class ServiceManagement extends HttpServlet {
             int price = validateAndGetIntParameter(request, "price", "Price must be a valid number");
             int duration = validateAndGetIntParameter(request, "duration", "Duration must be a valid number");
             String description = validateAndGetParameter(request, "description", "Description is required");
+            String category = validateAndGetParameter(request, "category", "Category is required");
 
             // Additional validations
             if (name.length() > 100) {
@@ -302,30 +271,81 @@ public class ServiceManagement extends HttpServlet {
                 image = request.getParameter("currentImage");
             }
 
-            Service updatedService = new Service(id, name, price, duration, description, image);
+            // Get the existing service to maintain its status
+            Service existingService = serviceDAO.selectService(id);
+            String status = existingService != null ? existingService.getStatus() : "ACTIVE";
+
+            Service updatedService = new Service(id, name, price, duration, description, image, category, status);
             serviceDAO.updateService(updatedService);
             
             response.sendRedirect(request.getContextPath() + "/servicemanagement");
         } catch (ServletException e) {
             System.out.println("ServletException: " + e.getMessage());
             request.setAttribute("errorMessage", e.getMessage());
-            listServices(request, response, null, 1, 10); // Show the list with an error message
+            listServices(request, response, null, null, 1, 10);
         } catch (Exception e) {
             System.out.println("Exception: " + e.getMessage());
-            e.printStackTrace(); // Print the full stack trace for debugging
+            e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred while updating the service: " + e.getMessage());
-            listServices(request, response, null, 1, 10); // Show the list with an error message
+            listServices(request, response, null, null, 1, 10);
         }
     }
 
-    // Delete a service from the database
-    private void deleteService(HttpServletRequest request, HttpServletResponse response)
+    private void updateServiceStatus(HttpServletRequest request, HttpServletResponse response)
             throws SQLException, IOException {
-        int id = Integer.parseInt(request.getParameter("id"));
-        serviceDAO.deleteService(id);
-        response.sendRedirect("servicemanagement?action=list");
+        System.out.println("Updating service status...");
+        System.out.println("Parameters received:");
+        System.out.println("ID: " + request.getParameter("id"));
+        System.out.println("Status: " + request.getParameter("status"));
+        
+        try {
+            String idStr = request.getParameter("id");
+            String status = request.getParameter("status");
+            
+            // Validate parameters
+            if (idStr == null || idStr.trim().isEmpty()) {
+                throw new ServletException("Service ID is required");
+            }
+            
+            if (status == null || status.trim().isEmpty()) {
+                throw new ServletException("Status is required");
+            }
+            
+            // Parse and validate ID
+            int id;
+            try {
+                id = Integer.parseInt(idStr.trim());
+            } catch (NumberFormatException e) {
+                throw new ServletException("Invalid service ID format");
+            }
+            
+            // Validate status value
+            if (!status.equals("ACTIVE") && !status.equals("INACTIVE")) {
+                throw new ServletException("Invalid status value");
+            }
+            
+            // Update the status
+            boolean success = serviceDAO.updateServiceStatus(id, status);
+            if (success) {
+                request.getSession().setAttribute("successMessage", 
+                    "Service status updated to " + status + " successfully");
+            } else {
+                request.getSession().setAttribute("errorMessage", 
+                    "Failed to update service status");
+            }
+        } catch (ServletException e) {
+            System.err.println("Error in updateServiceStatus: " + e.getMessage());
+            request.getSession().setAttribute("errorMessage", e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Unexpected error in updateServiceStatus: " + e.getMessage());
+            e.printStackTrace();
+            request.getSession().setAttribute("errorMessage", 
+                "Error updating service status: " + e.getMessage());
+        }
+        
+        response.sendRedirect("servicemanagement");
     }
-    
+
     @Override
     public String getServletInfo() {
         return "Short description";

@@ -45,9 +45,9 @@
                     <div class="profile-info">
                         <div class="profile-avatar">
                             <!-- Hiển thị ảnh của người dùng -->
-                            <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
-                                ? "newUI/assets/img/" + person.getImage() 
-                                : "newUI/assets/img/default-avartar.jpg" %>" 
+                            <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                                    ? "newUI/assets/img/" + person.getImage()
+                                    : "newUI/assets/img/default-avartar.jpg"%>" 
                                  alt="Profile Picture">
                             <button class="edit-avatar"><i class="fas fa-camera"></i></button>
                         </div>
@@ -71,22 +71,36 @@
                     <!-- Upcoming Appointments Tab -->
                     <div class="profile-tab active" id="appointments">
                         <h2>Upcoming Appointments</h2>
-                        <div class="appointments-grid">
-                            <div class="appointment-card">
-                                <div class="appointment-date">
-                                    <span class="month">MAR</span>
-                                    <span class="day">15</span>
+                        <c:if test="${commingup.size() == 0}">
+                            <p>No appointments.
+                            </c:if> 
+                            <c:forEach items="${requestScope.commingup}" var="upcoming">
+                            <div class="appointments-grid">
+                                <div class="appointment-card">
+                                    <div class="appointment-date">
+                                        <span class="month">${upcoming.start.toLocalDate().getMonth()}</span>
+                                        <span class="day">${upcoming.start.toLocalDate().getDayOfMonth()}</span>
+                                    </div>
+                                    <div class="appointment-details">
+                                        <c:forEach items="${upcoming.services}" var="info">
+                                            <h3>${info.service.name}</h3>
+                                        </c:forEach>
+                                        <p><i class="fas "></i> Status: ${upcoming.status}</p>
+                                        <p><i class="far fa-clock"></i> ${upcoming.start.toLocalTime()} - ${upcoming.end.toLocalTime()}</p>
+                                        <c:forEach items="${upcoming.services}" var="info">
+                                            <p><i class="fas fa-user"></i> with ${info.staff.name}</p>
+                                        </c:forEach>
+                                    </div>
+                                    <div class="appointment-actions">
+                                        <form action="customerProfile" method="post">
+                                            <input type="hidden" name="action" value="cancel">
+                                            <input type="hidden" value="${upcoming.id}" name="appointmentID">
+                                            <button type="submit" class="cancel-btn">Cancel</button>
+                                        </form>
+                                        <button class="reschedule-btn">Reschedule</button>
+                                    </div>
                                 </div>
-                                <div class="appointment-details">
-                                    <h3>Classic Lash Extensions</h3>
-                                    <p><i class="far fa-clock"></i> 2:00 PM - 4:30 PM</p>
-                                    <p><i class="fas fa-user"></i> with Jessica Chen</p>
-                                </div>
-                                <div class="appointment-actions">
-                                    <button class="reschedule-btn">Reschedule</button>
-                                    <button class="cancel-btn">Cancel</button>
-                                </div>
-                            </div>
+                            </c:forEach>
                             <!-- Add more appointment cards as needed -->
                         </div>
                     </div>
@@ -94,21 +108,28 @@
                     <!-- Service History Tab -->
                     <div class="profile-tab" id="history">
                         <h2>Service History</h2>
-                        <div class="history-list">
-                            <div class="history-item">
-                                <div class="history-date">Feb 15, 2024</div>
-                                <div class="history-details">
-                                    <h3>Hybrid Lash Fill</h3>
-                                    <p>Service by Emily Davis</p>
-                                    <p class="price">$95</p>
+                        <c:if test="${history.size() == 0}">
+                            <p>No history of appointments.
+                            </c:if>     
+                            <c:forEach items="${requestScope.history}" var="history">
+                            <div class="history-list">
+                                <div class="history-item">
+                                    <div class="history-date">${history.start.toLocalDate().getMonth()} ${history.start.toLocalDate().getDayOfMonth()}, ${history.getStart().toLocalDate().getYear()}</div>
+                                    
+                                    <div class="history-details">
+                                        <c:forEach items="${history.services}" var="info">
+                                            <h3>${info.service.name}</h3>
+                                            <p>Service by ${info.staff.name}</p>
+                                            <p class="price">$${info.service.price}</p>
+                                        </c:forEach>
+                                    </div>
+                                    <button class="book-again-btn">Book Again</button>
                                 </div>
-                                <button class="book-again-btn">Book Again</button>
+                                <!-- Add more history items as needed -->
                             </div>
-                            <!-- Add more history items as needed -->
-                        </div>
+                        </c:forEach>
                     </div>
 
-                    <!-- Preferences Tab -->
                     <!-- Preferences Tab -->
                     <div class="profile-tab" id="preferences">
                         <h2>Change Your Password</h2>
@@ -179,39 +200,39 @@
                             <!-- Full Name -->
                             <div class="form-group">
                                 <label>Full Name</label>
-                                <input type="text" name="fullName" value="<%= person.getName() %>" required>
+                                <input type="text" name="fullName" value="<%= person.getName()%>" required>
                             </div>
 
                             <!-- Date of Birth -->
                             <div class="form-group">
                                 <label>Date of Birth</label>
-                                <input type="date" name="dateOfBirth" value="<%= person.getDateOfBirth() != null ? person.getDateOfBirth().toString() : "" %>" required>
+                                <input type="date" name="dateOfBirth" value="<%= person.getDateOfBirth() != null ? person.getDateOfBirth().toString() : ""%>" required>
                             </div>
 
                             <!-- Gender -->
                             <div class="form-group">
                                 <label>Gender</label>
                                 <select name="gender" required>
-                                    <option value="M" <%= (person.getGender() == 'M') ? "selected" : "" %>>Male</option>
-                                    <option value="F" <%= (person.getGender() == 'F') ? "selected" : "" %>>Female</option>
-                                    <option value="O" <%= (person.getGender() == 'O') ? "selected" : "" %>>Other</option>
+                                    <option value="M" <%= (person.getGender() == 'M') ? "selected" : ""%>>Male</option>
+                                    <option value="F" <%= (person.getGender() == 'F') ? "selected" : ""%>>Female</option>
+                                    <option value="O" <%= (person.getGender() == 'O') ? "selected" : ""%>>Other</option>
                                 </select>
                             </div>
 
                             <!-- Phone -->
                             <div class="form-group">
                                 <label>Phone</label>
-                                <input type="tel" name="phone" value="<%= person.getPhone() %>" required>
+                                <input type="tel" name="phone" value="<%= person.getPhone()%>" required>
                             </div>
                             <!-- Address -->
                             <div class="form-group">
                                 <label>Address</label>
-                                <input type="text" name="address" value="<%= person.getAddress() %>" required>
+                                <input type="text" name="address" value="<%= person.getAddress()%>" required>
                             </div>
                             <!-- Email -->
                             <div class="form-group">
                                 <label>Email</label>
-                                <input type="email" name="email" id="email_field" value="<%= person.getEmail() %>" required oninput="validateEmail(this)">
+                                <input type="email" name="email" id="email_field" value="<%= person.getEmail()%>" required oninput="validateEmail(this)">
                             </div>
                             <div id="email_error" style="color: red; display: none;"></div> <!-- Hiển thị lỗi email -->           
                             <!-- Submit Button -->
@@ -291,20 +312,20 @@
         </script>
 
 
-        <% 
+        <%
             String successMessage = (String) session.getAttribute("successMessage");
             String errorMessage = (String) request.getAttribute("errorMessage");
 
             if (successMessage != null) {
         %>
-        <div class="alert alert-success"><%= successMessage %></div>
+        <div class="alert alert-success"><%= successMessage%></div>
         <%
                 session.removeAttribute("successMessage");
             }
 
             if (errorMessage != null) {
         %>
-        <div class="alert alert-danger"><%= errorMessage %></div>
+        <div class="alert alert-danger"><%= errorMessage%></div>
         <%
             }
         %>
@@ -340,5 +361,4 @@
 
         </script>
     </body>
-
 </html>

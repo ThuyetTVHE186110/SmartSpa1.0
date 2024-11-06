@@ -7,7 +7,7 @@
     // You can directly use session
     if (session == null || session.getAttribute("account") == null) {
         // Redirect to login page if session is not found or account is not in session
-        response.sendRedirect("adminLogin.jsp");
+        response.sendRedirect("error");
     } else {
         // Get the account object from session
         Account account = (Account) session.getAttribute("account");
@@ -85,7 +85,18 @@
                             <div class="card-body">
                                 <h5 class="card-title">Feedback</h5>
                                 <p>Manage customer feedback from this panel.</p>
+                                <!-- Search Bar and Filter Menu -->
+                                <div class="d-flex justify-content-between mb-3">
+                                    <input style="width: 30% !important" type="text" class="form-control w-50" id="searchFeedback" placeholder="Search for customers..." onkeyup="filterTable()">
 
+                                    <select class="form-select w-25" id="serviceFilter" onchange="filterTable()">
+                                        <option value="">All Service</option>
+                                        <option value="Stone Therapy">Stone Therapy</option>
+                                        <option value="Body Massage">Body Massage</option>
+                                        <option value="Facial Therapy">Facial Therapy</option>
+                                        <option value="Skin Care">Skin Care</option>
+                                    </select>
+                                </div>
                                 <!-- Table with stripped rows -->
                                 <table class="table datatable">
                                     <thead>
@@ -115,7 +126,7 @@
 
                                 </table>
                                 <!-- End Table with stripped rows -->
-
+                                <div id="paginationControls" class="mt-3 d-flex justify-content-center"></div>
                             </div>
                         </div>
 
@@ -173,28 +184,14 @@
                             <div class="col-12">
                                 <label for="viewComment" class="form-label">Comment</label>
                                 <textarea class="form-control" id="viewComment" rows="3" readonly></textarea>
-
-                                <input type="text" class="form-control" id="viewCustomerName" value="Brandon Jacob"
-                                       readonly>
                             </div>
-                            <div class="col-12">
-                                <label for="viewService" class="form-label">Service</label>
-                                <input type="text" class="form-control" id="viewService" value="Haircut" readonly>
-                            </div>
+                            
                             <div class="col-12">
                                 <label for="viewRating" class="form-label">Rating</label>
                                 <input type="text" class="form-control" id="viewRating" value="4.5" readonly>
                             </div>
-                            <div class="col-12">
-                                <label for="viewComment" class="form-label">Comment</label>
-                                <textarea class="form-control" id="viewComment" rows="3"
-                                          readonly>Great service, very satisfied!</textarea>
-                            </div>
-                            <div class="col-12">
-                                <label for="viewDate" class="form-label">Date</label>
-                                <input type="text" class="form-control" id="viewDate" value="2023-05-25" readonly>
+                            
 
-                            </div>
                         </form>
                         <!-- End View Feedback Form -->
                     </div>
@@ -204,14 +201,121 @@
                 </div>
             </div>
         </div><!-- End View Feedback Modal-->
-        <script>
+
+
+    </body>
+    <script>
                                                                 function setModalData(customerName, serviceName, content) {
                                                                     document.getElementById('viewCustomerName').value = customerName;
                                                                     document.getElementById('viewService').value = serviceName;
                                                                     document.getElementById('viewComment').value = content;
                                                                 }
-        </script>
 
-    </body>
+                                                                function filterTable() {
+                                                                    const input = document.getElementById('searchFeedback').value.toLowerCase();
+                                                                    const serviceFilter = document.getElementById('serviceFilter').value;
+                                                                    const table = document.querySelector('.datatable tbody');
+                                                                    const rows = table.getElementsByTagName('tr');
+                                                                    let filteredRows = [];
 
+                                                                    for (let i = 0; i < rows.length; i++) {
+                                                                        const cells = rows[i].getElementsByTagName('td');
+                                                                        let textMatch = false;
+                                                                        let serviceMatch = true; // Default to true when "All Service" is selected
+
+                                                                        // Check if the row matches the search text
+                                                                        for (let j = 0; j < cells.length; j++) {
+                                                                            if (cells[j]) {
+                                                                                const cellText = cells[j].textContent || cells[j].innerText;
+
+                                                                                // Check for text match
+                                                                                if (cellText.toLowerCase().indexOf(input) > -1) {
+                                                                                    textMatch = true;
+                                                                                }
+
+                                                                                // Check for service match (assuming service is in the 3rd column, adjust if necessary)
+                                                                                if (j === 2 && serviceFilter && serviceFilter !== '') {
+                                                                                    if (cells[j].textContent.trim() !== serviceFilter) {
+                                                                                        serviceMatch = false;
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+
+                                                                        // Display the row if both conditions are satisfied
+                                                                        if (textMatch && serviceMatch) {
+                                                                            filteredRows.push(rows[i]);
+                                                                        }
+                                                                    }
+
+                                                                    // Hide all rows first
+                                                                    for (let i = 0; i < rows.length; i++) {
+                                                                        rows[i].style.display = 'none';
+                                                                    }
+
+                                                                    // Show only filtered rows with pagination
+                                                                    const rowsPerPage = 5;
+                                                                    const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+                                                                    let currentPage = 1;
+
+                                                                    function displayPage(page) {
+                                                                        currentPage = page;
+                                                                        const start = (page - 1) * rowsPerPage;
+                                                                        const end = Math.min(start + rowsPerPage, filteredRows.length);
+
+                                                                        for (let i = 0; i < filteredRows.length; i++) {
+                                                                            filteredRows[i].style.display = (i >= start && i < end) ? '' : 'none';
+                                                                        }
+
+                                                                        renderPaginationControls();
+                                                                    }
+
+                                                                    function renderPaginationControls() {
+                                                                        const paginationControls = document.getElementById('paginationControls');
+                                                                        paginationControls.innerHTML = '';
+
+                                                                        const prevButton = document.createElement('button');
+                                                                        prevButton.textContent = 'Previous';
+                                                                        prevButton.classList.add('btn', 'btn-secondary', 'm-1');
+                                                                        prevButton.disabled = currentPage === 1;
+                                                                        prevButton.addEventListener('click', function () {
+                                                                            if (currentPage > 1) {
+                                                                                displayPage(currentPage - 1);
+                                                                            }
+                                                                        });
+                                                                        paginationControls.appendChild(prevButton);
+
+                                                                        for (let i = 1; i <= totalPages; i++) {
+                                                                            const button = document.createElement('button');
+                                                                            button.textContent = i;
+                                                                            button.classList.add('btn', 'btn-secondary', 'm-1');
+                                                                            if (i === currentPage) {
+                                                                                button.classList.add('active');
+                                                                            }
+                                                                            button.addEventListener('click', function () {
+                                                                                displayPage(i);
+                                                                            });
+                                                                            paginationControls.appendChild(button);
+                                                                        }
+
+                                                                        const nextButton = document.createElement('button');
+                                                                        nextButton.textContent = 'Next';
+                                                                        nextButton.classList.add('btn', 'btn-secondary', 'm-1');
+                                                                        nextButton.disabled = currentPage === totalPages;
+                                                                        nextButton.addEventListener('click', function () {
+                                                                            if (currentPage < totalPages) {
+                                                                                displayPage(currentPage + 1);
+                                                                            }
+                                                                        });
+                                                                        paginationControls.appendChild(nextButton);
+                                                                    }
+
+                                                                    displayPage(1);
+                                                                }
+
+
+
+
+
+    </script>
 </html>

@@ -24,7 +24,7 @@ public class AppointmentServiceDAO extends DBContext {
         PreparedStatement stm = null;
         ResultSet rs = null;
         try (Connection connection = getConnection()) {
-            String query = "INSERT INTO Appointment_Service (appointmentID, serviceID, staffID) VALUES (?, ?, ?)";
+            String query = "INSERT INTO Appointment_Service (appointmentID, servicesID, staffID) VALUES (?, ?, ?)";
             stm = connection.prepareStatement(query);
             stm.setInt(1, appointmentid);
             stm.setInt(2, serviceID);
@@ -63,7 +63,7 @@ public class AppointmentServiceDAO extends DBContext {
                 AppointmentService appointmentService = new AppointmentService();
                 appointmentService.setId(rs.getInt("ID"));
                 appointmentService.setAppointmentID(rs.getInt("AppointmentID"));
-                appointmentService.setService(serviceDAO.selectService(rs.getInt("ServiceID")));
+                appointmentService.setService(serviceDAO.selectService(rs.getInt("ServicesID")));
                 appointmentService.setStaff(personDAO.getPersonByID(rs.getInt("StaffID")));
                 services.add(appointmentService);
             }
@@ -102,7 +102,7 @@ public class AppointmentServiceDAO extends DBContext {
                 AppointmentService appointmentService = new AppointmentService();
                 appointmentService.setId(rs.getInt("ID"));
                 appointmentService.setAppointmentID(rs.getInt("AppointmentID"));
-                appointmentService.setService(serviceDAO.selectService(rs.getInt("ServiceID")));
+                appointmentService.setService(serviceDAO.selectService(rs.getInt("ServicesID")));
                 appointmentService.setStaff(personDAO.getPersonByID(rs.getInt("StaffID")));
                 services.add(appointmentService);
             }
@@ -148,9 +148,6 @@ public class AppointmentServiceDAO extends DBContext {
 
     public static void main(String[] args) {
         AppointmentServiceDAO aO = new AppointmentServiceDAO();
-        List<AppointmentService> list = aO.getAllAppointmentServices();
-        for (AppointmentService appointmentService : list) {
-            System.out.println(appointmentService.getAppointmentID());
-        }
+        aO.addAppointmentService(540, 2, 8);
     }
 }

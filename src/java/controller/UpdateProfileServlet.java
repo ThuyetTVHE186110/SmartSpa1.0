@@ -39,7 +39,8 @@ public class UpdateProfileServlet extends HttpServlet {
         String newEmail = request.getParameter("email");
         String dateOfBirthStr = request.getParameter("dateOfBirth");
         String genderStr = request.getParameter("gender");
-        // Handle other fields as needed, like phone, address, etc.
+
+        // Update the person object with new details
         if (fullName != null) {
             person.setName(fullName);
         }
@@ -49,15 +50,15 @@ public class UpdateProfileServlet extends HttpServlet {
         if (address != null) {
             person.setAddress(address);
         }
+
         try {
             // Update email and username if the email has changed
             if (newEmail != null && !newEmail.equals(person.getEmail())) {
                 boolean emailUpdated = new PersonDAO().updateEmailAndUsername(person.getId(), newEmail);
                 if (emailUpdated) {
-                    person.setEmail(newEmail);  // Update email in session object
-                    account.setUsername(newEmail);  // Update username in session object
+                    person.setEmail(newEmail);
+                    account.setUsername(newEmail);
                 } else {
-                    // Handle error (e.g., show an error message)
                     request.setAttribute("errorMessage", "Failed to update email.");
                 }
             }
@@ -68,17 +69,16 @@ public class UpdateProfileServlet extends HttpServlet {
 
         if (dateOfBirthStr != null && !dateOfBirthStr.isEmpty()) {
             try {
-                java.sql.Date dateOfBirth = java.sql.Date.valueOf(dateOfBirthStr); // Convert String to Date
+                java.sql.Date dateOfBirth = java.sql.Date.valueOf(dateOfBirthStr);
                 person.setDateOfBirth(dateOfBirth);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
-                // Handle invalid date format here if needed
+                request.setAttribute("errorMessage", "Invalid date format.");
             }
         }
         if (genderStr != null && !genderStr.isEmpty()) {
             person.setGender(genderStr.charAt(0));
         }
-        // Set other fields to `person` object similarly
 
         try {
             // Handle profile image upload
@@ -93,7 +93,7 @@ public class UpdateProfileServlet extends HttpServlet {
                     uploadDir.mkdir();
                 }
 
-                // Save file to directory
+                // Save the file to the directory
                 filePart.write(uploadPath + File.separator + fileName);
 
                 // Update image in session and database
@@ -103,21 +103,39 @@ public class UpdateProfileServlet extends HttpServlet {
 
             // Handle image deletion if requested
             if ("true".equals(request.getParameter("deleteImage"))) {
+                // Remove the file from the server directory
+                String currentImage = person.getImage();
+                if (currentImage != null && !currentImage.isEmpty() && !currentImage.equals("default-avartar.jpg")) {
+                    String uploadPath = getServletContext().getRealPath("/") + "img";
+                    File file = new File(uploadPath, currentImage);
+
+                    // Delete the file from the server
+                    if (file.exists()) {
+                        boolean deleted = file.delete();
+                        if (!deleted) {
+                            request.setAttribute("errorMessage", "Failed to delete the image file.");
+                        }
+                    }
+                }
+
+                // Update the database to remove the image reference
                 person.setImage(null);
                 new PersonDAO().updateImage(person.getId(), null);
             }
+
+            // Update the person details in the database
             new PersonDAO().updatePerson(person);
+
             // Save the updated person info to the session
             session.setAttribute("person", person);
+            session.setAttribute("successMessage", "Profile updated successfully!");
 
         } catch (SQLException e) {
             e.printStackTrace();
-            // Optionally add a custom error message or redirect to an error page
             request.setAttribute("errorMessage", "An error occurred while updating your profile. Please try again.");
             request.getRequestDispatcher("userProfile.jsp").forward(request, response);
             return;
         }
-        session.setAttribute("successMessage", "Profile updated successfully!");
 
         // Redirect back to profile page to view updated info
         response.sendRedirect("userProfile.jsp?tab=edit");

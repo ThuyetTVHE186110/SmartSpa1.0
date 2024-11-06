@@ -4,6 +4,7 @@
  */
 package dal;
 
+import com.sun.mail.imap.IMAPSSLStore;
 import static dal.DBContext.getConnection;
 import java.util.logging.Logger;
 import java.sql.Timestamp;
@@ -13,11 +14,16 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import model.Appointment;
 import model.AppointmentService;
+import model.Person;
+import model.Service;
+import model.TimeSlot;
 
 /**
  * Appointment Data Access Objects
@@ -26,10 +32,178 @@ import model.AppointmentService;
  */
 public class AppointmentDAO extends DBContext {
 
-    private static final String SELECT_ALL_APPOINTMENTS = "SELECT * FROM Appointment ORDER BY appointmentDate DESC, appointmentTime DESC";
-    private static final String INSERT_APPOINTMENT = "INSERT INTO Appointment (appointmentTime, appointmentDate, CreatedDate, status, note, CustomerID) VALUES (?, ?, ?, ?, ?, ?)";
+    private static final String SELECT_ALL_APPOINTMENTS = "SELECT * FROM Appointment ORDER BY Start DESC";
+    private static final String INSERT_APPOINTMENT = "INSERT INTO Appointment (Start, [End], CreatedDate, Status, Note, CustomerID) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String DELETE_APPOINTMENT = "DELETE FROM Appointment WHERE ID = ?";
-    private static final String UPDATE_APPOINTMENT = "UPDATE Appointment SET AppointmentTime = ?, AppointmentDate = ?, CreatedDate = ?, Status = ?, Note = ?, CustomerID = ? WHERE ID = ?";
+    private static final String UPDATE_APPOINTMENT = "UPDATE Appointment SET Start = ?, [End] = ?, CreatedDate = ?, Status = ?, Note = ?, CustomerID = ? WHERE ID = ?";
+    private static final String BUSY_TIME = """
+                                            SELECT Cast(a.Start as Time) as Start, Cast(a.[End] as Time) as [End]
+                                            FROM Appointment a
+                                            JOIN Appointment_Service asvc ON a.ID = asvc.AppointmentID
+                                            WHERE asvc.StaffID = ? AND a.Status <> 'Completed' AND Cast(a.Start as Date) = ? AND Cast(a.[End] as Date) = ?""";
+
+    private final PersonDAO personDAO = new PersonDAO();
+    private final AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
+
+    public Appointment getAppointmentByID(int id) {
+        Appointment appointment = null;
+        Logger logger = Logger.getLogger(getClass().getName());
+        String sql = "SELECT * FROM Appointment WHERE id = ?";
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
+            // Thiết lập tham số cho câu truy vấn SQL
+            stm.setInt(1, id);
+
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    appointment = new Appointment();
+                    appointment.setId(rs.getInt("ID"));
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
+                    appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setNote(rs.getString("Note"));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return appointment;
+    }
+
+    public List<Appointment> getAllByCustomer(int customerID) {
+        List<Appointment> appointments = new ArrayList<>();
+        Logger logger = Logger.getLogger(getClass().getName());
+
+        String SELECT_APPOINTMENTS = "SELECT * FROM Appointment a WHERE a.CustomerID = ?";
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS)) {
+
+// Thiết lập tham số cho câu truy vấn SQL
+            stm.setInt(1, customerID);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment();
+                    appointment.setId(rs.getInt("ID"));
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
+                    appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setNote(rs.getString("Note"));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
+                    appointments.add(appointment);
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return appointments;
+    }
+    
+    public List<Appointment> getHistoryCustomer(int customerID) {
+        List<Appointment> appointments = new ArrayList<>();
+        Logger logger = Logger.getLogger(getClass().getName());
+
+        String SELECT_APPOINTMENTS = "SELECT * FROM Appointment a WHERE a.Start < CAST(GETDATE() AS DATE) and a.CustomerID = ?";
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS)) {
+
+// Thiết lập tham số cho câu truy vấn SQL
+            stm.setInt(1, customerID);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment();
+                    appointment.setId(rs.getInt("ID"));
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
+                    appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setNote(rs.getString("Note"));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
+                    appointments.add(appointment);
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return appointments;
+    }
+
+    public List<Appointment> getCommingCustomer(int customerID) {
+        List<Appointment> appointments = new ArrayList<>();
+        Logger logger = Logger.getLogger(getClass().getName());
+
+        String SELECT_APPOINTMENTS = "SELECT * FROM Appointment a WHERE a.Start >= CAST(GETDATE() AS DATE) and a.CustomerID = ?";
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS)) {
+
+// Thiết lập tham số cho câu truy vấn SQL
+            stm.setInt(1, customerID);
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment();
+                    appointment.setId(rs.getInt("ID"));
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
+                    appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setNote(rs.getString("Note"));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
+                    appointments.add(appointment);
+                }
+            }
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return appointments;
+    }
+
+    public List<TimeSlot> getBusyTimes(int staffID, LocalDate date) {
+        List<TimeSlot> busyTimes = new ArrayList<>();
+        Logger logger = Logger.getLogger(getClass().getName());
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(BUSY_TIME)) {
+
+            // Thiết lập tham số cho câu truy vấn SQL
+            stm.setInt(1, staffID);
+            stm.setDate(2, java.sql.Date.valueOf(date));
+            stm.setDate(3, java.sql.Date.valueOf(date));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    TimeSlot busyTime = new TimeSlot();
+                    busyTime.setStart(rs.getTime("Start").toLocalTime());
+                    busyTime.setEnd(rs.getTime("End").toLocalTime());
+                    boolean exists = busyTimes.stream().anyMatch(existingTime
+                            -> existingTime.getStart().equals(busyTime.getStart())
+                            && existingTime.getEnd().equals(busyTime.getEnd()));
+                    if (!exists) {
+                        busyTimes.add(busyTime);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return busyTimes;
+    }
 
     /**
      * Get all appointment
@@ -46,17 +220,15 @@ public class AppointmentDAO extends DBContext {
             while (rs.next()) {
                 Appointment appointment = new Appointment();
                 appointment.setId(rs.getInt("ID"));
-                appointment.setAppointmentTime(rs.getTime("AppointmentTime").toLocalTime());
-                appointment.setAppointmentDate(rs.getDate("AppointmentDate").toLocalDate());
+                appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
                 appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
                 appointment.setStatus(rs.getString("Status"));
                 appointment.setNote(rs.getString("Note"));
 
-                PersonDAO personDAO = new PersonDAO();
                 appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
                 appointments.add(appointment);
 
-                AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
                 List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
                 appointment.setServices(list);
             }
@@ -75,9 +247,8 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getByDate(LocalDate date) {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
-        PersonDAO personDAO = new PersonDAO();
-        AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
-        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE appointmentDate = ? ORDER BY appointmentDate DESC, appointmentTime DESC";
+
+        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE Start = ? ORDER BY appointmentDate DESC, appointmentTime DESC";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
 
@@ -88,15 +259,17 @@ public class AppointmentDAO extends DBContext {
                 while (rs.next()) {
                     Appointment appointment = new Appointment();
                     appointment.setId(rs.getInt("ID"));
-                    appointment.setAppointmentTime(rs.getTime("AppointmentTime").toLocalTime());
-                    appointment.setAppointmentDate(rs.getDate("AppointmentDate").toLocalDate());
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
                     appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
                     appointment.setStatus(rs.getString("Status"));
                     appointment.setNote(rs.getString("Note"));
+
                     appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    appointments.add(appointment);
+
                     List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
                     appointment.setServices(list);
-                    appointments.add(appointment);
                 }
             }
 
@@ -110,8 +283,7 @@ public class AppointmentDAO extends DBContext {
     public List<Appointment> getByCustomer(String name) {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
-        PersonDAO personDAO = new PersonDAO();
-        AppointmentServiceDAO serviceDAO = new AppointmentServiceDAO();
+
         String SELECT_APPOINTMENTS_BY_DATE = """
                                              SELECT * FROM Appointment a join Person p on a.customerID = p.ID where p.Name like ?
                                              ORDER BY a.appointmentDate DESC, a.appointmentTime DESC""";
@@ -125,8 +297,8 @@ public class AppointmentDAO extends DBContext {
                 while (rs.next()) {
                     Appointment appointment = new Appointment();
                     appointment.setId(rs.getInt("ID"));
-                    appointment.setAppointmentTime(rs.getTime("AppointmentTime").toLocalTime());
-                    appointment.setAppointmentDate(rs.getDate("AppointmentDate").toLocalDate());
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
                     appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
                     appointment.setStatus(rs.getString("Status"));
                     appointment.setNote(rs.getString("Note"));
@@ -155,8 +327,8 @@ public class AppointmentDAO extends DBContext {
         PreparedStatement stm = null;
         try (Connection connection = getConnection()) {
             stm = connection.prepareStatement(INSERT_APPOINTMENT);
-            stm.setTime(1, Time.valueOf(appointment.getAppointmentTime())); // Thời gian cuộc hẹn
-            stm.setDate(2, java.sql.Date.valueOf(appointment.getAppointmentDate())); // Ngày cuộc hẹn
+            stm.setTimestamp(1, Timestamp.valueOf(appointment.getStart()));
+            stm.setTimestamp(2, Timestamp.valueOf(appointment.getEnd()));
             stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));   // Ngày tạo cuộc hẹn
             stm.setString(4, appointment.getStatus());                              // Trạng thái cuộc hẹn
             stm.setString(5, appointment.getNote());                                // Ghi chú
@@ -203,8 +375,8 @@ public class AppointmentDAO extends DBContext {
 
         try (Connection connection = getConnection()) {
             stm = connection.prepareStatement(UPDATE_APPOINTMENT);
-            stm.setTime(1, Time.valueOf(appointment.getAppointmentTime()));
-            stm.setDate(2, java.sql.Date.valueOf(appointment.getAppointmentDate()));
+            stm.setTimestamp(1, Timestamp.valueOf(appointment.getStart()));
+            stm.setTimestamp(2, Timestamp.valueOf(appointment.getEnd()));
             stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));
             stm.setString(4, appointment.getStatus());
             stm.setString(5, appointment.getNote());
@@ -265,17 +437,33 @@ public class AppointmentDAO extends DBContext {
         return maxID; // Trả về 0 nếu có lỗi hoặc không tìm thấy ID nào
     }
 
-    public static void main(String[] args) {
-        AppointmentDAO appointmentDAO = new AppointmentDAO();
-        List<Appointment> list = appointmentDAO.getAll();
+    public void updateStatus(String status, int appointmentID) {
+        PreparedStatement stm = null;
+        Logger logger = Logger.getLogger(getClass().getName());
 
-        for (Appointment appointment : list) {
-            List<AppointmentService> list1 = appointment.getServices();
-            System.out.println("Appoinment" + appointment.getId() + " : ");
-            for (AppointmentService appointmentService : list1) {
-                System.out.println(appointmentService.getService().getName());
+        try (Connection connection = getConnection()) {
+            stm = connection.prepareStatement("UPDATE Appointment SET Status = ? Where ID = ?;");
+            stm.setString(1, status);
+            stm.setInt(2, appointmentID);
+            int rowsAffected = stm.executeUpdate();
+            if (rowsAffected > 0) {
+                logger.info("Appointment successfully updated.");
+            }
+        } catch (SQLException e) {
+            logger.log(Level.SEVERE, "Error updating appointment: {0}", e.getMessage());
+        } finally {
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(AppointmentDAO.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         }
+    }
 
+    public static void main(String[] args) {
+        AppointmentDAO aO = new AppointmentDAO();
+        aO.updateStatus("Cancelled", 4);
     }
 }

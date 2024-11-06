@@ -1,7 +1,9 @@
 package controller;
 
 import dal.AccountDAO;
+import dal.AppointmentDAO;
 import dal.PersonDAO;
+import dal.PaymentDAO;
 import java.io.IOException;
 import java.sql.SQLException;
 import jakarta.servlet.ServletException;
@@ -9,8 +11,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.util.List;
 import model.Account;
+import model.Appointment;
 import model.Person;
+import model.Payment;
 
 public class CustomerProfileServlet extends HttpServlet {
 
@@ -27,27 +32,45 @@ public class CustomerProfileServlet extends HttpServlet {
         Account account = (Account) session.getAttribute("account");
         Person person = account.getPersonInfo();
         String action = request.getParameter("action");
+        String currentTab = request.getParameter("currentTab"); // Get the current tab parameter
 
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        if(action.equals("cancel")){
+            int id = Integer.parseInt(request.getParameter("appointmentID"));
+            appointmentDAO.updateStatus("Cancelled", id);
+            doGet(request, response);
+        }
+        
         try {
             if ("changePassword".equals(action)) {
-                // Handle password change
-                String currentPassword = request.getParameter("currentPassword");
+                String currentPassword = request.getParameter("password");
                 String newPassword = request.getParameter("newPassword");
+                String confirmNewPassword = request.getParameter("confirmNewPassword");
 
-                if (!account.getPassword().equals(currentPassword)) {
-                    request.setAttribute("error", "Current password is incorrect.");
+                if (!newPassword.equals(confirmNewPassword)) {
+                    request.setAttribute("errorMessage", "New passwords do not match.");
+                    request.setAttribute("currentTab", "preferences");
                     request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
                     return;
                 }
 
-                // Update password if valid
+                if (!account.getPassword().equals(currentPassword)) {
+                    request.setAttribute("errorMessage", "Current password is incorrect.");
+                    request.setAttribute("currentTab", "preferences");
+                    request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+                    return;
+                }
+
                 AccountDAO accountDAO = new AccountDAO();
-                accountDAO.updatePassword(account.getUsername(), newPassword);
-                account.setPassword(newPassword);  // Update password in session
-
-                request.setAttribute("successMessage", "Password changed successfully.");
-                response.sendRedirect("customerProfile");
-
+                if (accountDAO.updatePassword(account.getUsername(), newPassword)) {
+                    account.setPassword(newPassword);
+                    session.setAttribute("successMessage", "Password changed successfully.");
+                    response.sendRedirect("customerProfile?tab=preferences");
+                } else {
+                    request.setAttribute("errorMessage", "Failed to update password.");
+                    request.setAttribute("currentTab", "preferences");
+                    request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
+                }
             } else {
                 // Handle profile update
                 String fullName = request.getParameter("fullName");
@@ -58,24 +81,22 @@ public class CustomerProfileServlet extends HttpServlet {
                 String address = request.getParameter("address");
 
                 person.setName(fullName);
-                // Check if dateOfBirth is valid before setting
                 if (dateOfBirth != null && !dateOfBirth.isEmpty()) {
                     try {
                         person.setDateOfBirth(java.sql.Date.valueOf(dateOfBirth));
                     } catch (IllegalArgumentException e) {
-                        request.setAttribute("error", "Invalid date format. Please enter a valid date.");
+                        request.setAttribute("errorMessage", "Invalid date format. Please enter a valid date.");
+                        request.setAttribute("currentTab", "settings");
                         request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
                         return;
                     }
                 } else {
-                    // Handle the case where dateOfBirth might be optional or not provided
                     person.setDateOfBirth(null);
                 }
-                // Set gender only if it is not null and not empty
                 if (gender != null && !gender.isEmpty()) {
                     person.setGender(gender.charAt(0));
                 } else {
-                    person.setGender('U'); // Default 'U' for unknown or retain the current gender if null isn't intended to reset
+                    person.setGender('U');
                 }
                 person.setPhone(phone);
                 person.setEmail(email);
@@ -85,12 +106,14 @@ public class CustomerProfileServlet extends HttpServlet {
                 personDAO.updatePerson(person);
                 session.setAttribute("person", person);
 
-                request.setAttribute("successMessage", "Profile updated successfully.");
-                response.sendRedirect("customerProfile");
+                session.setAttribute("successMessage", "Profile updated successfully.");
+                response.sendRedirect("customerProfile?tab=" + (currentTab != null ? java.net.URLEncoder.encode(currentTab, "UTF-8") : "settings"));
+
             }
         } catch (SQLException e) {
             e.printStackTrace();
-            request.setAttribute("error", "An error occurred while updating your information.");
+            request.setAttribute("errorMessage", "An error occurred while updating your information.");
+            request.setAttribute("currentTab", currentTab);
             request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
         }
     }
@@ -98,14 +121,24 @@ public class CustomerProfileServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Display the profile page with the current information
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("login");
+            response.sendRedirect("login.jsp");
             return;
         }
+        AppointmentDAO appointmentDAO = new AppointmentDAO();
+        Account account = (Account) session.getAttribute("account");
+        Person person = account.getPersonInfo();
+        List<Appointment> history = appointmentDAO.getHistoryCustomer(person.getId());
+        request.setAttribute("history", history);
 
+        List<Appointment> commingup = appointmentDAO.getCommingCustomer(person.getId());
+        request.setAttribute("commingup", commingup);
         // Forward to customerProfile.jsp
+        PaymentDAO paymentDAO = new PaymentDAO();
+        List<Payment> payments = paymentDAO.getPaymentsByPersonId(person.getId());
+        request.setAttribute("payments", payments);
+
         request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
     }
 }

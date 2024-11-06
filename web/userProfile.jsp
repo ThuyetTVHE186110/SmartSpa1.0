@@ -21,20 +21,6 @@
         }
     }
 %>
-<style>
-    /* Đảm bảo khung ảnh là hình tròn */
-    .profile-avatar {
-        width: 150px; /* Kích thước vuông cho avatar */
-        height: 150px;
-        border-radius: 50%; /* Khung tròn */
-        overflow: hidden; /* Ẩn phần vượt quá để ảnh có dạng tròn */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border: 2px solid #ddd; /* Viền cho ảnh avatar */
-    }
-</style>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -72,24 +58,24 @@
     </head>
 
     <body>
-        <% 
-                    Account account = (Account) session.getAttribute("account"); 
-                    String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest"; 
+        <%
+            Account account = (Account) session.getAttribute("account");
+            String displayName = (account != null) ? account.getPersonInfo().getName() : "Guest";
         %>
 
-        <% 
-    Person person = account.getPersonInfo();
+        <%
+            Person person = account.getPersonInfo();
 
-    // Lấy các thông tin khác từ person
-    String fullName = (person != null) ? person.getName() : "Guest";
-    String phone = (person != null) ? person.getPhone() : "N/A";
-    String email = (person != null) ? person.getEmail() : "N/A";
-    String address = (person != null) ? person.getAddress() : "N/A";
-    char gender = (person != null) ? person.getGender() : 'N';
-    java.sql.Date dob = (person != null) ? person.getDateOfBirth() : null;
-    String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
-    
-    // Lấy đường dẫn hình ảnh từ person
+            // Lấy các thông tin khác từ person
+            String fullName = (person != null) ? person.getName() : "Guest";
+            String phone = (person != null) ? person.getPhone() : "N/A";
+            String email = (person != null) ? person.getEmail() : "N/A";
+            String address = (person != null) ? person.getAddress() : "N/A";
+            char gender = (person != null) ? person.getGender() : 'N';
+            java.sql.Date dob = (person != null) ? person.getDateOfBirth() : null;
+            String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
+
+            // Lấy đường dẫn hình ảnh từ person
         %>
         <jsp:include page="headerHTML.jsp" />
 
@@ -116,14 +102,10 @@
                         <div class="card">
                             <div class="card-body profile-card pt-4 d-flex flex-column align-items-center">
 
-                                <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
-                ? "img/" + person.getImage() 
-                : "img/default-avatar.jpg" %>" alt="Profile Picturea" class="rounded-circle">
-                                <h2><%= (displayName != null) ? displayName : "Guest" %></h2>
-<!--                                <div class="social-links mt-2">
-                                    <a href="#" class="facebook"><i class="bi bi-facebook"></i></a>
-                                </div>-->
-                            </div>
+                                <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                                        ? "img/" + person.getImage()
+                                        : "img/default-avatar.jpg"%>" alt="Profile Picturea" class="rounded-circle" style="width: 100px; height: 100px; object-fit: cover;">
+                                <h2><%= (displayName != null) ? displayName : "Guest"%></h2>                            </div>
                         </div>
 
                     </div>
@@ -161,32 +143,32 @@
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label ">Full Name</div>
-                                            <div class="col-lg-9 col-md-8"><%= fullName %></div>
+                                            <div class="col-lg-9 col-md-8"><%= fullName%></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label ">Date of Birth</div>
-                                            <div class="col-lg-9 col-md-8"><%= dateOfBirth %></div>
+                                            <div class="col-lg-9 col-md-8"><%= dateOfBirth%></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label">Gender</div>
-                                            <div class="col-lg-9 col-md-8"><%= (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "Other" %></div>
+                                            <div class="col-lg-9 col-md-8"><%= (gender == 'M') ? "Male" : (gender == 'F') ? "Female" : "Other"%></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label">Phone</div>
-                                            <div class="col-lg-9 col-md-8"><%= phone %></div>
+                                            <div class="col-lg-9 col-md-8"><%= phone%></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label">Email</div>
-                                            <div class="col-lg-9 col-md-8"><%= email %></div>
+                                            <div class="col-lg-9 col-md-8"><%= email%></div>
                                         </div>
 
                                         <div class="row">
                                             <div class="col-lg-3 col-md-4 label">Address</div>
-                                            <div class="col-lg-9 col-md-8"><%= address %></div>
+                                            <div class="col-lg-9 col-md-8"><%= address%></div>
                                         </div>
 
                                     </div>
@@ -198,20 +180,21 @@
                                             <div class="row mb-3">
                                                 <label for="profileImage" class="col-md-4 col-lg-3 col-form-label">Profile Image</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <img id="previewImage" src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty()) 
-                                                                 ? "img/" + person.getImage() 
-                                                                 : "img/default-avatar.jpg" %>" alt="Profile">
+                                                    <img id="previewImage" src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                                                            ? "img/" + person.getImage()
+                                                            : "img/default-avatar.jpg"%>" alt="Profile">
                                                     <div class="pt-2">
                                                         <!-- Image upload input -->
                                                         <label class="btn btn-primary btn-sm" title="Upload new profile image">
                                                             <i class="bi bi-upload"></i> Upload
-                                                            <input type="file" name="profileImage" style="display: none;" onchange="previewSelectedImage(event)">
+                                                            <input type="file" name="profileImage" id="profileImageInput" style="display: none;" accept="image/*" onchange="previewSelectedImage(event)">
                                                         </label>
                                                         <!-- Image delete input -->
                                                         <button type="button" onclick="deleteProfileImage()" class="btn btn-danger btn-sm" title="Remove my profile image">
                                                             <i class="bi bi-trash"></i> Delete
                                                         </button>
                                                     </div>
+
                                                 </div>
                                             </div>
 
@@ -219,7 +202,7 @@
                                             <div class="row mb-3">
                                                 <label for="fullName" class="col-md-4 col-lg-3 col-form-label">Full Name</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="fullName" type="text" class="form-control" id="fullName" value="<%= fullName %>">
+                                                    <input name="fullName" type="text" class="form-control" id="fullName" value="<%= fullName%>">
                                                 </div>
                                             </div>
 
@@ -227,7 +210,7 @@
                                             <div class="row mb-3">
                                                 <label for="dateOfBirth" class="col-md-4 col-lg-3 col-form-label">Date of Birth</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="dateOfBirth" type="date" class="form-control" id="dateOfBirth" value="<%= dateOfBirth %>">
+                                                    <input name="dateOfBirth" type="date" class="form-control" id="dateOfBirth" value="<%= dateOfBirth%>">
                                                 </div>
                                             </div>
 
@@ -236,9 +219,9 @@
                                                 <label for="gender" class="col-md-4 col-lg-3 col-form-label">Gender</label>
                                                 <div class="col-md-8 col-lg-9">
                                                     <select name="gender" class="form-control" id="gender" required>
-                                                        <option value="M" <%= (gender == 'M') ? "selected" : "" %>>Male</option>
-                                                        <option value="F" <%= (gender == 'F') ? "selected" : "" %>>Female</option>
-                                                        <option value="O" <%= (gender == 'O') ? "selected" : "" %>>Other</option>
+                                                        <option value="M" <%= (gender == 'M') ? "selected" : ""%>>Male</option>
+                                                        <option value="F" <%= (gender == 'F') ? "selected" : ""%>>Female</option>
+                                                        <option value="O" <%= (gender == 'O') ? "selected" : ""%>>Other</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -248,21 +231,21 @@
                                                 <label for="Address" class="col-md-4 col-lg-3 col-form-label">Address</label>
                                                 <div class="col-md-8 col-lg-9">
                                                     <input name="address" type="text" class="form-control" id="Address"
-                                                           value="<%= address %>">
+                                                           value="<%= address%>">
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="Phone" class="col-md-4 col-lg-3 col-form-label">Phone</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="phone" type="text" class="form-control" id="Phone" value="<%= phone %>">
+                                                    <input name="phone" type="text" class="form-control" id="Phone" value="<%= phone%>">
                                                 </div>
                                             </div>
 
                                             <div class="row mb-3">
                                                 <label for="Email" class="col-md-4 col-lg-3 col-form-label">Email</label>
                                                 <div class="col-md-8 col-lg-9">
-                                                    <input name="email" type="email" class="form-control" id="Email" value="<%= email %>">
+                                                    <input name="email" type="email" class="form-control" id="Email" value="<%= email%>">
                                                 </div>
                                             </div>
 
@@ -397,16 +380,20 @@
                     const previewImage = document.getElementById('previewImage');
                     previewImage.src = 'img/default-avartar.jpg';
 
-                    // Đặt giá trị deleteImage để xác định yêu cầu xóa
+                    // Add deleteImage hidden input to the form
                     const deleteForm = document.getElementById('deleteImageForm');
-                    const deleteInput = document.createElement('input');
-                    deleteInput.setAttribute('type', 'hidden');
-                    deleteInput.setAttribute('name', 'deleteImage');
-                    deleteInput.setAttribute('value', 'true');
-                    deleteForm.appendChild(deleteInput);
+                    if (!document.querySelector('input[name="deleteImage"]')) {
+                        const deleteInput = document.createElement('input');
+                        deleteInput.setAttribute('type', 'hidden');
+                        deleteInput.setAttribute('name', 'deleteImage');
+                        deleteInput.setAttribute('value', 'true');
+                        deleteForm.appendChild(deleteInput);
+                    }
 
-                    deleteForm.submit(); // Submit form để xóa ảnh
+                    deleteForm.submit(); // Submit form to remove image
                 }
+
+
             </script>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
@@ -422,20 +409,20 @@
                 });
             </script>
 
-            <% 
-    String successMessage = (String) session.getAttribute("successMessage");
-    String errorMessage = (String) request.getAttribute("errorMessage");
+            <%
+                String successMessage = (String) session.getAttribute("successMessage");
+                String errorMessage = (String) request.getAttribute("errorMessage");
 
-    if (successMessage != null) {
+                if (successMessage != null) {
             %>
-            <div class="alert alert-success"><%= successMessage %></div>
+            <div class="alert alert-success"><%= successMessage%></div>
             <%
                     session.removeAttribute("successMessage");
                 }
 
                 if (errorMessage != null) {
             %>
-            <div class="alert alert-danger"><%= errorMessage %></div>
+            <div class="alert alert-danger"><%= errorMessage%></div>
             <%
                 }
             %>
@@ -465,6 +452,16 @@
                         }
                     }
                 });
+            </script>
+            <script>
+                setTimeout(function () {
+                    const successAlert = document.querySelector('.alert-success');
+                    const errorAlert = document.querySelector('.alert-danger');
+                    if (successAlert)
+                        successAlert.style.display = 'none';
+                    if (errorAlert)
+                        errorAlert.style.display = 'none';
+                }, 5000); // Auto-dismiss after 5 seconds
             </script>
         </main><!-- End #main -->
 

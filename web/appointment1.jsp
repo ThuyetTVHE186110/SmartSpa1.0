@@ -2,6 +2,24 @@
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@ page import="model.Account" %> 
 <%@ page import="model.Person" %>  <!-- Import Person class -->
+<%
+    // Kiểm tra xem người dùng đã đăng nhập hay chưa
+    Account account = (Account) session.getAttribute("account");
+    if (account == null) {
+        // Nếu chưa đăng nhập, chuyển hướng tới trang lỗi hoặc login
+        response.sendRedirect("login");
+        return;
+    }
+
+    // Lấy thông tin cá nhân từ đối tượng account
+    Person person = account.getPersonInfo();
+
+    // Kiểm tra quyền hạn (chỉ cho phép customer role)
+    if (account.getRole() != 4) {
+        response.sendRedirect("error");
+        return;
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -260,39 +278,56 @@
                                 var events = []; // Initialize an empty array
                                 // Use JSP to loop through appointments and add each one to the events array
             <c:forEach var="appointment" items="${appointmentList}">
-                                var start = "${appointment.appointmentDate}T${appointment.appointmentTime}";
-                                    var end = "${appointment.appointmentDate}T15:00";
-                                    var note = "${appointment.note}";
-                                    var status = "${appointment.status}";
-                                    var services = [];
-                                    var staffs = [];
+                                var start = "${appointment.start}";
+                                var end = "${appointment.end}";
+                                var note = "${appointment.note}";
+                                var status = "${appointment.status}";
+                                var color;
+                                switch (status) {
+                                    case "Cancelled":
+                                        color = '#FF0000'; // Màu đỏ cho trạng thái "cancelled"
+                                        break;
+                                    case "In Processing":
+                                        color = '#4CAF50'; // Màu xanh lá cho trạng thái "confirmed"
+                                        break;
+                                    case "pending":
+                                        color = '#FFC107'; // Màu vàng cho trạng thái "pending"
+                                        break;
+                                    case "rescheduled":
+                                        color = '#2196F3'; // Màu xanh dương cho trạng thái "rescheduled"
+                                        break;
+                                    default:
+                                        color = '#rgb(108 117 125)'; // Màu mặc định nếu trạng thái không khớp
+                                }
+                                var services = [];
+                                var staffs = [];
                 <c:forEach var="info" items="${appointment.services}">
-                                    var service = "${info.service.name}";
-                                    services.push(service);
-                                    var staff = "${info.staff.name}";
-                                    if (staff && staff.trim().length > 0) {
-                                        staffs.push(staff);
-                                    }
+                                var service = "${info.service.name}";
+                                services.push(service);
+                                var staff = "${info.staff.name}";
+                                if (staff && staff.trim().length > 0) {
+                                    staffs.push(staff);
+                                }
                 </c:forEach>
-                                    console.log("Services: ", services);
-                                    console.log("Staffs: ", staffs);
-                                    events.push({
-                                        title: "${appointment.customer.name}",
-                                        start: start,
-                                        end: end,
+                                console.log("Services: ", services);
+                                console.log("Staffs: ", staffs);
+                                events.push({
+                                    title: services,
+                                    start: start,
+                                    end: end,
+                                    staff: staffs,
+                                    color: color,
+                                    extendedProps: {
+                                        client: '${appointment.customer.name}',
                                         staff: staffs,
-                                        color: '#B38886',
-                                        extendedProps: {
-                                            client: '${appointment.customer.name}',
-                                            staff: staffs,
-                                            service: services,
-                                            status: status,
-                                            notes: note
-                                        }
-                                    });
+                                        service: services,
+                                        status: status,
+                                        notes: note
+                                    }
+                                });
             </c:forEach>;
 
-                                    console.log(events); // Check if events are correctly added
+                                console.log(events); // Check if events are correctly added
         </script>
         <script>
             AOS.init();

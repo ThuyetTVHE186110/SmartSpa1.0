@@ -3,7 +3,53 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/D:/Study/Term%205/SWP391/SmartSpa1.0/web/appointmentManagement.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/service-management.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/product.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/model/CartItem.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PaymentCallbackServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/ServiceServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/util/ReportGenerator.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/index.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/feedback-management.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/service.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/customerProfile.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PaymentManagementServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/model/Account.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/servicedetails.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/LoginServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/CartDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/servlet/FinancialReportServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/servlet/SaveSurveyServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/PersonDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/DashboardServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/newUI/assets/css/styles.css</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/AppointmentDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/DBContext.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/paymentManagement.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/newUI/service-detail.html</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/WEB-INF/web.xml</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/ServiceManagement.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/util/ExportUtil.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/DeleteProfileImageServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/sideBar.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/OrderServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/PaymentDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/BlogDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/feedback.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/login.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/DashboardDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/dashboard.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PaymentSuccessServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/PaymentHistoryServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/web/financial-report.jsp</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/DiscountDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/ProductDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/dal/AccountDAO.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/CustomerProfileServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/ChangePasswordServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/CartServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/AccountManagementServlet.java</file>
+            <file>file:/C:/Users/Asus/Desktop/SmartSpa1.0/src/java/controller/BookingServlet.java</file>
         </group>
     </open-files>
 </project-private>

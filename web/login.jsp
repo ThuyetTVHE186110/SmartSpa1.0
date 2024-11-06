@@ -78,7 +78,7 @@
                     <input type="checkbox" id="rememberMe" name="rememberMe" <% if(request.getAttribute("rememberMe") != null) { %> checked <% } %> >
                     <label for="rememberMe">Remember me</label>
                 </div>
-                <span class="span"><a href="ForgotPassword.jsp" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
+                <span class="span"><a href="forgotPassword" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
             </div>
             <!--            <input type="hidden" name="userType" value="customer">           -->
             <!-- Submit Button -->
@@ -87,7 +87,7 @@
             <button class="button-submit" type="submit" name = "signin">Sign In</button>
             <!-- Sign Up Option -->
 
-            <p class="p">Don't have an account? <span class="span"><a href="signup.jsp" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
+            <p class="p">Don't have an account? <span class="span"><a href="signup" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
             <!-- Add button to switch to admin login -->
             <button class="button-submit" type="button" onclick="window.location.href = 'adminLogin.jsp';">
                 For Admin Only
@@ -156,17 +156,6 @@
                     });
                 }
             </script>
-
-            <button class="btn facebook">
-                <svg viewBox="0 0 16 16" class="bi bi-facebook" fill="currentColor" height="16" width="16"
-                     xmlns="http://www.w3.org/2000/svg">
-                <path
-                    d="M16 8.049c0-4.446-3.582-8.05-8-8.05C3.58 0-.002 3.603-.002 8.05c0 4.017 2.926 7.347 6.75 7.951v-5.625h-2.03V8.05H6.75V6.275c0-2.017 1.195-3.131 3.022-3.131.876 0 1.791.157 1.791.157v1.98h-1.009c-.993 0-1.303.621-1.303 1.258v1.51h2.218l-.354 2.326H9.25V16c3.824-.604 6.75-3.934 6.75-7.951z">
-                </path>
-                </svg>
-                <span>Facebook</span>
-
-            </button>
         </div>
     </form>
     <div class="error-container"></div> <!-- Error notification container -->

@@ -12,7 +12,7 @@
 
     <body>
         <div class="backgroundImg"></div>
-        <form class="form form-container"action="PasswordForgotServlet" method="POST">
+        <form class="form form-container"action="forgotPassword" method="POST">
             <div class="logo_container"></div>
             <div class="title_container">
                 <p class="title">Reset your Password</p>
