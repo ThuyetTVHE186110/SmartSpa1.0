@@ -90,7 +90,6 @@
                                         <option value="">Filter by Gender</option>
                                         <option value="M">Male</option>
                                         <option value="F">Female</option>
-
                                     </select>
                                 </div>
                                 <!-- Table with stripped rows -->

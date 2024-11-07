@@ -89,9 +89,6 @@
 
             <p class="p">Don't have an account? <span class="span"><a href="signup" style="text-decoration: none; color: inherit;">Sign Up</a></span></p>
             <!-- Add button to switch to admin login -->
-            <button class="button-submit" type="button" onclick="window.location.href = 'adminLogin.jsp';">
-                For Admin Only
-            </button>
         <!-- Separator -->
         <div class="separator">
             <hr class="line">

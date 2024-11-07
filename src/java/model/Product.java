@@ -37,6 +37,24 @@ public class Product {
     public Product() {
     }
 
+    public Product(int id, String name, int price, int quantity, Discount discountInfo, Supplier supplierInfo, String category, String branchName, String image, String description, String status, String ingredient, String howToUse, String benefit, int rewardPoints) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.quantity = quantity;
+        this.discountInfo = discountInfo;
+        this.supplierInfo = supplierInfo;
+        this.category = category;
+        this.branchName = branchName;
+        this.image = image;
+        this.description = description;
+        this.status = status;
+        this.ingredient = ingredient;
+        this.howToUse = howToUse;
+        this.benefit = benefit;
+        this.rewardPoints = rewardPoints;
+    }
+
     public int getId() {
         return id;
     }
@@ -148,5 +166,7 @@ public class Product {
     public void setBenefit(String benefit) {
         this.benefit = benefit;
     }
+
+ 
 
 }

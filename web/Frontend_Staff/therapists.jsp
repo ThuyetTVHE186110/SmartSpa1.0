@@ -36,37 +36,57 @@
                     <div class="therapists-grid">
                         <!-- Therapists List -->
                         <div class="therapists-list">
-                            <!-- Active Therapist Card -->
-                            <div class="therapist-card available">
-                                <div class="therapist-header">
-                                    <img src="therapist1.jpg" alt="Emma Wilson" class="therapist-avatar">
-                                    <div class="status-badge">Available</div>
-                                </div>
-                                <div class="therapist-info">
-                                    <h3>Emma Wilson</h3>
-                                    <p class="therapist-title">Senior Massage Therapist</p>
-                                    <div class="specialties">
-                                        <span class="specialty-tag">Swedish Massage</span>
-                                        <span class="specialty-tag">Deep Tissue</span>
-                                        <span class="specialty-tag">Hot Stone</span>
+                            <c:forEach var="therapist" items="${therapists}">
+                                <!-- Therapist Card -->
+                                <div class="therapist-card ${therapist.status != null ? therapist.status.toLowerCase() : 'available'}">
+                                    <div class="therapist-header">
+                                        <c:choose>
+                                            <c:when test="${therapist.image != null && !therapist.image.isEmpty()}">
+                                                <img src="newUI/assets/img/${therapist.image}" alt="${therapist.name}" class="therapist-avatar">
+                                            </c:when>
+                                            <c:otherwise>
+                                                <img src="newUI/assets/img/default-avatar.jpg" alt="${therapist.name}" class="therapist-avatar">
+                                            </c:otherwise>
+                                        </c:choose>
+                                        <div class="status-badge">${therapist.status != null ? therapist.status : 'Available'}</div>
                                     </div>
-                                    <div class="schedule-info">
-                                        <div class="schedule-item">
-                                            <i class="fas fa-clock"></i>
-                                            <span>Next appointment: 2:30 PM</span>
-                                        </div>
-                                        <div class="schedule-item">
-                                            <i class="fas fa-calendar-check"></i>
-                                            <span>Today's appointments: 6</span>
+
+                                    <div class="therapist-info">
+                                        <h3>${therapist.name}</h3>
+                                        <p class="therapist-title">Massage Therapist</p>
+
+                                        <!-- Display Appointments -->
+                                        <div class="appointments">
+                                            <h4>Upcoming Appointments:</h4>
+                                            <c:forEach var="appointment" items="${therapist.appointments}">
+                                                <div class="appointment-details">
+                                                    <p><b>Time:</b> ${appointment.start} - ${appointment.end}</p>
+                                                    <p><b>Status:</b> ${appointment.status}</p>
+
+                                                    <!-- Services Associated with Each Appointment -->
+                                                    <div class="services-info">
+                                                        <c:forEach var="service" items="${appointment.services}">
+                                                            <div class="service-detail">
+                                                                <p><b>Service:</b> ${service.name}</p>
+                                                                <p><b>Price:</b> $${service.price}</p>
+                                                                <p><b>Duration:</b> ${service.duration} mins</p>
+                                                            </div>
+                                                        </c:forEach>
+                                                    </div>
+                                                </div>
+                                            </c:forEach>
                                         </div>
                                     </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="therapist-actions">
+                                        <button class="btn-icon" title="View Schedule"><i class="fas fa-calendar"></i></button>
+                                        <button class="btn-icon" title="Edit Profile"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-icon" title="Set Break"><i class="fas fa-coffee"></i></button>
+                                    </div>
                                 </div>
-                                <div class="therapist-actions">
-                                    <button class="btn-icon" title="View Schedule"><i class="fas fa-calendar"></i></button>
-                                    <button class="btn-icon" title="Edit Profile"><i class="fas fa-edit"></i></button>
-                                    <button class="btn-icon" title="Set Break"><i class="fas fa-coffee"></i></button>
-                                </div>
-                            </div>
+                            </c:forEach>
+
 
                             <!-- Busy Therapist Card -->
                             <div class="therapist-card busy">
@@ -205,6 +225,20 @@
                                         Settings
                                     </button>
                                 </div>
+                            </div>
+                            <!-- Pagination -->
+                            <div class="pagination">
+                                <c:if test="${currentPage > 1}">
+                                    <a href="therapist?page=${currentPage - 1}" class="page-link">Previous</a>
+                                </c:if>
+
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <a href="therapist?page=${i}" class="page-link ${i == currentPage ? 'active' : ''}">${i}</a>
+                                </c:forEach>
+
+                                <c:if test="${currentPage < totalPages}">
+                                    <a href="therapist?page=${currentPage + 1}" class="page-link">Next</a>
+                                </c:if>
                             </div>
                         </div>
                     </div>

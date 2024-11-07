@@ -1,3 +1,5 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +11,8 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link rel="stylesheet" href="./styles.css">
+        <!--<link rel="stylesheet" href="./styles.css">-->
+        <link rel="stylesheet" href="/SmartSpa1.0/Frontend_Staff/styles.css">
     </head>
     <body>
         <div class="dashboard-container">
@@ -22,11 +25,12 @@
                         <div class="header-content">
                             <h2>Feedback Management</h2>
                             <div class="feedback-filter">
-                                <button class="filter-btn active">All Reviews</button>
-                                <button class="filter-btn">Recent</button>
-                                <button class="filter-btn">Unresponded</button>
-                                <button class="filter-btn positive">Positive</button>
-                                <button class="filter-btn negative">Needs Attention</button>
+                                <select class="filter-btn" id="serviceFilter">
+                                        <option value="">All Services</option>
+                                        <c:forEach items="${service}" var="service">
+                                        <option value="${service.id}">${service.name}</option>
+                                        </c:forEach>
+                                    </select>
                             </div>
                         </div>
                         <button class="btn-primary" id="exportFeedbackBtn">
@@ -56,7 +60,7 @@
                                             <i class="fas fa-star"></i>
                                             <span>5.0</span>
                                         </div>
-                                        <span class="feedback-date">2 hours ago</span>
+                                        <!--<span class="feedback-date">2 hours ago</span>-->
                                     </div>
                                 </div>
                                 <div class="feedback-content">
@@ -189,7 +193,7 @@
 
                             <!-- Common Feedback Topics -->
                             <div class="summary-card">
-                                <h3>Common Topics</h3>
+                                <h3>Common Service</h3>
                                 <div class="topic-list">
                                     <div class="topic-item positive">
                                         <span class="topic-name">Staff Professionalism</span>

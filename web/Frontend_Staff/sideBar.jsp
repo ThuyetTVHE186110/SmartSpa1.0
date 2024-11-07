@@ -18,13 +18,13 @@
                 </a>
             </li>
             <li>
-                <a href="services.jsp">
+                <a href="staff-services">
                     <i class="fas fa-spa"></i>
                     <span>Services</span>
                 </a>
             </li>
             <li>
-                <a href="therapists.jsp">
+                <a href="therapist">
                     <i class="fas fa-user-md"></i>
                     <span>Therapists</span>
                 </a>
@@ -36,7 +36,7 @@
                 </a>
             </li>
             <li>
-                <a href="clients.jsp">
+                <a href="clientManagement">
                     <i class="fas fa-users"></i>
                     <span>Clients</span>
                 </a>
@@ -48,7 +48,7 @@
                 </a>
             </li>
             <li>
-                <a href="packages.jsp">
+                <a href="staff-packages">
                     <i class="fas fa-gift"></i>
                     <span>Packages & Promos</span>
                 </a>

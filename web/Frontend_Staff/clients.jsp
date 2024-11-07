@@ -1,3 +1,28 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@ page import="model.Account" %>
+<%@ page import="model.Person" %> <!-- Import Person class -->
+<%@ page import="dal.PersonDAO" %>
+<%@ page import="java.util.List" %>
+<%
+    // Constants for pagination
+    final int CLIENTS_PER_PAGE = 8;
+    int currentPage = 1;
+
+    // Retrieve page parameter from the request if available
+    String pageParam = request.getParameter("page");
+    if (pageParam != null) {
+        currentPage = Integer.parseInt(pageParam);
+    }
+
+    int offset = (currentPage - 1) * CLIENTS_PER_PAGE;
+
+    // Initialize DAO and fetch the list of clients with pagination
+    PersonDAO personDAO = new PersonDAO();
+    List<Person> clients = personDAO.getAllCustomers(offset, CLIENTS_PER_PAGE);
+%>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -22,11 +47,31 @@
                         <div class="header-content">
                             <h2>Client Management</h2>
                             <div class="client-filter">
-                                <button class="filter-btn active">All Clients</button>
-                                <button class="filter-btn">Regular</button>
-                                <button class="filter-btn">VIP</button>
-                                <button class="filter-btn">New</button>
+                                <form action="clientManagement" method="get" class="d-flex justify-content-between align-items-center">
+                                    <button type="submit" name="filter" value="all"
+                                            class="filter-btn btn btn-outline-primary ${param.filter == null || param.filter == 'all' ? 'active' : ''}">
+                                        All Clients
+                                    </button>
+
+                                    <button type="submit" name="filter" value="regular"
+                                            class="filter-btn btn btn-outline-primary ${param.filter == 'regular' ? 'active' : ''}">
+                                        Regular Clients
+                                    </button>
+
+                                    <button type="submit" name="filter" value="vip"
+                                            class="filter-btn btn btn-outline-primary ${param.filter == 'vip' ? 'active' : ''}">
+                                        VIP Clients
+                                    </button>
+
+                                    <button type="submit" name="filter" value="new"
+                                            class="filter-btn btn btn-outline-primary ${param.filter == 'new' ? 'active' : ''}">
+                                        New Clients
+                                    </button>
+                                </form>
+
+
                             </div>
+
                         </div>
                         <button class="btn-primary" id="newClientBtn">
                             <i class="fas fa-plus"></i> Add New Client
@@ -36,101 +81,56 @@
                     <div class="clients-grid">
                         <!-- Clients List -->
                         <div class="clients-list">
-                            <!-- Regular Client -->
-                            <div class="client-card">
-                                <div class="client-header">
-                                    <img src="client1.jpg" alt="Sarah Johnson" class="client-avatar">
-                                    <div class="client-status regular">Regular Client</div>
-                                </div>
-                                <div class="client-info">
-                                    <h3>Sarah Johnson</h3>
-                                    <div class="contact-details">
-                                        <p><i class="fas fa-envelope"></i> sarah.j@email.com</p>
-                                        <p><i class="fas fa-phone"></i> (555) 123-4567</p>
-                                    </div>
-                                    <div class="preferences">
-                                        <h4>Preferences</h4>
-                                        <div class="preference-tags">
-                                            <span class="pref-tag">Swedish Massage</span>
-                                            <span class="pref-tag">Medium Pressure</span>
-                                            <span class="pref-tag">Female Therapist</span>
-                                        </div>
-                                    </div>
-                                    <div class="visit-history">
-                                        <p><i class="fas fa-history"></i> Last Visit: 2 weeks ago</p>
-                                        <p><i class="fas fa-calendar-check"></i> Total Visits: 12</p>
-                                    </div>
-                                </div>
-                                <div class="client-actions">
-                                    <button class="btn-icon" title="View Profile"><i class="fas fa-user"></i></button>
-                                    <button class="btn-icon" title="Book Appointment"><i class="fas fa-calendar-plus"></i></button>
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                </div>
-                            </div>
+                            <c:forEach var="client" items="${customers}">
+                                <c:choose>
+                                    <c:when test="${client.image != null && !client.image.isEmpty()}">
+                                        <c:set var="imageUrl" value="newUI/assets/img/${client.image}" />
+                                    </c:when>
+                                    <c:otherwise>
+                                        <c:set var="imageUrl" value="newUI/assets/img/default-avatar.jpg" />
+                                    </c:otherwise>
+                                </c:choose>
 
-                            <!-- VIP Client -->
-                            <div class="client-card vip">
-                                <div class="client-header">
-                                    <img src="client2.jpg" alt="Michael Brown" class="client-avatar">
-                                    <div class="client-status vip">VIP Member</div>
-                                </div>
-                                <div class="client-info">
-                                    <h3>Michael Brown</h3>
-                                    <div class="contact-details">
-                                        <p><i class="fas fa-envelope"></i> michael.b@email.com</p>
-                                        <p><i class="fas fa-phone"></i> (555) 234-5678</p>
-                                    </div>
-                                    <div class="preferences">
-                                        <h4>Preferences</h4>
-                                        <div class="preference-tags">
-                                            <span class="pref-tag">Deep Tissue</span>
-                                            <span class="pref-tag">Hot Stone</span>
-                                            <span class="pref-tag">Room 3</span>
+                                <div class="client-card ${client.tier != null ? client.tier.toLowerCase() : 'regular'}">
+                                    <div class="client-header">
+                                        <img src="${imageUrl}" 
+                                             alt="${client.name}" class="client-avatar">
+                                        <div class="client-status ${client.tier != null ? client.tier.toLowerCase() : 'regular'}">
+                                            ${client.tier != null ? client.tier : 'Regular'}
                                         </div>
                                     </div>
-                                    <div class="visit-history">
-                                        <p><i class="fas fa-history"></i> Last Visit: 3 days ago</p>
-                                        <p><i class="fas fa-calendar-check"></i> Total Visits: 45</p>
+                                    <div class="client-info">
+                                        <h3>${client.name}</h3>
+                                        <div class="contact-details">
+                                            <p><i class="fas fa-envelope"></i> ${client.email}</p>
+                                            <p><i class="fas fa-phone"></i> ${client.phone}</p>
+                                        </div>
+                                        <div class="preferences">
+                                            <h4>Preferences</h4>
+                                            <div class="preference-tags">
+                                                <!-- Display preferences if available -->
+                                                <span class="pref-tag">Swedish Massage</span>
+                                                <span class="pref-tag">Medium Pressure</span>
+                                                <span class="pref-tag">Female Therapist</span>
+                                            </div>
+                                        </div>
+                                        <div class="visit-history">
+                                            <p><i class="fas fa-history"></i> Last Visit: 2 weeks ago</p>
+                                            <p><i class="fas fa-calendar-check"></i> Total Points: ${client.points}</p>
+                                        </div>
+                                    </div>
+                                    <div class="client-actions">
+                                        <button class="btn-icon" title="View Profile"><i class="fas fa-user"></i></button>
+                                        <button class="btn-icon" title="Book Appointment"><i class="fas fa-calendar-plus"></i></button>
+                                        <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
                                     </div>
                                 </div>
-                                <div class="client-actions">
-                                    <button class="btn-icon" title="View Profile"><i class="fas fa-user"></i></button>
-                                    <button class="btn-icon" title="Book Appointment"><i class="fas fa-calendar-plus"></i></button>
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                </div>
-                            </div>
+                            </c:forEach>
 
-                            <!-- New Client -->
-                            <div class="client-card new">
-                                <div class="client-header">
-                                    <img src="client3.jpg" alt="Emily Davis" class="client-avatar">
-                                    <div class="client-status new">New Client</div>
-                                </div>
-                                <div class="client-info">
-                                    <h3>Emily Davis</h3>
-                                    <div class="contact-details">
-                                        <p><i class="fas fa-envelope"></i> emily.d@email.com</p>
-                                        <p><i class="fas fa-phone"></i> (555) 345-6789</p>
-                                    </div>
-                                    <div class="preferences">
-                                        <h4>Preferences</h4>
-                                        <div class="preference-tags">
-                                            <span class="pref-tag">Aromatherapy</span>
-                                            <span class="pref-tag">Light Pressure</span>
-                                        </div>
-                                    </div>
-                                    <div class="visit-history">
-                                        <p><i class="fas fa-history"></i> First Visit: Today</p>
-                                        <p><i class="fas fa-calendar-check"></i> Total Visits: 1</p>
-                                    </div>
-                                </div>
-                                <div class="client-actions">
-                                    <button class="btn-icon" title="View Profile"><i class="fas fa-user"></i></button>
-                                    <button class="btn-icon" title="Book Appointment"><i class="fas fa-calendar-plus"></i></button>
-                                    <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
-                                </div>
-                            </div>
                         </div>
+
+
+
 
                         <!-- Summary Column -->
                         <div class="summary-column">
@@ -209,6 +209,19 @@
                                         Export List
                                     </button>
                                 </div>
+                            </div>
+                            <div class="pagination">
+                                <c:if test="${currentPage > 1}">
+                                    <a href="clientManagement?filter=${selectedTier}&page=${currentPage - 1}" class="page-link">Previous</a>
+                                </c:if>
+
+                                <c:forEach begin="1" end="${totalPages}" var="i">
+                                    <a href="clientManagement?filter=${selectedTier}&page=${i}" class="page-link ${i == currentPage ? 'active' : ''}">${i}</a>
+                                </c:forEach>
+
+                                <c:if test="${currentPage < totalPages}">
+                                    <a href="clientManagement?filter=${selectedTier}&page=${currentPage + 1}" class="page-link">Next</a>
+                                </c:if>
                             </div>
                         </div>
                     </div>
