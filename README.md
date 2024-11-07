@@ -17,11 +17,11 @@ Chúng mình là nhóm 5 lớp SE1866-KS trường Đại học FPT Hà Nội.
 ## Features v1.0
 
 - Login, Signup, ForgotPassword
-- View Service, Add Service
-- View Product
+- View Service, Book service
+- View Product, Buy product
 - Create Appoinment
-- View Feedback
-
+- View feedback, add feedback
+- Purchase by payOS
 
 
 ## Installation
