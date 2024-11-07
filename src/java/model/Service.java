@@ -18,6 +18,7 @@ public class Service {
     private String image;
     private String category;
     private String status;
+    private int rewardPoints;
 
     public Service() {
     }
@@ -41,6 +42,14 @@ public class Service {
         this.image = image;
         this.category = category;
         this.status = status;
+    }
+
+    public int getRewardPoints() {
+        return rewardPoints;
+    }
+
+    public void setRewardPoints(int rewardPoints) {
+        this.rewardPoints = rewardPoints;
     }
 
     public int getId() {
@@ -107,5 +116,4 @@ public class Service {
         this.status = status;
     }
 
-    
 }

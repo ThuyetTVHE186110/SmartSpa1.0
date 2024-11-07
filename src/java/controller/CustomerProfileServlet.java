@@ -11,11 +11,14 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import jakarta.servlet.http.Part;
+import java.nio.file.Paths;
 import java.util.List;
 import model.Account;
 import model.Appointment;
 import model.Person;
 import model.Payment;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class CustomerProfileServlet extends HttpServlet {
 
@@ -32,17 +35,48 @@ public class CustomerProfileServlet extends HttpServlet {
         Account account = (Account) session.getAttribute("account");
         Person person = account.getPersonInfo();
         String action = request.getParameter("action");
-        String currentTab = request.getParameter("currentTab"); // Get the current tab parameter
+        String currentTab = request.getParameter("currentTab");
+
+        // Check if action is null before proceeding
+        if (action == null) {
+            session.setAttribute("errorMessage", "Action parameter is missing.");
+            response.sendRedirect("customerProfile?tab=settings");
+            return;
+        }
 
         AppointmentDAO appointmentDAO = new AppointmentDAO();
-        if(action.equals("cancel")){
+        if ("cancel".equals(action)) {
             int id = Integer.parseInt(request.getParameter("appointmentID"));
             appointmentDAO.updateStatus("Cancelled", id);
             doGet(request, response);
+            return;
         }
-        
+
         try {
-            if ("changePassword".equals(action)) {
+            if ("uploadImage".equals(action)) {
+                // Handle image upload
+                Part filePart = request.getPart("profileImage");
+                if (filePart != null && filePart.getSize() > 0) {
+                    String fileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                    String imagePath = getServletContext().getRealPath("/newUI/assets/img/") + fileName;
+
+                    // Save the file on the server
+                    filePart.write(imagePath);
+
+                    // Update the database with the new image file name
+                    person.setImage(fileName);
+                    PersonDAO personDAO = new PersonDAO();
+                    personDAO.updateImage(person.getId(), fileName);
+
+                    // Update the session attribute
+                    session.setAttribute("person", person);
+                    session.setAttribute("successMessage", "Profile picture updated successfully.");
+                } else {
+                    session.setAttribute("errorMessage", "Please select an image file.");
+                }
+                response.sendRedirect("customerProfile?tab=settings");
+                return;
+            } else if ("changePassword".equals(action)) {
                 String currentPassword = request.getParameter("password");
                 String newPassword = request.getParameter("newPassword");
                 String confirmNewPassword = request.getParameter("confirmNewPassword");
@@ -54,16 +88,20 @@ public class CustomerProfileServlet extends HttpServlet {
                     return;
                 }
 
-                if (!account.getPassword().equals(currentPassword)) {
+                // Validate the current password with BCrypt
+                if (!BCrypt.checkpw(currentPassword, account.getPassword())) {
                     request.setAttribute("errorMessage", "Current password is incorrect.");
                     request.setAttribute("currentTab", "preferences");
                     request.getRequestDispatcher("customerProfile.jsp").forward(request, response);
                     return;
                 }
 
+                // Hash the new password using BCrypt
+                String hashedNewPassword = BCrypt.hashpw(newPassword, BCrypt.gensalt());
+
                 AccountDAO accountDAO = new AccountDAO();
-                if (accountDAO.updatePassword(account.getUsername(), newPassword)) {
-                    account.setPassword(newPassword);
+                if (accountDAO.updatePassword(account.getUsername(), hashedNewPassword)) {
+                    account.setPassword(hashedNewPassword); // Update the password in the session
                     session.setAttribute("successMessage", "Password changed successfully.");
                     response.sendRedirect("customerProfile?tab=preferences");
                 } else {
@@ -108,7 +146,6 @@ public class CustomerProfileServlet extends HttpServlet {
 
                 session.setAttribute("successMessage", "Profile updated successfully.");
                 response.sendRedirect("customerProfile?tab=" + (currentTab != null ? java.net.URLEncoder.encode(currentTab, "UTF-8") : "settings"));
-
             }
         } catch (SQLException e) {
             e.printStackTrace();

@@ -34,16 +34,16 @@
         <!-- Submit Feedback Section -->
         <section class="submit-feedback">
             <div class="container">
-                <h2>Leave Your Feedback</h2>
-                <form id="feedback-form" class="feedback-form">
+                <h2 style="color: black">Leave Your Feedback</h2>
+                <form id="feedback-form" class="feedback-form" action="feedback" method="post">
                     <div class="form-row">
                         <div class="form-group">
                             <label for="name">Your Name</label>
-                            <input type="text" id="name" required>
+                            <input type="text" id="name" name="name" required>
                         </div>
                         <div class="form-group">
                             <label for="service">Service Received</label>
-                            <select id="service" required>
+                            <select id="service" name="service" required>
                                 <option value="">Select a service</option>
                                 <option value="body-massage">Body Massage</option>
                                 <option value="stone-therapy">Stone Therapy</option>
@@ -58,7 +58,7 @@
                             </select>
                         </div>
                     </div>
-                    <div class="form-group">
+<!--                    <div class="form-group">
                         <label>Rate Your Experience</label>
                         <div class="rating">
                             <input type="radio" id="star5" name="rating" value="5" required>
@@ -72,15 +72,11 @@
                             <input type="radio" id="star1" name="rating" value="1">
                             <label for="star1"><i class="fas fa-star"></i></label>
                         </div>
-                    </div>
+                    </div>-->
                     <div class="form-group">
                         <label for="feedback">Your Feedback</label>
-                        <textarea id="feedback" rows="5" required></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="photo">Add Photos (optional)</label>
-                        <input type="file" id="photo" accept="image/*" multiple>
-                    </div>
+                        <textarea id="feedback" name="feedback" rows="5" required></textarea>
+                    </div>                   
                     <button type="submit" class="submit-btn">Submit Feedback</button>
                 </form>
             </div>
@@ -90,11 +86,18 @@
         <section class="testimonial">
             <div class="testimonial-content">
                 <h2>Feedback</h2>
+                <div class="testimonial-filters">
+                    <button class="filter-btn active" data-filter="all">All</button>
+                    <button class="filter-btn" data-filter="classic-lash">Classic Lash</button>
+                    <button class="filter-btn" data-filter="hybrid-lash">Hybrid Lash</button>
+                    <button class="filter-btn" data-filter="volume-lash">Volume Lash</button>
+                    <button class="filter-btn" data-filter="lash-lift">Lash Lift</button>
+                </div>
                 <div class="testimonial-slider-container">
                     <div class="star-decoration top-left"></div>
                     <div class="star-decoration top-right"></div>
                     <button class="slider-control prev" aria-label="Previous testimonial">&lt;</button>
-                    
+
                     <div class="testimonial-slider">
                         <c:forEach items="${feedback}" var="feedback">
                             <div class="testimonial-slide ">
@@ -103,13 +106,13 @@
                                 <span class="client-name">Service Name: ${feedback.service.name}</span>
                             </div>
                         </c:forEach>
-
                     </div>
                     <button class="slider-control next" aria-label="Next testimonial">&gt;</button>
                     <div class="star-decoration bottom-left"></div>
                     <div class="star-decoration bottom-right"></div>
                 </div>
                 <div class="slider-dots"></div>
+                <button id="load-more" class="load-more-btn">Load More Reviews</button>
             </div>
         </section>
 
@@ -171,7 +174,7 @@
                 nextButton.addEventListener('click', nextSlide);
                 // Auto-advance slides
                 function startSlideShow() {
-                    slideInterval = setInterval(nextSlide, 1000);
+                    slideInterval = setInterval(nextSlide, 3000);
                 }
 
                 // Pause auto-advance on hover

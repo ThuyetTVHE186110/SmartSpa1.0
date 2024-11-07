@@ -4,7 +4,9 @@
  */
 package model;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 /**
  *
@@ -15,6 +17,36 @@ public class Cart {
     private int id;
     private Person personInfo;
     private int quantity;
+    private List<CartItem> items;  // Danh sách các mục trong giỏ hàng
+
+    public Cart() {
+        items = new ArrayList<>(); // Khởi tạo danh sách các mục
+    }
+
+    public Cart(int id, Person personInfo) {
+        this.id = id;
+        this.personInfo = personInfo;
+        this.items = new ArrayList<>();
+    }
+    // Phương thức thêm một CartItem vào giỏ hàng
+
+    public void addItem(CartItem item) {
+        items.add(item);
+    }
+
+    // Phương thức xóa một CartItem khỏi giỏ hàng
+    public void removeItem(CartItem item) {
+        items.remove(item);
+    }
+
+    // Getter và Setter cho danh sách CartItem
+    public List<CartItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<CartItem> items) {
+        this.items = items;
+    }
 
     public int getId() {
         return id;
