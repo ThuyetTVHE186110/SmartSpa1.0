@@ -20,6 +20,8 @@ public class Person {
     private String email;
     private String address;
     private String image;
+    private int points;
+    private String tier;
 
     public Person() {
     }
@@ -33,6 +35,22 @@ public class Person {
         this.phone = phone;
         this.email = email;
         this.address = address;
+    }
+
+    public int getPoints() {
+        return points;
+    }
+
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public String getTier() {
+        return tier;
+    }
+
+    public void setTier(String tier) {
+        this.tier = tier;
     }
 
     public String getImage() {

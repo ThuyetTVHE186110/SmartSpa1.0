@@ -14,6 +14,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import model.Feedback;
+import model.Person;
+import model.Service;
 
 /**
  *
@@ -69,7 +71,30 @@ public class FeedbackServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
+        // Get form parameters
+        String name = request.getParameter("name");
+        String serviceName = request.getParameter("service");
+        String content = request.getParameter("feedback");
+        
+        // Create the person and service objects
+        Person customer = new Person();
+        customer.setName(name);
+        
+        Service service = new Service();
+        service.setName(serviceName);
+        
+        // Create feedback object
+        Feedback feedback = new Feedback();
+        feedback.setContent(content);
+        feedback.setCustomer(customer);
+        feedback.setService(service);
+
+        // Insert feedback into the database
+        FeedbackDAO feedbackDAO = new FeedbackDAO();
+        feedbackDAO.createFeedback(feedback);
+        
+        response.sendRedirect("feedback");
+//        request.getRequestDispatcher("feedback.jsp").forward(request, response);
     }
 
     /**

@@ -58,8 +58,13 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="customer-management" class="active">
+                                <a href="customer-management" >
                                     <i class="bi bi-circle"></i><span>Customer Management</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="customerClassification">
+                                    <i class="bi bi-circle"></i><span>Customer Classification</span>
                                 </a>
                             </li>
                             <li>
@@ -80,7 +85,7 @@
                     <!-- Customer Section -->
                     <li class="nav-item">
                         <a class="nav-link collapsed" data-bs-target="#customer-nav" data-bs-toggle="collapse" href="#">
-                            <i class="bi bi-people"></i><span>Customer</span><i class="bi bi-chevron-down ms-auto"></i>
+                            <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
                         </a>
                         <ul id="customer-nav" class="nav-content collapse " data-bs-parent="#sidebar-nav">
                             <li>
