@@ -24,16 +24,16 @@
                 <!-- Product Gallery -->
                 <div class="product-gallery" data-aos="fade-right">
                     <div class="main-image">
-                        <img src="./assets/img/products/lash-cleanser-large.jpg" alt="Lash Cleanser" id="mainImage">
+                        <img class="img-fluid" src="${product.image}" alt="${product.name}">
                     </div>
-                    <div class="thumbnail-images">
-                        <img src="./assets/img/products/lash-cleanser-1.jpg" alt="Lash Cleanser View 1"
-                             onclick="changeImage(this.src)">
-                        <img src="./assets/img/products/lash-cleanser-2.jpg" alt="Lash Cleanser View 2"
-                             onclick="changeImage(this.src)">
-                        <img src="./assets/img/products/lash-cleanser-3.jpg" alt="Lash Cleanser View 3"
-                             onclick="changeImage(this.src)">
-                    </div>
+                    <!--                    <div class="thumbnail-images">
+                                            <img src="./assets/img/products/lash-cleanser-1.jpg" alt="Lash Cleanser View 1"
+                                                 onclick="changeImage(this.src)">
+                                            <img src="./assets/img/products/lash-cleanser-2.jpg" alt="Lash Cleanser View 2"
+                                                 onclick="changeImage(this.src)">
+                                            <img src="./assets/img/products/lash-cleanser-3.jpg" alt="Lash Cleanser View 3"
+                                                 onclick="changeImage(this.src)">
+                                        </div>-->
                 </div>
 
                 <!-- Product Information -->
@@ -52,11 +52,10 @@
                         </div>
                     </div>
 
-                    <div class="product-price">
-                        <span class="current-price">$${product.price * (1 - product.discountInfo.discountPercent/100)}</span>
-                        <span class="original-price">$${product.price}</span>
-                        <span class="discount">Save ${product.discountInfo.discountPercent}%</span>
-                    </div>
+
+                    <span class="current-price">$${product.price}</span>
+
+
 
                     <div class="product-description">
                         <p>${product.description}</p>
@@ -125,11 +124,9 @@
                     <div class="tab-pane" id="how-to-use">
                         <h3>How to Use</h3>
                         <ol>
-                            <li>${product.howToUse}</li>
-                            <li>Gently work the cleanser through lashes from base to tip</li>
-                            <li>Rinse thoroughly with water</li>
-                            <li>Pat dry gently with a clean towel</li>
-                            <li>Use morning and night for best results</li>
+                            <c:forEach var="howToUse" items="${fn:split(product.howToUse, ',')}">
+                                <li>${howToUse}</li>
+                                </c:forEach>
                         </ol>
                     </div>
 

@@ -3,6 +3,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 package controller.Material;
+
 import dal.MaterialDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
 import model.Material;
+import model.Supplier;
 
 /**
  *
@@ -63,6 +65,8 @@ public class MaterialListServlet extends HttpServlet {
 
         int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
 
+        List<Supplier> materials = materialDAO.getAllSuppliers();
+        request.setAttribute("suppliers", materials);
         request.setAttribute("materialList", materialList);
         request.setAttribute("currentPage", page);
         request.setAttribute("totalPages", totalPages);

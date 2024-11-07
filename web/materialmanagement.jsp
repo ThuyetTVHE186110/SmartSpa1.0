@@ -222,8 +222,13 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="supplierId" class="form-label">Supplier ID</label>
-                                <input type="number" class="form-control" id="supplierId" name="supplierId" required>
+                                <label for="supplierId" class="form-label">Supplier</label>
+                                <select class="form-select" id="supplierId" name="supplierId" required>
+                                    <option value="" disabled selected>Select Supplier</option>
+                                    <c:forEach var="supplier" items="${suppliers}">
+                                        <option value="${supplier.id}">${supplier.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
                             <div class="col-md-6">
@@ -289,8 +294,13 @@
                             </div>
 
                             <div class="col-md-6">
-                                <label for="supplierId" class="form-label">Supplier ID</label>
-                                <input type="number" class="form-control" id="supplierId" name="supplierId" required min="1">
+                                <label for="supplierId" class="form-label">Supplier</label>
+                                <select class="form-select" id="supplierId" name="supplierId" required>
+                                    <option value="" disabled selected>Select Supplier</option>
+                                    <c:forEach var="supplier" items="${suppliers}">
+                                        <option value="${supplier.id}">${supplier.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
 
@@ -333,42 +343,39 @@
                                                             }
                                                         }
                                                         var editMaterialModal = document.getElementById('editMaterialModal');
-                                                        editMaterialModal.addEventListener('show.bs.modal', function (event) {
-                                                            // Lấy nút đã kích hoạt modal (nút Edit)
-                                                            var button = event.relatedTarget;
-                                                            // Lấy giá trị id từ thuộc tính data-id của nút
-                                                            var materialId = button.getAttribute('data-id');
-                                                            // Gửi yêu cầu AJAX tới server để lấy chi tiết sản phẩm
-                                                            fetch('${pageContext.request.contextPath}/materialinformation?id=' + materialId)
-                                                                    .then(response => response.json())  // Parse dữ liệu JSON
-                                                                    .then(material => {
-                                                                        // Tìm form và cập nhật action URL với id sản phẩm
-                                                                        var form = editMaterialModal.querySelector('form');
-                                                                        form.action = form.action.split('?')[0] + "?id=" + materialId;
+editMaterialModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var materialId = button.getAttribute('data-id');
 
-                                                                        // Cập nhật giá trị cho các trường trong modal
-                                                                        form.querySelector('input[name="id"]').value = material.id;
-                                                                        form.querySelector('input[name="name"]').value = material.name;
-                                                                        form.querySelector('textarea[name="description"]').value = material.description;
-                                                                        form.querySelector('input[name="price"]').value = material.price;
+    fetch('${pageContext.request.contextPath}/materialinformation?id=' + materialId)
+        .then(response => response.json())
+        .then(material => {
+            var form = editMaterialModal.querySelector('form');
+            form.action = form.action.split('?')[0] + "?id=" + materialId;
 
-                                                                        form.querySelector('input[name="supplierId"]').value = material.supplierId;
+            // Populate fields
+            form.querySelector('input[name="id"]').value = material.id;
+            form.querySelector('input[name="name"]').value = material.name;
+            form.querySelector('textarea[name="description"]').value = material.description;
+            form.querySelector('input[name="price"]').value = material.price;
 
-                                                                        var statusSelect = form.querySelector('select[name="status"]');
-                                                                        statusSelect.value = material.status;
-                                                                        if (!statusSelect.value) {
-                                                                            Array.from(statusSelect.options).forEach(option => {
-                                                                                if (option.text === material.status) {
-                                                                                    option.selected = true;
-                                                                                }
-                                                                            });
-                                                                        }
+            // Supplier select
+         
+var supplierSelect = form.querySelector('select[name="supplierId"]');
+supplierSelect.value = material.supplierInfo.id; // Kiểm tra xem id này có đúng không
 
-                                                                        // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
-                                                                    })
-                                                                    .catch(error => console.error('Error fetching material details:', error));
+            // Status select
+            var statusSelect = form.querySelector('select[name="status"]');
+            statusSelect.value = material.status; // Ensure this value is correctly set
 
-                                                        });
+            // Image preview
+            var currentImageInput = form.querySelector('input[name="currentImage"]');
+            currentImageInput.value = material.image;
+            var imagePreviewText = form.querySelector('.form-text');
+            imagePreviewText.innerHTML = `Current image: <img src="${material.image}" alt="Current Image" style="max-width: 100px;">`;
+        })
+        .catch(error => console.error('Error fetching material details:', error));
+});
 
         </script>
 

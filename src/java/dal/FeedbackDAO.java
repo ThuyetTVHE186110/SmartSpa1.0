@@ -55,6 +55,39 @@ public class FeedbackDAO extends DBContext {
         return feedback;
     }
     
+     public ArrayList<Feedback> getFeedbackByService(int serviceId) {
+        ArrayList<Feedback> feedbackS = new ArrayList<>();
+        try {
+        String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.Name AS serviceName " +
+                     "FROM Feedback f " +
+                     "JOIN Person p ON f.CustomerID = p.ID " +
+                     "JOIN Services s ON f.ServicesID = s.ID " +
+                     "WHERE f.ServicesID = ?";
+            PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            statement.setInt(1, serviceId);
+            while (rs.next()) {
+                Feedback feedback = new Feedback();
+                feedback.setId(rs.getInt("ID"));
+                feedback.setContent(rs.getString("Content"));
+
+                Person customer = new Person();
+                customer.setName(rs.getString("customerName"));
+                feedback.setCustomer(customer);
+
+                Service service = new Service();
+                service.setName(rs.getString("serviceName"));
+                feedback.setService(service);
+
+                feedback.add(feedback);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return feedbackS;
+    }
+    
     public int getTotalFeedbacks(){
         int  count = 0;
         try {
@@ -102,18 +135,37 @@ public class FeedbackDAO extends DBContext {
         }
     }
 
-    public void createFeedback(Feedback feedback) {
+    public boolean createFeedback(int customerId, String content, int serviceId) {
+            boolean isAdded = false;
         try {
-            String sql = "INSERT INTO Feedback (Content, CustomerID, ServicesID) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Feedback (CustomerID, Content, ServicesID) VALUES (?, ?, ?)";
             PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
-            statement.setString(1, feedback.getContent());
-            statement.setInt(2, feedback.getCustomer().getId());
-            statement.setInt(3, feedback.getService().getId());
-            statement.executeUpdate();
+            statement.setInt(1, customerId); // Customer ID from the logged-in user's Person object
+            statement.setString(2, content);
+            statement.setInt(3, serviceId);
+            int rowsInserted = statement.executeUpdate();
+            isAdded = rowsInserted > 0;
         } catch (SQLException e) {
             System.out.println(e);
         }
+        return isAdded;
     }
+   public static void main(String args[]){
+       FeedbackDAO feedbackDAO = new FeedbackDAO();
+                boolean isAdded = feedbackDAO.createFeedback(3, "đù ", 1
+                
+                
+                
+                
+                
+                
+                );
+                if (isAdded) {
+                    System.out.println("Ok");
+                } else {
+                    System.out.println("Đù mé!");
+                }
+   }
 
 //    public void readFeedback(int id){
 //        try {

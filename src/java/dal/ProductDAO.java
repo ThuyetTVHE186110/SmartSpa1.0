@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Category;
 import model.Product;
 import model.Discount;
 import model.Supplier;
@@ -50,16 +51,51 @@ public class ProductDAO extends DBContext {
         return products;
     }
 
+    public List<Supplier> getAllSuppliers() {
+        List<Supplier> suppliers = new ArrayList<>();
+        String sql = "SELECT * FROM Supplier";
+
+        try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Supplier supplier = new Supplier();
+                supplier.setId(rs.getInt("ID"));
+                supplier.setName(rs.getString("Name"));
+                suppliers.add(supplier); // Thêm nhà cung cấp vào danh sách
+                System.out.println("Supplier ID: " + supplier.getId() + ", Name: " + supplier.getName());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return suppliers;
+    }
+
+    public List<Category> getAllCategories() {
+        List<Category> categories = new ArrayList<>();
+        String sql = "SELECT * FROM Category";
+        try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Category category = new Category();
+                category.setId(rs.getInt("ID"));
+                category.setName(rs.getString("Name"));
+                categories.add(category); // Thêm nhà cung cấp vào danh sách
+                System.out.println("Category ID: " + category.getId() + ", Name: " + category.getName());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categories;
+    }
+
     public Product getProductByID(int productID) {
         Product product = null;
         try (Connection connection = DBContext.getConnection()) {
             String sql = """
-                         SELECT p.*, d.DiscountPercent, s.Name as SupplierName, s.Address as SupplierAddress, c.Name as CategoryName
-                         FROM Product p
-                         LEFT JOIN Discount d ON p.DiscountID = d.DiscountID
-                         INNER JOIN Supplier s ON p.SupplierID = s.ID
-                         INNER JOIN Category c ON p.CategoryID = c.ID
-                         WHERE p.ID = ?""";
+                     SELECT p.*, d.DiscountPercent, s.ID as SupplierID, s.Name as SupplierName, s.Address as SupplierAddress, c.Name as CategoryName
+                     FROM Product p
+                     LEFT JOIN Discount d ON p.DiscountID = d.DiscountID
+                     INNER JOIN Supplier s ON p.SupplierID = s.ID
+                     INNER JOIN Category c ON p.CategoryID = c.ID
+                     WHERE p.ID = ?""";
 
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.setInt(1, productID);
@@ -77,6 +113,7 @@ public class ProductDAO extends DBContext {
                         product.setDiscountInfo(discount);
 
                         Supplier supplier = new Supplier();
+                        supplier.setId(rs.getInt("SupplierID")); // Lưu ID nhà cung cấp
                         supplier.setName(rs.getString("SupplierName"));
                         supplier.setAddress(rs.getString("SupplierAddress"));
                         product.setSupplierInfo(supplier);
@@ -87,6 +124,7 @@ public class ProductDAO extends DBContext {
                         product.setIngredient(rs.getString("Ingredient"));
                         product.setHowToUse(rs.getString("HowToUse"));
                         product.setBenefit(rs.getString("Benefit"));
+                        product.setStatus(rs.getString("Status"));
                     }
                 }
             }
@@ -94,7 +132,6 @@ public class ProductDAO extends DBContext {
             e.printStackTrace();
         }
         return product;
-
     }
 
     public int count(String txtSearch) {
@@ -166,9 +203,9 @@ public class ProductDAO extends DBContext {
     }
 
     public void addProduct(String name, String description, int price, int quantity,
-            String image, int categoryId, int supplierId, int discountId, String branchName, String status, String ingredient, String howToUse, String benefit) {
-        String sql = "INSERT INTO Product (Name, Description, Price, Quantity, Image, CategoryID, SupplierID, DiscountID, BranchName, Status, Ingredient, HowToUse, Benefit) "
-                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            String image, int categoryId, int supplierId, String branchName, String status, String ingredient, String howToUse, String benefit) {
+        String sql = "INSERT INTO Product (Name, Description, Price, Quantity, Image, CategoryID, SupplierID, BranchName, Status, Ingredient, HowToUse, Benefit) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         System.out.println("SQL: " + sql);
 
         try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
@@ -179,12 +216,11 @@ public class ProductDAO extends DBContext {
             pstmt.setString(5, image);
             pstmt.setInt(6, categoryId);
             pstmt.setInt(7, supplierId);
-            pstmt.setInt(8, discountId);
-            pstmt.setString(9, branchName);
-            pstmt.setString(10, status);
-            pstmt.setString(11, ingredient);
-            pstmt.setString(12, howToUse);
-            pstmt.setString(13, benefit);
+            pstmt.setString(8, branchName);
+            pstmt.setString(9, status);
+            pstmt.setString(10, ingredient);
+            pstmt.setString(11, howToUse);
+            pstmt.setString(12, benefit);
 
             int rowsAffected = pstmt.executeUpdate();
             if (rowsAffected > 0) {
@@ -201,12 +237,11 @@ public class ProductDAO extends DBContext {
     }
 
     public void updateProduct(int productId, String name, String description, int price,
-            int quantity, String image, int categoryId, int supplierId, int discountId, String branchName, String status, String ingredient, String howToUse, String benefit) {
+            int quantity, String image, int categoryId, int supplierId, String branchName, String status, String ingredient, String howToUse, String benefit) {
         String sql = "UPDATE Product "
                 + "SET Name = ?, "
                 + "    Price = ?, "
                 + "    Quantity = ?, "
-                + "    DiscountID = ?, "
                 + "    SupplierID = ?, "
                 + "    CategoryID = ?, "
                 + "    BranchName = ?, "
@@ -222,31 +257,33 @@ public class ProductDAO extends DBContext {
             pstmt.setString(1, name);
             pstmt.setInt(2, price);
             pstmt.setInt(3, quantity);
-            pstmt.setInt(4, discountId);
-            pstmt.setInt(5, supplierId);
-            pstmt.setInt(6, categoryId);
-            pstmt.setString(7, branchName);
-            pstmt.setString(8, image);
-            pstmt.setString(9, description);
-            pstmt.setString(10, status);
-            pstmt.setString(11, ingredient);
-            pstmt.setString(12, howToUse);
-            pstmt.setString(13, benefit);
-            pstmt.setInt(14, productId); // Đặt productId ở vị trí cuối cùng
+            pstmt.setInt(4, supplierId);
+            pstmt.setInt(5, categoryId);
+            pstmt.setString(6, branchName);
+            pstmt.setString(7, image);
+            pstmt.setString(8, description);
+            pstmt.setString(9, status);
+            pstmt.setString(10, ingredient);
+            pstmt.setString(11, howToUse);
+            pstmt.setString(12, benefit);
+            pstmt.setInt(13, productId); // Đặt productId ở vị trí cuối cùng
             pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-    
 
     public static void main(String[] args) {
         ProductDAO productDAO = new ProductDAO();
-        logger.log(Level.INFO, "First product: {0}", productDAO.getAllProducts().get(0));
-        logger.log(Level.INFO, "Product with ID 1: {0}", productDAO.getProductByID(1));
-        int count = productDAO.count("a");
-        System.out.println(count);
+//        logger.log(Level.INFO, "First product: {0}", productDAO.getAllProducts().get(0));
+//        logger.log(Level.INFO, "Product with ID 1: {0}", productDAO.getProductByID(1));
+//        int count = productDAO.count("a");
+//        System.out.println(count);
         //productDAO.addProduct("Sản phẩm A", "Mô tả sản phẩm A", 100000, 10, "image_url.jpg", 1, 1, 2, "Chi nhánh 1");
-
+        List<Supplier> suppliers = productDAO.getAllSuppliers();
+        if (suppliers.isEmpty()) {
+            System.out.println("No suppliers found!");
+        }
+        List<Category> categories = productDAO.getAllCategories();
     }
 }

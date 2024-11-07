@@ -19,7 +19,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 import model.Material;
+import model.Supplier;
 
 /**
  *
@@ -67,48 +69,10 @@ public class UpdateMaterial extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String idParam = request.getParameter("id");
-        if (idParam == null) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Material ID is required");
-            return;
-        }
-
-        int id;
-        try {
-            id = Integer.parseInt(idParam);
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid Material ID format");
-            return;
-        }
-
-        String name = request.getParameter("name");
-        String description = request.getParameter("description");
-
-        // Initialize variables with default values
-        int price = 0;
-        int supplierId = 0;
-
-        // Check and parse parameters, if present
-        try {
-            String priceParam = request.getParameter("price");
-            if (priceParam != null && !priceParam.isEmpty()) {
-                price = Integer.parseInt(priceParam);
-            }
-            String supplierIdParam = request.getParameter("supplierId");
-            if (supplierIdParam != null && !supplierIdParam.isEmpty()) {
-                supplierId = Integer.parseInt(supplierIdParam);
-            }
-        } catch (NumberFormatException e) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
-            return;
-        }
-
-        String image = request.getParameter("image"); // Handle file upload if needed
-        String status = request.getParameter("status");
-        // Create MaterialDAO object and call updateMaterial method
         MaterialDAO materialDAO = new MaterialDAO();
-        materialDAO.updateMaterial(id, name, description, price, image, supplierId, status);
-        response.sendRedirect("materialmanagement");
+        List<Supplier> suppliers = materialDAO.getAllSuppliers();
+        request.setAttribute("suppliers", suppliers);
+        request.getRequestDispatcher("/materialmanagement").forward(request, response);
 
     }
 

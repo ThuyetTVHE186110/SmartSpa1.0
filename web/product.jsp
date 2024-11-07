@@ -56,7 +56,7 @@
                         <div class="product-card" data-category="${p.category}"
                              data-product-id="${p.id}" data-aos="fade-up">
                             <div class="product-image">
-                                <img class="img-fluid" src="img/${p.image}" alt="${p.name}">
+                                <img class="img-fluid" src="${p.image}" alt="${p.name}">
                                 <div class="product-overlay">
                                     <a href="productdetail?id=${p.id}" class="quick-view-btn">View
                                         Details</a>
