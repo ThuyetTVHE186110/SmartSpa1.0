@@ -76,7 +76,7 @@
             String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
 
             // Lấy đường dẫn hình ảnh từ person
-        %>
+%>
         <jsp:include page="headerHTML.jsp" />
 
         <!-- ======= Sidebar ======= -->
@@ -129,7 +129,9 @@
                                         <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change
                                             Password</button>
                                     </li>
-
+                                    <li class="nav-item">
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#referral-code">Referral Code</button>
+                                    </li>
                                 </ul>
 
 
@@ -316,6 +318,21 @@
 
                                     </div>
 
+                                    <div class="tab-pane fade pt-3" id="referral-code">
+                                        <c:choose>
+                                            <c:when test="${referral != null}">
+                                                <!-- Nội dung khi referral tồn tại -->
+                                                <h5 class="card-title">Referral Code: ${referral.code}</h5>
+                                                <h5 class="card-title">Value of Code: ${referral.value}%</h5>
+                                            </c:when>
+                                            <c:otherwise>
+                                                <!-- Nội dung khi referral không tồn tại -->
+                                                <h5 class="card-title">Referral code does not exist.</h5>
+                                            </c:otherwise>
+                                        </c:choose>
+
+
+                                    </div>
                                 </div><!-- End Bordered Tabs -->
 
                             </div>

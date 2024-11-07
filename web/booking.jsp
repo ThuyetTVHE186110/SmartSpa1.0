@@ -69,6 +69,44 @@
                 color: white;
                 border-color: #0056b3;
             }
+            /* Style cho ô input */
+            .summary-item input[type="text"] {
+                width: 150px;
+                padding: 10px;
+                font-size: 16px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                transition: border-color 0.3s ease;
+            }
+
+            .summary-item input[type="text"]:focus {
+                border-color: #66afe9;
+                outline: none;
+                box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+            }
+
+            /* Style cho thông báo mã referral */
+            .code {
+                margin-top: 10px;
+                font-size: 14px;
+                color: #555;
+                padding: 8px;
+                border-radius: 4px;
+                background-color: #f1f1f1;
+            }
+            .error-message { 
+                position: fixed;
+                top: 10px;
+                right: 10px;
+                background-color: rgba(255, 0, 0, 0.8);
+                color: white;
+                padding: 10px;
+                border-radius: 5px;
+                font-size: 16px;
+                z-index: 9999; /* Đảm bảo nó luôn hiển thị ở trên cùng */
+                opacity: 0; /* Ẩn thông báo ban đầu */
+                transition: opacity 0.5s ease-in-out; /* Hiệu ứng mờ dần */
+            }
         </style>
     </head>
 
@@ -83,7 +121,9 @@
                 <p>${success}</p>
             </div>
         </section>
-
+        <!--Error Message-->
+        <div id="error-message" class="error-message">
+        </div>
         <!-- Booking Form Section -->
         <section class="booking-section">
             <div class="booking-container">
@@ -98,7 +138,7 @@
                     </div>
                     <div class="step">
                         <span class="step-number">3</span>
-                        <span class="step-text">Your Details</span>
+                        <span class="step-text">Special Notes</span>
                     </div>
                     <div class="step">
                         <span class="step-number">4</span>
@@ -109,6 +149,8 @@
                     <!-- Step 1: Service Selection -->
                     <div class="form-step active" id="step1">
                         <h2>Select Your Service</h2>
+                        <!-- Input store selected services -->
+                        <input type="hidden" name="selectedServices" id="selectedServices">
                         <div class="service-categories">
                             <%--<c:forEach items="${requestScope.categoryList}" var="category">--%>
                             <div class="service-category">
@@ -117,7 +159,7 @@
                                     <c:forEach items="${requestScope.serviceList}" var="service">
                                         <%--<c:if test="${category.id == service.categoryID}">--%>
                                         <label class="service-option">
-                                            <input type="radio" name="service" value="${service.id}">
+                                            <input type="checkbox" name="service" value="${service.id}" class="service-checkbox" required>
                                             <span class="option-content">
                                                 <span class="service-name">${service.name}</span>
                                                 <span class="service-price">$${service.price}</span>
@@ -142,7 +184,7 @@
                             <!-- Staff Selection -->
                             <div class="form-group">
                                 <label for="staff">Select Staff</label>
-                                <select id="staff" name="staff" required onchange="getAvailableTimes()">
+                                <select id="staff" name="staff" required>
                                     <option value="">Any available staff</option>
                                     <c:forEach items="${requestScope.staffList}" var="staff">
                                         <option value="${staff.id}">${staff.name}</option>
@@ -151,9 +193,9 @@
                             </div>
 
                             <div class="datetime-selection">
-                                <div class="calendar-container">
+                                <div class="calendar-container" style="max-height: fit-content">
                                     <label for="appointmentDate">Choose Date</label>
-                                    <input type="date" id="appointmentDate" name="appointmentDate" value="${today}" required onchange="getAvailableTimes()">
+                                    <input type="date" id="appointmentDate" name="appointmentDate" value="${today}" required>
                                 </div>
                                 <div class="time-slots">
                                     <h3>Available Times</h3>
@@ -189,9 +231,9 @@
 
                     <!-- Step 3: Personal Details -->
                     <div class="form-step" id="step3">
-                        <h2>Your Details</h2>
+                        <h2>Special Notes</h2>
                         <div class="personal-details">
-                            <div class="form-group">
+<!--                            <div class="form-group">
                                 <label for="name">Full Name</label>
                                 <input type="text" id="name" name="name" value="${account.personInfo.name}" required>
                             </div>
@@ -202,7 +244,7 @@
                             <div class="form-group">
                                 <label for="phone">Phone</label>
                                 <input type="tel" id="phone" name="phone" value="${account.personInfo.phone}" required>
-                            </div>
+                            </div>-->
                             <div class="form-group">
                                 <label for="notes">Special Notes/Requests</label>
                                 <textarea id="notes" name="notes" rows="4"></textarea>
@@ -227,8 +269,13 @@
                                 <p id="summary-datetime"></p>
                             </div>
                             <div class="summary-item">
-                                <h3>Your Details</h3>
-                                <p id="summary-details"></p>
+                                <h3>Total: </h3>
+                                <p id="summary-total"></p>
+                            </div>
+                            <div class="summary-item">
+                                <h3>Promo Code: </h3>
+                                <input type="text" id="referralCode" placeholder="Enter CODE" name="code" onchange="checkReferral()">
+                                <div class="message-code"></div>
                             </div>
                         </div>
                         <div class="form-navigation">
@@ -250,75 +297,122 @@
         <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/main.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/main.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
+
         <script>
-                                            var selectedTime = null;
-                                            async function getAvailableTimes() {
-                                                const staffId = document.getElementById("staff").value;
-                                                const date = document.getElementById("appointmentDate").value;
-                                                const service = document.querySelector('input[name="service"]:checked')?.value;
-
-                                                if (staffId && date && service) {
-                                                    try {
-                                                        const response = await fetch(`getAvailableTimes?service=` + service + `&staffId=` + staffId + `&date=` + date);
-                                                        const availableSlots = await response.json();
-
-//                                                     Clear previous slots
-                                                        document.getElementById("morningSlots").innerHTML = "";
-                                                        document.getElementById("afternoonSlots").innerHTML = "";
-                                                        document.getElementById("eveningSlots").innerHTML = "";
-
-                                                        availableSlots.forEach(slot => {
-                                                            const button = document.createElement("button");
-                                                            button.type = "button";
-                                                            button.classList.add("time-slot");
-                                                            button.textContent = slot;
-                                                            button.onclick = () => selectTime(button, slot);
-
-                                                            // Categorize by time of day
-                                                            const [hour] = slot.split(":").map(Number);
-                                                            if (hour >= 10 && hour < 12) {
-                                                                document.getElementById("morningSlots").appendChild(button);
-                                                            } else if (hour >= 12 && hour < 16) {
-                                                                document.getElementById("afternoonSlots").appendChild(button);
-                                                            } else if (hour >= 16 && hour < 18) {
-                                                                document.getElementById("eveningSlots").appendChild(button);
-                                                            }
-                                                        });
-                                                    } catch (error) {
-                                                        console.error("Error fetching available times:", error);
+                                    async function checkReferral() {
+                                        const code = document.getElementById("referralCode").value;
+                                        const codeDiv = document.querySelector(".message-code");
+                                        if (code) {
+                                            try {
+                                                const response = await fetch(`getReferral?code=` + code);
+                                                // Kiểm tra nếu phản hồi thành công
+                                                if (response.ok) {
+                                                    const data = await response.json();
+                                                    if (data.message === "Mã không hợp lệ") {
+                                                        codeDiv.textContent = data.message; // Ghi thông điệp vào thẻ div
+                                                    } else {
+                                                        codeDiv.textContent = "Bạn được giảm " + data.message + "%";
                                                     }
+                                                    codeDiv.classList.add("code");
                                                 } else {
-                                                    console.log("Please select staff, date, and service.");
+                                                    codeDiv.textContent = "Lỗi kết nối đến server";
                                                 }
+                                            } catch (error) {
+                                                console.error("Lỗi:", error);
+                                                codeDiv.textContent = "Đã xảy ra lỗi khi xử lý yêu cầu";
                                             }
+                                        } else {
+                                            codeDiv.textContent = "";
+                                            codeDiv.classList.remove("code");
+                                        }
+                                    }
+        </script>
+        <script>
+            var selectedTime = null;
+            document.addEventListener("DOMContentLoaded", function () {
+                const selectedServices = []; // Mảng lưu các dịch vụ đã chọn
 
-                                            function selectTime(selectedButton, time) {
-                                                document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
-                                                selectedButton.classList.add('selected');
-                                                // Store the selected time in the variable
-                                                selectedTime = time;
-                                                console.log("Selected time:", selectedTime);  // Log the selected time for debugging
+                // Hàm lấy các khung giờ trống khi có thay đổi
+                async function getAvailableTimes() {
+                    // Cập nhật mảng selectedServices với các dịch vụ đang được chọn
+                    selectedServices.length = 0;
+                    document.querySelectorAll(".service-checkbox:checked").forEach(checkbox => {
+                        selectedServices.push(checkbox.value);
+                    });
 
-                                                // Optional: Update a hidden input field if you need to submit it with a form
-                                                document.getElementById("selectedTimeInput").value = selectedTime;
-                                            }
+                    const staffId = document.getElementById("staff").value;
+                    const date = document.getElementById("appointmentDate").value;
+
+                    if (staffId && date && selectedServices.length > 0) {
+                        try {
+                            const serviceParam = selectedServices.join(",");
+                            document.getElementById("selectedServices").value = serviceParam;
+                            console.log(serviceParam);
+                            const response = await fetch(`getAvailableTimes?service=` + serviceParam + `&staffId=` + staffId + `&date=` + date);
+                            const availableSlots = await response.json();
+
+                            // Xóa các khung giờ trước đó
+                            document.getElementById("morningSlots").innerHTML = "";
+                            document.getElementById("afternoonSlots").innerHTML = "";
+                            document.getElementById("eveningSlots").innerHTML = "";
+
+                            // Cập nhật các khung giờ trống
+                            availableSlots.forEach(slot => {
+                                const button = document.createElement("button");
+                                button.type = "button";
+                                button.classList.add("time-slot");
+                                button.textContent = slot;
+                                button.onclick = () => selectTime(button, slot);
+
+                                // Phân loại theo buổi
+                                const [hour] = slot.split(":").map(Number);
+                                if (hour >= 10 && hour < 12) {
+                                    document.getElementById("morningSlots").appendChild(button);
+                                } else if (hour >= 12 && hour < 16) {
+                                    document.getElementById("afternoonSlots").appendChild(button);
+                                } else if (hour >= 16 && hour < 18) {
+                                    document.getElementById("eveningSlots").appendChild(button);
+                                }
+                            });
+                        } catch (error) {
+                            console.error("Error fetching available times:", error);
+                        }
+                    } else {
+                        console.log("Please select staff, date, and service.");
+                    }
+                }
+
+                // Lắng nghe thay đổi từ checkbox dịch vụ, chọn nhân viên, và ngày hẹn
+                document.querySelectorAll(".service-checkbox").forEach(checkbox => {
+                    checkbox.addEventListener("change", getAvailableTimes);
+                });
+                document.getElementById("staff").addEventListener("change", getAvailableTimes);
+                document.getElementById("appointmentDate").addEventListener("change", getAvailableTimes);
+            });
+
+            function selectTime(selectedButton, time) {
+                document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
+                selectedButton.classList.add('selected');
+                // Store the selected time in the variable
+                selectedTime = time;
+                console.log("Selected time:", selectedTime); // Log the selected time for debugging
+
+                // Optional: Update a hidden input field if you need to submit it with a form
+                document.getElementById("selectedTimeInput").value = selectedTime;
+            }
         </script>
         <script>
             AOS.init();
-
             // Hamburger menu functionality
             const hamburger = document.querySelector('.hamburger');
             const navLinks = document.querySelector('.nav-links');
-
             hamburger.addEventListener('click', () => {
                 navLinks.classList.toggle('active');
                 hamburger.classList.toggle('active');
             });
-
             // Form step navigation
             let currentStep = 1;
             const totalSteps = 4;
-
             function updateSteps() {
                 document.querySelectorAll('.step').forEach((step, index) => {
                     if (index + 1 < currentStep) {
@@ -331,7 +425,6 @@
                         step.classList.remove('active', 'completed');
                     }
                 });
-
                 document.querySelectorAll('.form-step').forEach((step, index) => {
                     if (index + 1 === currentStep) {
                         step.classList.add('active');
@@ -343,20 +436,27 @@
 
             document.querySelectorAll('.next-step').forEach(button => {
                 button.addEventListener('click', () => {
+
                     const currentFormStep = document.querySelector('.form-step.active');
-                    const inputs = currentFormStep.querySelectorAll('input, textarea');
+                    const inputs = currentFormStep.querySelectorAll('input');
+                    console.log(inputs);
                     let valid = true;
-
                     // Check if each input is filled (only if required)
-                    inputs.forEach(input => {
-                        if (input.hasAttribute('required') && !input.value.trim()) {
-                            input.classList.add('error'); // Add an error class (you can style it in CSS)
-                            valid = false;
-                        } else {
-                            input.classList.remove('error'); // Remove error class if input is valid
-                        }
-                    });
+                    if (currentFormStep.id === 'step1') {
+                        const serviceCheckboxes = document.querySelectorAll('.service-checkbox');
+                        const isServiceSelected = Array.from(serviceCheckboxes).some(checkbox => checkbox.checked);
 
+                        if (!isServiceSelected) {
+                            showError('Please select at least one service to continue.');
+                            valid = false;
+                        }
+                    } else if (currentFormStep.id === 'step2') {
+                        const selectedTimeSlots = document.querySelectorAll('.time-slot.selected');
+                        if (selectedTimeSlots.length === 0) {
+                            showError('Please select at least one available time to continue.');
+                            valid = false;
+                        }
+                    }
                     if (valid) {
                         // Move to the next step only if all required inputs are filled
                         if (currentStep < totalSteps) {
@@ -366,12 +466,9 @@
                                 updateSummary(); // Update summary when reaching the last step
                             }
                         }
-                    } else {
-                        alert('Please fill in all required fields before continuing.');
                     }
                 });
             });
-
             document.querySelectorAll('.prev-step').forEach(button => {
                 button.addEventListener('click', () => {
                     if (currentStep > 1) {
@@ -380,7 +477,6 @@
                     }
                 });
             });
-
             function updateSummary() {
                 // Update selected service
                 const selectedService = document.querySelector('input[name="service"]:checked');
@@ -388,14 +484,12 @@
                 const servicePrice = selectedService ? selectedService.closest('.service-option').querySelector('.service-price').textContent : '';
                 const serviceDuration = selectedService ? selectedService.closest('.service-option').querySelector('.service-duration').textContent : '';
                 document.getElementById('summary-service').textContent = serviceName + " - " + servicePrice + " (" + serviceDuration + ")";
-
                 // Update selected date & time
                 const date = document.getElementById("appointmentDate").value;
-//                var selectedTime = selectTime;
-//                const summaryDate = selectedDate.value ? selectedDate.textContent : 'No date selected';
-//                const summaryTime = selectedTime ? selectedTime.value : 'No time selected';
+                //                var selectedTime = selectTime;
+                //                const summaryDate = selectedDate.value ? selectedDate.textContent : 'No date selected';
+                //                const summaryTime = selectedTime ? selectedTime.value : 'No time selected';
                 document.getElementById('summary-datetime').textContent = date + " at " + selectedTime;
-
                 // Update personal details
                 const name = document.getElementById('name').value;
                 const email = document.getElementById('email').value;
@@ -406,16 +500,36 @@
             }
 
             // Form submission
-//            document.getElementById('bookingForm').addEventListener('submit', function (e) {
-//                e.preventDefault();
-//                // Add your booking submission logic here
-//                alert('Thank you for your booking! We will confirm your appointment shortly.');
-//                // Reset form and steps
-//                currentStep = 1;
-//                updateSteps();
-//                this.reset();
-//            }
-//            );
+            //            document.getElementById('bookingForm').addEventListener('submit', function (e) {
+            //                e.preventDefault();
+            //                // Add your booking submission logic here
+            //                alert('Thank you for your booking! We will confirm your appointment shortly.');
+            //                // Reset form and steps
+            //                currentStep = 1;
+            //                updateSteps();
+            //                this.reset();
+            //            }
+            //            );
+            function showError(message) {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = message;  // Thay đổi nội dung thông báo
+
+                // Hiển thị thông báo lỗi
+                errorMessage.style.display = 'block';
+
+                // Đợi 0.1 giây để cho phép browser render thông báo
+                setTimeout(() => {
+                    errorMessage.style.opacity = 1;  // Từ từ hiện lên
+                }, 100);
+
+                // Ẩn thông báo sau 3 giây
+                setTimeout(() => {
+                    errorMessage.style.opacity = 0;  // Dần dần mờ đi
+                    setTimeout(() => {
+                        errorMessage.style.display = 'none';  // Ẩn đi sau khi hiệu ứng kết thúc
+                    }, 500); // Thời gian để opacity chuyển thành 0 (500ms)
+                }, 3000); // Sau 3 giây, ẩn thông báo
+            }
         </script>
     </body>
 

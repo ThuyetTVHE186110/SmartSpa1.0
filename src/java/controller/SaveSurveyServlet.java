@@ -1,22 +1,30 @@
-package servlet;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
+ */
 
-import java.io.IOException;
-import javax.servlet.ServletException;
-import javax.servlet.annotation.WebServlet;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+package controller;
+
 import com.google.gson.Gson;
-import dao.SurveyDAO;
-import model.Survey;
-import model.Account;
+import dal.SurveyDAO;
+import java.io.IOException;
+import java.io.PrintWriter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.List;
+import java.util.Map;
+import model.Account;
+import model.Survey;
 
-@WebServlet(name = "SaveSurvey", urlPatterns = {"/SaveSurvey"})
+/**
+ *
+ * @author Asus
+ */
 public class SaveSurveyServlet extends HttpServlet {
-    
+   
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("application/json");
@@ -64,4 +72,4 @@ public class SaveSurveyServlet extends HttpServlet {
             throws ServletException, IOException {
         processRequest(request, response);
     }
-} 
+}

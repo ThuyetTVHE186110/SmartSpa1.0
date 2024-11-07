@@ -107,7 +107,7 @@ public class AppointmentDAO extends DBContext {
 
         return appointments;
     }
-    
+
     public List<Appointment> getHistoryCustomer(int customerID) {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
@@ -248,7 +248,7 @@ public class AppointmentDAO extends DBContext {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
 
-        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE Start = ? ORDER BY appointmentDate DESC, appointmentTime DESC";
+        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE Cast(Start as Date) = ? ORDER BY Start DESC";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
 
@@ -320,61 +320,54 @@ public class AppointmentDAO extends DBContext {
      * Add new appointment
      *
      * @param appointment
-     * @throws java.sql.SQLException
+     * @return
      */
-    public void addAppointment(Appointment appointment) throws SQLException {
+    public boolean addAppointment(Appointment appointment) {
         Logger logger = Logger.getLogger(getClass().getName());
-        PreparedStatement stm = null;
-        try (Connection connection = getConnection()) {
-            stm = connection.prepareStatement(INSERT_APPOINTMENT);
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(INSERT_APPOINTMENT)) {
+
             stm.setTimestamp(1, Timestamp.valueOf(appointment.getStart()));
             stm.setTimestamp(2, Timestamp.valueOf(appointment.getEnd()));
-            stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));   // Ngày tạo cuộc hẹn
-            stm.setString(4, appointment.getStatus());                              // Trạng thái cuộc hẹn
-            stm.setString(5, appointment.getNote());                                // Ghi chú
-            stm.setInt(6, appointment.getCustomer().getId());                         // ID của người tham gia
+            stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));
+            stm.setString(4, appointment.getStatus());
+            stm.setString(5, appointment.getNote());
+            stm.setInt(6, appointment.getCustomer().getId());
 
             int rowsAffected = stm.executeUpdate();
             if (rowsAffected > 0) {
                 logger.info("Appointment successfully added.");
+                return true;
             }
-
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error adding appointment: {0}", e.getMessage());
-        } finally {
-            if (stm != null) {
-                stm.close();
-            }
         }
+        return false;
     }
 
-    public void deleteAppointment(int appointmentId) throws SQLException {
-        PreparedStatement stm = null;
+    public boolean deleteAppointment(int appointmentId) {
         Logger logger = Logger.getLogger(getClass().getName());
 
-        try (Connection connection = getConnection()) {
-            stm = connection.prepareStatement(DELETE_APPOINTMENT);
-            stm.setInt(1, appointmentId); // Set appointment ID to delete
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(DELETE_APPOINTMENT)) {
+
+            stm.setInt(1, appointmentId);
 
             int rowsAffected = stm.executeUpdate();
             if (rowsAffected > 0) {
                 logger.info("Appointment successfully deleted.");
+                return true;
             }
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error deleting appointment: {0}", e.getMessage());
-        } finally {
-            if (stm != null) {
-                stm.close();
-            }
         }
+        return false;
     }
 
-    public void updateAppointment(Appointment appointment) throws SQLException {
-        PreparedStatement stm = null;
+    public boolean updateAppointment(Appointment appointment) {
         Logger logger = Logger.getLogger(getClass().getName());
 
-        try (Connection connection = getConnection()) {
-            stm = connection.prepareStatement(UPDATE_APPOINTMENT);
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(UPDATE_APPOINTMENT)) {
+
             stm.setTimestamp(1, Timestamp.valueOf(appointment.getStart()));
             stm.setTimestamp(2, Timestamp.valueOf(appointment.getEnd()));
             stm.setTimestamp(3, Timestamp.valueOf(appointment.getCreatedDate()));
@@ -386,15 +379,12 @@ public class AppointmentDAO extends DBContext {
             int rowsAffected = stm.executeUpdate();
             if (rowsAffected > 0) {
                 logger.info("Appointment successfully updated.");
+                return true;
             }
-
         } catch (SQLException e) {
             logger.log(Level.SEVERE, "Error updating appointment: {0}", e.getMessage());
-        } finally {
-            if (stm != null) {
-                stm.close();
-            }
         }
+        return false;
     }
 
     /**

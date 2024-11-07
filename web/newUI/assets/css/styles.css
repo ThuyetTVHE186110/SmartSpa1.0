@@ -4805,10 +4805,10 @@ footer {
 }
 
 /* Form Styles */
-.preferences-form,
+/*.preferences-form,
 .settings-form {
-    max-width: 600px;
-}
+    max-width: 960px;
+}*/
 
 .form-group {
     margin-bottom: 20px;
@@ -5519,8 +5519,6 @@ footer {
 /* Fix form elements */
 form {
     width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
 }
 
 input,
@@ -6022,7 +6020,7 @@ textarea {
     }
 
     .calendar-container {
-        overflow-x: auto;
+        /*        overflow-x: auto;*/
     }
 
     .fc {
@@ -8175,7 +8173,7 @@ textarea {
     }
 
     .calendar-container {
-        overflow-x: auto;
+        /*overflow-x: auto;*/
     }
 
     .fc {
@@ -10324,7 +10322,7 @@ textarea {
     }
 
     .calendar-container {
-        overflow-x: auto;
+        /*overflow-x: auto;*/
     }
 
     .fc {
@@ -11000,7 +10998,7 @@ textarea {
     }
 
     .view-details:hover,
-    .book-now:hover {
+        .book-now:hover {
         background-color: #8D6968;
         color: white;
     }
@@ -11098,7 +11096,7 @@ textarea {
     ``` </rewritten_file>
 
     /* Responsive Styles */
-    @media(max-width: 768px) {
+    @media (max-width: 768px) {
         .navbar {
             flex-direction: column;
             align-items: flex-start;
@@ -11287,7 +11285,7 @@ textarea {
     }
 
     .view-details:hover,
-    .book-now:hover {
+        .book-now:hover {
         background-color: #8D6968;
         color: white;
         border-color: #8D6968;
@@ -12184,8 +12182,8 @@ textarea {
     }
 
     .form-group input:focus,
-    .form-group select:focus,
-    .form-group textarea:focus {
+        .form-group select:focus,
+        .form-group textarea:focus {
         outline: none;
         border-color: #B38886;
     }
@@ -12496,7 +12494,7 @@ textarea {
     }
 
     .next-step:hover,
-    .confirm-booking:hover {
+        .confirm-booking:hover {
         background-color: #8D6968;
         transform: translateY(-2px);
     }
@@ -12815,7 +12813,7 @@ textarea {
     /* Form Styles */
     .preferences-form,
     .settings-form {
-        max-width: 600px;
+        /*max-width: 600px;*/
     }
 
     .form-group {
@@ -12869,7 +12867,7 @@ textarea {
     }
 
     .save-preferences-btn:hover,
-    .save-settings-btn:hover {
+        .save-settings-btn:hover {
         background-color: #8D6968;
     }
 
@@ -14733,7 +14731,7 @@ textarea {
     }
 
     .continue-btn:hover,
-    .place-order-btn:hover {
+        .place-order-btn:hover {
         background-color: #8D6968;
     }
 
@@ -15358,8 +15356,8 @@ textarea {
     }
 
     .rating input:checked~label,
-    .rating label:hover,
-    .rating label:hover~label {
+        .rating label:hover,
+        .rating label:hover~label {
         color: #FFD700;
     }
 
@@ -16882,7 +16880,7 @@ textarea {
     }
 
     .continue-btn:hover,
-    .place-order-btn:hover {
+        .place-order-btn:hover {
         background-color: #8D6968;
     }
 
@@ -17509,8 +17507,8 @@ textarea {
     }
 
     .rating input:checked~label,
-    .rating label:hover,
-    .rating label:hover~label {
+        .rating label:hover,
+        .rating label:hover~label {
         color: #FFD700;
     }
 
@@ -19033,7 +19031,7 @@ textarea {
     }
 
     .continue-btn:hover,
-    .place-order-btn:hover {
+        .place-order-btn:hover {
         background-color: #8D6968;
     }
 
@@ -19660,8 +19658,8 @@ textarea {
     }
 
     .rating input:checked~label,
-    .rating label:hover,
-    .rating label:hover~label {
+        .rating label:hover,
+        .rating label:hover~label {
         color: #FFD700;
     }
 
@@ -20405,7 +20403,7 @@ textarea {
         }
 
         .calendar-container {
-            overflow-x: auto;
+            /*overflow-x: auto;*/
         }
 
         .fc {
@@ -21186,7 +21184,7 @@ textarea {
     }
 
     .continue-btn:hover,
-    .place-order-btn:hover {
+        .place-order-btn:hover {
         background-color: #8D6968;
     }
 
@@ -21813,8 +21811,8 @@ textarea {
     }
 
     .rating input:checked~label,
-    .rating label:hover,
-    .rating label:hover~label {
+        .rating label:hover,
+        .rating label:hover~label {
         color: #FFD700;
     }
 

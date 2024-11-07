@@ -5,21 +5,21 @@
 <%
     // No need to declare session manually; it's already available in JSP
     // You can directly use session
-//    if (session == null || session.getAttribute("account") == null) {
-//        // Redirect to login page if session is not found or account is not in session
-//        response.sendRedirect("adminLogin.jsp");
-//    } else {
-//        // Get the account object from session
-//        Account account = (Account) session.getAttribute("account");
-//
-//        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
-//            // Allow access to the page (do nothing and let the JSP render)
-//        } else {
-//            // Set an error message and redirect to an error page
-//            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
-//            request.getRequestDispatcher("error").forward(request, response);
-//        }
-//    }
+    if (session == null || session.getAttribute("account") == null) {
+        // Redirect to login page if session is not found or account is not in session
+        response.sendRedirect("adminLogin.jsp");
+    } else {
+        // Get the account object from session
+        Account account = (Account) session.getAttribute("account");
+
+        if (account.getRole() == 1 || account.getRole() == 2 || account.getRole() == 3) {
+            // Allow access to the page (do nothing and let the JSP render)
+        } else {
+            // Set an error message and redirect to an error page
+            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+            request.getRequestDispatcher("error").forward(request, response);
+        }
+    }
 %>
 
 <!DOCTYPE html>
@@ -150,12 +150,16 @@
                                 <p>Manage appointments from this panel.</p>
                                 <div class="container">
                                     <div class="dropdown">
-                                        <select id="employee-select">
-                                            <option>Choose Staff</option>
-                                            <c:forEach items="${requestScope.staffList}" var="staff">
-                                                <option>${staff.name}</option>>
-                                            </c:forEach>
-                                        </select>
+                                        <form action="appointment-management" id="appointmentForm" method="post">
+                                            <input type="hidden" value="chooseStaff" name="action">
+                                            <label for="employee-select">Choose staff:</label>
+                                            <select id="employee-select" name="selectedStaff" onchange="document.getElementById('appointmentForm').submit();">
+                                                <option value="all-staff" <c:if test="${'all-staff' == selectedStaff or selectedStaff == null}">selected</c:if>>All Staff</option>
+                                                <c:forEach items="${requestScope.staffList}" var="staff">
+                                                    <option value="${staff.id}" <c:if test="${staff.id == requestScope.selectedStaff}">selected</c:if>>${staff.name}</option>
+                                                </c:forEach>
+                                            </select>
+                                        </form>
                                     </div>
                                     <div class="search">
                                         <form action="appointment-management" method="post">
@@ -203,7 +207,7 @@
                                                 <th scope="row">${appointment.id}</th>
                                                 <td>${appointment.customer.name}</td>
                                                 <td> 
-                                                    ${appointment.start} ${appointment.end}
+                                                    ${appointment.start.toLocalTime()} - ${appointment.end.toLocalTime()}
                                                 </td>
                                                 <td>
                                                     <c:set var="size" value="${fn:length(appointmentServicesMap[appointment.id])}" />
@@ -244,7 +248,7 @@
                                                 </td>
                                                 <td>
                                                     <div style="display: flex">
-                                                        <button type="button" class="btn btn-success">Check Out</button>
+                                                        <button type="button" class="btn btn-success" <c:if test="${appointment.status == 'Cancelled'}"> disabled </c:if>>Check Out</button>
                                                         <button type="button" class="btn btn-primary btn-sm edit-button" data-bs-toggle="modal"
                                                                 data-bs-target="#editAppointmentModal"
                                                                 data-appointment-id="${appointment.id}"
@@ -255,7 +259,7 @@
                                                                 data-time="${appointment.end}"
                                                                 data-status="${appointment.status}"
                                                                 data-note="${appointment.note}">Edit</button>
-                                                        <button type="button" class="btn btn-danger btn-sm cancel-appointment" data-bs-toggle="modal" data-bs-target="#cancel-appointment" data-appointment-id="${appointment.id}">Cancel</button>
+                                                                <button type="button" class="btn btn-danger btn-sm cancel-appointment" data-bs-toggle="modal" data-bs-target="#cancel-appointment" data-appointment-id="${appointment.id}">Cancel</button>
                                                     </div>
                                                 </td>
                                             </tr>
@@ -264,7 +268,7 @@
                                     </tbody>
                                 </table>
                                 <!-- End Table with stripped rows -->
-                                <c:if test="${appointmentList.size() == 0}">
+                                <c:if test="${appointmentList.size() == 0 or appointmentList == null}">
                                     <div class="no-appointments">
                                         No appointments found.
                                     </div>
@@ -439,7 +443,6 @@
                 </div>
             </div>
         </div>
-
 
         <!--Cancel Appointment-->
         <div class="modal fade" id="cancel-appointment" tabindex="-1" aria-labelledby="addCouncilModalLabel" aria-hidden="true">

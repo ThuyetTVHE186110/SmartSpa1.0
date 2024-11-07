@@ -6,6 +6,7 @@ package controller;
 
 import dal.AccountDAO;
 import dal.PersonDAO;
+import dal.ReferralDAO;
 import java.io.IOException;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
@@ -15,6 +16,7 @@ import model.Person;
 import jakarta.servlet.http.HttpSession;
 import model.Account;
 import java.sql.SQLException;
+import model.Referral;
 
 /**
  *
@@ -35,6 +37,9 @@ public class UserProfileServlet extends HttpServlet {
         Account account = (Account) session.getAttribute("account");
         Person person = account.getPersonInfo();
 
+        ReferralDAO referralDAO = new ReferralDAO();
+        Referral referral = referralDAO.getReferralByStaff(person.getId());
+        request.setAttribute("referral", referral);
         // Set attributes for display in JSP
         request.setAttribute("person", person);
         request.setAttribute("displayName", person.getName());

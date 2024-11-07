@@ -1,12 +1,23 @@
-package dao;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package dal;
 
-import java.sql.*;
-import java.util.*;
+import static dal.DBContext.getConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import model.Survey;
-import dal.DBContext;
 
-public class SurveyDAO extends DBContext {
-    
+/**
+ *
+ * @author Asus
+ */
+public class SurveyDAO {
     public boolean saveSurvey(Survey survey) {
         String sql = "INSERT INTO UserSurvey (userId, skinType, skinConcerns, beautyGoals, budgetRange, " +
                     "preferredServices, previousTreatments) VALUES (?, ?, ?, ?, ?, ?, ?)";
@@ -72,4 +83,4 @@ public class SurveyDAO extends DBContext {
         
         return recommendations;
     }
-} 
+}
