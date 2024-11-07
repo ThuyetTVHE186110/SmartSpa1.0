@@ -19,6 +19,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import model.Supplier;
 
 /**
  *
@@ -31,7 +33,10 @@ public class AddMaterial extends HttpServlet {
   @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+       MaterialDAO materialDAO = new MaterialDAO();
+       List<Supplier> suppliers = materialDAO.getAllSuppliers();
+        request.setAttribute("suppliers", suppliers);
+        request.getRequestDispatcher("/materialmanagement").forward(request, response);
 }
 
 

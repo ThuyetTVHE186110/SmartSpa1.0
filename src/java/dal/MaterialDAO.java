@@ -41,41 +41,60 @@ public class MaterialDAO extends DBContext {
         }
         return materials;
     }
+    public List<Supplier> getAllSuppliers() {
+        List<Supplier> suppliers = new ArrayList<>();
+        String sql = "SELECT * FROM Supplier";
 
-    public Material getMaterialByID(int materialID) {
-        Material material = null;
-        try (Connection connection = DBContext.getConnection()) {
-            String sql = """
-                         SELECT p.*, s.Name as SupplierName, s.Address as SupplierAddress
-                         FROM Material p
-                         INNER JOIN Supplier s ON p.SupplierID = s.ID                      
-                         WHERE p.ID = ?""";
-
-            try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-                pstmt.setInt(1, materialID);
-                try (ResultSet rs = pstmt.executeQuery()) {
-                    if (rs.next()) {
-                        material = new Material();
-                        material.setId(rs.getInt("ID"));
-                        material.setName(rs.getString("Name"));
-                        material.setPrice(rs.getInt("Price"));
-                        material.setImage(rs.getString("Image"));
-
-                        Supplier supplier = new Supplier();
-                        supplier.setName(rs.getString("SupplierName"));
-                        supplier.setAddress(rs.getString("SupplierAddress"));
-                        material.setSupplierInfo(supplier);
-                        material.setDescription(rs.getString("Description"));
- 
-                    }
-                }
+        try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Supplier supplier = new Supplier();
+                supplier.setId(rs.getInt("ID"));
+                supplier.setName(rs.getString("Name"));
+                suppliers.add(supplier); // Thêm nhà cung cấp vào danh sách
+                System.out.println("Supplier ID: " + supplier.getId() + ", Name: " + supplier.getName());
             }
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return material;
-
+        return suppliers;
     }
+   public Material getMaterialByID(int materialID) {
+    Material material = null;
+    try (Connection connection = DBContext.getConnection()) {
+        String sql = """
+                     SELECT p.*, s.ID as SupplierID, s.Name as SupplierName, s.Address as SupplierAddress
+                     FROM Material p
+                     INNER JOIN Supplier s ON p.SupplierID = s.ID                      
+                     WHERE p.ID = ?""";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, materialID);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    material = new Material();
+                    material.setId(rs.getInt("ID"));
+                    material.setName(rs.getString("Name"));
+                    material.setPrice(rs.getInt("Price"));
+                    material.setImage(rs.getString("Image"));
+                    material.setDescription(rs.getString("Description"));
+                    
+                    // Lưu thông tin nhà cung cấp
+                    Supplier supplier = new Supplier();
+                    supplier.setId(rs.getInt("SupplierID")); // Lưu ID của nhà cung cấp
+                    supplier.setName(rs.getString("SupplierName"));
+                    supplier.setAddress(rs.getString("SupplierAddress"));
+                    material.setSupplierInfo(supplier);
+                    
+                    // Nếu bạn có status trong bảng Material
+                    material.setStatus(rs.getString("Status")); // Lưu status nếu có
+                }
+            }
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return material;
+}
 
     public int count(String txtSearch) {
         String searchMaterial = "SELECT COUNT(*) FROM Material p "
