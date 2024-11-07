@@ -92,7 +92,6 @@
                 border-radius: 4px;
                 background-color: #f1f1f1;
             }
-
             .error-message {
                 position: fixed;
                 top: 10px;
@@ -102,12 +101,9 @@
                 padding: 10px;
                 border-radius: 5px;
                 font-size: 16px;
-                z-index: 9999;
-                /* Đảm bảo nó luôn hiển thị ở trên cùng */
-                opacity: 0;
-                /* Ẩn thông báo ban đầu */
-                transition: opacity 0.5s ease-in-out;
-                /* Hiệu ứng mờ dần */
+                z-index: 9999; /* Đảm bảo nó luôn hiển thị ở trên cùng */
+                opacity: 0; /* Ẩn thông báo ban đầu */
+                transition: opacity 0.5s ease-in-out; /* Hiệu ứng mờ dần */
             }
         </style>
     </head>
@@ -147,8 +143,7 @@
                         <span class="step-text">Confirmation</span>
                     </div>
                 </div>
-                <form id="bookingForm" class="booking-form" data-aos="fade-up" action="booking"
-                      method="post">
+                <form id="bookingForm" class="booking-form" data-aos="fade-up" action="booking" method="post">
                     <!-- Step 1: Service Selection -->
                     <div class="form-step active" id="step1">
                         <h2>Select Your Service</h2>
@@ -162,24 +157,18 @@
                                     <c:forEach items="${requestScope.serviceList}" var="service">
                                         <%--<c:if test="${category.id == service.categoryID}">--%>
                                         <label class="service-option">
-                                            <input type="checkbox" name="service"
-                                                   value="${service.id}" class="service-checkbox"
-                                                   required>
+                                            <input type="checkbox" name="service" value="${service.id}" class="service-checkbox">
                                             <span class="option-content">
-                                                <span
-                                                    class="service-name">${service.name}</span>
-                                                <span
-                                                    class="service-price">$${service.price}</span>
-                                                <span
-                                                    class="service-duration">${service.duration}
-                                                    mins</span>
+                                                <span class="service-name">${service.name}</span>
+                                                <span class="service-price">$${service.price}</span>
+                                                <span class="service-duration">${service.duration} mins</span>
                                             </span>
                                         </label>
-                                        <%--< /c:if>--%>
+                                        <%--</c:if>--%>
                                     </c:forEach>
                                 </div>
                             </div>
-                            <%--< /c:forEach>--%>
+                            <%--</c:forEach>--%>
                         </div>
                         <div class="form-navigation">
                             <button type="button" class="next-step">Continue to Date & Time</button>
@@ -204,8 +193,7 @@
                             <div class="datetime-selection">
                                 <div class="calendar-container" style="max-height: fit-content">
                                     <label for="appointmentDate">Choose Date</label>
-                                    <input type="date" id="appointmentDate" name="appointmentDate"
-                                           value="${today}" required>
+                                    <input type="date" id="appointmentDate" name="appointmentDate" value="${today}" required>
                                 </div>
                                 <div class="time-slots">
                                     <h3>Available Times</h3>
@@ -215,7 +203,7 @@
                                             <h4>Morning</h4>
                                             <div id="morningSlots">
                                                 <!-- Morning slots populated by JavaScript -->
-                                            </div>
+                                            </div>         
                                         </div>
                                         <div class="time-column">
                                             <h4>Afternoon</h4>
@@ -223,7 +211,7 @@
                                                 <!-- Afternoon slots populated by JavaScript -->
                                             </div>
                                         </div>
-                                        <div class="time-column">
+                                        <div class="time-column" >
                                             <h4>Evening</h4>
                                             <div id="eveningSlots">
                                                 <!-- Evening slots populated by JavaScript -->
@@ -235,8 +223,7 @@
                         </div>
                         <div class="form-navigation">
                             <button type="button" class="prev-step">Back</button>
-                            <button id="continue-details" type="button" class="next-step">Continue to
-                                Details</button>
+                            <button id="continue-details" type="button" class="next-step">Continue to Details</button>
                         </div>
                     </div>
 
@@ -245,17 +232,17 @@
                         <h2>Special Notes</h2>
                         <div class="personal-details">
                             <!--                            <div class="form-group">
-                <label for="name">Full Name</label>
-                <input type="text" id="name" name="name" value="${account.personInfo.name}" required>
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" name="email" value="${account.personInfo.email}" required>
-            </div>
-            <div class="form-group">
-                <label for="phone">Phone</label>
-                <input type="tel" id="phone" name="phone" value="${account.personInfo.phone}" required>
-            </div>-->
+                                                            <label for="name">Full Name</label>
+                                                            <input type="text" id="name" name="name" value="${account.personInfo.name}" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="email">Email</label>
+                                                            <input type="email" id="email" name="email" value="${account.personInfo.email}" required>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label for="phone">Phone</label>
+                                                            <input type="tel" id="phone" name="phone" value="${account.personInfo.phone}" required>
+                                                        </div>-->
                             <div class="form-group">
                                 <label for="notes">Special Notes/Requests</label>
                                 <textarea id="notes" name="notes" rows="4"></textarea>
@@ -285,16 +272,14 @@
                             </div>
                             <div class="summary-item">
                                 <h3>Promo Code: </h3>
-                                <input type="text" id="referralCode" placeholder="Enter CODE"
-                                       name="code" onchange="checkReferral()">
+                                <input type="text" id="referralCode" placeholder="Enter CODE" name="code" onchange="checkReferral()">
                                 <div class="message-code"></div>
                             </div>
                         </div>
                         <div class="form-navigation">
                             <input type="hidden" id="selectedTimeInput" name="selectedTime">
                             <button type="button" class="prev-step">Back</button>
-                            <button id="booking" type="submit" class="confirm-booking">Confirm
-                                Booking</button>
+                            <button id="booking" type="submit" class="confirm-booking">Confirm Booking</button>
                         </div>
                     </div>
                 </form>
@@ -308,87 +293,109 @@
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/daygrid@6.1.10/main.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/timegrid@6.1.10/main.min.js'></script>
-        <script
-        src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/main.min.js'></script>
+        <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/main.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
 
         <script>
-                                           async function checkReferral() {
-                                               const code = document.getElementById("referralCode").value;
-                                               const codeDiv = document.querySelector(".message-code");
-                                               if (code) {
-                                                   try {
-                                                       const response = await fetch(`getReferral?code=` + code);
-                                                       // Kiểm tra nếu phản hồi thành công
-                                                       if (response.ok) {
-                                                           const data = await response.json();
-                                                           if (data.message === "Mã không hợp lệ") {
-                                                               codeDiv.textContent = data.message; // Ghi thông điệp vào thẻ div
-                                                           } else {
-                                                               codeDiv.textContent = "Bạn được giảm " + data.message + "%";
-                                                           }
-                                                           codeDiv.classList.add("code");
-                                                       } else {
-                                                           codeDiv.textContent = "Lỗi kết nối đến server";
-                                                       }
-                                                   } catch (error) {
-                                                       console.error("Lỗi:", error);
-                                                       codeDiv.textContent = "Đã xảy ra lỗi khi xử lý yêu cầu";
-                                                   }
-                                               } else {
-                                                   codeDiv.textContent = "";
-                                                   codeDiv.classList.remove("code");
-                                               }
-                                           }
+                                    async function checkReferral() {
+                                        const code = document.getElementById("referralCode").value;
+                                        const codeDiv = document.querySelector(".message-code");
+                                        if (code) {
+                                            try {
+                                                const response = await fetch(`getReferral?code=` + code);
+                                                // Kiểm tra nếu phản hồi thành công
+                                                if (response.ok) {
+                                                    const data = await response.json();
+                                                    if (data.message === "Mã không hợp lệ") {
+                                                        codeDiv.textContent = data.message; // Ghi thông điệp vào thẻ div
+                                                    } else {
+                                                        codeDiv.textContent = "Bạn được giảm " + data.message + "%";
+                                                    }
+                                                    codeDiv.classList.add("code");
+                                                } else {
+                                                    codeDiv.textContent = "Lỗi kết nối đến server";
+                                                }
+                                            } catch (error) {
+                                                console.error("Lỗi:", error);
+                                                codeDiv.textContent = "Đã xảy ra lỗi khi xử lý yêu cầu";
+                                            }
+                                        } else {
+                                            codeDiv.textContent = "";
+                                            codeDiv.classList.remove("code");
+                                        }
+                                    }
         </script>
         <script>
             var selectedTime = null;
-            async function getAvailableTimes() {
-                const staffId = document.getElementById("staff").value;
-                const date = document.getElementById("appointmentDate").value;
-                const service = document.querySelector('input[name="service"]:checked')?.value;
+            document.addEventListener("DOMContentLoaded", function () {
+                const selectedServices = []; // Mảng lưu các dịch vụ đã chọn
 
-                if (staffId && date && service) {
-                    try {
-                        const response = await fetch(`getAvailableTimes?service=` + service + `&staffId=` + staffId + `&date=` + date);
-                        const availableSlots = await response.json();
+                // Hàm lấy các khung giờ trống khi có thay đổi
+                async function getAvailableTimes() {
+                    // Cập nhật mảng selectedServices với các dịch vụ đang được chọn
+                    selectedServices.length = 0;
+                    document.querySelectorAll(".service-checkbox:checked").forEach(checkbox => {
+                        selectedServices.push(checkbox.value);
+                    });
 
-                        //                                                     Clear previous slots
-                        document.getElementById("morningSlots").innerHTML = "";
-                        document.getElementById("afternoonSlots").innerHTML = "";
-                        document.getElementById("eveningSlots").innerHTML = "";
+                    const staffId = document.getElementById("staff").value;
+                    const date = document.getElementById("appointmentDate").value;
 
-                        availableSlots.forEach(slot => {
-                            const button = document.createElement("button");
-                            button.type = "button";
-                            button.classList.add("time-slot");
-                            button.textContent = slot;
-                            button.onclick = () => selectTime(button, slot);
+                    if (staffId && date && selectedServices.length > 0) {
+                        try {
+                            const serviceParam = selectedServices.join(",");
+                            document.getElementById("selectedServices").value = serviceParam;
+                            console.log(serviceParam);
+                            const response = await fetch(`getAvailableTimes?service=` + serviceParam + `&staffId=` + staffId + `&date=` + date);
+                            const availableSlots = await response.json();
 
-                            // Categorize by time of day
-                            const [hour] = slot.split(":").map(Number);
-                            if (hour >= 10 && hour < 12) {
-                                document.getElementById("morningSlots").appendChild(button);
-                            } else if (hour >= 12 && hour < 16) {
-                                document.getElementById("afternoonSlots").appendChild(button);
-                            } else if (hour >= 16 && hour < 18) {
-                                document.getElementById("eveningSlots").appendChild(button);
+                            // Xóa các khung giờ trước đó
+                            document.getElementById("morningSlots").innerHTML = "";
+                            document.getElementById("afternoonSlots").innerHTML = "";
+                            document.getElementById("eveningSlots").innerHTML = "";
+
+                            // Cập nhật các khung giờ trống
+                            if (availableSlots !== null) {
+                                availableSlots.forEach(slot => {
+                                    const button = document.createElement("button");
+                                    button.type = "button";
+                                    button.classList.add("time-slot");
+                                    button.textContent = slot;
+                                    button.onclick = () => selectTime(button, slot);
+
+                                    // Phân loại theo buổi
+                                    const [hour] = slot.split(":").map(Number);
+                                    if (hour >= 10 && hour < 12) {
+                                        document.getElementById("morningSlots").appendChild(button);
+                                    } else if (hour >= 12 && hour < 16) {
+                                        document.getElementById("afternoonSlots").appendChild(button);
+                                    } else if (hour >= 16 && hour < 18) {
+                                        document.getElementById("eveningSlots").appendChild(button);
+                                    }
+                                });
                             }
-                        });
-                    } catch (error) {
-                        console.error("Error fetching available times:", error);
+                        } catch (error) {
+                            console.error("Error fetching available times:", error);
+                        }
+                    } else {
+                        console.log("Please select staff, date, and service.");
                     }
-                } else {
-                    console.log("Please select staff, date, and service.");
                 }
-            }
+
+                // Lắng nghe thay đổi từ checkbox dịch vụ, chọn nhân viên, và ngày hẹn
+                document.querySelectorAll(".service-checkbox").forEach(checkbox => {
+                    checkbox.addEventListener("change", getAvailableTimes);
+                });
+                document.getElementById("staff").addEventListener("change", getAvailableTimes);
+                document.getElementById("appointmentDate").addEventListener("change", getAvailableTimes);
+            });
 
             function selectTime(selectedButton, time) {
                 document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
                 selectedButton.classList.add('selected');
                 // Store the selected time in the variable
                 selectedTime = time;
-                console.log("Selected time:", selectedTime);  // Log the selected time for debugging
+                console.log("Selected time:", selectedTime); // Log the selected time for debugging
 
                 // Optional: Update a hidden input field if you need to submit it with a form
                 document.getElementById("selectedTimeInput").value = selectedTime;
@@ -484,12 +491,12 @@
                 //                const summaryTime = selectedTime ? selectedTime.value : 'No time selected';
                 document.getElementById('summary-datetime').textContent = date + " at " + selectedTime;
                 // Update personal details
-                const name = document.getElementById('name').value;
-                const email = document.getElementById('email').value;
-                const phone = document.getElementById('phone').value;
-                const notes = document.getElementById('notes').value;
-                document.getElementById('summary-details').innerHTML =
-                        "Name: " + name + "<br>Email: " + email + "<br>Phone: " + phone + "<br>Notes: " + (notes ? notes : 'None');
+//                const name = document.getElementById('name').value;
+//                const email = document.getElementById('email').value;
+//                const phone = document.getElementById('phone').value;
+//                const notes = document.getElementById('notes').value;
+//                document.getElementById('summary-details').innerHTML =
+//                        "Name: " + name + "<br>Email: " + email + "<br>Phone: " + phone + "<br>Notes: " + (notes ? notes : 'None');
             }
 
             // Form submission

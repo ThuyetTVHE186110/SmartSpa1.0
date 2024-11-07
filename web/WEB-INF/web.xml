@@ -91,7 +91,7 @@
     </servlet>
     <servlet>
         <servlet-name>BookingServlet</servlet-name>
-        <servlet-class>controller.BookingServlet</servlet-class>
+        <servlet-class>controller.Booking.BookingServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CustomerProfileServlet</servlet-name>
