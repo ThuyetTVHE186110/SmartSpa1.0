@@ -43,7 +43,7 @@
             <div class="appointments-container">
                 <!-- Staff Filter -->
                 <div class="staff-filter">
-                    <h2>Staff Schedule</h2>
+                    <h2>Appointment History</h2>
                     <div class="staff-toggle">
                         <label class="staff-checkbox">
                             <input type="checkbox" checked data-staff="all">

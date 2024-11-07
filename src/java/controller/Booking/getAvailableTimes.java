@@ -27,7 +27,7 @@ import model.TimeSlot;
  *
  * @author ADMIN
  */
-public class getAvailableTimes extends HttpServlet {
+public class GetAvailableTimes extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -68,24 +68,48 @@ public class getAvailableTimes extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            int serviceID = Integer.parseInt(request.getParameter("service"));
+            List<String> availableTimes = null;
             int staffId = Integer.parseInt(request.getParameter("staffId"));
             LocalDate date = LocalDate.parse(request.getParameter("date"));
+            LocalDate today = LocalDate.now();
+            // Lấy danh sách serviceID từ tham số yêu cầu
+            String[] serviceIds = request.getParameter("service").split(",");
+
             AppointmentDAO appointmentDAO = new AppointmentDAO();
             ServiceDAO serviceDAO = new ServiceDAO();
-            Service service = serviceDAO.selectService(serviceID);
+
+            // Tính tổng thời gian cho tất cả các dịch vụ được chọn
+            int totalDuration = 0;
+            for (String serviceIdStr : serviceIds) {
+                int serviceID = Integer.parseInt(serviceIdStr);
+                Service service = serviceDAO.selectService(serviceID);
+                totalDuration += service.getDuration(); // Cộng dồn thời gian của mỗi dịch vụ
+            }
+
+            // Lấy các khung giờ đã được đặt trước đó
             List<TimeSlot> busyTimes = appointmentDAO.getBusyTimes(staffId, date);
+
+            // Định nghĩa giờ mở cửa và đóng cửa
             LocalTime openingTime = LocalTime.of(10, 0);
+            LocalTime nowTime = LocalTime.now();
+            if (nowTime.isAfter(openingTime)) {
+                openingTime = nowTime;
+            }
             LocalTime closingTime = LocalTime.of(18, 0);
-            List<String> availableTimes = null;
-            availableTimes = calculateAvailableSlots(service.getDuration(), openingTime, closingTime, busyTimes);
-            // Send available slots as JSON
+
+            // Tính toán các khung giờ trống dựa trên tổng thời gian dịch vụ
+            if (date.isEqual(today) || date.isAfter(today)) {
+                availableTimes = calculateAvailableSlots(totalDuration, openingTime, closingTime, busyTimes);
+            }
+
+            // Gửi các khung giờ trống dưới dạng JSON
             response.setContentType("application/json");
             PrintWriter out = response.getWriter();
             out.print(new Gson().toJson(availableTimes));
             out.flush();
+
         } catch (SQLException ex) {
-            Logger.getLogger(getAvailableTimes.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(GetAvailableTimes.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -135,4 +159,5 @@ public class getAvailableTimes extends HttpServlet {
 
         return availableSlots;
     }
+
 }
