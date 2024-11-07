@@ -16,7 +16,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
+import model.Category;
 import model.Supplier;
+
 @MultipartConfig
 @WebServlet(name = "UpdateProduct", urlPatterns = {"/updateproduct"})
 public class UpdateProduct extends HttpServlet {
@@ -24,7 +26,13 @@ public class UpdateProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        // Xử lý nếu cần thiết, ví dụ lấy thông tin sản phẩm để hiển thị.
+        ProductDAO productDAO = new ProductDAO();
+        List<Supplier> suppliers = productDAO.getAllSuppliers();
+        List<Category> categories = productDAO.getAllCategories();
+        request.setAttribute("suppliers", suppliers);
+        request.setAttribute("categories", categories);
+        request.getRequestDispatcher("/productlist").forward(request, response);
+
     }
 
     @Override
@@ -70,14 +78,14 @@ public class UpdateProduct extends HttpServlet {
                 categoryId = Integer.parseInt(categoryIdParam);
             }
 
-             String supplierIdParam = request.getParameter("supplierId");
-        if (supplierIdParam != null && !supplierIdParam.isEmpty()) {
-            supplierId = Integer.parseInt(supplierIdParam); // Lấy supplierId từ request
+            String supplierIdParam = request.getParameter("supplierId");
+            if (supplierIdParam != null && !supplierIdParam.isEmpty()) {
+                supplierId = Integer.parseInt(supplierIdParam); // Lấy supplierId từ request
+            }
+        } catch (NumberFormatException e) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
+            return;
         }
-    } catch (NumberFormatException e) {
-        response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
-        return;
-    }
 
         // Xử lý tải lên hình ảnh hoặc giữ hình ảnh hiện tại
         Part imagePart = request.getPart("file");
@@ -116,11 +124,8 @@ public class UpdateProduct extends HttpServlet {
 
         // Tạo đối tượng ProductDAO và gọi phương thức updateProduct
         ProductDAO productDAO = new ProductDAO();
-//        List<Supplier> suppliers = productDAO.getAllSuppliers();
         productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
-
         // Chuyển hướng đến trang danh sách sản phẩm (hoặc trang hiển thị)
-//        request.setAttribute("suppliers", suppliers);
         response.sendRedirect("productlist");
     }
 

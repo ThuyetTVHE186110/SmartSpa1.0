@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Category;
 import model.Product;
 import model.Discount;
 import model.Supplier;
@@ -68,17 +69,33 @@ public class ProductDAO extends DBContext {
         return suppliers;
     }
 
-   
+    public List<Category> getAllCategories() {
+        List<Category> categories = new ArrayList<>();
+        String sql = "SELECT * FROM Category";
+        try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
+            while (rs.next()) {
+                Category category = new Category();
+                category.setId(rs.getInt("ID"));
+                category.setName(rs.getString("Name"));
+                categories.add(category); // Thêm nhà cung cấp vào danh sách
+                System.out.println("Category ID: " + category.getId() + ", Name: " + category.getName());
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categories;
+    }
+
     public Product getProductByID(int productID) {
         Product product = null;
         try (Connection connection = DBContext.getConnection()) {
             String sql = """
-                         SELECT p.*, d.DiscountPercent, s.Name as SupplierName, s.Address as SupplierAddress, c.Name as CategoryName
-                         FROM Product p
-                         LEFT JOIN Discount d ON p.DiscountID = d.DiscountID
-                         INNER JOIN Supplier s ON p.SupplierID = s.ID
-                         INNER JOIN Category c ON p.CategoryID = c.ID
-                         WHERE p.ID = ?""";
+                     SELECT p.*, d.DiscountPercent, s.ID as SupplierID, s.Name as SupplierName, s.Address as SupplierAddress, c.Name as CategoryName
+                     FROM Product p
+                     LEFT JOIN Discount d ON p.DiscountID = d.DiscountID
+                     INNER JOIN Supplier s ON p.SupplierID = s.ID
+                     INNER JOIN Category c ON p.CategoryID = c.ID
+                     WHERE p.ID = ?""";
 
             try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
                 pstmt.setInt(1, productID);
@@ -96,6 +113,7 @@ public class ProductDAO extends DBContext {
                         product.setDiscountInfo(discount);
 
                         Supplier supplier = new Supplier();
+                        supplier.setId(rs.getInt("SupplierID")); // Lưu ID nhà cung cấp
                         supplier.setName(rs.getString("SupplierName"));
                         supplier.setAddress(rs.getString("SupplierAddress"));
                         product.setSupplierInfo(supplier);
@@ -106,6 +124,7 @@ public class ProductDAO extends DBContext {
                         product.setIngredient(rs.getString("Ingredient"));
                         product.setHowToUse(rs.getString("HowToUse"));
                         product.setBenefit(rs.getString("Benefit"));
+                        product.setStatus(rs.getString("Status"));
                     }
                 }
             }
@@ -113,7 +132,6 @@ public class ProductDAO extends DBContext {
             e.printStackTrace();
         }
         return product;
-
     }
 
     public int count(String txtSearch) {
@@ -266,6 +284,6 @@ public class ProductDAO extends DBContext {
         if (suppliers.isEmpty()) {
             System.out.println("No suppliers found!");
         }
-
+        List<Category> categories = productDAO.getAllCategories();
     }
 }

@@ -18,6 +18,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
+import model.Category;
+import model.Supplier;
 
 /**
  *
@@ -30,7 +33,13 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       
+       ProductDAO productDAO = new ProductDAO();
+        List<Supplier> suppliers = productDAO.getAllSuppliers();
+        List<Category> categories = productDAO.getAllCategories();
+        request.setAttribute("suppliers", suppliers);
+        request.setAttribute("categories", categories);
+        request.getRequestDispatcher("/productlist").forward(request, response);
+
     }
 
     /**
@@ -120,7 +129,7 @@ public class AddProduct extends HttpServlet {
         System.out.println(supplierId);
         System.out.println(branchName);
         productDAO.addProduct(name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
-        System.out.println("ass");
+
 
         // Chuyển hướng đến danh sách sản phẩm
         response.sendRedirect("productlist");

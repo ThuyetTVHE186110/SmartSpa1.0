@@ -12,7 +12,9 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
+import model.Category;
 import model.Product;
+import model.Supplier;
 
 /**
  *
@@ -40,37 +42,43 @@ public class ProductListServlet extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        ProductDAO productDAO = new ProductDAO();
-        String searchQuery = request.getParameter("search");
-        int page = 1;
-        int recordsPerPage = 6; // Adjust as needed
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+    ProductDAO productDAO = new ProductDAO();
+    String searchQuery = request.getParameter("search");
+    int page = 1;
+    int recordsPerPage = 6;
 
-        if (request.getParameter("page") != null) {
-            page = Integer.parseInt(request.getParameter("page"));
-        }
-
-        List<Product> productList;
-        int totalRecords;
-
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            productList = productDAO.search(searchQuery, page);
-            totalRecords = productDAO.count(searchQuery);
-        } else {
-            productList = productDAO.getAllProducts();
-            totalRecords = productDAO.count(""); // Total for all products
-        }
-
-        int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
-
-        request.setAttribute("productList", productList);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
-        request.setAttribute("searchQuery", searchQuery);
-
-        request.getRequestDispatcher("productmanagement.jsp").forward(request, response);
+    if (request.getParameter("page") != null) {
+        page = Integer.parseInt(request.getParameter("page"));
     }
+
+    List<Product> productList;
+    int totalRecords;
+
+    if (searchQuery != null && !searchQuery.isEmpty()) {
+        productList = productDAO.search(searchQuery, page);
+        totalRecords = productDAO.count(searchQuery);
+    } else {
+        productList = productDAO.getAllProducts();
+        totalRecords = productDAO.count("");
+    }
+
+    int totalPages = (int) Math.ceil((double) totalRecords / recordsPerPage);
+
+    // Thêm danh sách nhà cung cấp vào yêu cầu
+    List<Supplier> suppliers = productDAO.getAllSuppliers();
+    request.setAttribute("suppliers", suppliers);
+    List<Category> categories = productDAO.getAllCategories();
+    request.setAttribute("categories", categories);
+    request.setAttribute("productList", productList);
+    request.setAttribute("currentPage", page);
+    request.setAttribute("totalPages", totalPages);
+    request.setAttribute("searchQuery", searchQuery);
+
+    request.getRequestDispatcher("productmanagement.jsp").forward(request, response);
+}
+
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

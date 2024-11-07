@@ -228,12 +228,22 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="categoryId" class="form-label">Category ID</label>
-                                <input type="number" class="form-control" id="categoryId" name="categoryId" required>
+                                <label for="supplierId" class="form-label">Category</label>
+                                <select class="form-select" id="categoryId" name="categoryId" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                    <c:forEach var="category" items="${categories}">
+                                        <option value="${category.id}">${category.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="supplierId" class="form-label">Supplier ID</label>
-                                <input type="number" class="form-control" id="supplierId" name="supplierId" required>
+                                <label for="supplierId" class="form-label">Supplier</label>
+                                <select class="form-select" id="supplierId" name="supplierId" required>
+                                    <option value="" disabled selected>Select Supplier</option>
+                                    <c:forEach var="supplier" items="${suppliers}">
+                                        <option value="${supplier.id}">${supplier.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
 
                             <div class="col-md-6">
@@ -315,23 +325,23 @@
                                 </div>
                             </div>
                             <div class="col-md-6">
-                                <label for="categoryId" class="form-label">Category ID</label>
-                                <input type="number" class="form-control" id="categoryId" name="categoryId" value="" required min="1">
+                                <label for="supplierId" class="form-label">Category</label>
+                                <select class="form-select" id="categoryId" name="categoryId" required>
+                                    <option value="" disabled selected>Select Category</option>
+                                    <c:forEach var="category" items="${categories}">
+                                        <option value="${category.id}">${category.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
                             <div class="col-md-6">
-                                <label for="supplierId" class="form-label">Supplier ID</label>
-                                <input type="number" class="form-control" id="supplierId" name="supplierId" required min="1">
+                                <label for="supplierId" class="form-label">Supplier</label>
+                                <select class="form-select" id="supplierId" name="supplierId" required>
+                                    <option value="" disabled selected>Select Supplier</option>
+                                    <c:forEach var="supplier" items="${suppliers}">
+                                        <option value="${supplier.id}">${supplier.name}</option>
+                                    </c:forEach>
+                                </select>
                             </div>
-                            <!-- <div class="col-md-6">
-                                        <label for="supplierId" class="form-label">Supplier Name</label>
-                                        <select class="form-select" id="supplierId" name="supplierId" required>
-                                            <option value="" disabled selected>Select Supplier</option>
-                                             Tạo các option từ danh sách suppliers 
-                            <c:forEach var="supplier" items="${suppliers}">
-                                <option value="${supplier.id}" data-name="${supplier.name}">${supplier.name}</option>
-                            </c:forEach>
-                        </select>
-                    </div>-->
 
                             <div class="col-md-6">
                                 <label for="branchName" class="form-label">Branch Name</label>
@@ -373,42 +383,36 @@
         <script>
 
                                                         var editProductModal = document.getElementById('editProductModal');
-                                                        editProductModal.addEventListener('show.bs.modal', function (event) {
-                                                            var button = event.relatedTarget;
-                                                            var productId = button.getAttribute('data-id');
+editProductModal.addEventListener('show.bs.modal', function (event) {
+    var button = event.relatedTarget;
+    var productId = button.getAttribute('data-id');
 
-                                                            fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
-                                                                    .then(response => response.json())
-                                                                    .then(product => {
-                                                                        var form = editProductModal.querySelector('form');
-                                                                        form.action = form.action.split('?')[0] + "?id=" + productId;
+    fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
+        .then(response => response.json())
+        .then(product => {
+            var form = editProductModal.querySelector('form');
+            form.action = form.action.split('?')[0] + "?id=" + productId;
 
-                                                                        form.querySelector('input[name="id"]').value = product.id || '';
-                                                                        form.querySelector('input[name="name"]').value = product.name || '';
-                                                                        form.querySelector('textarea[name="description"]').value = product.description || '';
-                                                                        form.querySelector('input[name="price"]').value = product.price || '';
-                                                                        form.querySelector('input[name="quantity"]').value = product.quantity || '';
-                                                                        form.querySelector('input[name="categoryId"]').value = product.categoryId || '';
-                                                                        form.querySelector('select[name="supplierId"]').value = product.supplierId || '';
-                                                                        form.querySelector('input[name="discountId"]').value = product.discountId || '';
-                                                                        form.querySelector('input[name="branchName"]').value = product.branchName || '';
+            form.querySelector('input[name="id"]').value = product.id || '';
+            form.querySelector('input[name="name"]').value = product.name || '';
+            form.querySelector('textarea[name="description"]').value = product.description || '';
+            form.querySelector('input[name="price"]').value = product.price || '';
+            form.querySelector('input[name="quantity"]').value = product.quantity || '';
+            form.querySelector('input[name="branchName"]').value = product.branchName || '';
+            form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
+            form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
+            form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
 
-                                                                        var statusSelect = form.querySelector('select[name="status"]');
-                                                                        statusSelect.value = product.status || '';
-                                                                        if (!statusSelect.value) {
-                                                                            Array.from(statusSelect.options).forEach(option => {
-                                                                                if (option.text === product.status) {
-                                                                                    option.selected = true;
-                                                                                }
-                                                                            });
-                                                                        }
+            // Gán giá trị cho nhà cung cấp
+            var supplierSelect = form.querySelector('select[name="supplierId"]');
+            supplierSelect.value = product.supplierInfo.id; // Đảm bảo rằng ID này là chính xác
 
-                                                                        form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
-                                                                        form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
-                                                                        form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
-                                                                    })
-                                                                    .catch(error => console.error('Error fetching product details:', error));
-                                                        });
+            // Gán giá trị cho trạng thái
+            var statusSelect = form.querySelector('select[name="status"]');
+            statusSelect.value = product.status || ''; // Đảm bảo trạng thái được gán đúng
+        })
+        .catch(error => console.error('Error fetching product details:', error));
+});
         </script>
 
     </body><!-- comment -->
