@@ -7,9 +7,14 @@ package dal;
 import model.Service;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.Map;
+import model.PopularService;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 /**
  *
@@ -278,5 +283,469 @@ public class ServiceDAO extends DBContext {
         }
         return 0;
     }
+
+    public List<String> getAllCategories() throws SQLException {
+        List<String> categories = new ArrayList<>();
+        String sql = "SELECT DISTINCT category FROM Services WHERE category IS NOT NULL ORDER BY category";
+        
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+            
+            while (rs.next()) {
+                categories.add(rs.getString("category"));
+            }
+        }
+        return categories;
+    }
+
+    public List<PopularService> getPopularServices() throws SQLException {
+        List<PopularService> popularServices = new ArrayList<>();
+        String sql = """
+            SELECT s.ID, s.Name,
+                   COUNT(aps.ServicesID) as booking_count,
+                   CAST(
+                       (CASE 
+                            WHEN (SELECT COUNT(*) FROM Appointment_Service 
+                                  INNER JOIN Appointment a ON Appointment_Service.AppointmentID = a.ID
+                                  WHERE MONTH(a.CreatedDate) = MONTH(GETDATE())) > 0 
+                            THEN (COUNT(aps.ServicesID) * 100.0 / 
+                                  (SELECT COUNT(*) FROM Appointment_Service 
+                                   INNER JOIN Appointment a ON Appointment_Service.AppointmentID = a.ID
+                                   WHERE MONTH(a.CreatedDate) = MONTH(GETDATE())))
+                            ELSE 0
+                        END) AS INT
+                   ) as trend_percentage
+            FROM Services s
+            LEFT JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+            LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+            WHERE a.CreatedDate IS NULL OR MONTH(a.CreatedDate) = MONTH(GETDATE())
+            GROUP BY s.ID, s.Name
+            ORDER BY booking_count DESC
+            OFFSET 0 ROWS FETCH NEXT 5 ROWS ONLY
+        """;
+        
+        try (Connection connection = getConnection();
+             PreparedStatement statement = connection.prepareStatement(sql);
+             ResultSet rs = statement.executeQuery()) {
+            
+            while (rs.next()) {
+                PopularService service = new PopularService();
+                service.setId(rs.getInt("ID"));
+                service.setName(rs.getString("Name"));
+                service.setBookingCount(rs.getInt("booking_count"));
+                service.setTrend(rs.getInt("trend_percentage"));
+                popularServices.add(service);
+            }
+        }
+        return popularServices;
+    }
+
+    public Map<String, Object> getServicePerformanceMetrics(int serviceId) throws SQLException {
+        Map<String, Object> metrics = new HashMap<>();
+        String sql = """
+            SELECT 
+                s.ID, s.Name,
+                COUNT(DISTINCT a.ID) as total_appointments,
+                COUNT(DISTINCT a.CustomerID) as unique_customers,
+                COUNT(DISTINCT aps.StaffID) as assigned_staff,
+                SUM(ob.TotalAmount) as total_revenue,
+                AVG(DATEDIFF(MINUTE, a.CreatedDate, a.Start)) as avg_booking_leadtime
+            FROM Services s
+            LEFT JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+            LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+            LEFT JOIN Orders_Bill ob ON a.ID = ob.AppointmentID
+            WHERE s.ID = ? AND a.CreatedDate >= DATEADD(MONTH, -3, GETDATE())
+            GROUP BY s.ID, s.Name
+        """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                metrics.put("totalAppointments", rs.getInt("total_appointments"));
+                metrics.put("uniqueCustomers", rs.getInt("unique_customers"));
+                metrics.put("assignedStaff", rs.getInt("assigned_staff"));
+                metrics.put("totalRevenue", rs.getBigDecimal("total_revenue"));
+                metrics.put("avgBookingLeadtime", rs.getInt("avg_booking_leadtime"));
+            }
+        }
+        return metrics;
+    }
+
+    public List<Map<String, Object>> getStaffServicePerformance(int serviceId) throws SQLException {
+        String sql = """
+            WITH StaffMetrics AS (
+                SELECT 
+                    p.ID as StaffID,
+                    p.Name as StaffName,
+                    COUNT(DISTINCT aps.ID) as service_count,
+                    COUNT(DISTINCT a.CustomerID) as unique_customers,
+                    COUNT(DISTINCT CASE WHEN a.Status = 'Completed' THEN a.ID END) as completed_services,
+                    COUNT(DISTINCT a.ID) as total_services
+                FROM Person p
+                JOIN Account acc ON p.ID = acc.PersonID
+                LEFT JOIN Appointment_Service aps ON p.ID = aps.StaffID
+                LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+                WHERE acc.RoleID = 3 
+                AND (aps.ServicesID = ? OR ? IS NULL)
+                GROUP BY p.ID, p.Name
+            )
+            SELECT 
+                StaffID,
+                StaffName,
+                service_count,
+                unique_customers,
+                CASE 
+                    WHEN total_services > 0 
+                    THEN (completed_services * 100.0 / total_services)
+                    ELSE 0 
+                END as completion_rate
+            FROM StaffMetrics
+            WHERE service_count > 0
+            ORDER BY service_count DESC
+        """;
+        
+        List<Map<String, Object>> staffPerformance = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, serviceId);
+            ps.setInt(2, serviceId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> staff = new HashMap<>();
+                staff.put("staffId", rs.getInt("StaffID"));
+                staff.put("staffName", rs.getString("StaffName"));
+                staff.put("serviceCount", rs.getInt("service_count"));
+                staff.put("uniqueCustomers", rs.getInt("unique_customers"));
+                staff.put("completionRate", Math.round(rs.getDouble("completion_rate")));
+                staffPerformance.add(staff);
+            }
+        }
+        return staffPerformance;
+    }
+
+    public Map<String, Object> getServiceResourceRequirements(int serviceId) throws SQLException {
+        Map<String, Object> resources = new HashMap<>();
+        String sql = """
+            SELECT 
+                s.ID as ServiceID,
+                p.ID as ProductID,
+                p.Name as ProductName,
+                p.Quantity as AvailableQuantity,
+                m.ID as MaterialID,
+                m.Name as MaterialName,
+                m.Status as MaterialStatus,
+                sp.ID as ServiceProductID
+            FROM Services s
+            LEFT JOIN Service_Product sp ON s.ID = sp.ServiceID
+            LEFT JOIN Product p ON sp.ProductID = p.ID
+            LEFT JOIN Material m ON p.ID = m.ID
+            WHERE s.ID = ?
+        """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+            
+            List<Map<String, Object>> products = new ArrayList<>();
+            List<Map<String, Object>> materials = new ArrayList<>();
+            
+            while (rs.next()) {
+                // Product info
+                if (rs.getInt("ProductID") > 0) {
+                    Map<String, Object> product = new HashMap<>();
+                    product.put("id", rs.getInt("ProductID"));
+                    product.put("name", rs.getString("ProductName"));
+                    product.put("available", rs.getInt("AvailableQuantity"));
+                    // Default to 1 if no specific requirement is set
+                    product.put("required", 1);
+                    products.add(product);
+                }
+                
+                // Material info
+                if (rs.getInt("MaterialID") > 0) {
+                    Map<String, Object> material = new HashMap<>();
+                    material.put("id", rs.getInt("MaterialID"));
+                    material.put("name", rs.getString("MaterialName"));
+                    material.put("status", rs.getString("MaterialStatus"));
+                    materials.add(material);
+                }
+            }
+            
+            resources.put("products", products);
+            resources.put("materials", materials);
+            
+            // Add debug logging
+            System.out.println("Resource Requirements for Service " + serviceId + ":");
+            System.out.println("Products found: " + products.size());
+            System.out.println("Materials found: " + materials.size());
+        }
+        
+        return resources;
+    }
+
+    public List<Map<String, Object>> getServiceSteps(int serviceId) throws SQLException {
+        String sql = """
+            SELECT 
+                st.ID,
+                st.Name,
+                st.Description,
+                st.Duration,
+                COUNT(DISTINCT aps.StaffID) as qualified_staff_count
+            FROM Steps st
+            LEFT JOIN Appointment_Service aps ON st.ServiceID = aps.ServicesID
+            WHERE st.ServiceID = ?
+            GROUP BY st.ID, st.Name, st.Description, st.Duration
+            ORDER BY st.ID
+        """;
+        
+        List<Map<String, Object>> steps = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Map<String, Object> step = new HashMap<>();
+                step.put("id", rs.getInt("ID"));
+                step.put("name", rs.getString("Name"));
+                step.put("description", rs.getString("Description"));
+                step.put("duration", rs.getInt("Duration"));
+                step.put("qualifiedStaffCount", rs.getInt("qualified_staff_count"));
+                steps.add(step);
+            }
+        }
+        return steps;
+    }
+
+    public Map<String, Object> getMonthlyStats() throws SQLException {
+        Map<String, Object> monthlyStats = new HashMap<>();
+        String sql = """
+            WITH CurrentMonthData AS (
+                SELECT 
+                    SUM(ob.TotalAmount) as total_revenue,
+                    COUNT(DISTINCT a.ID) as total_bookings
+                FROM Services s
+                LEFT JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+                LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+                LEFT JOIN Orders_Bill ob ON a.ID = ob.AppointmentID
+                WHERE MONTH(a.CreatedDate) = MONTH(GETDATE())
+            ),
+            PreviousMonthData AS (
+                SELECT 
+                    SUM(ob.TotalAmount) as prev_revenue,
+                    COUNT(DISTINCT a.ID) as prev_bookings
+                FROM Services s
+                LEFT JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+                LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+                LEFT JOIN Orders_Bill ob ON a.ID = ob.AppointmentID
+                WHERE MONTH(a.CreatedDate) = MONTH(DATEADD(MONTH, -1, GETDATE()))
+            ),
+            MonthlyTrends AS (
+                SELECT 
+                    MONTH(a.CreatedDate) as month,
+                    COUNT(DISTINCT a.ID) as bookings,
+                    SUM(ob.TotalAmount) as revenue
+                FROM Services s
+                LEFT JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+                LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+                LEFT JOIN Orders_Bill ob ON a.ID = ob.AppointmentID
+                WHERE a.CreatedDate >= DATEADD(MONTH, -6, GETDATE())
+                GROUP BY MONTH(a.CreatedDate)
+            )
+            SELECT 
+                c.total_revenue,
+                c.total_bookings,
+                CASE 
+                    WHEN p.prev_revenue > 0 
+                    THEN ((c.total_revenue - p.prev_revenue) * 100.0 / p.prev_revenue)
+                    ELSE 0 
+                END as revenue_trend,
+                CASE 
+                    WHEN p.prev_bookings > 0 
+                    THEN ((c.total_bookings - p.prev_bookings) * 100.0 / p.prev_bookings)
+                    ELSE 0 
+                END as booking_trend
+            FROM CurrentMonthData c
+            CROSS JOIN PreviousMonthData p
+        """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                monthlyStats.put("totalRevenue", rs.getBigDecimal("total_revenue"));
+                monthlyStats.put("totalBookings", rs.getInt("total_bookings"));
+                monthlyStats.put("revenueTrend", rs.getDouble("revenue_trend"));
+                monthlyStats.put("bookingTrend", rs.getDouble("booking_trend"));
+                
+                // Add chart data
+                monthlyStats.put("chartData", getMonthlyChartData());
+            } else {
+                // Set default values if no data
+                monthlyStats.put("totalRevenue", BigDecimal.ZERO);
+                monthlyStats.put("totalBookings", 0);
+                monthlyStats.put("revenueTrend", 0.0);
+                monthlyStats.put("bookingTrend", 0.0);
+                monthlyStats.put("chartData", new ArrayList<>());
+            }
+        }
+        return monthlyStats;
+    }
+
+    private List<Map<String, Object>> getMonthlyChartData() throws SQLException {
+        String sql = """
+            WITH MonthlyStats AS (
+                SELECT 
+                    MONTH(a.CreatedDate) as month,
+                    COUNT(DISTINCT a.ID) as bookings,
+                    SUM(ISNULL(ob.TotalAmount, 0)) as revenue
+                FROM Services s
+                LEFT JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+                LEFT JOIN Appointment a ON aps.AppointmentID = a.ID
+                LEFT JOIN Orders_Bill ob ON a.ID = ob.AppointmentID
+                WHERE a.CreatedDate >= DATEADD(MONTH, -6, GETDATE())
+                    AND a.CreatedDate <= GETDATE()
+                GROUP BY MONTH(a.CreatedDate)
+            )
+            SELECT 
+                month,
+                bookings,
+                revenue,
+                LAG(bookings) OVER (ORDER BY month) as prev_bookings,
+                LAG(revenue) OVER (ORDER BY month) as prev_revenue
+            FROM MonthlyStats
+            ORDER BY month
+        """;
+        
+        List<Map<String, Object>> chartData = new ArrayList<>();
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+            
+            // Add debug logging
+            System.out.println("Monthly Chart Data:");
+            while (rs.next()) {
+                Map<String, Object> monthData = new HashMap<>();
+                int month = rs.getInt("month");
+                int bookings = rs.getInt("bookings");
+                BigDecimal revenue = rs.getBigDecimal("revenue");
+                
+                monthData.put("month", month);
+                monthData.put("bookings", bookings);
+                monthData.put("revenue", revenue);
+                
+                // Debug print
+                System.out.printf("Month: %d, Bookings: %d, Revenue: $%.2f%n", 
+                    month, bookings, revenue);
+                
+                chartData.add(monthData);
+            }
+        }
+        return chartData;
+    }
+
+    public Map<String, Object> getServiceTrends(int serviceId) {
+        Map<String, Object> trends = new HashMap<>();
+        String sql = """
+            WITH MonthlyData AS (
+                SELECT 
+                    DATEPART(MONTH, a.CreatedDate) as month,
+                    COUNT(DISTINCT a.ID) as booking_count,
+                    SUM(ISNULL(ob.TotalAmount, 0)) as revenue,
+                    AVG(DATEDIFF(MINUTE, a.CreatedDate, a.Start)) as avg_booking_leadtime
+                FROM Services s
+                JOIN Appointment_Service aps ON s.ID = aps.ServicesID
+                JOIN Appointment a ON aps.AppointmentID = a.ID
+                LEFT JOIN Orders_Bill ob ON a.ID = ob.AppointmentID
+                WHERE s.ID = ? AND a.CreatedDate >= DATEADD(MONTH, -6, GETDATE())
+                GROUP BY DATEPART(MONTH, a.CreatedDate)
+            )
+            SELECT 
+                month,
+                booking_count,
+                revenue,
+                avg_booking_leadtime,
+                LAG(booking_count) OVER (ORDER BY month) as prev_bookings,
+                LAG(revenue) OVER (ORDER BY month) as prev_revenue
+            FROM MonthlyData
+            ORDER BY month
+        """;
+        
+        try (Connection conn = getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, serviceId);
+            ResultSet rs = ps.executeQuery();
+            
+            List<Map<String, Object>> monthlyData = new ArrayList<>();
+            while (rs.next()) {
+                Map<String, Object> month = new HashMap<>();
+                month.put("month", rs.getInt("month"));
+                month.put("bookings", rs.getInt("booking_count"));
+                month.put("revenue", rs.getBigDecimal("revenue"));
+                month.put("leadTime", rs.getInt("avg_booking_leadtime"));
+                
+                // Calculate trends
+                int prevBookings = rs.getInt("prev_bookings");
+                BigDecimal prevRevenue = rs.getBigDecimal("prev_revenue");
+                
+                if (prevBookings > 0) {
+                    double bookingTrend = ((rs.getInt("booking_count") - prevBookings) * 100.0) / prevBookings;
+                    month.put("bookingTrend", Math.round(bookingTrend));
+                }
+                
+                if (prevRevenue != null && prevRevenue.compareTo(BigDecimal.ZERO) > 0) {
+                    BigDecimal currentRevenue = rs.getBigDecimal("revenue");
+                    if (currentRevenue != null) {
+                        BigDecimal revenueTrend = currentRevenue
+                            .subtract(prevRevenue)
+                            .multiply(new BigDecimal(100))
+                            .divide(prevRevenue, 2, RoundingMode.HALF_UP);
+                        month.put("revenueTrend", revenueTrend);
+                    }
+                }
+                
+                monthlyData.add(month);
+            }
+            
+            trends.put("monthlyData", monthlyData);
+            
+            // Calculate overall trends
+            if (!monthlyData.isEmpty()) {
+                Map<String, Object> firstMonth = monthlyData.get(0);
+                Map<String, Object> lastMonth = monthlyData.get(monthlyData.size() - 1);
+                
+                double overallBookingTrend = calculateTrend(
+                    (Integer)firstMonth.get("bookings"), 
+                    (Integer)lastMonth.get("bookings")
+                );
+                
+                BigDecimal firstRevenue = (BigDecimal) firstMonth.get("revenue");
+                BigDecimal lastRevenue = (BigDecimal) lastMonth.get("revenue");
+                double overallRevenueTrend = calculateTrend(
+                    firstRevenue != null ? firstRevenue.doubleValue() : 0, 
+                    lastRevenue != null ? lastRevenue.doubleValue() : 0
+                );
+                
+                trends.put("overallBookingTrend", overallBookingTrend);
+                trends.put("overallRevenueTrend", overallRevenueTrend);
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Error getting service trends: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return trends;
+    }
+
+    private double calculateTrend(double start, double end) {
+        if (start == 0) return 0;
+        return ((end - start) / start) * 100;
+    }
+
+    
 
 }
