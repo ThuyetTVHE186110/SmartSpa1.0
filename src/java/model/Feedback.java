@@ -13,18 +13,29 @@ public class Feedback {
     private String content;
     private Person customer;
     private Service service;
-    private int StarRating;
-
+    private int starRating;
+    private String responseFeedback;
     public Feedback() {
     }
 
-    public Feedback(int id, String content, Person customer, Service service, int StarRating) {
+    public Feedback(int id, String content, Person customer, Service service, int starRating, String responseFeedback) {
         this.id = id;
         this.content = content;
         this.customer = customer;
         this.service = service;
-        this.StarRating = StarRating;
+        this.starRating = starRating;
+        this.responseFeedback = responseFeedback;
     }
+
+    public String getResponseFeedback() {
+        return responseFeedback;
+    }
+
+    public void setResponseFeedback(String responseFeedback) {
+        this.responseFeedback = responseFeedback;
+    }
+
+    
 
     public int getId() {
         return id;
@@ -59,11 +70,16 @@ public class Feedback {
     }
 
     public int getStarRating() {
-        return StarRating;
+        return starRating;
     }
 
     public void setStarRating(int StarRating) {
-        this.StarRating = StarRating;
+        this.starRating = StarRating;
+    }
+
+    @Override
+    public String toString() {
+        return "Feedback{" + "id=" + id + ", content=" + content + ", customer=" + customer + ", service=" + service + ", starRating=" + starRating + ", responseFeedback=" + responseFeedback + '}';
     }
 
     
