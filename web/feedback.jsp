@@ -4,6 +4,7 @@
     Author     : Asus
 --%>
 
+<%@page import="model.Service"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -45,34 +46,23 @@
                             <label for="service">Service Received</label>
                             <select id="service" name="service" required>
                                 <option value="">Select a service</option>
-                                <option value="body-massage">Body Massage</option>
-                                <option value="stone-therapy">Stone Therapy</option>
-                                <option value="facial-therapy">Facial Therapy</option>
-                                <option value="skin-care">Skin Care</option>
-                                <option value="stream-">Stream Bath</option>
-                                <option value="classic-lash">Classic Lash Extensions</option>
-                                <option value="hybrid-lash">Hybrid Lash Extensions</option>
-                                <option value="volume-lash">Volume Lash Extensions</option>
-                                <option value="lash-lift">Lash Lift</option>
-                                <option value="lash-tint">Lash Lift & Tint</option>
+                                <c:forEach items="${service}" var="service">
+                                    <option value="${service.id}">${service.name}</option>
+                                </c:forEach>
+                                <!--                                <option value="body-massage">Body Massage</option>
+                                                                <option value="stone-therapy">Stone Therapy</option>
+                                                                <option value="facial-therapy">Facial Therapy</option>
+                                                                <option value="skin-care">Skin Care</option>
+                                                                <option value="stream-">Stream Bath</option>
+                                                                <option value="classic-lash">Classic Lash Extensions</option>
+                                                                <option value="hybrid-lash">Hybrid Lash Extensions</option>
+                                                                <option value="volume-lash">Volume Lash Extensions</option>
+                                                                <option value="lash-lift">Lash Lift</option>
+                                                                <option value="lash-tint">Lash Lift & Tint</option>-->
                             </select>
                         </div>
                     </div>
-<!--                    <div class="form-group">
-                        <label>Rate Your Experience</label>
-                        <div class="rating">
-                            <input type="radio" id="star5" name="rating" value="5" required>
-                            <label for="star5"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star4" name="rating" value="4">
-                            <label for="star4"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star3" name="rating" value="3">
-                            <label for="star3"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star2" name="rating" value="2">
-                            <label for="star2"><i class="fas fa-star"></i></label>
-                            <input type="radio" id="star1" name="rating" value="1">
-                            <label for="star1"><i class="fas fa-star"></i></label>
-                        </div>
-                    </div>-->
+
                     <div class="form-group">
                         <label for="feedback">Your Feedback</label>
                         <textarea id="feedback" name="feedback" rows="5" required></textarea>
