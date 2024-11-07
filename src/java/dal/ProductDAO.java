@@ -77,7 +77,7 @@ public class ProductDAO extends DBContext {
                 Category category = new Category();
                 category.setId(rs.getInt("ID"));
                 category.setName(rs.getString("Name"));
-                categories.add(category); // Thêm nhà cung cấp vào danh sách
+                categories.add(category); 
                 System.out.println("Category ID: " + category.getId() + ", Name: " + category.getName());
             }
         } catch (SQLException e) {
