@@ -46,60 +46,64 @@ public class FinancialReportServlet extends HttpServlet {
             return;
         }
         
-        // Get parameters with default values
-        String startDate = request.getParameter("startDate");
-        if (startDate == null || startDate.isEmpty()) {
-            startDate = LocalDate.now().minusMonths(1).toString();
-        }
-        
-        String endDate = request.getParameter("endDate");
-        if (endDate == null || endDate.isEmpty()) {
-            endDate = LocalDate.now().toString();
-        }
-        
-        String yearParam = request.getParameter("year");
-        int year;
-        if (yearParam == null || yearParam.isEmpty()) {
-            year = LocalDate.now().getYear();
-        } else {
-            try {
-                year = Integer.parseInt(yearParam);
-            } catch (NumberFormatException e) {
-                year = LocalDate.now().getYear();
-            }
-        }
-        
         try {
-            System.out.println("Generating report for period: " + startDate + " to " + endDate);
+            // Get parameters with default values
+            LocalDate endDate = LocalDate.now();
+            LocalDate startDate = endDate.minusMonths(1);
+            
+            String startDateStr = request.getParameter("startDate");
+            if (startDateStr != null && !startDateStr.isEmpty()) {
+                startDate = LocalDate.parse(startDateStr);
+            }
+            
+            String endDateStr = request.getParameter("endDate");
+            if (endDateStr != null && !endDateStr.isEmpty()) {
+                endDate = LocalDate.parse(endDateStr);
+            }
+            
+            int year = LocalDate.now().getYear();
+            String yearStr = request.getParameter("year");
+            if (yearStr != null && !yearStr.isEmpty()) {
+                year = Integer.parseInt(yearStr);
+            }
+
+            System.out.println("Date range: " + startDate + " to " + endDate);
             
             // Get financial data
-            Map<String, Double> revenueByService = reportDAO.getRevenueByService(startDate, endDate);
-            System.out.println("Revenue by service: " + revenueByService);
+            Map<String, Double> revenueByService = reportDAO.getRevenueByService(startDate.toString(), endDate.toString());
+            System.out.println("Revenue by service data: " + revenueByService);
             
             Map<String, Double> monthlyRevenue = reportDAO.getMonthlyRevenue(year);
-            System.out.println("Monthly revenue: " + monthlyRevenue);
+            System.out.println("Monthly revenue data: " + monthlyRevenue);
             
-            Map<String, Object> summary = reportDAO.getFinancialSummary(startDate, endDate);
-            System.out.println("Financial summary: " + summary);
+            Map<String, Object> summary = reportDAO.getFinancialSummary(startDate.toString(), endDate.toString());
+            System.out.println("Summary data: " + summary);
             
-            List<Map<String, Object>> topCustomers = reportDAO.getTopCustomers(startDate, endDate, 10);
-            System.out.println("Top customers: " + topCustomers);
+            List<Map<String, Object>> topCustomers = reportDAO.getTopCustomers(startDate.toString(), endDate.toString(), 10);
+            System.out.println("Top customers data: " + topCustomers);
             
             // Convert data to JSON for charts
             Gson gson = new Gson();
-            request.setAttribute("revenueByService", gson.toJson(revenueByService));
-            request.setAttribute("monthlyRevenue", gson.toJson(monthlyRevenue));
+            String revenueByServiceJson = gson.toJson(revenueByService);
+            String monthlyRevenueJson = gson.toJson(monthlyRevenue);
+            
+            System.out.println("Revenue by service JSON: " + revenueByServiceJson);
+            System.out.println("Monthly revenue JSON: " + monthlyRevenueJson);
+            
+            // Set attributes
+            request.setAttribute("revenueByService", revenueByServiceJson);
+            request.setAttribute("monthlyRevenue", monthlyRevenueJson);
             request.setAttribute("summary", summary);
             request.setAttribute("topCustomers", topCustomers);
-            request.setAttribute("startDate", startDate);
-            request.setAttribute("endDate", endDate);
+            request.setAttribute("startDate", startDate.toString());
+            request.setAttribute("endDate", endDate.toString());
             request.setAttribute("year", year);
             
             // Forward to JSP
             request.getRequestDispatcher("financial-report.jsp").forward(request, response);
             
         } catch (Exception e) {
-            System.err.println("Error generating report: " + e.getMessage());
+            System.err.println("Error in FinancialReportServlet: " + e.getMessage());
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, 
                              "Error generating report: " + e.getMessage());
