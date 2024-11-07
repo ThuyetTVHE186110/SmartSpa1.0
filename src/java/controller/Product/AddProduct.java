@@ -52,7 +52,6 @@ public class AddProduct extends HttpServlet {
         int quantity = 0;
         int categoryId = 0;
         int supplierId = 0;
-        int discountId = 0;
 
         // Kiểm tra và chuyển đổi các tham số, nếu có giá trị
         try {
@@ -76,10 +75,7 @@ public class AddProduct extends HttpServlet {
                 supplierId = Integer.parseInt(supplierIdParam);
             }
 
-            String discountIdParam = request.getParameter("discountId");
-            if (discountIdParam != null) {
-                discountId = Integer.parseInt(discountIdParam);
-            }
+           
         } catch (NumberFormatException e) {
             e.printStackTrace();
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
@@ -87,7 +83,7 @@ public class AddProduct extends HttpServlet {
         }
 
         // Handle file upload
-        Part imagePart = request.getPart("image");
+        Part imagePart = request.getPart("file");
         if (imagePart == null || imagePart.getSize() == 0) {
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Image part is missing or empty");
             return;
@@ -122,9 +118,8 @@ public class AddProduct extends HttpServlet {
         System.out.println(image);
         System.out.println(categoryId);
         System.out.println(supplierId);
-        System.out.println(discountId);
         System.out.println(branchName);
-        productDAO.addProduct(name, description, price, quantity, image, categoryId, supplierId, discountId, branchName, status, ingredient, howToUse, benefit);
+        productDAO.addProduct(name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
         System.out.println("ass");
 
         // Chuyển hướng đến danh sách sản phẩm

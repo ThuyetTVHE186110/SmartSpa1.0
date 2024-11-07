@@ -1,4 +1,5 @@
 <%@ page import="model.Account" %> <!-- Import your Account model -->
+<%@ page import="model.Supplier" %>
 <%
     // No need to declare session manually; it's already available in JSP
     // You can directly use session
@@ -18,6 +19,7 @@
         }
     }
 %>
+
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -233,10 +235,7 @@
                                 <label for="supplierId" class="form-label">Supplier ID</label>
                                 <input type="number" class="form-control" id="supplierId" name="supplierId" required>
                             </div>
-                            <div class="col-md-6">
-                                <label for="discountId" class="form-label">Discount ID</label>
-                                <input type="number" class="form-control" id="discountId" name="discountId" required>
-                            </div>
+
                             <div class="col-md-6">
                                 <label for="branchName" class="form-label">Branch Name</label>
                                 <input type="text" class="form-control" id="branchName" name="branchName" required>
@@ -250,15 +249,15 @@
                                     <option value="Unknown">Unknown</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="ingredient" class="form-label">Ingredient</label>
                                 <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="howToUse" class="form-label">How To Use</label>
                                 <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="benefit" class="form-label">Benefit</label>
                                 <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
                             </div>
@@ -311,7 +310,7 @@
                                     Please select an image file (JPG or PNG only).
                                 </div>
                                 <div class="form-text">
-                                    Current image: ${material.image}<br>
+                                    Current image: ${product.image}<br>
                                     Leave empty to keep current image. Maximum file size: 5MB
                                 </div>
                             </div>
@@ -323,10 +322,17 @@
                                 <label for="supplierId" class="form-label">Supplier ID</label>
                                 <input type="number" class="form-control" id="supplierId" name="supplierId" required min="1">
                             </div>
-                            <div class="col-md-6">
-                                <label for="discountId" class="form-label">Discount ID</label>
-                                <input type="number" class="form-control" id="discountId" name="discountId" min="1">
-                            </div>
+                            <!-- <div class="col-md-6">
+                                        <label for="supplierId" class="form-label">Supplier Name</label>
+                                        <select class="form-select" id="supplierId" name="supplierId" required>
+                                            <option value="" disabled selected>Select Supplier</option>
+                                             Tạo các option từ danh sách suppliers 
+                            <c:forEach var="supplier" items="${suppliers}">
+                                <option value="${supplier.id}" data-name="${supplier.name}">${supplier.name}</option>
+                            </c:forEach>
+                        </select>
+                    </div>-->
+
                             <div class="col-md-6">
                                 <label for="branchName" class="form-label">Branch Name</label>
                                 <input type="text" class="form-control" id="branchName" name="branchName" required minlength="3">
@@ -340,18 +346,19 @@
                                     <option value="Unknown">Unknown</option>
                                 </select>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="ingredient" class="form-label">Ingredient</label>
-                                <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
+                                <textarea class="form-control" id="ingredient" name="ingredient" rows="3" required minlength="10"></textarea>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="howToUse" class="form-label">How To Use</label>
-                                <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
+                                <textarea class="form-control" id="howToUse" name="howToUse" rows="3" required minlength="10"></textarea>
                             </div>
-                            <div class="col-md-6">
+                            <div class="col-12">
                                 <label for="benefit" class="form-label">Benefit</label>
-                                <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
+                                <textarea class="form-control" id="benefit" name="benefit" rows="3" required minlength="10"></textarea>
                             </div>
+
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                                 <button type="submit" class="btn btn-primary">Save Changes</button>
@@ -363,34 +370,31 @@
                 </div>
             </div>
         </div><!-- End Edit Product Modal-->
-
         <script>
+
                                                         var editProductModal = document.getElementById('editProductModal');
                                                         editProductModal.addEventListener('show.bs.modal', function (event) {
-                                                            // Lấy nút đã kích hoạt modal (nút Edit)
                                                             var button = event.relatedTarget;
-                                                            // Lấy giá trị id từ thuộc tính data-id của nút
                                                             var productId = button.getAttribute('data-id');
-                                                            // Gửi yêu cầu AJAX tới server để lấy chi tiết sản phẩm
+
                                                             fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
-                                                                    .then(response => response.json())  // Parse dữ liệu JSON
+                                                                    .then(response => response.json())
                                                                     .then(product => {
-                                                                        // Tìm form và cập nhật action URL với id sản phẩm
                                                                         var form = editProductModal.querySelector('form');
                                                                         form.action = form.action.split('?')[0] + "?id=" + productId;
 
-                                                                        // Cập nhật giá trị cho các trường trong modal
-                                                                        form.querySelector('input[name="id"]').value = product.id;
-                                                                        form.querySelector('input[name="name"]').value = product.name;
-                                                                        form.querySelector('textarea[name="description"]').value = product.description;
-                                                                        form.querySelector('input[name="price"]').value = product.price;
-                                                                        form.querySelector('input[name="quantity"]').value = product.quantity;
-                                                                        form.querySelector('input[name="categoryId"]').value = product.categoryId;
-                                                                        form.querySelector('input[name="supplierId"]').value = product.supplierId;
-                                                                        form.querySelector('input[name="discountId"]').value = product.discountId;
-                                                                        form.querySelector('input[name="branchName"]').value = product.branchName;
+                                                                        form.querySelector('input[name="id"]').value = product.id || '';
+                                                                        form.querySelector('input[name="name"]').value = product.name || '';
+                                                                        form.querySelector('textarea[name="description"]').value = product.description || '';
+                                                                        form.querySelector('input[name="price"]').value = product.price || '';
+                                                                        form.querySelector('input[name="quantity"]').value = product.quantity || '';
+                                                                        form.querySelector('input[name="categoryId"]').value = product.categoryId || '';
+                                                                        form.querySelector('select[name="supplierId"]').value = product.supplierId || '';
+                                                                        form.querySelector('input[name="discountId"]').value = product.discountId || '';
+                                                                        form.querySelector('input[name="branchName"]').value = product.branchName || '';
+
                                                                         var statusSelect = form.querySelector('select[name="status"]');
-                                                                        statusSelect.value = product.status;
+                                                                        statusSelect.value = product.status || '';
                                                                         if (!statusSelect.value) {
                                                                             Array.from(statusSelect.options).forEach(option => {
                                                                                 if (option.text === product.status) {
@@ -398,15 +402,13 @@
                                                                                 }
                                                                             });
                                                                         }
-                                                                        form.querySelector('input[name="ingredient"]').value = product.ingredient;
-                                                                        form.querySelector('input[name="howToUse"]').value = product.howToUse;
-                                                                        form.querySelector('input[name="benefit"]').value = product.benefit;
-                                                                        // Bạn có thể bổ sung thêm các field khác như hình ảnh nếu cần
+
+                                                                        form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
+                                                                        form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
+                                                                        form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
                                                                     })
                                                                     .catch(error => console.error('Error fetching product details:', error));
-
                                                         });
-
         </script>
 
     </body><!-- comment -->
