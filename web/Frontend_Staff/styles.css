@@ -1016,6 +1016,8 @@ section {
 
 /* Timeline Column */
 .timeline-column {
+    
+    
     background: white;
     border-radius: var(--border-radius);
     padding: 1.5rem;

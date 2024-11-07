@@ -42,7 +42,7 @@
         <section class="appointments-section">
             <div class="appointments-container">
                 <!-- Staff Filter -->
-                <div class="staff-filter">
+<!--                <div class="staff-filter">
                     <h2>Appointment History</h2>
                     <div class="staff-toggle">
                         <label class="staff-checkbox">
@@ -56,7 +56,7 @@
                             </label>
                         </c:forEach>
                     </div>
-                </div>
+                </div>-->
 
                 <!-- Calendar Section -->
                 <div class="calendar-section">
