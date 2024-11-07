@@ -25,59 +25,7 @@ import security.PasswordUtil;
  */
 public class AccountDAO {
 
-//    public Account getByUsernamePassword(String username, String password) {
-//        Account account = null;
-//        Person person = null;
-//
-//        String sql = "SELECT a.ID, a.Username, a.Password, a.RoleID, a.Status, "
-//                + "p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, p.Address, p.Image "
-//                + "FROM Account a "
-//                + "JOIN Person p ON a.PersonID = p.ID "
-//                + "WHERE a.Username = ? AND a.Password = ?";
-//
-//        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-//            // Set the parameters for the prepared statement
-//            ps.setString(1, username);
-//            ps.setString(2, password);
-//
-//            // Execute the query
-//            try (ResultSet rs = ps.executeQuery()) {
-//                if (rs.next()) {
-//                    // Check account status
-//                    String status = rs.getString("Status");
-//                    if (!"Active".equalsIgnoreCase(status)) {
-//                        // Return null if account status is not Active
-//                        return null;
-//                    }
-//
-//                    // Create a Person object from the ResultSet
-//                    person = new Person();
-//                    person.setId(rs.getInt(6)); // Person.ID
-//                    person.setName(rs.getString(7)); // Person.Name
-//                    person.setDateOfBirth(rs.getDate(8)); // Person.DateOfBirth
-//
-//                    // Check Gender safely
-//                    String genderStr = rs.getString(9);
-//                    char gender = (genderStr != null && !genderStr.isEmpty()) ? genderStr.charAt(0) : 'U';
-//                    person.setGender(gender);
-//
-//                    person.setPhone(rs.getString(10)); // Person.Phone
-//                    person.setEmail(rs.getString(11)); // Person.Email
-//                    person.setAddress(rs.getString(12)); // Person.Address
-//                    person.setImage(rs.getString("Image")); // Person.Image
-//
-//                    // Create an Account object from the ResultSet
-//                    account = new Account(rs.getInt(1), rs.getString(2), rs.getString(3), rs.getInt(4), person);
-//                    account.setStatus(status); // Set status in Account object
-//                }
-//            }
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//            Logger.getLogger(AccountDAO.class.getName()).log(Level.SEVERE, "Database error", e);
-//        }
-//
-//        return account; // Return the Account object if found and active, otherwise null
-//    }
+
     public Account getByUsernamePassword(String username, String password) {
         Account account = null;
         Person person = null;

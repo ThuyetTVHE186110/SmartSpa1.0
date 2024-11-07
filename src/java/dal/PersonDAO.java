@@ -733,18 +733,21 @@ public class PersonDAO extends DBContext {
         return false;
     }
 
-    public List<Person> getAllCustomers() {
+    public List<Person> getAllCustomers(int offset, int limit) {
         List<Person> customers = new ArrayList<>();
         String sql = """
-                     SELECT p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, 
-                                        p.Address, p.Image, p.points, p.tier 
-                                        FROM Person p 
-                                       INNER JOIN Account a ON p.ID = a.PersonID 
-                                       WHERE a.roleID = 4
-                     """;
+                 SELECT p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, 
+                        p.Address, p.Image, p.points, p.tier 
+                 FROM Person p 
+                 INNER JOIN Account a ON p.ID = a.PersonID 
+                 WHERE a.roleID = 4
+                 ORDER BY p.ID
+                 OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                 """;
 
         try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
-            System.out.println("Executing query to retrieve all customers...");
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
 
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
@@ -767,7 +770,7 @@ public class PersonDAO extends DBContext {
                 }
             }
         } catch (SQLException e) {
-            System.err.println("Error in getAllCustomers: " + e.getMessage());
+            System.err.println("Error in getAllCustomers with pagination: " + e.getMessage());
             e.printStackTrace();
         }
 
@@ -787,6 +790,99 @@ public class PersonDAO extends DBContext {
             System.err.println("Error updating reward points for person ID " + personId + ": " + e.getMessage());
             throw new RuntimeException("Error updating reward points", e);
         }
+    }
+
+    public List<Person> getCustomersByTier(String tier, int offset, int limit) {
+        List<Person> customers = new ArrayList<>();
+        String sql = """
+                 SELECT p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, 
+                        p.Address, p.Image, p.points, p.tier 
+                 FROM Person p 
+                 INNER JOIN Account a ON p.ID = a.PersonID 
+                 WHERE a.roleID = 4 AND p.tier = ?
+                 ORDER BY p.ID
+                 OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                 """;
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tier);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("ID"));
+                    person.setName(rs.getString("Name"));
+                    person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                    String gender = rs.getString("Gender");
+                    if (gender != null && gender.length() > 0) {
+                        person.setGender(gender.charAt(0));
+                    }
+                    person.setPhone(rs.getString("Phone"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
+                    person.setPoints(rs.getInt("points"));
+                    person.setTier(rs.getString("tier"));
+
+                    customers.add(person);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in getCustomersByTier with pagination: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return customers;
+    }
+
+    public int countCustomersByTier(String tier) {
+        String sql = """
+                 SELECT COUNT(*) AS total
+                 FROM Person p 
+                 INNER JOIN Account a ON p.ID = a.PersonID 
+                 WHERE a.roleID = 4 AND p.tier = ?
+                 """;
+        int count = 0;
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, tier);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in countCustomersByTier: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return count;
+    }
+
+    public int countAllCustomers() {
+        String sql = """
+                 SELECT COUNT(*) AS total
+                 FROM Person p 
+                 INNER JOIN Account a ON p.ID = a.PersonID 
+                 WHERE a.roleID = 4
+                 """;
+        int count = 0;
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    count = rs.getInt("total");
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in countAllCustomers: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return count;
     }
 
 }
