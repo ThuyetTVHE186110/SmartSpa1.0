@@ -6,7 +6,7 @@
     <nav>
         <ul>
             <li>
-                <a href="#dashboard" class="active">
+                <a href="index.jsp">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
@@ -69,3 +69,20 @@
     </nav>
 </aside>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const currentPath = window.location.pathname.split("/").pop();
+        const sidebarLinks = document.querySelectorAll(".sidebar nav ul li a");
+
+        // Smoothly add 'active' to the matching link and remove from others
+        sidebarLinks.forEach(link => {
+            const linkPath = link.getAttribute("href");
+
+            if (linkPath === currentPath) {
+                link.classList.add("active");
+            } else {
+                link.classList.remove("active");
+            }
+        });
+    });
+</script>

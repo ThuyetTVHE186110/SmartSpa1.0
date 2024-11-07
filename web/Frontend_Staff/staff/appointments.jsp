@@ -424,5 +424,6 @@
             </div>
         </div>
         <script src="app.js"></script>
+        <script src="../js/pages/appointments.js"></script>
     </body>
 </html>

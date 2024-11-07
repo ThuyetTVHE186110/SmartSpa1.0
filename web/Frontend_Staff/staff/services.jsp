@@ -402,5 +402,6 @@
             </div>
         </div>
         <script src="app.js"></script>  
+        <script src="../js/pages/services.js"></script>
     </body><!-- comment -->
 </html>
