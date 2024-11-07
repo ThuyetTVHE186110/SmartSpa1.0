@@ -64,13 +64,16 @@
                     <input type="checkbox" id="rememberMe" name="rememberMe" <% if(request.getAttribute("rememberMe") != null) { %> checked <% } %> >
                     <label for="rememberMe">Remember me</label>
                 </div>
-                <span class="span"><a href="forgotPassword" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
+                <span class="span"><a href="ForgotPassword.jsp" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
             </div>
             <!-- Submit Button -->
             <input type="hidden" name="userType" value="admin">
 
             <button class="button-submit" type="submit" name = "signin">Sign In</button>
             <!-- Sign Up Option -->
+            <button class="button-submit" type="button" onclick="window.location.href = 'login';">
+                Login as a Customer
+            </button>
 
 
 

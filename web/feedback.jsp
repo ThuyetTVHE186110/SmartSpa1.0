@@ -40,10 +40,6 @@
                     <c:when test="${not empty sessionScope.account}">
                         <form id="feedback-form" class="feedback-form" action="feedback" method="post">
                             <div class="form-row">
-                                <!--                        <div class="form-group">
-                                                            <label for="name">Your Name</label>
-                                                            <input type="text" id="name" name="name" required>
-                                                        </div>-->
                                 <div class="form-group">
                                     <label for="service">Service Received</label>
                                     <select id="service" name="service" required>
@@ -51,16 +47,6 @@
                                         <c:forEach items="${service}" var="service">
                                             <option value="${service.id}">${service.name}</option>
                                         </c:forEach>
-                                        <!--                                <option value="body-massage">Body Massage</option>
-                                                                        <option value="stone-therapy">Stone Therapy</option>
-                                                                        <option value="facial-therapy">Facial Therapy</option>
-                                                                        <option value="skin-care">Skin Care</option>
-                                                                        <option value="stream-">Stream Bath</option>
-                                                                        <option value="classic-lash">Classic Lash Extensions</option>
-                                                                        <option value="hybrid-lash">Hybrid Lash Extensions</option>
-                                                                        <option value="volume-lash">Volume Lash Extensions</option>
-                                                                        <option value="lash-lift">Lash Lift</option>
-                                                                        <option value="lash-tint">Lash Lift & Tint</option>-->
                                     </select>
                                 </div>
                             </div>
@@ -83,13 +69,8 @@
         <section class="testimonial">
             <div class="testimonial-content">
                 <h2>Feedback</h2>
-                <div class="testimonial-filters">
-                    <button class="filter-btn active" data-filter="all">All</button>
-                    <button class="filter-btn" data-filter="classic-lash">Classic Lash</button>
-                    <button class="filter-btn" data-filter="hybrid-lash">Hybrid Lash</button>
-                    <button class="filter-btn" data-filter="volume-lash">Volume Lash</button>
-                    <button class="filter-btn" data-filter="lash-lift">Lash Lift</button>
-                </div>
+
+
                 <div class="testimonial-slider-container">
                     <div class="star-decoration top-left"></div>
                     <div class="star-decoration top-right"></div>
@@ -109,18 +90,82 @@
                     <div class="star-decoration bottom-right"></div>
                 </div>
                 <div class="slider-dots"></div>
-                <button id="load-more" class="load-more-btn">Load More Reviews</button>
+                <button id="load-more" class="load-more-btn" onclick="showFeedbackContainer()">Load More Reviews</button>
             </div>
         </section>
-
-
 
         <!-- Footer Section -->
         <footer>
             <!-- [Previous footer code remains the same] -->
+            <!-- Container chứa tất cả feedback trong footer -->
+            <div id="allFeedbackContainer" class="feedback-container" style="display: none;">
+                <h2 style="color: brown">All Feedback</h2>
+                <div class="feedback-list">
+                    <hr>
+                    <c:forEach items="${feedback}" var="feedback">
+                        <div class="feedback-item">
+                            <p>"${feedback.content}"</p>
+                            <span class="client-name">- ${feedback.customer.name}</span><br>
+                            <span class="service-name">Service: ${feedback.service.name}</span>
+                        </div>
+                        <hr>
+                    </c:forEach>
+                </div>
+                <div class="pagination">
+                    <button onclick="changePage(-1)" class="page-btn">Previous</button>
+                    <span>Page <span id="currentPage">${currentPage}</span> of <span id="totalPages">${totalPages}</span></span>
+                    <button onclick="changePage(1)" class="page-btn">Next</button>
+                </div>
+            </div>
+
+            <!-- CSS cho container và phân trang -->
+            <style>
+                .feedback-container {
+                    padding: 20px;
+                    background-color: #f8f9fa;
+                    border-top: 1px solid #ddd;
+                    max-width: 80%;
+                    margin: auto;
+                    max-height: 500px;
+                }
+                .feedback-item {
+                    margin-bottom: 15px;
+                }
+                .pagination {
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin-top: 20px;
+                }
+                .page-btn {
+                    margin: 0 10px;
+                    padding: 5px 15px;
+                    cursor: pointer;
+                }
+            </style>
         </footer>
 
         <script>
+
+            // Hiển thị container feedback
+            function showFeedbackContainer() {
+                document.getElementById("allFeedbackContainer").style.display = "block";
+            }
+
+            // Điều khiển phân trang
+            function changePage(step) {
+                let currentPage = parseInt(document.getElementById("currentPage").innerText);
+                let totalPages = parseInt(document.getElementById("totalPages").innerText);
+
+                let newPage = currentPage + step;
+                if (newPage >= 1 && newPage <= totalPages) {
+                    window.location.href = `FeedbackServlet?page=${newPage}`;
+                }
+            }
+
+
+
+            //sessionn
             document.addEventListener('DOMContentLoaded', () => {
                 AOS.init();
                 // Hamburger menu functionality

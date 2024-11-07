@@ -98,7 +98,7 @@
     </servlet>
     <servlet>
         <servlet-name>ChangePasswordServlet</servlet-name>
-        <servlet-class>controller.ChangePasswordServlet</servlet-class>
+        <servlet-class>controller.Authentication.ChangePasswordServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>RoleErrorServlet</servlet-name>
@@ -175,6 +175,18 @@
     <servlet>
         <servlet-name>CustomerClassificationServlet</servlet-name>
         <servlet-class>controller.CustomerClassificationServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ClientManagement</servlet-name>
+        <servlet-class>controller.ClientManagement</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AdminLoginServlet</servlet-name>
+        <servlet-class>controller.Authentication.AdminLoginServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TherapistManagement</servlet-name>
+        <servlet-class>controller.TherapistManagement</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -351,6 +363,18 @@
     <servlet-mapping>
         <servlet-name>CustomerClassificationServlet</servlet-name>
         <url-pattern>/customerClassification</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClientManagement</servlet-name>
+        <url-pattern>/Frontend_Staff/clientManagement</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AdminLoginServlet</servlet-name>
+        <url-pattern>/adminLogin</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TherapistManagement</servlet-name>
+        <url-pattern>/Frontend_Staff/therapist</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
