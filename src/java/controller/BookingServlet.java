@@ -14,6 +14,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -21,6 +22,7 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Account;
 import model.Appointment;
 import model.Person;
 import model.Service;
@@ -96,46 +98,43 @@ public class BookingServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             AppointmentDAO appointmentDAO = new AppointmentDAO();
-            PersonDAO personDAO = new PersonDAO();
-            String name = request.getParameter("name");
-            String email = request.getParameter("email");
-            String phone = request.getParameter("phone");
-            Person customer = new Person();
-            customer.setName(name);
-            customer.setEmail(email);
-            customer.setPhone(phone);
-            Person personCheck = personDAO.existCheck(customer);
-            
-            if (personCheck == null) {
-                personDAO.insertPerson(customer);
-                int nextID = personDAO.maxID();
-                customer.setId(nextID);
-            } else {
-                customer.setId(personCheck.getId());
-            }
-            
-            int serviceID = Integer.parseInt(request.getParameter("service"));
             ServiceDAO serviceDAO = new ServiceDAO();
-            Service service = serviceDAO.selectService(serviceID);
+            HttpSession session = request.getSession(false);
+            if (session == null || session.getAttribute("account") == null) {
+                response.sendRedirect("login"); // Redirect to a custom error page if session is invalid
+                return;
+            }
+
+            Account account = (Account) session.getAttribute("account");
+            String[] serviceIds = request.getParameter("selectedServices").split(",");
+            // Tong thoi gian
+            int totalDuration = totalDuration(serviceIds);
             LocalDate date = LocalDate.parse(request.getParameter("appointmentDate"));
             LocalTime time = LocalTime.parse(request.getParameter("selectedTime"));
             LocalDateTime start = LocalDateTime.of(date, time);
             String note = request.getParameter("notes");
             Appointment appointment = new Appointment();
             appointment.setStart(start);
-            appointment.setEnd(start.plusMinutes(service.getDuration()));
+            appointment.setEnd(start.plusMinutes(totalDuration));
             appointment.setCreatedDate(LocalDateTime.now());
             appointment.setStatus("Scheduled");
             appointment.setNote(note);
-            appointment.setCustomer(customer);
-            appointmentDAO.addAppointment(appointment);
-            int staffId = Integer.parseInt(request.getParameter("staff"));
-            AppointmentServiceDAO serviceList = new AppointmentServiceDAO();
-            serviceList.addAppointmentService(appointmentDAO.getMaxAppointmentID(), serviceID, staffId);
+            appointment.setCustomer(account.getPersonInfo());
+            if (appointmentDAO.addAppointment(appointment)) {
+                for (String id : serviceIds) {
+                    int serviceID = Integer.parseInt(id);
+                    // Xử lý từng serviceId, ví dụ thêm vào danh sách đặt chỗ
+                    Service service = serviceDAO.selectService(serviceID);
+                    int staffId = Integer.parseInt(request.getParameter("staff"));
+                    AppointmentServiceDAO serviceList = new AppointmentServiceDAO();
+                    serviceList.addAppointmentService(appointmentDAO.getMaxAppointmentID(), service.getId(), staffId);
+                }
+            }
             request.setAttribute("success", "Booking successfully!");
             doGet(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(BookingServlet.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("error"); // Redirect to a custom error page if session is invalid
         }
     }
 
@@ -149,4 +148,14 @@ public class BookingServlet extends HttpServlet {
         return "Short description";
     }// </editor-fold>
 
+    private int totalDuration(String[] serviceIds) throws SQLException {
+        ServiceDAO serviceDAO = new ServiceDAO();
+        int totalDuration = 0;
+        for (String serviceIdStr : serviceIds) {
+            int serviceID = Integer.parseInt(serviceIdStr);
+            Service service = serviceDAO.selectService(serviceID);
+            totalDuration += service.getDuration(); // Cộng dồn thời gian của mỗi dịch vụ
+        }
+        return totalDuration;
+    }
 }

@@ -83,13 +83,11 @@
                                     </div>
                                     <div class="appointment-details">
                                         <c:forEach items="${upcoming.services}" var="info">
-                                            <h3>${info.service.name}</h3>
-                                        </c:forEach>
-                                        <p><i class="fas "></i> Status: ${upcoming.status}</p>
-                                        <p><i class="far fa-clock"></i> ${upcoming.start.toLocalTime()} - ${upcoming.end.toLocalTime()}</p>
-                                        <c:forEach items="${upcoming.services}" var="info">
+                                            <h3> Service: ${info.service.name}</h3>
                                             <p><i class="fas fa-user"></i> with ${info.staff.name}</p>
                                         </c:forEach>
+                                        <p><i class="fas "></i>Status: ${upcoming.status}</p>
+                                        <p><i class="far fa-clock"></i> ${upcoming.start.toLocalTime()} - ${upcoming.end.toLocalTime()}</p>
                                     </div>
                                     <div class="appointment-actions">
                                         <form action="customerProfile" method="post">
