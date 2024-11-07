@@ -346,7 +346,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SaveSurveyServlet</servlet-name>
-        <url-pattern>/save-survey</url-pattern>
+        <url-pattern>/SaveSurvey</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>

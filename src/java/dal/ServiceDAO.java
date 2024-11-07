@@ -26,6 +26,30 @@ public class ServiceDAO extends DBContext {
     public ServiceDAO() {
     }
 
+    public List<Service> getServicesBySkinTypeAndBudget(String skinType, String budgetRange) throws SQLException {
+        List<Service> services = new ArrayList<>();
+        String sql = "SELECT * FROM services WHERE skinType = ? AND price <= ?";
+
+        int maxPrice = 100;  // default cho mức "budget"
+        if (budgetRange.equals("moderate")) {
+            maxPrice = 300;
+        } else if (budgetRange.equals("premium")) {
+            maxPrice = Integer.MAX_VALUE;
+        }
+
+        try (Connection connection = getConnection(); PreparedStatement ps = connection.prepareStatement(sql)) {
+
+            ps.setString(1, skinType);
+            ps.setInt(2, maxPrice);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                services.add(extractServiceFromResultSet(rs));
+            }
+        }
+        return services;
+    }
+
     // Insert a new service into the database
     public void addService(Service service) throws SQLException {
         try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SERVICE_SQL)) {
@@ -82,12 +106,11 @@ public class ServiceDAO extends DBContext {
         } catch (SQLException ex) {
             Logger.getLogger(ServiceDAO.class.getName()).log(Level.SEVERE, null, ex);
         }
-        for(Service service: services){
+        for (Service service : services) {
             System.out.println(services);
         }
-        
-        }
-    
+
+    }
 
     // Get services by category using SQL Server syntax
     public List<Service> getServicesByCategory(String category) throws SQLException {

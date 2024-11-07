@@ -70,6 +70,7 @@
                     <button class="profile-nav-btn" data-tab="history">Payment History</button>
                     <button class="profile-nav-btn" data-tab="settings">Account Information</button>
                     <button class="profile-nav-btn" data-tab="preferences">Change Password</button>
+                    <a href="feedback" class="profile-nav-btn" data-tab="preferences">Send Feedback</a>
                 </div>
 
                 <!-- Profile Content -->

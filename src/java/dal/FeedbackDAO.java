@@ -12,10 +12,7 @@ import model.Feedback;
 import model.Person;
 import model.Service;
 
-/**
- *
- * @author admin
- */
+
 public class FeedbackDAO extends DBContext {
 
     public FeedbackDAO() {

@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -59,7 +60,7 @@
                                             <i class="fas fa-star"></i>
                                             <span>5.0</span>
                                         </div>
-                                        <span class="feedback-date">2 hours ago</span>
+                                        <!--<span class="feedback-date">2 hours ago</span>-->
                                     </div>
                                 </div>
                                 <div class="feedback-content">
@@ -192,7 +193,7 @@
 
                             <!-- Common Feedback Topics -->
                             <div class="summary-card">
-                                <h3>Common Topics</h3>
+                                <h3>Common Service</h3>
                                 <div class="topic-list">
                                     <div class="topic-item positive">
                                         <span class="topic-name">Staff Professionalism</span>
