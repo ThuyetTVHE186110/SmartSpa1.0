@@ -21,8 +21,41 @@ public class FeedbackDAO extends DBContext {
     public FeedbackDAO() {
     }
 
-    public ArrayList<Feedback> getFeedback() {
+    public ArrayList<Feedback> getAllFeedback() {
+        ArrayList<Feedback> feedbackList = new ArrayList<>();
+        try {
+            String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.name AS serviceName, f.StarRating "
+                    + "FROM Feedback f "
+                    + "JOIN Person p ON f.CustomerID = p.ID "
+                    + "JOIN Services s ON f.ServicesID = s.ID";
+            PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            while (rs.next()) {
+                Feedback fb = new Feedback();
+                fb.setId(rs.getInt("ID"));
+                fb.setContent(rs.getString("Content"));
 
+                Person customer = new Person();
+                customer.setId(rs.getInt("ID"));
+                customer.setName(rs.getString("customerName"));
+                fb.setCustomer(customer);
+
+                Service service = new Service();
+                service.setId(rs.getInt("ID"));
+                service.setName(rs.getString("serviceName"));
+                fb.setService(service);
+                
+                fb.setStarRating(rs.getInt("StarRating"));
+                
+                feedbackList.add(fb);
+            }
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        return feedbackList;
+    }
+
+    public ArrayList<Feedback> getFeedback() {
         ArrayList<Feedback> feedback = new ArrayList<>();
         try {
             String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.name AS serviceName "
@@ -35,18 +68,18 @@ public class FeedbackDAO extends DBContext {
                 Feedback fb = new Feedback();
                 fb.setId(rs.getInt("ID"));
                 fb.setContent(rs.getString("Content"));
-                
+
                 Person customer = new Person();
                 customer.setId(rs.getInt("ID"));
                 customer.setName(rs.getString("customerName"));
                 fb.setCustomer(customer);
-                
+
                 Service service = new Service();
                 service.setId(rs.getInt("ID"));
                 service.setName(rs.getString("serviceName"));
                 fb.setService(service);
                 
-                feedback.add(fb);           
+                feedback.add(fb);
             }
         } catch (SQLException e) {
             System.out.println(e);
@@ -54,15 +87,15 @@ public class FeedbackDAO extends DBContext {
 
         return feedback;
     }
-    
-     public ArrayList<Feedback> getFeedbackByService(int serviceId) {
+
+    public ArrayList<Feedback> getFeedbackByService(int serviceId) {
         ArrayList<Feedback> feedbackS = new ArrayList<>();
         try {
-        String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.Name AS serviceName " +
-                     "FROM Feedback f " +
-                     "JOIN Person p ON f.CustomerID = p.ID " +
-                     "JOIN Services s ON f.ServicesID = s.ID " +
-                     "WHERE f.ServicesID = ?";
+            String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.Name AS serviceName "
+                    + "FROM Feedback f "
+                    + "JOIN Person p ON f.CustomerID = p.ID "
+                    + "JOIN Services s ON f.ServicesID = s.ID "
+                    + "WHERE f.ServicesID = ?";
             PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
             statement.setInt(1, serviceId);
@@ -87,22 +120,22 @@ public class FeedbackDAO extends DBContext {
 
         return feedbackS;
     }
-    
-    public int getTotalFeedbacks(){
-        int  count = 0;
+
+    public int getTotalFeedbacks() {
+        int count = 0;
         try {
-            String  sql = "SELECT COUNT(*) AS total FROM feedback";
+            String sql = "SELECT COUNT(*) AS total FROM feedback";
             PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
             ResultSet rs = statement.executeQuery();
-            while(rs.next()){
+            while (rs.next()) {
                 count = rs.getInt("total");
             }
         } catch (SQLException e) {
-             e.printStackTrace();
+            e.printStackTrace();
         }
         return count;
-    } 
-    
+    }
+
     public void deleteFeedbackByID(String id) {
         try {
             String sql = "DELETE FROM Feedback WHERE ID=?";
@@ -136,7 +169,7 @@ public class FeedbackDAO extends DBContext {
     }
 
     public boolean createFeedback(int customerId, String content, int serviceId) {
-            boolean isAdded = false;
+        boolean isAdded = false;
         try {
             String sql = "INSERT INTO Feedback (CustomerID, Content, ServicesID) VALUES (?, ?, ?)";
             PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
@@ -150,22 +183,15 @@ public class FeedbackDAO extends DBContext {
         }
         return isAdded;
     }
-   public static void main(String args[]){
-       FeedbackDAO feedbackDAO = new FeedbackDAO();
-                boolean isAdded = feedbackDAO.createFeedback(3, "đù ", 1
-                
-                
-                
-                
-                
-                
-                );
-                if (isAdded) {
-                    System.out.println("Ok");
-                } else {
-                    System.out.println("Đù mé!");
-                }
-   }
+
+    
+    public static void main(String args[]) {
+        FeedbackDAO feedbackDAO = new FeedbackDAO();
+        ArrayList<Feedback> f = feedbackDAO.getAllFeedback();
+        for (Feedback feedback : f) {
+            System.out.println(feedback.getStarRating());
+        }
+    }
 
 //    public void readFeedback(int id){
 //        try {
@@ -179,7 +205,4 @@ public class FeedbackDAO extends DBContext {
 //        } catch (Exception e) {
 //        }
 //    }
-
 }
-
-

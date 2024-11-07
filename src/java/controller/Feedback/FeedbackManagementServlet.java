@@ -32,7 +32,7 @@ public class FeedbackManagementServlet extends HttpServlet {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
         ServiceDAO serviceDAO = new ServiceDAO();
         
-        ArrayList<Feedback> feedback = feedbackDAO.getFeedback();
+        ArrayList<Feedback> feedbackList = feedbackDAO.getAllFeedback();
         List<Service> service = null;
         
         try {
@@ -42,7 +42,7 @@ public class FeedbackManagementServlet extends HttpServlet {
         }
         
         request.setAttribute("service", service);
-        request.setAttribute("feedback", feedback);
+        request.setAttribute("feedbackList", feedbackList);
 
         request.getRequestDispatcher("Frontend_Staff/feedback.jsp").forward(request, response);
     }
