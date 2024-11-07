@@ -28,7 +28,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Profile - Blushed Beauty Bar</title>
-        <link rel="stylesheet" href="newUI//assets/css/styles.css">
+        <link rel="stylesheet" href="newUI/assets/css/styles.css">
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -49,7 +49,12 @@
                                     ? "newUI/assets/img/" + person.getImage()
                                     : "newUI/assets/img/default-avartar.jpg"%>" 
                                  alt="Profile Picture">
-                            <button class="edit-avatar"><i class="fas fa-camera"></i></button>
+                            <form action="customerProfile" method="post" enctype="multipart/form-data">
+                                <input type="hidden" name="action" value="uploadImage">
+                                <label for="uploadImage" class="edit-avatar"><i class="fas fa-camera"></i></label>
+                                <input type="file" name="profileImage" id="uploadImage" style="display: none;" onchange="previewImage(event)">
+                                <button type="submit" style="display: none;" id="uploadButton"></button>
+                            </form>
                         </div>
                         <div class="profile-details">
                             <h1><c:out value="${account.personInfo.name}"/></h1> <!-- Display customer name -->
@@ -115,7 +120,7 @@
                             <div class="history-list">
                                 <div class="history-item">
                                     <div class="history-date">${history.start.toLocalDate().getMonth()} ${history.start.toLocalDate().getDayOfMonth()}, ${history.getStart().toLocalDate().getYear()}</div>
-                                    
+
                                     <div class="history-details">
                                         <c:forEach items="${history.services}" var="info">
                                             <h3>${info.service.name}</h3>
@@ -135,6 +140,8 @@
                         <h2>Change Your Password</h2>
                         <form class="preferences-form" action="customerProfile" method="post" onsubmit="return validatePassword()">
                             <!-- Password Update Section -->
+                            <!-- Hidden field to specify the action -->
+                            <input type="hidden" name="action" value="changePassword">
                             <h3>Change Password</h3>
 
 
@@ -197,6 +204,7 @@
                         <h2>Account Settings</h2>
                         <!-- Form cập nhật thông tin -->
                         <form class="settings-form" action="customerProfile" method="post" onsubmit="return validateForm()">
+                            <input type="hidden" name="action" value="updateProfile">
                             <!-- Full Name -->
                             <div class="form-group">
                                 <label>Full Name</label>
@@ -312,23 +320,47 @@
         </script>
 
 
-        <%
-            String successMessage = (String) session.getAttribute("successMessage");
-            String errorMessage = (String) request.getAttribute("errorMessage");
+        <script>
+            function showMessage(type, message) {
+                // Create the message container
+                const messageContainer = document.createElement('div');
+                messageContainer.classList.add('message-container', type);
 
-            if (successMessage != null) {
-        %>
-        <div class="alert alert-success"><%= successMessage%></div>
-        <%
-                session.removeAttribute("successMessage");
+                // Add an icon based on the message type
+                const icon = document.createElement('i');
+                icon.className = type === 'success' ? 'bi bi-check-circle' : 'bi bi-exclamation-triangle';
+                messageContainer.appendChild(icon);
+
+                // Add the message text
+                const text = document.createElement('span');
+                text.textContent = message;
+                messageContainer.appendChild(text);
+
+                // Append to the body
+                document.body.appendChild(messageContainer);
+
+                // Auto-hide the message after 3 seconds
+                setTimeout(() => {
+                    messageContainer.style.animation = 'slideOut 0.5s ease-in forwards';
+                    messageContainer.addEventListener('animationend', () => {
+                        messageContainer.remove();
+                    });
+                }, 3000);
             }
 
-            if (errorMessage != null) {
-        %>
-        <div class="alert alert-danger"><%= errorMessage%></div>
-        <%
-            }
-        %>
+            // Show success message if set in session
+            <% if (session.getAttribute("successMessage") != null) {%>
+            showMessage('success', '<%= session.getAttribute("successMessage")%>');
+            <% session.removeAttribute("successMessage"); %>
+            <% } %>
+
+            // Show error message if set in request
+            <% if (request.getAttribute("errorMessage") != null) {%>
+            showMessage('error', '<%= request.getAttribute("errorMessage")%>');
+            <% }%>
+        </script>
+
+
         <script>
             AOS.init();
 
@@ -357,8 +389,19 @@
                 });
             }
             );
+        </script>
+        <script>
+            function previewImage(event) {
+                const reader = new FileReader();
+                reader.onload = function () {
+                    const output = document.getElementById('profileImagePreview');
+                    output.src = reader.result;
+                };
+                reader.readAsDataURL(event.target.files[0]);
 
-
+                // Automatically submit the form to upload the image
+                document.getElementById("uploadButton").click();
+            }
         </script>
     </body>
 </html>

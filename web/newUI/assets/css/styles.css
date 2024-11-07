@@ -22573,37 +22573,61 @@ textarea {
     }
 
     /* Message Container Styles */
-    .message-container {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 15px 25px;
-        border-radius: 5px;
-        z-index: 1000;
-        animation: slideIn 0.5s ease-out;
-    }
+    /* Message Container Styles */
+.message-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 15px 25px;
+    border-radius: 8px;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    font-weight: 500;
+    color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    opacity: 0;
+    transform: translateY(-20px);
+    animation: slideIn 0.5s ease-out forwards;
+}
 
-    .message-container.success {
-        background-color: #4CAF50;
-        color: white;
-    }
+.message-container.success {
+    background-color: #28a745; /* Updated success color */
+}
 
-    .message-container.error {
-        background-color: #f44336;
-        color: white;
-    }
+.message-container.error {
+    background-color: #dc3545; /* Updated error color */
+}
 
-    @keyframes slideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
-        }
+.message-container i {
+    margin-right: 10px;
+    font-size: 20px;
+}
 
-        to {
-            transform: translateX(0);
-            opacity: 1;
-        }
+/* Animation for slide in and slide out */
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
     }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideOut {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+}
+
 
     .payment-history-container {
         padding: 40px 20px;

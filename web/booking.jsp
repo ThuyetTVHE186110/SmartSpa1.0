@@ -13,7 +13,7 @@
         Account account = (Account) session.getAttribute("account");
 
         if (account.getRole() == 4) {
-//            response.sendRedirect("booking");
+            response.sendRedirect("booking");
         } else {
             // Set an error message and redirect to an error page
             request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
@@ -251,57 +251,57 @@
         <script src='https://cdn.jsdelivr.net/npm/@fullcalendar/interaction@6.1.10/main.min.js'></script>
         <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/main.min.js'></script>
         <script>
-                                            var selectedTime = null;
-                                            async function getAvailableTimes() {
-                                                const staffId = document.getElementById("staff").value;
-                                                const date = document.getElementById("appointmentDate").value;
-                                                const service = document.querySelector('input[name="service"]:checked')?.value;
+                                        var selectedTime = null;
+                                        async function getAvailableTimes() {
+                                            const staffId = document.getElementById("staff").value;
+                                            const date = document.getElementById("appointmentDate").value;
+                                            const service = document.querySelector('input[name="service"]:checked')?.value;
 
-                                                if (staffId && date && service) {
-                                                    try {
-                                                        const response = await fetch(`getAvailableTimes?service=` + service + `&staffId=` + staffId + `&date=` + date);
-                                                        const availableSlots = await response.json();
+                                            if (staffId && date && service) {
+                                                try {
+                                                    const response = await fetch(`getAvailableTimes?service=` + service + `&staffId=` + staffId + `&date=` + date);
+                                                    const availableSlots = await response.json();
 
 //                                                     Clear previous slots
-                                                        document.getElementById("morningSlots").innerHTML = "";
-                                                        document.getElementById("afternoonSlots").innerHTML = "";
-                                                        document.getElementById("eveningSlots").innerHTML = "";
+                                                    document.getElementById("morningSlots").innerHTML = "";
+                                                    document.getElementById("afternoonSlots").innerHTML = "";
+                                                    document.getElementById("eveningSlots").innerHTML = "";
 
-                                                        availableSlots.forEach(slot => {
-                                                            const button = document.createElement("button");
-                                                            button.type = "button";
-                                                            button.classList.add("time-slot");
-                                                            button.textContent = slot;
-                                                            button.onclick = () => selectTime(button, slot);
+                                                    availableSlots.forEach(slot => {
+                                                        const button = document.createElement("button");
+                                                        button.type = "button";
+                                                        button.classList.add("time-slot");
+                                                        button.textContent = slot;
+                                                        button.onclick = () => selectTime(button, slot);
 
-                                                            // Categorize by time of day
-                                                            const [hour] = slot.split(":").map(Number);
-                                                            if (hour >= 10 && hour < 12) {
-                                                                document.getElementById("morningSlots").appendChild(button);
-                                                            } else if (hour >= 12 && hour < 16) {
-                                                                document.getElementById("afternoonSlots").appendChild(button);
-                                                            } else if (hour >= 16 && hour < 18) {
-                                                                document.getElementById("eveningSlots").appendChild(button);
-                                                            }
-                                                        });
-                                                    } catch (error) {
-                                                        console.error("Error fetching available times:", error);
-                                                    }
-                                                } else {
-                                                    console.log("Please select staff, date, and service.");
+                                                        // Categorize by time of day
+                                                        const [hour] = slot.split(":").map(Number);
+                                                        if (hour >= 10 && hour < 12) {
+                                                            document.getElementById("morningSlots").appendChild(button);
+                                                        } else if (hour >= 12 && hour < 16) {
+                                                            document.getElementById("afternoonSlots").appendChild(button);
+                                                        } else if (hour >= 16 && hour < 18) {
+                                                            document.getElementById("eveningSlots").appendChild(button);
+                                                        }
+                                                    });
+                                                } catch (error) {
+                                                    console.error("Error fetching available times:", error);
                                                 }
+                                            } else {
+                                                console.log("Please select staff, date, and service.");
                                             }
+                                        }
 
-                                            function selectTime(selectedButton, time) {
-                                                document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
-                                                selectedButton.classList.add('selected');
-                                                // Store the selected time in the variable
-                                                selectedTime = time;
-                                                console.log("Selected time:", selectedTime);  // Log the selected time for debugging
+                                        function selectTime(selectedButton, time) {
+                                            document.querySelectorAll('.time-slot').forEach(btn => btn.classList.remove('selected'));
+                                            selectedButton.classList.add('selected');
+                                            // Store the selected time in the variable
+                                            selectedTime = time;
+                                            console.log("Selected time:", selectedTime);  // Log the selected time for debugging
 
-                                                // Optional: Update a hidden input field if you need to submit it with a form
-                                                document.getElementById("selectedTimeInput").value = selectedTime;
-                                            }
+                                            // Optional: Update a hidden input field if you need to submit it with a form
+                                            document.getElementById("selectedTimeInput").value = selectedTime;
+                                        }
         </script>
         <script>
             AOS.init();

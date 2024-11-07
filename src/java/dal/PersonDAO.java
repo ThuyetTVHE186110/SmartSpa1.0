@@ -210,13 +210,12 @@ public class PersonDAO extends DBContext {
     public boolean deletePersonAndAccountById(int personId) {
         String deleteAccountSql = "DELETE FROM Account WHERE PersonID = ?";
         String deletePersonSql = "DELETE FROM Person WHERE ID = ?";
-        
+
         try (Connection connection = getConnection()) {
             connection.setAutoCommit(false); // Bắt đầu giao dịch
 
-            try (PreparedStatement accountStmt = connection.prepareStatement(deleteAccountSql);
-                 PreparedStatement personStmt = connection.prepareStatement(deletePersonSql)) {
-                
+            try (PreparedStatement accountStmt = connection.prepareStatement(deleteAccountSql); PreparedStatement personStmt = connection.prepareStatement(deletePersonSql)) {
+
                 // Xóa tài khoản liên kết
                 accountStmt.setInt(1, personId);
                 accountStmt.executeUpdate();
@@ -224,7 +223,7 @@ public class PersonDAO extends DBContext {
                 // Xóa người dùng
                 personStmt.setInt(1, personId);
                 int rowsAffected = personStmt.executeUpdate();
-                
+
                 connection.commit(); // Cam kết giao dịch nếu tất cả đều thành công
                 return rowsAffected > 0;
             } catch (SQLException e) {
@@ -237,8 +236,6 @@ public class PersonDAO extends DBContext {
             return false;
         }
     }
-
-    
 
     public List<Person> getPersonByName(String name) {
         List<Person> list = new ArrayList<>();
@@ -690,6 +687,98 @@ public class PersonDAO extends DBContext {
 
     public void updateEmployee(Person person) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    public String calculateTier(int points) {
+        if (points >= 5000) {
+            return "S-Tier";
+        } else if (points >= 1000) {
+            return "A-Tier";
+        } else {
+            return "Regular";
+        }
+    }
+
+    // Cập nhật điểm và hạng cho khách hàng
+    public boolean updateCustomerPointsAndTier(int personId, int points, String tier) {
+        String sql = "UPDATE Person SET points = ?, tier = ? WHERE ID = ?";
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, points);
+            ps.setString(2, tier);
+            ps.setInt(3, personId);
+
+            System.out.println("Executing update for person ID: " + personId);
+
+            int rowsAffected = ps.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Successfully updated points and tier for person ID: " + personId);
+                return true;
+            } else {
+                System.out.println("No rows affected for person ID: " + personId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in updateCustomerPointsAndTier: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public List<Person> getAllCustomers() {
+        List<Person> customers = new ArrayList<>();
+        String sql = """
+                     SELECT p.ID, p.Name, p.DateOfBirth, p.Gender, p.Phone, p.Email, 
+                                        p.Address, p.Image, p.points, p.tier 
+                                        FROM Person p 
+                                       INNER JOIN Account a ON p.ID = a.PersonID 
+                                       WHERE a.roleID = 4
+                     """;
+
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            System.out.println("Executing query to retrieve all customers...");
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    Person person = new Person();
+                    person.setId(rs.getInt("ID"));
+                    person.setName(rs.getString("Name"));
+                    person.setDateOfBirth(rs.getDate("DateOfBirth"));
+                    String gender = rs.getString("Gender");
+                    if (gender != null && gender.length() > 0) {
+                        person.setGender(gender.charAt(0));
+                    }
+                    person.setPhone(rs.getString("Phone"));
+                    person.setEmail(rs.getString("Email"));
+                    person.setAddress(rs.getString("Address"));
+                    person.setImage(rs.getString("Image"));
+                    person.setPoints(rs.getInt("points"));
+                    person.setTier(rs.getString("tier"));
+
+                    customers.add(person);
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error in getAllCustomers: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return customers;
+    }
+
+    // Method to add reward points to a customer
+    public boolean addRewardPoints(int personId, int points) {
+        String sql = "UPDATE Person SET points = points + ? WHERE ID = ?";
+        try (Connection conn = DBContext.getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, points);
+            stmt.setInt(2, personId);
+
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            System.err.println("Error updating reward points for person ID " + personId + ": " + e.getMessage());
+            throw new RuntimeException("Error updating reward points", e);
+        }
     }
 
 }
