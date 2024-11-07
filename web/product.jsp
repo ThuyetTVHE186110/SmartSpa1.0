@@ -31,9 +31,9 @@
         <!-- Product Categories Section -->
         <section class="product-categories">
             <div style="display: flex; padding-bottom: 20px">
-                <form action="searchproduct?index=1" method="post" style="display: flex; align-items: center; margin-left: auto">
+                <form action="searchproduct?index=1" method="post" style="display: flex">
                     <input class="searchBox" type="text" name="txtSearch" required 
-                           style="padding: 7px; border: 1px solid #ccc; border-right: none; width: 1000px; border-radius: 10px 0 0 10px;" 
+                           style="padding: 7px; border: 1px solid #ccc; border-right: none; border-radius: 10px 0 0 10px;" 
                            value="${param.txtSearch}"> <!-- Giữ lại giá trị đã nhập -->
                     <input class="searchButton" type="submit" name="btnGo" value="Search" 
                            style="background-color: #B38886; color: white; border: 1px solid #F9A392; border-left: none; padding: 7px; cursor: pointer; border-radius: 0 10px 10px 0;">

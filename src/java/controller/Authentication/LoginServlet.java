@@ -40,7 +40,7 @@ public class LoginServlet extends HttpServlet {
         Cookie[] cookies = request.getCookies();
         String savedUsername = null;
         String savedPassword = null;
-        
+
         if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("savedUsername".equals(cookie.getName())) {
@@ -58,7 +58,7 @@ public class LoginServlet extends HttpServlet {
         // Forward to the login page (or your login JSP)
         request.getRequestDispatcher("login.jsp").forward(request, response);
     }
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -66,13 +66,13 @@ public class LoginServlet extends HttpServlet {
         String password = request.getParameter("txtPassword");
         String rememberMe = request.getParameter("rememberMe");
         String userType = request.getParameter("userType");
-        
+
         AccountDAO accountDAO = new AccountDAO();
         Account account = null;
-        
+
         try {
             account = accountDAO.getByUsernamePassword(username, password);
-            
+
             if (account != null) {
                 String storedPassword = account.getPassword();
                 boolean isPasswordValid;
@@ -92,7 +92,7 @@ public class LoginServlet extends HttpServlet {
                         account.setPassword(hashedPassword); // Update password in session/account object
                     }
                 }
-                
+
                 if (isPasswordValid) {
                     // Existing logic for successful login
                     if ("Suspended".equalsIgnoreCase(account.getStatus())) {
@@ -100,10 +100,10 @@ public class LoginServlet extends HttpServlet {
                         request.getRequestDispatcher("login.jsp").forward(request, response);
                         return;
                     }
-                    
+
                     int roleID = account.getRole();
                     String roleName = account.getRoleName();
-                    
+
                     HttpSession session = request.getSession();
                     session.setAttribute("account", account);
                     session.setAttribute("loggedIn", true);
@@ -116,7 +116,7 @@ public class LoginServlet extends HttpServlet {
                     if (person != null) {
                         session.setAttribute("person", person);
                     }
-                    
+
                     if ("on".equals(rememberMe)) {
                         Cookie usernameCookie = new Cookie("savedUsername", username);
                         usernameCookie.setMaxAge(60 * 60 * 24 * 30);
@@ -128,10 +128,18 @@ public class LoginServlet extends HttpServlet {
                         usernameCookie.setMaxAge(0);
                         response.addCookie(usernameCookie);
                     }
-                    
-                    if ("admin".equals(userType) && (roleID == 1 || roleID == 2 || roleID == 3)) {
-                        session.setAttribute("successMessage", "Admin/Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-                        response.sendRedirect("dashboard");
+
+                    if ("admin".equals(userType)) {
+                        if (roleID == 1 || roleID == 2) {
+                            session.setAttribute("successMessage", "Admin login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+                            response.sendRedirect("dashboard");
+                        } else if (roleID == 3) {
+                            session.setAttribute("successMessage", "Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
+                            response.sendRedirect("Frontend_Staff/");
+                        } else {
+                            request.setAttribute("error", "Invalid role for admin access.");
+                            request.getRequestDispatcher("login.jsp").forward(request, response);
+                        }
                     } else if ("customer".equals(userType) && roleID == 4) {
                         session.setAttribute("successMessage", "Login successful! Welcome, " + account.getPersonInfo().getName() + ".");
                         response.sendRedirect("index");
@@ -139,6 +147,7 @@ public class LoginServlet extends HttpServlet {
                         request.setAttribute("error", "Invalid role or user type.");
                         request.getRequestDispatcher("login.jsp").forward(request, response);
                     }
+
                 } else {
                     request.setAttribute("error", "Login failed! Invalid username or password.");
                     request.setAttribute("username", username);
@@ -163,5 +172,5 @@ public class LoginServlet extends HttpServlet {
             request.getRequestDispatcher("login.jsp").forward(request, response);
         }
     }
-    
+
 }

@@ -10,7 +10,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Material;
-import model.Discount;
 import model.Supplier;
 
 public class MaterialDAO extends DBContext {

@@ -1,4 +1,8 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+<%@page contentType="text/html" pageEncoding="UTF-8" %>
 <!DOCTYPE html>
+<link rel="stylesheet" href="/SmartSpa1.0/Frontend_Staff/styles.css">
 <html lang="en">
 
     <head>
@@ -18,219 +22,186 @@
             <div class="main-content">
                 <jsp:include page="topbar.jsp" />
                 <main>
-                    <div class="section-header">
-                        <div class="header-content">
-                            <h2>Spa Inventory Management</h2>
-                            <div class="inventory-filter">
-                                <button class="filter-btn active">All Items</button>
-                                <button class="filter-btn">Massage Oils</button>
-                                <button class="filter-btn">Essential Oils</button>
-                                <button class="filter-btn">Skincare</button>
-                                <button class="filter-btn">Supplies</button>
-                                <button class="filter-btn low-stock">Low Stock</button>
-                            </div>
+                    <div class="header-content">
+                        <h2>Spa Inventory Management</h2>
+                        <!-- Filter buttons (optional) -->
+                        <div class="inventory-filter">
+                            <button class="filter-btn active">All Items</button>
+                            <c:forEach var="category" items="${productCategories}">
+                                <button class="filter-btn">${category.name}</button>
+                            </c:forEach>
+                            <button class="filter-btn all-materials">Materials</button>
+                            <button class="filter-btn low-stock">Low Stock</button>
                         </div>
-                        <button class="btn-primary" id="newItemBtn">
-                            <i class="fas fa-plus"></i> Add New Item
-                        </button>
                     </div>
 
                     <div class="inventory-grid">
                         <!-- Inventory List -->
                         <div class="inventory-list">
-                            <!-- Massage Oils Category -->
+                            <!-- Display Products -->
                             <div class="inventory-category">
                                 <div class="category-header">
-                                    <h3>Massage Oils</h3>
-                                    <button class="btn-text">Manage Category</button>
+                                    <h3>Products</h3>
                                 </div>
                                 <div class="inventory-cards">
-                                    <!-- Regular Stock Item -->
-                                    <div class="inventory-card">
-                                        <div class="inventory-header">
-                                            <img src="lavender-oil.jpg" alt="Lavender Massage Oil" class="item-image">
-                                            <div class="stock-badge sufficient">In Stock</div>
-                                        </div>
-                                        <div class="inventory-info">
-                                            <h4>Lavender Massage Oil</h4>
-                                            <div class="item-details">
-                                                <span><i class="fas fa-boxes"></i> Current Stock: 45 units</span>
-                                                <span><i class="fas fa-exclamation-triangle"></i> Min Stock: 20 units</span>
-                                                <span><i class="fas fa-dollar-sign"></i> Unit Cost: $15.00</span>
+                                    <c:forEach var="product" items="${products}">
+                                        <div class="inventory-card">
+                                            <div class="inventory-header">
+                                                <img src="${product.image}" alt="${product.name}" class="item-image">
                                             </div>
-                                            <div class="stock-progress">
-                                                <div class="progress-bar" style="width: 75%"></div>
-                                                <span>75% of max stock</span>
-                                            </div>
-                                            <div class="usage-info">
-                                                <p><i class="fas fa-chart-line"></i> Monthly Usage: ~30 units</p>
-                                                <p><i class="fas fa-clock"></i> Last Restocked: 2 weeks ago</p>
-                                                <p><i class="fas fa-shopping-cart"></i> Next Order Due: In 3 weeks</p>
+                                            <div class="inventory-info">
+                                                <h4>${product.name}</h4>
+                                                <div class="item-details">
+                                                    <span><i class="fas fa-dollar-sign"></i> Price: $${product.price}</span>
+                                                    <span><i class="fas fa-tag"></i> Category: ${product.category}</span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="inventory-actions">
-                                            <button class="btn-icon" title="Restock"><i class="fas fa-plus-circle"></i></button>
-                                            <button class="btn-icon" title="Adjust Stock"><i class="fas fa-edit"></i></button>
-                                            <button class="btn-icon" title="View History"><i class="fas fa-history"></i></button>
-                                            <button class="btn-icon" title="Set Alerts"><i class="fas fa-bell"></i></button>
-                                        </div>
-                                    </div>
+                                    </c:forEach>
 
-                                    <!-- Low Stock Item -->
-                                    <div class="inventory-card low-stock">
-                                        <div class="inventory-header">
-                                            <img src="almond-oil.jpg" alt="Almond Massage Oil" class="item-image">
-                                            <div class="stock-badge warning">Low Stock</div>
-                                        </div>
-                                        <div class="inventory-info">
-                                            <h4>Almond Massage Oil</h4>
-                                            <div class="item-details">
-                                                <span><i class="fas fa-boxes"></i> Current Stock: 12 units</span>
-                                                <span><i class="fas fa-exclamation-triangle"></i> Min Stock: 15 units</span>
-                                                <span><i class="fas fa-dollar-sign"></i> Unit Cost: $18.00</span>
-                                            </div>
-                                            <div class="stock-progress low">
-                                                <div class="progress-bar" style="width: 25%"></div>
-                                                <span>25% of max stock</span>
-                                            </div>
-                                            <div class="usage-info">
-                                                <p><i class="fas fa-chart-line"></i> Monthly Usage: ~25 units</p>
-                                                <p><i class="fas fa-clock"></i> Last Restocked: 1 month ago</p>
-                                                <p><i class="fas fa-shopping-cart"></i> Reorder Required!</p>
-                                            </div>
-                                        </div>
-                                        <div class="inventory-actions">
-                                            <button class="btn-icon urgent" title="Restock Now"><i class="fas fa-plus-circle"></i></button>
-                                            <button class="btn-icon" title="Adjust Stock"><i class="fas fa-edit"></i></button>
-                                            <button class="btn-icon" title="View History"><i class="fas fa-history"></i></button>
-                                            <button class="btn-icon" title="Set Alerts"><i class="fas fa-bell"></i></button>
-                                        </div>
-                                    </div>
                                 </div>
                             </div>
 
-                            <!-- Essential Oils Category -->
+                            <!-- Display Materials -->
                             <div class="inventory-category">
                                 <div class="category-header">
-                                    <h3>Essential Oils</h3>
-                                    <button class="btn-text">Manage Category</button>
+                                    <h3>Materials</h3>
                                 </div>
                                 <div class="inventory-cards">
-                                    <div class="inventory-card">
-                                        <div class="inventory-header">
-                                            <img src="eucalyptus-oil.jpg" alt="Eucalyptus Essential Oil" class="item-image">
-                                            <div class="stock-badge sufficient">In Stock</div>
-                                        </div>
-                                        <div class="inventory-info">
-                                            <h4>Eucalyptus Essential Oil</h4>
-                                            <div class="item-details">
-                                                <span><i class="fas fa-boxes"></i> Current Stock: 28 units</span>
-                                                <span><i class="fas fa-exclamation-triangle"></i> Min Stock: 10 units</span>
-                                                <span><i class="fas fa-dollar-sign"></i> Unit Cost: $22.00</span>
+                                    <c:forEach var="material" items="${materialCategories}">
+                                        <div class="inventory-card">
+                                            <div class="inventory-header">
+                                                <img src="${material.image}" alt="${material.name}" class="item-image">
                                             </div>
-                                            <div class="stock-progress">
-                                                <div class="progress-bar" style="width: 65%"></div>
-                                                <span>65% of max stock</span>
-                                            </div>
-                                            <div class="usage-info">
-                                                <p><i class="fas fa-chart-line"></i> Monthly Usage: ~15 units</p>
-                                                <p><i class="fas fa-clock"></i> Last Restocked: 1 week ago</p>
-                                                <p><i class="fas fa-shopping-cart"></i> Next Order Due: In 6 weeks</p>
+                                            <div class="inventory-info">
+                                                <h4>${material.name}</h4>
+                                                <div class="item-details">
+                                                    <span><i class="fas fa-dollar-sign"></i> Price: $${material.price}</span>
+
+                                                </div>
                                             </div>
                                         </div>
-                                        <div class="inventory-actions">
-                                            <button class="btn-icon" title="Restock"><i class="fas fa-plus-circle"></i></button>
-                                            <button class="btn-icon" title="Adjust Stock"><i class="fas fa-edit"></i></button>
-                                            <button class="btn-icon" title="View History"><i class="fas fa-history"></i></button>
-                                            <button class="btn-icon" title="Set Alerts"><i class="fas fa-bell"></i></button>
-                                        </div>
-                                    </div>
+                                    </c:forEach>
                                 </div>
                             </div>
+
                         </div>
-
-                        <!-- Summary Column -->
-                        <div class="summary-column">
-                            <!-- Inventory Overview -->
-                            <div class="summary-card">
-                                <h3>Inventory Overview</h3>
-                                <div class="summary-stats">
-                                    <div class="stat">
-                                        <span class="label">Total Items</span>
-                                        <span class="value">156</span>
-                                    </div>
-                                    <div class="stat">
-                                        <span class="label">Categories</span>
-                                        <span class="value">8</span>
-                                    </div>
-                                    <div class="stat">
-                                        <span class="label">Low Stock</span>
-                                        <span class="value">3</span>
-                                    </div>
-                                    <div class="stat">
-                                        <span class="label">To Order</span>
-                                        <span class="value">5</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Recent Activity -->
-                            <div class="summary-card">
-                                <h3>Recent Activity</h3>
-                                <div class="activity-list">
-                                    <div class="activity-item">
-                                        <div class="activity-icon"><i class="fas fa-box"></i></div>
-                                        <div class="activity-details">
-                                            <h4>Stock Received</h4>
-                                            <p>50 units of Lavender Oil added</p>
-                                            <span class="activity-time">2 hours ago</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item">
-                                        <div class="activity-icon warning"><i class="fas fa-exclamation-circle"></i></div>
-                                        <div class="activity-details">
-                                            <h4>Low Stock Alert</h4>
-                                            <p>Almond Oil below minimum level</p>
-                                            <span class="activity-time">1 day ago</span>
-                                        </div>
-                                    </div>
-                                    <div class="activity-item">
-                                        <div class="activity-icon"><i class="fas fa-sync"></i></div>
-                                        <div class="activity-details">
-                                            <h4>Stock Updated</h4>
-                                            <p>Monthly inventory check completed</p>
-                                            <span class="activity-time">2 days ago</span>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- Quick Actions -->
-                            <div class="summary-card">
-                                <h3>Quick Actions</h3>
-                                <div class="quick-actions-grid">
-                                    <button class="action-btn">
-                                        <i class="fas fa-plus-circle"></i>
-                                        New Item
-                                    </button>
-                                    <button class="action-btn">
-                                        <i class="fas fa-file-invoice"></i>
-                                        Create Order
-                                    </button>
-                                    <button class="action-btn">
-                                        <i class="fas fa-qrcode"></i>
-                                        Scan Items
-                                    </button>
-                                    <button class="action-btn">
-                                        <i class="fas fa-file-export"></i>
-                                        Export List
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div> 
+                    </div>
                 </main>
             </div>
         </div>
     </body>
+
+    <script>
+        // Hàm để thay đổi class active cho các nút filter
+        function updateActiveButton(selectedButton) {
+            // Lấy tất cả các button filter
+            const buttons = document.querySelectorAll(".filter-btn");
+            buttons.forEach(button => {
+                // Xóa class active khỏi tất cả các button
+                button.classList.remove("active");
+            });
+            // Thêm class active vào button được chọn
+            selectedButton.classList.add("active");
+        }
+
+        // Xử lý sự kiện cho nút "All Items"
+        document.querySelector(".filter-btn.active").addEventListener("click", function () {
+            updateActiveButton(this);  // Thêm class active
+            document.querySelector(".inventory-grid").innerHTML = ""; // Xóa nội dung hiện tại
+            loadAllItems();  // Gọi hàm để tải tất cả các item
+        });
+
+        // Xử lý sự kiện cho nút "Materials"
+        document.querySelector(".all-materials").addEventListener("click", function () {
+            updateActiveButton(this);  // Thêm class active
+            document.querySelector(".inventory-grid").innerHTML = ""; // Xóa nội dung hiện tại
+            loadAllMaterials();  // Gọi hàm để tải tất cả nguyên liệu
+        });
+
+        // Xử lý sự kiện cho nút "Low Stock"
+        document.querySelector(".low-stock").addEventListener("click", function () {
+            updateActiveButton(this);  // Thêm class active
+            document.querySelector(".inventory-grid").innerHTML = ""; // Xóa nội dung hiện tại
+            loadLowStockItems();  // Gọi hàm để tải các item có số lượng tồn kho thấp
+        });
+
+        // Hàm tải tất cả các items (có thể bao gồm cả sản phẩm và nguyên liệu)
+        function loadAllItems() {
+            // Lấy tất cả sản phẩm
+            fetch("/productinformation")
+                    .then(response => response.json())
+                    .then(data => {
+                        const inventoryGrid = document.querySelector(".inventory-grid");
+                        data.forEach(item => {
+                            const itemElement = document.createElement("div");
+                            itemElement.classList.add("inventory-card");
+                            itemElement.innerHTML = `
+                      <div class="inventory-header">
+                          <img src="${item.imagePath}" alt="${item.name}" class="item-image">
+                      </div>
+                      <div class="inventory-info">
+                          <h4>${item.name}</h4>
+                          <span><i class="fas fa-boxes"></i> Current Stock: ${item.currentStock} units</span>
+                      </div>
+                  `;
+                            inventoryGrid.appendChild(itemElement);
+                        });
+                    })
+                    .catch(error => console.error("Error loading products:", error));
+
+            // Load nguyên liệu (material)
+            loadAllMaterials();
+        }
+
+        // Hàm tải tất cả nguyên liệu
+        function loadAllMaterials() {
+            fetch("/materialinformation")
+                    .then(response => response.json())
+                    .then(data => {
+                        const inventoryGrid = document.querySelector(".inventory-grid");
+                        data.forEach(item => {
+                            const itemElement = document.createElement("div");
+                            itemElement.classList.add("inventory-card");
+                            itemElement.innerHTML = `
+                      <div class="inventory-header">
+                          <img src="${item.imagePath}" alt="${item.name}" class="item-image">
+                      </div>
+                      <div class="inventory-info">
+                          <h4>${item.name}</h4>
+                          <span><i class="fas fa-boxes"></i> Current Stock: ${item.currentStock} units</span>
+                      </div>
+                  `;
+                            inventoryGrid.appendChild(itemElement);
+                        });
+                    })
+                    .catch(error => console.error("Error loading materials:", error));
+        }
+
+        // Hàm tải các item có số lượng tồn kho thấp
+        function loadLowStockItems() {
+            fetch("/getLowStockItems") // Thay đổi URL theo yêu cầu của bạn
+                    .then(response => response.json())
+                    .then(data => {
+                        const inventoryGrid = document.querySelector(".inventory-grid");
+                        data.forEach(item => {
+                            const itemElement = document.createElement("div");
+                            itemElement.classList.add("inventory-card");
+                            itemElement.innerHTML = `
+                      <div class="inventory-header">
+                          <img src="${item.imagePath}" alt="${item.name}" class="item-image">
+                      </div>
+                      <div class="inventory-info">
+                          <h4>${item.name}</h4>
+                          <span><i class="fas fa-boxes"></i> Current Stock: ${item.currentStock} units</span>
+                      </div>
+                  `;
+                            inventoryGrid.appendChild(itemElement);
+                        });
+                    })
+                    .catch(error => console.error("Error loading low stock items:", error));
+        }
+
+    </script>
+
 </html>

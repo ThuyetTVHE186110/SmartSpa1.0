@@ -9,6 +9,8 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.Map;
 import model.PopularService;
 import java.math.BigDecimal;
@@ -18,7 +20,8 @@ import java.math.RoundingMode;
  *
  * @author ThuyetTVHE186110
  */
-public class ServiceDAO extends DBContext{
+public class ServiceDAO extends DBContext {
+
     private static final String INSERT_SERVICE_SQL = "INSERT INTO services (name, price, duration, description, image, category, status) VALUES (?, ?, ?, ?, ?, ?, ?)";
     private static final String SELECT_SERVICE_BY_ID = "SELECT * FROM services WHERE id = ?";
     private static final String SELECT_ALL_SERVICES = "SELECT * FROM services";
@@ -30,8 +33,7 @@ public class ServiceDAO extends DBContext{
 
     // Insert a new service into the database
     public void addService(Service service) throws SQLException {
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SERVICE_SQL)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(INSERT_SERVICE_SQL)) {
             preparedStatement.setString(1, service.getName());
             preparedStatement.setInt(2, service.getPrice());
             preparedStatement.setInt(3, service.getDuration());
@@ -46,8 +48,7 @@ public class ServiceDAO extends DBContext{
     // Select a service by its ID
     public Service selectService(int id) throws SQLException {
         Service service = null;
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SERVICE_BY_ID)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(SELECT_SERVICE_BY_ID)) {
             preparedStatement.setInt(1, id);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -64,11 +65,10 @@ public class ServiceDAO extends DBContext{
 
     public List<Service> selectAllServices(int offset, int limit) throws SQLException {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services) AS tmp " +
-                    "WHERE RowNum BETWEEN ? AND ?";
-        
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services) AS tmp "
+                + "WHERE RowNum BETWEEN ? AND ?";
+
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, offset + 1);
             preparedStatement.setInt(2, offset + limit);
             ResultSet rs = preparedStatement.executeQuery();
@@ -79,13 +79,27 @@ public class ServiceDAO extends DBContext{
         return services;
     }
 
+    public static void main(String args[]) {
+        ServiceDAO serviceDAO = new ServiceDAO();
+        List<Service> services = null;
+        try {
+            services = serviceDAO.selectAllServices();
+        } catch (SQLException ex) {
+            Logger.getLogger(ServiceDAO.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        for(Service service: services){
+            System.out.println(services);
+        }
+        
+        }
+    
+
     // Get services by category using SQL Server syntax
     public List<Service> getServicesByCategory(String category) throws SQLException {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT * FROM services WHERE category = ? AND status = 'ACTIVE'";
-        
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, category);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
@@ -97,8 +111,7 @@ public class ServiceDAO extends DBContext{
 
     // Update a service
     public boolean updateService(Service service) throws SQLException {
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SERVICE_SQL)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(UPDATE_SERVICE_SQL)) {
             preparedStatement.setString(1, service.getName());
             preparedStatement.setInt(2, service.getPrice());
             preparedStatement.setInt(3, service.getDuration());
@@ -113,8 +126,7 @@ public class ServiceDAO extends DBContext{
 
     // Delete a service
     public boolean deleteService(int id) throws SQLException {
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SERVICE_SQL)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(DELETE_SERVICE_SQL)) {
             preparedStatement.setInt(1, id);
             return preparedStatement.executeUpdate() > 0;
         }
@@ -123,12 +135,11 @@ public class ServiceDAO extends DBContext{
     // Search services with pagination using SQL Server syntax
     public List<Service> searchServices(String searchQuery, int offset, int limit) throws SQLException {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services " +
-                    "WHERE name LIKE ? OR description LIKE ?) AS tmp " +
-                    "WHERE RowNum BETWEEN ? AND ?";
-        
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services "
+                + "WHERE name LIKE ? OR description LIKE ?) AS tmp "
+                + "WHERE RowNum BETWEEN ? AND ?";
+
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, "%" + searchQuery + "%");
             preparedStatement.setString(2, "%" + searchQuery + "%");
             preparedStatement.setInt(3, offset + 1);
@@ -144,8 +155,7 @@ public class ServiceDAO extends DBContext{
     // Get total count for search results
     public int getTotalSearchResults(String searchQuery) throws SQLException {
         String sql = "SELECT COUNT(*) as total FROM services WHERE name LIKE ? OR description LIKE ?";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, "%" + searchQuery + "%");
             preparedStatement.setString(2, "%" + searchQuery + "%");
             ResultSet rs = preparedStatement.executeQuery();
@@ -173,8 +183,7 @@ public class ServiceDAO extends DBContext{
     // Add method to update service status
     public boolean updateServiceStatus(int serviceId, String status) throws SQLException {
         String sql = "UPDATE services SET status = ? WHERE id = ?";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, status);
             preparedStatement.setInt(2, serviceId);
             return preparedStatement.executeUpdate() > 0;
@@ -185,9 +194,8 @@ public class ServiceDAO extends DBContext{
     public List<Service> getServicesByStatus(String status) throws SQLException {
         List<Service> services = new ArrayList<>();
         String sql = "SELECT * FROM services WHERE status = ?";
-        
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, status);
             ResultSet rs = preparedStatement.executeQuery();
             while (rs.next()) {
@@ -199,11 +207,10 @@ public class ServiceDAO extends DBContext{
 
     public List<Service> getServicesByStatusPaginated(String status, int offset, int limit) throws SQLException {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services " +
-                    "WHERE status = ?) AS tmp WHERE RowNum BETWEEN ? AND ?";
-        
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services "
+                + "WHERE status = ?) AS tmp WHERE RowNum BETWEEN ? AND ?";
+
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, status);
             preparedStatement.setInt(2, offset + 1);
             preparedStatement.setInt(3, offset + limit);
@@ -217,8 +224,7 @@ public class ServiceDAO extends DBContext{
 
     public int getTotalServicesByStatus(String status) throws SQLException {
         String sql = "SELECT COUNT(*) as total FROM services WHERE status = ?";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, status);
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -230,11 +236,10 @@ public class ServiceDAO extends DBContext{
 
     public List<Service> getServicesWithPagination(int offset, int limit) throws SQLException {
         List<Service> services = new ArrayList<>();
-        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services) AS tmp " +
-                    "WHERE RowNum BETWEEN ? AND ?";
-        
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        String sql = "SELECT * FROM (SELECT *, ROW_NUMBER() OVER (ORDER BY id) as RowNum FROM services) AS tmp "
+                + "WHERE RowNum BETWEEN ? AND ?";
+
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setInt(1, offset + 1);
             preparedStatement.setInt(2, offset + limit);
             ResultSet rs = preparedStatement.executeQuery();
@@ -247,8 +252,7 @@ public class ServiceDAO extends DBContext{
 
     public int getTotalServices() throws SQLException {
         String sql = "SELECT COUNT(*) as total FROM services";
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (Connection connection = getConnection(); PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             ResultSet rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 return rs.getInt("total");
@@ -813,4 +817,5 @@ public class ServiceDAO extends DBContext{
             e.printStackTrace();
         }
     }
+
 }

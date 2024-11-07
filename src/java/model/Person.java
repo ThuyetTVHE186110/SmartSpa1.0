@@ -5,6 +5,7 @@
 package model;
 
 import java.sql.Date;
+import java.util.List;
 
 /**
  *
@@ -22,6 +23,8 @@ public class Person {
     private String image;
     private int points;
     private String tier;
+    private String status;
+    private List<Appointment> appointments; // Add this field
 
     public Person() {
     }
@@ -35,6 +38,22 @@ public class Person {
         this.phone = phone;
         this.email = email;
         this.address = address;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public int getPoints() {

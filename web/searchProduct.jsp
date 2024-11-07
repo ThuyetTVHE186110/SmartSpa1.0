@@ -30,9 +30,9 @@
         <!-- Product Categories Section -->
         <section class="product-categories">
             <div style="display: flex; padding-bottom: 20px">
-                <form action="searchproduct?index=1" method="post" style="display: flex; align-items: center; margin-left: auto">
+                <form action="searchproduct?index=1" method="post" style="display: flex">
                     <input class="searchBox" type="text" name="txtSearch" required 
-                           style="padding: 7px; border: 1px solid #ccc; border-right: none; width: 200px; border-radius: 10px 0 0 10px;" 
+                           style="padding: 7px; border: 1px solid #ccc; border-right: none; width: 1000px; border-radius: 10px 0 0 10px;" 
                            value="${param.txtSearch}"> <!-- Giữ lại giá trị đã nhập -->
                     <input class="searchButton" type="submit" name="btnGo" value="Search" 
                            style="background-color: #B38886; color: white; border: 1px solid #F9A392; border-left: none; padding: 7px; cursor: pointer; border-radius: 0 10px 10px 0;">
@@ -50,9 +50,10 @@
                     <c:forEach items="${listSearch}" var="p">
                         <div class="product-card" data-category="${p.category}" data-aos="fade-up">
                             <div class="product-image">
-                                <img class="img-fluid" src="img/${p.image}" alt="">
+                                <img class="img-fluid" src="${p.image}" alt="${p.name}">
                                 <div class="product-overlay">
-                                    <a href="producdetail?id=${p.id}" class="quick-view-btn">View Details</a>
+                                    <a href="productdetail?id=${p.id}" class="quick-view-btn">View
+                                        Details</a>
                                 </div>
                             </div>
                             <div class="product-info">
@@ -132,55 +133,55 @@
         </footer>
 
         <script>
-             document.addEventListener('DOMContentLoaded', function () {
-        const categoryButtons = document.querySelectorAll('.category-btn');
-        const productCards = document.querySelectorAll('.product-card');
-        const searchQuery = "${param.txtSearch}".toLowerCase(); // Lấy từ khóa tìm kiếm
-        let selectedCategory = 'all'; // Default category
+            document.addEventListener('DOMContentLoaded', function () {
+                const categoryButtons = document.querySelectorAll('.category-btn');
+                const productCards = document.querySelectorAll('.product-card');
+                const searchQuery = "${param.txtSearch}".toLowerCase(); // Lấy từ khóa tìm kiếm
+                let selectedCategory = 'all'; // Default category
 
-        categoryButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                selectedCategory = button.getAttribute('data-category');
+                categoryButtons.forEach(button => {
+                    button.addEventListener('click', () => {
+                        selectedCategory = button.getAttribute('data-category');
 
-                // Remove 'active' class from all buttons, then add it to the clicked button
-                categoryButtons.forEach(btn => btn.classList.remove('active'));
-                button.classList.add('active');
+                        // Remove 'active' class from all buttons, then add it to the clicked button
+                        categoryButtons.forEach(btn => btn.classList.remove('active'));
+                        button.classList.add('active');
 
-                // Filter products based on selected category
-                filterProducts(selectedCategory);
-                updatePaginationLinks(selectedCategory); // Update pagination links
-            });
-        });
+                        // Filter products based on selected category
+                        filterProducts(selectedCategory);
+                        updatePaginationLinks(selectedCategory); // Update pagination links
+                    });
+                });
 
-        // Hiển thị tất cả sản phẩm theo từ khóa tìm kiếm ngay khi tải trang
-        filterProducts('all');
+                // Hiển thị tất cả sản phẩm theo từ khóa tìm kiếm ngay khi tải trang
+                filterProducts('all');
 
-        function filterProducts(selectedCategory) {
-            productCards.forEach(card => {
-                const productCategory = card.getAttribute('data-category');
-                const productName = card.querySelector('h3').textContent.toLowerCase();
+                function filterProducts(selectedCategory) {
+                    productCards.forEach(card => {
+                        const productCategory = card.getAttribute('data-category');
+                        const productName = card.querySelector('h3').textContent.toLowerCase();
 
-                // Check if the product matches the selected category and search query
-                const matchesCategory = (selectedCategory === 'all' || productCategory === selectedCategory);
-                const matchesSearch = productName.includes(searchQuery);
+                        // Check if the product matches the selected category and search query
+                        const matchesCategory = (selectedCategory === 'all' || productCategory === selectedCategory);
+                        const matchesSearch = productName.includes(searchQuery);
 
-                if (matchesCategory && matchesSearch) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
+                        if (matchesCategory && matchesSearch) {
+                            card.style.display = 'block';
+                        } else {
+                            card.style.display = 'none';
+                        }
+                    });
+                }
+
+                function updatePaginationLinks(category) {
+                    const paginationLinks = document.querySelectorAll('.page-number');
+                    paginationLinks.forEach(link => {
+                        const currentUrl = new URL(link.href);
+                        currentUrl.searchParams.set('category', category); // Update the category parameter
+                        link.href = currentUrl.toString();
+                    });
                 }
             });
-        }
-
-        function updatePaginationLinks(category) {
-            const paginationLinks = document.querySelectorAll('.page-number');
-            paginationLinks.forEach(link => {
-                const currentUrl = new URL(link.href);
-                currentUrl.searchParams.set('category', category); // Update the category parameter
-                link.href = currentUrl.toString();
-            });
-        }
-    });
 
             AOS.init();
 
