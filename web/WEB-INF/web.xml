@@ -176,6 +176,10 @@
         <servlet-name>CustomerClassificationServlet</servlet-name>
         <servlet-class>controller.CustomerClassificationServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ClientManagement</servlet-name>
+        <servlet-class>controller.ClientManagement</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/login</url-pattern>
@@ -351,6 +355,10 @@
     <servlet-mapping>
         <servlet-name>CustomerClassificationServlet</servlet-name>
         <url-pattern>/customerClassification</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ClientManagement</servlet-name>
+        <url-pattern>/Frontend_Staff/clientManagement</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

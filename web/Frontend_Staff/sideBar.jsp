@@ -36,7 +36,7 @@
                 </a>
             </li>
             <li>
-                <a href="clients.jsp">
+                <a href="clientManagement">
                     <i class="fas fa-users"></i>
                     <span>Clients</span>
                 </a>
