@@ -3995,7 +3995,7 @@ footer {
     margin-bottom: 30px;
 }
 
-``` </rewritten_file>.location-info p {
+</rewritten_file>.location-info p {
     font-size: 1.1rem;
     margin-bottom: 15px;
 }
@@ -4663,6 +4663,8 @@ footer {
 
 .profile-tab.active {
     display: block;
+    padding: 30px;
+    
 }
 
 .profile-tab h2 {
