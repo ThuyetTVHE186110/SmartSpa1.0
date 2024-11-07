@@ -61,7 +61,8 @@
                 <!-- Profile Navigation -->
                 <div class="profile-nav">
                     <button class="profile-nav-btn active" data-tab="appointments">Appointments</button>
-                    <button class="profile-nav-btn" data-tab="history">History</button>
+                    <button class="profile-nav-btn" data-tab="service-history">History</button>
+                    <button class="profile-nav-btn" data-tab="history">Payment History</button>
                     <button class="profile-nav-btn" data-tab="settings">Account Information</button>
                     <button class="profile-nav-btn" data-tab="preferences">Change Password</button>
                 </div>
@@ -104,7 +105,7 @@
                     </div>
 
                     <!-- Service History Tab -->
-                    <div class="profile-tab" id="history">
+                    <div class="profile-tab" id="service-history">
                         <h2>Service History</h2>
                         <c:if test="${history.size() == 0}">
                             <p>No history of appointments.
@@ -165,8 +166,6 @@
                         <form class="preferences-form" action="customerProfile" method="post" onsubmit="return validatePassword()">
                             <!-- Password Update Section -->
                             <h3>Change Password</h3>
-
-
                             <!-- Password -->
                             <div class="form-group">
                                 <label>Current Password</label>
@@ -386,8 +385,6 @@
                 });
             }
             );
-
-
         </script>
     </body>
 </html>
