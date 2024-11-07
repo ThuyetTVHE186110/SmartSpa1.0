@@ -55,7 +55,7 @@
     </servlet>
     <servlet>
         <servlet-name>VerifyRegistrationOtpServlet</servlet-name>
-        <servlet-class>controller.VerifyRegistrationOtpServlet</servlet-class>
+        <servlet-class>controller.Authentication.VerifyRegistrationOtpServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SelectStaffServlet</servlet-name>
