@@ -24,7 +24,7 @@
                 </a>
             </li>
             <li>
-                <a href="therapists.jsp">
+                <a href="therapist">
                     <i class="fas fa-user-md"></i>
                     <span>Therapists</span>
                 </a>
