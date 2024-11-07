@@ -34,24 +34,24 @@ public class TherapistManagement extends HttpServlet {
         int offset = (page - 1) * THERAPISTS_PER_PAGE;
         PersonDAO personDAO = new PersonDAO();
 
-        // Retrieve therapists with roleID = 3
-        List<Person> therapists = personDAO.getTherapists(offset, THERAPISTS_PER_PAGE, 3); // 3 = roleID for therapists
-        for (Person therapist : therapists) {
-            // Get the status and appointments for each therapist
-            String status = personDAO.getTherapistStatus(therapist.getId());
-            therapist.setStatus(status); // Assuming `Person` class has a `status` field
-
-            // Retrieve and set each therapist's appointments
-            List<Appointment> appointments = personDAO.getAppointmentsByTherapist(therapist.getId());
-            therapist.setAppointments(appointments); // Add a setAppointments method in `Person` if needed
-        }
-
-        int totalTherapists = personDAO.countTherapistsByRole(3);
-        int totalPages = (int) Math.ceil((double) totalTherapists / THERAPISTS_PER_PAGE);
-
-        request.setAttribute("therapists", therapists);
-        request.setAttribute("currentPage", page);
-        request.setAttribute("totalPages", totalPages);
+//        // Retrieve therapists with roleID = 3
+//        List<Person> therapists = personDAO.getTherapists(offset, THERAPISTS_PER_PAGE, 3); // 3 = roleID for therapists
+//        for (Person therapist : therapists) {
+//            // Get the status and appointments for each therapist
+//            String status = personDAO.getTherapistStatus(therapist.getId());
+//            therapist.setStatus(status); // Assuming `Person` class has a `status` field
+//
+//            // Retrieve and set each therapist's appointments
+//            List<Appointment> appointments = personDAO.getAppointmentsByTherapist(therapist.getId());
+//            therapist.setAppointments(appointments); // Add a setAppointments method in `Person` if needed
+//        }
+//
+//        int totalTherapists = personDAO.countTherapistsByRole(3);
+//        int totalPages = (int) Math.ceil((double) totalTherapists / THERAPISTS_PER_PAGE);
+//
+//        request.setAttribute("therapists", therapists);
+//        request.setAttribute("currentPage", page);
+//        request.setAttribute("totalPages", totalPages);
 
         request.getRequestDispatcher("therapists.jsp").forward(request, response);
     }
