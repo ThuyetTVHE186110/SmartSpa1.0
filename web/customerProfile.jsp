@@ -113,7 +113,7 @@
                             <div class="history-list">
                                 <div class="history-item">
                                     <div class="history-date">${history.start.toLocalDate().getMonth()} ${history.start.toLocalDate().getDayOfMonth()}, ${history.getStart().toLocalDate().getYear()}</div>
-                                    
+
                                     <div class="history-details">
                                         <c:forEach items="${history.services}" var="info">
                                             <h3>${info.service.name}</h3>
@@ -127,7 +127,37 @@
                             </div>
                         </c:forEach>
                     </div>
+                    <!-- Service History Tab -->
+                    <div class="profile-tab" id="history">
+                        <h2>Payment History</h2>
+                        <div class="history-list">
+                            <c:if test="${empty payments}">
+                                <div class="no-history">
+                                    <p>No payment history available.</p>
+                                </div>
+                            </c:if>
 
+                            <c:forEach var="payment" items="${payments}">
+                                <div class="history-item">
+                                    <div class="history-date">
+                                        <fmt:formatDate value="${payment.createdAt}"
+                                                        pattern="MMM dd, yyyy" />
+                                    </div>
+                                    <div class="history-details">
+                                        <h3>Order #${payment.orderCode}</h3>
+                                        <p>Status: <span
+                                                class="payment-status ${payment.status.toLowerCase()}">${payment.status}</span>
+                                        </p>
+                                        <p class="price">
+                                        <fmt:formatNumber value="${payment.amount}" type="currency"
+                                                          currencyCode="${payment.currency}" />
+                                        </p>
+                                        <p class="description">${payment.description}</p>
+                                    </div>
+                                </div>
+                            </c:forEach>
+                        </div>
+                    </div>
                     <!-- Preferences Tab -->
                     <!-- Preferences Tab -->
                     <div class="profile-tab" id="preferences">
