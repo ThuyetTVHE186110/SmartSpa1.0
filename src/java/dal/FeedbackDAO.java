@@ -55,6 +55,39 @@ public class FeedbackDAO extends DBContext {
         return feedback;
     }
     
+     public ArrayList<Feedback> getFeedbackByService(int serviceId) {
+        ArrayList<Feedback> feedbackS = new ArrayList<>();
+        try {
+        String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.Name AS serviceName " +
+                     "FROM Feedback f " +
+                     "JOIN Person p ON f.CustomerID = p.ID " +
+                     "JOIN Services s ON f.ServicesID = s.ID " +
+                     "WHERE f.ServicesID = ?";
+            PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
+            ResultSet rs = statement.executeQuery();
+            statement.setInt(1, serviceId);
+            while (rs.next()) {
+                Feedback feedback = new Feedback();
+                feedback.setId(rs.getInt("ID"));
+                feedback.setContent(rs.getString("Content"));
+
+                Person customer = new Person();
+                customer.setName(rs.getString("customerName"));
+                feedback.setCustomer(customer);
+
+                Service service = new Service();
+                service.setName(rs.getString("serviceName"));
+                feedback.setService(service);
+
+                feedback.add(feedback);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return feedbackS;
+    }
+    
     public int getTotalFeedbacks(){
         int  count = 0;
         try {
@@ -119,7 +152,14 @@ public class FeedbackDAO extends DBContext {
     }
    public static void main(String args[]){
        FeedbackDAO feedbackDAO = new FeedbackDAO();
-                boolean isAdded = feedbackDAO.createFeedback(3, "đù ", 1);
+                boolean isAdded = feedbackDAO.createFeedback(3, "đù ", 1
+                
+                
+                
+                
+                
+                
+                );
                 if (isAdded) {
                     System.out.println("Ok");
                 } else {
