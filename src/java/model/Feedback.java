@@ -56,4 +56,8 @@ public class Feedback {
         this.service = service;
     }
 
+    public void add(Feedback feedback) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
 }
