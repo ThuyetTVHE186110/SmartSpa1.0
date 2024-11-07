@@ -10,7 +10,7 @@
 
     <body>
         <div class="backgroundImg"></div>
-        <form class="form form-container"action="VerifyOtpServlet" method="POST">
+        <form class="form form-container"action="verifyOTP" method="POST">
             <div class="logo_container"></div>
             <div class="title_container">
                 <p class="title">Reset your Password</p>
@@ -35,7 +35,7 @@
             <button class="button-submit" type="submit" name = "signin">Confirm</button>
             <!-- Sign Up Option -->
 
-            <p class="p">Login to another account? <span class="span"><a href="login.jsp" style="text-decoration: none; color: inherit;">Login</a></span></p>
+            <p class="p">Login to another account? <span class="span"><a href="login" style="text-decoration: none; color: inherit;">Login</a></span></p>
             <!-- Separator -->
             <div class="separator">
                 <hr class="line">

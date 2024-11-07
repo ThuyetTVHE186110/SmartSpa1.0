@@ -78,7 +78,7 @@
                     <input type="checkbox" id="rememberMe" name="rememberMe" <% if(request.getAttribute("rememberMe") != null) { %> checked <% } %> >
                     <label for="rememberMe">Remember me</label>
                 </div>
-                <span class="span"><a href="ForgotPassword.jsp" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
+                <span class="span"><a href="forgotPassword" style="text-decoration: none; color: inherit;">Forgot password?</a></span>
             </div>
             <!--            <input type="hidden" name="userType" value="customer">           -->
             <!-- Submit Button -->
