@@ -109,7 +109,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li> End Customer Nav 
+                    </li> 
 
 
 
