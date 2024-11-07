@@ -135,7 +135,7 @@ public class LoginServlet extends HttpServlet {
                             response.sendRedirect("dashboard");
                         } else if (roleID == 3) {
                             session.setAttribute("successMessage", "Staff login successful! Welcome, " + account.getPersonInfo().getName() + ".");
-                            response.sendRedirect("Frontend_Staff/clientManagement");
+                            response.sendRedirect("Frontend_Staff/");
                         } else {
                             request.setAttribute("error", "Invalid role for admin access.");
                             request.getRequestDispatcher("login.jsp").forward(request, response);
