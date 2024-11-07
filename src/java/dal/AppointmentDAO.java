@@ -8,7 +8,6 @@ import com.sun.mail.imap.IMAPSSLStore;
 import static dal.DBContext.getConnection;
 import java.util.logging.Logger;
 import java.sql.Timestamp;
-import java.sql.Time;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -172,6 +171,36 @@ public class AppointmentDAO extends DBContext {
 
         return appointments;
     }
+    public List<Appointment> getCommingToday() {
+        List<Appointment> appointments = new ArrayList<>();
+        Logger logger = Logger.getLogger(getClass().getName());
+
+        String SELECT_APPOINTMENTS = "SELECT * FROM Appointment a WHERE a.Start = CAST(GETDATE() AS DATE)";
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS)) {
+
+// Thiết lập tham số cho câu truy vấn SQL
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment();
+                    appointment.setId(rs.getInt("ID"));
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
+                    appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setNote(rs.getString("Note"));
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
+                    appointments.add(appointment);
+                }
+            }
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return appointments;
+    }
 
     public List<TimeSlot> getBusyTimes(int staffID, LocalDate date) {
         List<TimeSlot> busyTimes = new ArrayList<>();
@@ -248,12 +277,54 @@ public class AppointmentDAO extends DBContext {
         List<Appointment> appointments = new ArrayList<>();
         Logger logger = Logger.getLogger(getClass().getName());
 
-        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE Cast(Start as Date) = ? ORDER BY Start DESC";
+        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE Cast(Start as Date) = ? ORDER BY Start";
 
         try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(SELECT_APPOINTMENTS_BY_DATE)) {
 
             // Thiết lập tham số cho câu truy vấn SQL
             stm.setDate(1, java.sql.Date.valueOf(date));
+
+            try (ResultSet rs = stm.executeQuery()) {
+                while (rs.next()) {
+                    Appointment appointment = new Appointment();
+                    appointment.setId(rs.getInt("ID"));
+                    appointment.setStart(rs.getTimestamp("Start").toLocalDateTime());
+                    appointment.setEnd(rs.getTimestamp("End").toLocalDateTime());
+                    appointment.setCreatedDate(rs.getTimestamp("CreatedDate").toLocalDateTime());
+                    appointment.setStatus(rs.getString("Status"));
+                    appointment.setNote(rs.getString("Note"));
+
+                    appointment.setCustomer(personDAO.getPersonByID(rs.getInt("CustomerID")));
+                    appointments.add(appointment);
+
+                    List<AppointmentService> list = serviceDAO.getServiceByID(appointment.getId());
+                    appointment.setServices(list);
+                }
+            }
+
+        } catch (SQLException e) {
+            logger.info(e.getMessage());
+        }
+
+        return appointments;
+    }
+
+    public List<Appointment> getByThisWeek(LocalDate date) {
+        List<Appointment> appointments = new ArrayList<>();
+        Logger logger = Logger.getLogger(getClass().getName());
+
+//        String SELECT_APPOINTMENTS_BY_DATE = "SELECT * FROM Appointment WHERE Cast(Start as Date) = ? ORDER BY Start";
+        String sql = """
+                     SELECT *
+                     FROM Appointment
+                     WHERE DATEPART(week, Start) = DATEPART(week, GETDATE())
+                       AND DATEPART(year, Start) = DATEPART(year, GETDATE());""";
+
+        try (Connection connection = getConnection(); PreparedStatement stm = connection.prepareStatement(sql)) {
+
+            // Thiết lập tham số cho câu truy vấn SQL
+//            stm.setDate(1, java.sql.Date.valueOf(date));
+//            stm.setDate(2, java.sql.Date.valueOf(date));
 
             try (ResultSet rs = stm.executeQuery()) {
                 while (rs.next()) {
