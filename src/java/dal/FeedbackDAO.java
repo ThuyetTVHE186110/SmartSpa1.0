@@ -102,18 +102,30 @@ public class FeedbackDAO extends DBContext {
         }
     }
 
-    public void createFeedback(Feedback feedback) {
+    public boolean createFeedback(int customerId, String content, int serviceId) {
+            boolean isAdded = false;
         try {
-            String sql = "INSERT INTO Feedback (Content, CustomerID, ServicesID) VALUES (?, ?, ?)";
+            String sql = "INSERT INTO Feedback (CustomerID, Content, ServicesID) VALUES (?, ?, ?)";
             PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
-            statement.setString(1, feedback.getContent());
-            statement.setInt(2, feedback.getCustomer().getId());
-            statement.setInt(3, feedback.getService().getId());
-            statement.executeUpdate();
+            statement.setInt(1, customerId); // Customer ID from the logged-in user's Person object
+            statement.setString(2, content);
+            statement.setInt(3, serviceId);
+            int rowsInserted = statement.executeUpdate();
+            isAdded = rowsInserted > 0;
         } catch (SQLException e) {
             System.out.println(e);
         }
+        return isAdded;
     }
+   public static void main(String args[]){
+       FeedbackDAO feedbackDAO = new FeedbackDAO();
+                boolean isAdded = feedbackDAO.createFeedback(3, "đù ", 1);
+                if (isAdded) {
+                    System.out.println("Ok");
+                } else {
+                    System.out.println("Đù mé!");
+                }
+   }
 
 //    public void readFeedback(int id){
 //        try {

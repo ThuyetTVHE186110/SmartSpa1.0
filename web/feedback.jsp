@@ -36,39 +36,46 @@
         <section class="submit-feedback">
             <div class="container">
                 <h2 style="color: black">Leave Your Feedback</h2>
-                <form id="feedback-form" class="feedback-form" action="feedback" method="post">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="name">Your Name</label>
-                            <input type="text" id="name" name="name" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="service">Service Received</label>
-                            <select id="service" name="service" required>
-                                <option value="">Select a service</option>
-                                <c:forEach items="${service}" var="service">
-                                    <option value="${service.id}">${service.name}</option>
-                                </c:forEach>
-                                <!--                                <option value="body-massage">Body Massage</option>
-                                                                <option value="stone-therapy">Stone Therapy</option>
-                                                                <option value="facial-therapy">Facial Therapy</option>
-                                                                <option value="skin-care">Skin Care</option>
-                                                                <option value="stream-">Stream Bath</option>
-                                                                <option value="classic-lash">Classic Lash Extensions</option>
-                                                                <option value="hybrid-lash">Hybrid Lash Extensions</option>
-                                                                <option value="volume-lash">Volume Lash Extensions</option>
-                                                                <option value="lash-lift">Lash Lift</option>
-                                                                <option value="lash-tint">Lash Lift & Tint</option>-->
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="feedback">Your Feedback</label>
-                        <textarea id="feedback" name="feedback" rows="5" required></textarea>
-                    </div>                   
-                    <button type="submit" class="submit-btn">Submit Feedback</button>
-                </form>
+                <c:choose>
+                    <c:when test="${not empty sessionScope.account}">
+                        <form id="feedback-form" class="feedback-form" action="feedback" method="post">
+                            <div class="form-row">
+                                <!--                        <div class="form-group">
+                                                            <label for="name">Your Name</label>
+                                                            <input type="text" id="name" name="name" required>
+                                                        </div>-->
+                                <div class="form-group">
+                                    <label for="service">Service Received</label>
+                                    <select id="service" name="service" required>
+                                        <option value="">Select a service</option>
+                                        <c:forEach items="${service}" var="service">
+                                            <option value="${service.id}">${service.name}</option>
+                                        </c:forEach>
+                                        <!--                                <option value="body-massage">Body Massage</option>
+                                                                        <option value="stone-therapy">Stone Therapy</option>
+                                                                        <option value="facial-therapy">Facial Therapy</option>
+                                                                        <option value="skin-care">Skin Care</option>
+                                                                        <option value="stream-">Stream Bath</option>
+                                                                        <option value="classic-lash">Classic Lash Extensions</option>
+                                                                        <option value="hybrid-lash">Hybrid Lash Extensions</option>
+                                                                        <option value="volume-lash">Volume Lash Extensions</option>
+                                                                        <option value="lash-lift">Lash Lift</option>
+                                                                        <option value="lash-tint">Lash Lift & Tint</option>-->
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="content">Your Feedback</label>
+                                <textarea id="content" name="content" rows="5" required></textarea>
+                            </div>                   
+                            <button type="submit" class="submit-btn">Submit Feedback</button>
+                        </form>
+                    </c:when>
+                    <c:otherwise>
+                        <p>You need to login to add feedback.</p>
+                        <a href="login">Login</a>
+                    </c:otherwise>
+                </c:choose>
             </div>
         </section>
 
