@@ -62,7 +62,7 @@ public class ChangePasswordServlet extends HttpServlet {
 
             // Success message and redirect
             session.setAttribute("successMessage", "Password changed successfully!");
-            response.sendRedirect("userProfile.jsp");
+            response.sendRedirect("userProfile.jsp?tab=change-password");
         } else {
             request.setAttribute("errorMessage", "Failed to change password. Please try again.");
             request.getRequestDispatcher("userProfile.jsp").forward(request, response);

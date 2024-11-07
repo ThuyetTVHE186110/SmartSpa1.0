@@ -76,7 +76,7 @@
             String dateOfBirth = (dob != null) ? new java.text.SimpleDateFormat("yyyy-MM-dd").format(dob) : "N/A";
 
             // Lấy đường dẫn hình ảnh từ person
-        %>
+%>
         <jsp:include page="headerHTML.jsp" />
 
         <!-- ======= Sidebar ======= -->
@@ -123,14 +123,13 @@
                                     </li>
 
                                     <li class="nav-item">
-                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit">Edit Profile</button>
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-edit" onclick="setActiveTab('profile-edit')">Edit Profile</button>
                                     </li>
                                     <li class="nav-item">
-                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password">Change
-                                            Password</button>
+                                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#profile-change-password" onclick="setActiveTab('profile-change-password')">Change Password</button>
                                     </li>
 
-                                </ul>
+                                </ul>   
 
 
 
@@ -189,12 +188,11 @@
                                                             <i class="bi bi-upload"></i> Upload
                                                             <input type="file" name="profileImage" id="profileImageInput" style="display: none;" accept="image/*" onchange="previewSelectedImage(event)">
                                                         </label>
-                                                        <!-- Image delete input -->
+                                                        <!-- Image delete button -->
                                                         <button type="button" onclick="deleteProfileImage()" class="btn btn-danger btn-sm" title="Remove my profile image">
                                                             <i class="bi bi-trash"></i> Delete
                                                         </button>
                                                     </div>
-
                                                 </div>
                                             </div>
 
@@ -325,6 +323,23 @@
                 </div>
             </section>
             <script>
+                // Function to set active tab in the URL
+                function setActiveTab(tabId) {
+                    location.hash = tabId;
+                }
+
+                // On page load, set the active tab based on the URL hash
+                document.addEventListener("DOMContentLoaded", function () {
+                    const hash = location.hash.substring(1); // Remove the '#' character
+                    if (hash) {
+                        const targetTab = document.querySelector(`[data-bs-target="#${hash}"]`);
+                        if (targetTab) {
+                            new bootstrap.Tab(targetTab).show(); // Show the tab based on the hash
+                        }
+                    }
+                });
+            </script>
+            <script>
                 function validateChangePasswordForm() {
                     const currentPassword = document.getElementById('currentPassword').value;
                     const newPassword = document.getElementById('newPassword').value;
@@ -378,21 +393,23 @@
                 // Đặt ảnh về ảnh mặc định khi nhấn Delete
                 function deleteProfileImage() {
                     const previewImage = document.getElementById('previewImage');
-                    previewImage.src = 'img/default-avartar.jpg';
+                    previewImage.src = 'img/default-avatar.jpg'; // Set preview to default image
 
-                    // Add deleteImage hidden input to the form
-                    const deleteForm = document.getElementById('deleteImageForm');
-                    if (!document.querySelector('input[name="deleteImage"]')) {
-                        const deleteInput = document.createElement('input');
-                        deleteInput.setAttribute('type', 'hidden');
-                        deleteInput.setAttribute('name', 'deleteImage');
-                        deleteInput.setAttribute('value', 'true');
-                        deleteForm.appendChild(deleteInput);
-                    }
+                    // Create a hidden form to submit the delete action
+                    const form = document.createElement("form");
+                    form.method = "post";
+                    form.action = "updateProfile"; // Ensure this matches your servlet's action URL
 
-                    deleteForm.submit(); // Submit form to remove image
+                    // Add deleteImage hidden input to indicate deletion
+                    const deleteInput = document.createElement("input");
+                    deleteInput.type = "hidden";
+                    deleteInput.name = "deleteImage";
+                    deleteInput.value = "true";
+                    form.appendChild(deleteInput);
+
+                    document.body.appendChild(form);
+                    form.submit(); // Submit form to trigger the delete action
                 }
-
 
             </script>
             <script>
@@ -428,31 +445,44 @@
             %>
             <script>
                 document.addEventListener("DOMContentLoaded", function () {
-                    // Lấy tham số 'tab' từ URL
+                    // Get the 'tab' parameter from the URL
                     const urlParams = new URLSearchParams(window.location.search);
                     const tab = urlParams.get('tab');
 
-                    // Nếu tham số tab có giá trị là 'edit', chọn tab "Edit Profile"
+                    // Function to deactivate the default active tab (Overview)
+                    function deactivateDefaultTab() {
+                        const overviewTabButton = document.querySelector('[data-bs-target="#profile-overview"]');
+                        const overviewTabContent = document.querySelector('#profile-overview');
+                        if (overviewTabButton && overviewTabContent) {
+                            overviewTabButton.classList.remove('active');
+                            overviewTabContent.classList.remove('show', 'active');
+                        }
+                    }
+
+                    // Activate "Edit Profile" tab if 'tab' is 'edit'
                     if (tab === 'edit') {
                         const editTabButton = document.querySelector('[data-bs-target="#profile-edit"]');
                         const editTabContent = document.querySelector('#profile-edit');
-
                         if (editTabButton && editTabContent) {
-                            // Kích hoạt tab "Edit Profile"
                             editTabButton.classList.add('active');
                             editTabContent.classList.add('show', 'active');
+                            deactivateDefaultTab();
+                        }
+                    }
 
-                            // Vô hiệu hóa tab "Overview" mặc định
-                            const overviewTabButton = document.querySelector('[data-bs-target="#profile-overview"]');
-                            const overviewTabContent = document.querySelector('#profile-overview');
-                            if (overviewTabButton && overviewTabContent) {
-                                overviewTabButton.classList.remove('active');
-                                overviewTabContent.classList.remove('show', 'active');
-                            }
+                    // Activate "Change Password" tab if 'tab' is 'change-password'
+                    if (tab === 'change-password') {
+                        const changePasswordTabButton = document.querySelector('[data-bs-target="#profile-change-password"]');
+                        const changePasswordTabContent = document.querySelector('#profile-change-password');
+                        if (changePasswordTabButton && changePasswordTabContent) {
+                            changePasswordTabButton.classList.add('active');
+                            changePasswordTabContent.classList.add('show', 'active');
+                            deactivateDefaultTab();
                         }
                     }
                 });
             </script>
+
             <script>
                 setTimeout(function () {
                     const successAlert = document.querySelector('.alert-success');

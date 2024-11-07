@@ -543,6 +543,14 @@ public class PersonDAO extends DBContext {
         }
     }
 
+    public void deleteImage(int personId) throws SQLException {
+        String sql = "UPDATE Person SET Image = NULL WHERE ID = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, personId);
+            ps.executeUpdate();
+        }
+    }
+
     public boolean updateEmailAndUsername(int personId, String newEmail) throws SQLException {
         Connection conn = null;
         PreparedStatement personStmt = null;
