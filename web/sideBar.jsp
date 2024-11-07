@@ -62,28 +62,28 @@
                                     <i class="bi bi-circle"></i><span>Customer Management</span>
                                 </a>
                             </li>
-                            <li>
+<!--                            <li>
                                 <a href="customerClassification">
                                     <i class="bi bi-circle"></i><span>Customer Classification</span>
                                 </a>
-                            </li>
+                            </li>-->
                             <li>
-                                <a class="nav-link" href="payment-management">
-                                    <i class="bi bi-credit-card"></i>
+                                <a href="payment-management">
+                                    <i class="bi bi-circle"></i>
                                     <span>Payment Management</span>
                                 </a>
                             </li>
                             <li>
-                                <a class="nav-link" href="financial-report">
-                                    <i class="bi bi-credit-card"></i>
+                                <a href="financial-report">
+                                    <i class="bi bi-circle"></i>
                                     <span>Financial Report</span>
                                 </a>
                             </li>
                         </ul>
                     </li><!-- End Manager Nav -->
 
-                    <!-- Customer Section -->
-                    <li class="nav-item">
+                  
+<!--                    <li class="nav-item">
                         <a class="nav-link collapsed" data-bs-target="#customer-nav" data-bs-toggle="collapse" href="#">
                             <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
                         </a>
@@ -109,7 +109,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li><!-- End Customer Nav -->
+                    </li> End Customer Nav -->
 
 
 
