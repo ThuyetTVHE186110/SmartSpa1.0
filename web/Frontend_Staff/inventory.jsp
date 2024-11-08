@@ -46,19 +46,21 @@
                         <h2>Spa Inventory Management</h2>
                         <!-- Filter buttons (optional) -->
                         <div class="inventory-filter">
-                            <button class="filter-btn active">All Items</button>
+                            <button class="filter-btn active" data-category="all">All Items</button>
                             <c:forEach var="category" items="${productCategories}">
-                                <button class="filter-btn">${category.name}</button>
+                                <button class="filter-btn" data-category="${category.id}">${category.name}</button>
                             </c:forEach>
-                            <button class="filter-btn all-materials">Materials</button>
-                            <button class="filter-btn low-stock">Low Stock</button>
+                            <button class="filter-btn all-materials" data-category="materials">Materials</button>
+                            <button class="filter-btn low-stock" data-category="low-stock">Low Stock</button>
                         </div>
+
                     </div>
 
+
                     <div class="inventory-grid">
-                        <!-- Inventory List -->
+
                         <div class="inventory-list">
-                            <!-- Display Products -->
+
                             <div class="inventory-category">
                                 <div class="category-header">
                                     <h3>Products</h3>
@@ -104,25 +106,140 @@
                                     </c:forEach>
                                 </div>
                             </div>
-
                         </div>
-                    </div>
+
+
+                        <div class="summary-column">
+
+                            <div class="summary-card">
+                                <h3>Inventory Overview</h3>
+                                <div class="summary-stats">
+                                    <div class="stat">
+                                        <span class="label">Total Items</span>
+                                        <span class="value">156</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="label">Categories</span>
+                                        <span class="value">8</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="label">Low Stock</span>
+                                        <span class="value">3</span>
+                                    </div>
+                                    <div class="stat">
+                                        <span class="label">To Order</span>
+                                        <span class="value">5</span>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="summary-card">
+                                <h3>Recent Activity</h3>
+                                <div class="activity-list">
+                                    <div class="activity-item">
+                                        <div class="activity-icon"><i class="fas fa-box"></i></div>
+                                        <div class="activity-details">
+                                            <h4>Stock Received</h4>
+                                            <p>50 units of Lavender Oil added</p>
+                                            <span class="activity-time">2 hours ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon warning"><i class="fas fa-exclamation-circle"></i></div>
+                                        <div class="activity-details">
+                                            <h4>Low Stock Alert</h4>
+                                            <p>Almond Oil below minimum level</p>
+                                            <span class="activity-time">1 day ago</span>
+                                        </div>
+                                    </div>
+                                    <div class="activity-item">
+                                        <div class="activity-icon"><i class="fas fa-sync"></i></div>
+                                        <div class="activity-details">
+                                            <h4>Stock Updated</h4>
+                                            <p>Monthly inventory check completed</p>
+                                            <span class="activity-time">2 days ago</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="summary-card">
+                                <h3>Quick Actions</h3>
+                                <div class="quick-actions-grid">
+                                    <button class="action-btn">
+                                        <i class="fas fa-plus-circle"></i>
+                                        New Item
+                                    </button>
+                                    <button class="action-btn">
+                                        <i class="fas fa-file-invoice"></i>
+                                        Create Order
+                                    </button>
+                                    <button class="action-btn">
+                                        <i class="fas fa-qrcode"></i>
+                                        Scan Items
+                                    </button>
+                                    <button class="action-btn">
+                                        <i class="fas fa-file-export"></i>
+                                        Export List
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
                 </main>
             </div>
         </div>
     </body>
 
     <script>
-        // Hàm để thay đổi class active cho các nút filter
+        // Function to update active button
         function updateActiveButton(selectedButton) {
-            // Lấy tất cả các button filter
-            const buttons = document.querySelectorAll(".filter-btn");
-            buttons.forEach(button => {
-                // Xóa class active khỏi tất cả các button
+            document.querySelectorAll(".filter-btn").forEach(button => {
                 button.classList.remove("active");
             });
-            // Thêm class active vào button được chọn
             selectedButton.classList.add("active");
+        }
+
+// Add event listeners to filter buttons
+        document.querySelectorAll('.filter-btn').forEach(button => {
+            button.addEventListener('click', function () {
+                const categoryId = this.getAttribute('data-category');
+                // Check if categoryId is defined and append it to the URL correctly
+                if (categoryId) {
+                    window.location.href = `inventoryservlet?categoryID=${categoryId}`;
+                }
+            });
+        });
+
+// Function to load items based on the selected category
+        function loadItemsByCategory(category) {
+            document.querySelector(".inventory-grid").innerHTML = ""; // Clear current items
+
+            // Define URL for fetching data based on category
+            let url = `/productinformation?category=${category}`;
+
+            fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const inventoryGrid = document.querySelector(".inventory-grid");
+                        data.forEach(item => {
+                            const itemElement = document.createElement("div");
+                            itemElement.classList.add("inventory-card");
+                            itemElement.innerHTML = `
+                    <div class="inventory-header">
+                        <img src="${item.imagePath}" alt="${item.name}" class="item-image">
+                    </div>
+                    <div class="inventory-info">
+                        <h4>${item.name}</h4>
+                        <span><i class="fas fa-boxes"></i> Current Stock: ${item.currentStock} units</span>
+                    </div>
+                `;
+                            inventoryGrid.appendChild(itemElement);
+                        });
+                    })
+                    .catch(error => console.error("Error loading items:", error));
         }
 
         // Xử lý sự kiện cho nút "All Items"

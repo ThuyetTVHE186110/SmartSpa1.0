@@ -184,6 +184,8 @@
     <servlet>
         <servlet-name>RoomManagement</servlet-name>
         <servlet-class>controller.Room.RoomManagement</servlet-class>
+    </servlet>
+    <servlet>    
         <servlet-name>ClientManagement</servlet-name>
         <servlet-class>controller.ClientManagement</servlet-class>
     </servlet>
@@ -382,6 +384,8 @@
     <servlet-mapping>
         <servlet-name>RoomManagement</servlet-name>
         <url-pattern>/room-management</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>    
         <servlet-name>ClientManagement</servlet-name>
         <url-pattern>/Frontend_Staff/clientManagement</url-pattern>
     </servlet-mapping>

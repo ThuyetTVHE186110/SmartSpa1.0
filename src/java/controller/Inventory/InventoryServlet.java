@@ -59,29 +59,38 @@ public class InventoryServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+   @Override
+protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-           InventoryDAO inventoryDAO = new InventoryDAO();
+    InventoryDAO inventoryDAO = new InventoryDAO();
     
-    // Get all inventory items
-    List<Inventory> inventoryList = inventoryDAO.getAllInventory();
+    // Lấy tham số categoryID từ yêu cầu
+    String categoryIdParam = request.getParameter("categoryID");
+    List<Product> products;
     
-    // Get product and material categories
+    if (categoryIdParam != null && !categoryIdParam.isEmpty()) {
+        // Nếu có categoryID, chuyển sang kiểu số và lấy danh sách sản phẩm theo danh mục
+        int categoryId = Integer.parseInt(categoryIdParam);
+        products = inventoryDAO.getProductsByCategory(categoryId);
+    } else {
+        // Nếu không có categoryID, lấy tất cả sản phẩm
+        products = inventoryDAO.getAllProducts();
+    }
+
+    // Lấy danh mục sản phẩm và danh mục vật liệu
     List<Category> productCategories = inventoryDAO.getProductCategories();
-    List<Product> products = inventoryDAO.getAllProducts();
     List<Material> materialCategories = inventoryDAO.getMaterialCategories();
     
-    // Set attributes for JSP
-    request.setAttribute("inventoryList", inventoryList);
+    // Set các thuộc tính cho JSP
     request.setAttribute("products", products);
     request.setAttribute("productCategories", productCategories);
     request.setAttribute("materialCategories", materialCategories);
     
-    // Forward to the inventory JSP page
+    // Chuyển tiếp tới trang JSP hiển thị
     RequestDispatcher dispatcher = request.getRequestDispatcher("Frontend_Staff/inventory.jsp");
     dispatcher.forward(request, response);
-    } 
+}
+
 
     /** 
      * Handles the HTTP <code>POST</code> method.
