@@ -159,19 +159,19 @@
                                 <div class="summary-stats">
                                     <div class="stat">
                                         <span class="label">Total Reviews</span>
-                                        <span class="value">248</span>
+                                        <span class="value" id="total-reviews">0</span>
                                     </div>
                                     <div class="stat">
                                         <span class="label">Average Rating</span>
-                                        <span class="value">4.8</span>
+                                        <span class="value" id="average-rating">0.0</span>
                                     </div>
                                     <div class="stat">
                                         <span class="label">Response Rate</span>
-                                        <span class="value">95%</span>
+                                        <span class="value" id="response-rate">0%</span>
                                     </div>
                                     <div class="stat">
                                         <span class="label">Pending</span>
-                                        <span class="value">3</span>
+                                        <span class="value" id="pending-feedback">0</span>
                                     </div>
                                 </div>
                             </div>
@@ -183,40 +183,42 @@
                                     <div class="rating-bar">
                                         <span class="rating-label">5 Stars</span>
                                         <div class="progress-bar">
-                                            <div class="progress" style="width: 75%"></div>
+                                            <div class="progress" id="progress-5" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count">180</span>
+                                        <span class="rating-count" id="count-5">0</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">4 Stars</span>
                                         <div class="progress-bar">
-                                            <div class="progress" style="width: 15%"></div>
+                                            <div class="progress" id="progress-4" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count">45</span>
+                                        <span class="rating-count" id="count-4">0</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">3 Stars</span>
                                         <div class="progress-bar">
-                                            <div class="progress" style="width: 5%"></div>
+                                            <div class="progress" id="progress-3" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count">15</span>
+                                        <span class="rating-count" id="count-3">0</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">2 Stars</span>
                                         <div class="progress-bar">
-                                            <div class="progress" style="width: 3%"></div>
+                                            <div class="progress" id="progress-2" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count">5</span>
+                                        <span class="rating-count" id="count-2">0</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">1 Star</span>
                                         <div class="progress-bar">
-                                            <div class="progress" style="width: 2%"></div>
+                                            <div class="progress" id="progress-1" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count">3</span>
+                                        <span class="rating-count" id="count-1">0</span>
                                     </div>
                                 </div>
                             </div>
+
+
 
                             <!-- Common Feedback Topics -->
                             <div class="summary-card">
@@ -270,6 +272,81 @@
         </div>
     </body>
 </html>
+<script>
+    // RATING DISTRIBUTE
+    document.addEventListener("DOMContentLoaded", function () {
+        // Kiểm tra dữ liệu feedbackList và cập nhật Rating Distribution
+        const feedbackList = [
+            {starRating: 5, content: "Great service!"},
+            {starRating: 4, content: "Very good!"},
+            {starRating: 3, content: "It was okay."},
+            {starRating: 2, content: "Not satisfied."},
+            {starRating: 1, content: "Terrible experience."},
+                    // Thêm các mục feedback khác nếu cần
+        ];
+
+        function updateRatingDistribution(feedbackList) {
+            const ratingCounts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+
+            // Đếm số lượng đánh giá cho mỗi mức sao
+            feedbackList.forEach(feedback => {
+                if (feedback.starRating >= 1 && feedback.starRating <= 5) {
+                    ratingCounts[feedback.starRating]++;
+                }
+            });
+
+            // Tổng số đánh giá
+            const totalReviews = feedbackList.length;
+
+            // Cập nhật tỷ lệ và số lượng cho từng mức đánh giá
+            for (let rating = 5; rating >= 1; rating--) {
+                const count = ratingCounts[rating];
+                const percentage = totalReviews > 0 ? ((count / totalReviews) * 100).toFixed(0) + "%" : "0%";
+
+                // Cập nhật thanh tiến trình và số lượng
+                document.getElementById(`progress-${rating}`).style.width = percentage;
+                document.getElementById(`count-${rating}`).textContent = count;
+            }
+        }
+
+        // Gọi hàm cập nhật
+        updateRatingDistribution(feedbackList);
+    });
+
+
+</script>
+
+<script>
+    // OVERVIEW FEEDBACK
+    // 
+    // Dữ liệu mẫu, thay thế bằng dữ liệu thực tế từ server hoặc backend
+    const feedbackList = [
+        {starRating: 5, responseFeedback: "Thank you!", service: {id: 1, name: "Massage"}, customer: {name: "Alice"}},
+        {starRating: 4, responseFeedback: null, service: {id: 2, name: "Facial"}, customer: {name: "Bob"}},
+        {starRating: 3, responseFeedback: "Sorry for the inconvenience.", service: {id: 3, name: "Haircut"}, customer: {name: "Charlie"}},
+                // Thêm các mục feedback khác nếu cần
+    ];
+
+// Hàm tính toán các giá trị và cập nhật Summary Column
+    function updateFeedbackSummary(feedbackList) {
+        const totalReviews = feedbackList.length;
+        const averageRating = (feedbackList.reduce((sum, feedback) => sum + feedback.starRating, 0) / totalReviews).toFixed(1);
+        const respondedFeedback = feedbackList.filter(feedback => feedback.responseFeedback).length;
+        const responseRate = ((respondedFeedback / totalReviews) * 100).toFixed(0) + "%";
+        const pendingFeedback = totalReviews - respondedFeedback;
+
+        // Cập nhật các phần tử HTML trong Summary Column
+        document.getElementById('total-reviews').textContent = totalReviews;
+        document.getElementById('average-rating').textContent = averageRating;
+        document.getElementById('response-rate').textContent = responseRate;
+        document.getElementById('pending-feedback').textContent = pendingFeedback;
+    }
+
+// Gọi hàm khi tải trang hoặc khi dữ liệu feedbackList thay đổi
+    updateFeedbackSummary(feedbackList);
+
+</script>
+
 <script>
     // Function to enable editing of the textarea when the update button is clicked
     function enableEdit() {
