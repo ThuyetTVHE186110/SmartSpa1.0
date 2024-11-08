@@ -142,7 +142,7 @@
                                     <p>Saturday: 9am - 5pm</p>
                                     <p>Sunday: Closed</p>
                                 </div>
-                                <button class="book-now-btn"><a href="booking.jsp">Book an Appointment</a></button>
+                                <button class="book-now-btn"  ><a style="text-decoration: none; color: #fff;"href="booking.jsp">Book an Appointment</a></button>
                             </div>
                             <div class="location-map" data-aos="fade-left">
                                 <!-- Replace with your actual Google Maps embed code -->
