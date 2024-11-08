@@ -1,5 +1,25 @@
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ page import="model.Account" %> 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%
+    // No need to declare session manually; it's already available in JSP
+    // You can directly use session
+    if (session == null || session.getAttribute("account") == null) {
+        // Redirect to login page if session is not found or account is not in session
+        response.sendRedirect("../adminLogin");
+    } else {
+        // Get the account object from session
+        Account account = (Account) session.getAttribute("account");
+
+        if (account.getRole() == 3) {
+            // Allow access to the page (do nothing and let the JSP render)
+        } else {
+            // Set an error message and redirect to an error page
+            request.setAttribute("errorMessage", "You do not have the required permissions to access the dashboard.");
+            request.getRequestDispatcher("error").forward(request, response);
+        }
+    }
+%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -61,10 +81,10 @@
                                                 <span class="feature-tag"><i class="fas fa-music"></i> Sound System</span>
                                                 <span class="feature-tag"><i class="fas fa-wind"></i> Climate Control</span>
                                             </div>
-<!--                                            <div class="room-schedule">
-                                                <p><i class="fas fa-clock"></i> Next Booking: 2:30 PM</p>
-                                                <p><i class="fas fa-calendar-check"></i> Today's Bookings: 5</p>
-                                            </div>-->
+                                            <!--                                            <div class="room-schedule">
+                                                                                            <p><i class="fas fa-clock"></i> Next Booking: 2:30 PM</p>
+                                                                                            <p><i class="fas fa-calendar-check"></i> Today's Bookings: 5</p>
+                                                                                        </div>-->
                                         </div>
                                         <div class="room-actions">
                                             <button class="btn-icon" title="View Schedule"><i class="fas fa-calendar"></i></button>
