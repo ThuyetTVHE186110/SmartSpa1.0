@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
+    
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.Authentication.LoginServlet</servlet-class>
@@ -54,7 +55,7 @@
     </servlet>
     <servlet>
         <servlet-name>VerifyRegistrationOtpServlet</servlet-name>
-        <servlet-class>controller.VerifyRegistrationOtpServlet</servlet-class>
+        <servlet-class>controller.Authentication.VerifyRegistrationOtpServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SelectStaffServlet</servlet-name>
@@ -90,7 +91,7 @@
     </servlet>
     <servlet>
         <servlet-name>BookingServlet</servlet-name>
-        <servlet-class>controller.BookingServlet</servlet-class>
+        <servlet-class>controller.Booking.BookingServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CustomerProfileServlet</servlet-name>
@@ -177,6 +178,14 @@
         <servlet-class>controller.CustomerClassificationServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AppointmentStaffServlet</servlet-name>
+        <servlet-class>controller.Appointment_Staff.AppointmentManagementServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RoomManagement</servlet-name>
+        <servlet-class>controller.Room.RoomManagement</servlet-class>
+    </servlet>
+    <servlet>    
         <servlet-name>ClientManagement</servlet-name>
         <servlet-class>controller.ClientManagement</servlet-class>
     </servlet>
@@ -187,6 +196,10 @@
     <servlet>
         <servlet-name>TherapistManagement</servlet-name>
         <servlet-class>controller.TherapistManagement</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffServiceServlet</servlet-name>
+        <servlet-class>controller.StaffServiceServlet</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
@@ -350,7 +363,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>SaveSurveyServlet</servlet-name>
-        <url-pattern>/save-survey</url-pattern>
+        <url-pattern>/SaveSurvey</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>NewServlet</servlet-name>
@@ -365,6 +378,14 @@
         <url-pattern>/customerClassification</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>AppointmentStaffServlet</servlet-name>
+        <url-pattern>/appointment-staff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoomManagement</servlet-name>
+        <url-pattern>/room-management</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>    
         <servlet-name>ClientManagement</servlet-name>
         <url-pattern>/Frontend_Staff/clientManagement</url-pattern>
     </servlet-mapping>
@@ -375,6 +396,10 @@
     <servlet-mapping>
         <servlet-name>TherapistManagement</servlet-name>
         <url-pattern>/Frontend_Staff/therapist</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>StaffServiceServlet</servlet-name>
+        <url-pattern>/staff-services</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>

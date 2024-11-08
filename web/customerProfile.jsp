@@ -28,7 +28,7 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>My Profile - Blushed Beauty Bar</title>
-        <link rel="stylesheet" href="newUI/assets/css/styles.css">
+        <link rel="stylesheet" href="newUI//assets/css/styles.css">
         <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
         <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
@@ -70,6 +70,7 @@
                     <button class="profile-nav-btn" data-tab="history">Payment History</button>
                     <button class="profile-nav-btn" data-tab="settings">Account Information</button>
                     <button class="profile-nav-btn" data-tab="preferences">Change Password</button>
+                    <a href="feedback" class="profile-nav-btn" data-tab="preferences">Send Feedback</a>
                 </div>
 
                 <!-- Profile Content -->

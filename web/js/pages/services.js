@@ -170,3 +170,13 @@ function validateServiceForm() {
 
     return true;
 }
+
+function filterServices(category) {
+    window.location.href = 'staff-services?action=filter&category=' + encodeURIComponent(category);
+}
+
+// Add function to show/hide debug info
+function toggleDebugInfo() {
+    const debugInfo = document.querySelector('.debug-info');
+    debugInfo.style.display = debugInfo.style.display === 'none' ? 'block' : 'none';
+} 

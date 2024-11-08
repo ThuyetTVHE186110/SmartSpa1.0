@@ -1,3 +1,6 @@
+<%@page import="model.Appointment"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -9,7 +12,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link rel="stylesheet" href="./styles.css">
+        <link rel="stylesheet" href="/SmartSpa1.0/Frontend_Staff/styles.css">
     </head>
     <body>
         <div class="dashboard-container">
@@ -23,13 +26,25 @@
                         <div class="header-content">
                             <h2>Appointments Management</h2>
                             <div class="date-filter">
-                                <button class="date-btn active">Today</button>
-                                <button class="date-btn">Tomorrow</button>
-                                <button class="date-btn">This Week</button>
-                                <input type="date" class="date-picker">
+                                <form action="appointment-staff" method="post" id="today">
+                                    <input type="hidden" name="action" value="today">
+                                    <button class="date-btn" onclick="document.getElementById('today').submit();">Today</button>
+                                </form>
+                                <form action="appointment-staff" method="post" id="tomorrow">
+                                    <input type="hidden" name="action" value="tomorrow">
+                                    <button class="date-btn" onclick="document.getElementById('tomorrow').submit();">Tomorrow</button>
+                                </form>
+                                <form action="appointment-staff" method="post" id="this-week">
+                                    <input type="hidden" name="action" value="this-week">
+                                    <button class="date-btn" onclick="document.getElementById('this-week').submit();">This Week</button>
+                                </form>
+                                <form action="appointment-staff" method="post" id="searchDate">
+                                    <input type="hidden" name="action" value="searchDate">
+                                    <input type="date" class="date-picker" name="searchDate" value="${searchDate}" onchange="document.getElementById('searchDate').submit();">
+                                </form>
                             </div>
                         </div>
-                        <button class="btn-primary" id="newAppointmentBtn">
+                        <button class="btn-primary" id="newAppointmentBtn" onclick="initializeEventListeners()">
                             <i class="fas fa-plus"></i> New Appointment
                         </button>
                     </div>
@@ -37,7 +52,38 @@
                     <div class="appointments-grid">
                         <!-- Timeline Column -->
                         <div class="timeline-column">
-                            <div class="time-slot">
+                            <c:forEach items="${requestScope.appointmentList}" var="appointment">
+                                <div class="time-slot">
+                                    <span class="time">${appointment.start.toLocalTime()}</span>
+                                    <div class="slot-content">
+                                        <div class="appointment-card booked">
+                                            <div class="appointment-time">
+                                                ${appointment.start.toLocalTime()} - ${appointment.end.toLocalTime()}</div>
+                                            <h4>
+                                                <c:forEach items="${appointment.services}" var="info">
+                                                    ${info.service.name}
+                                                </c:forEach>
+                                            </h4>
+                                            <div class="appointment-info">
+                                                <span><i class="fas fa-user"></i> ${appointment.customer.name}</span>
+                                                <span><i class="fas fa-user-md"></i> ${appointment.services.get(0).staff.name}</span>
+                                                <span><i class="fas fa-door-open"></i>
+                                                    <!--appointment.room-->
+                                                </span>
+                                                <span><i class="fas fa-clock"></i>
+                                                    ${appointment.services.get(0).service.duration}</span>
+                                                <span><i class="fas fa-dollar-sign"></i> $${appointment.services.get(0).service.price}</span>
+                                            </div>
+                                            <div class="appointment-actions">
+                                                <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                                <button class="btn-icon" title="Cancel"><i class="fas fa-times"></i></button>
+                                                <button class="btn-icon" title="Complete"><i class="fas fa-check"></i></button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </c:forEach>
+<!--                            <div class="time-slot">
                                 <span class="time">09:00</span>
                                 <div class="slot-content">
                                     <div class="appointment-card booked">
@@ -58,6 +104,7 @@
                                     </div>
                                 </div>
                             </div>
+
 
                             <div class="time-slot">
                                 <span class="time">10:00</span>
@@ -86,7 +133,7 @@
                                 </div>
                             </div>
 
-                            <!-- Add more time slots -->
+                             Add more time slots 
                             <div class="time-slot">
                                 <span class="time">14:00</span>
                                 <div class="slot-content">
@@ -108,7 +155,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>-->
 
                         <!-- Summary Column -->
                         <div class="summary-column">
@@ -118,20 +165,30 @@
                                 <div class="summary-stats">
                                     <div class="stat">
                                         <span class="label">Total Appointments</span>
-                                        <span class="value">8</span>
+                                        <span class="value">${upcoming.size()}</span>
                                     </div>
                                     <div class="stat">
                                         <span class="label">Completed</span>
-                                        <span class="value">3</span>
+                                        <c:set var="completedCount" value="0" />
+                                        <c:set var="upcomingCount" value="0" />
+                                        <c:forEach var="appointment" items="${upcoming}">
+                                            <c:if test="${appointment.status == 'Completed'}">
+                                                <c:set var="completedCount" value="${completedCount + 1}" />
+                                            </c:if>
+                                            <c:if test="${appointment.status != 'Completed'}">
+                                                <c:set var="completedCount" value="${completedCount + 1}" />
+                                            </c:if>
+                                        </c:forEach>
+                                        <span class="value">${completedCount}</span>
                                     </div>
                                     <div class="stat">
                                         <span class="label">Upcoming</span>
-                                        <span class="value">4</span>
+                                        <span class="value">${upcomingCount}</span>
                                     </div>
-                                    <div class="stat">
+<!--                                    <div class="stat">
                                         <span class="label">Available Slots</span>
                                         <span class="value">5</span>
-                                    </div>
+                                    </div>-->
                                 </div>
                             </div>
 
@@ -207,10 +264,9 @@
                                         <label>Client</label>
                                         <select required>
                                             <option value="">Select Client</option>
-                                            <option value="1">Sarah Johnson</option>
-                                            <option value="2">Michael Brown</option>
-                                            <option value="3">Emily Davis</option>
-                                            <option value="4">David Wilson</option>
+                                            <c:forEach items="${customerList}" var="customer">
+                                                <option value="${customer.id}">${customer.name} - ${customer.phone}</option>
+                                            </c:forEach>
                                         </select>
                                     </div>
 
@@ -219,11 +275,9 @@
                                         <label>Service</label>
                                         <select required>
                                             <option value="">Select Service</option>
-                                            <option value="swedish">Swedish Massage (60 min) - $85</option>
-                                            <option value="deep">Deep Tissue Massage (90 min) - $120</option>
-                                            <option value="hot">Hot Stone Massage (75 min) - $110</option>
-                                            <option value="facial">Facial Treatment (60 min) - $95</option>
-                                            <option value="aromatherapy">Aromatherapy (60 min) - $90</option>
+                                            <c:forEach items="${serviceList}" var="service">
+                                                <option value="${service.id}">${service.name} (${service.duration} min) - $${service.price}</option>
+                                            </c:forEach>
                                         </select>
                                     </div>
 
@@ -232,6 +286,7 @@
                                         <label>Therapist</label>
                                         <select required>
                                             <option value="">Select Therapist</option>
+                                            
                                             <option value="1">Emma Wilson (Swedish, Deep Tissue)</option>
                                             <option value="2">John Smith (Sports, Thai Massage)</option>
                                             <option value="3">Lisa Anderson (Facial, Aromatherapy)</option>
@@ -262,44 +317,10 @@
                                         </select>
                                     </div>
 
-                                    <!-- Special Requirements -->
-                                    <div class="form-group">
-                                        <label>Special Requirements</label>
-                                        <div class="checkbox-group">
-                                            <label class="checkbox-label">
-                                                <input type="checkbox" value="allergies">
-                                                Allergies/Sensitivities
-                                            </label>
-                                            <label class="checkbox-label">
-                                                <input type="checkbox" value="pressure">
-                                                Specific Pressure Preference
-                                            </label>
-                                            <label class="checkbox-label">
-                                                <input type="checkbox" value="areas">
-                                                Focus Areas
-                                            </label>
-                                            <label class="checkbox-label">
-                                                <input type="checkbox" value="music">
-                                                Music Preference
-                                            </label>
-                                        </div>
-                                    </div>
-
                                     <!-- Notes -->
                                     <div class="form-group">
                                         <label>Additional Notes</label>
                                         <textarea rows="3" placeholder="Enter any special requests, preferences, or notes"></textarea>
-                                    </div>
-
-                                    <!-- Payment Information -->
-                                    <div class="form-group">
-                                        <label>Payment Method</label>
-                                        <select required>
-                                            <option value="">Select Payment Method</option>
-                                            <option value="cash">Cash</option>
-                                            <option value="card">Credit/Debit Card</option>
-                                            <option value="package">Package/Gift Card</option>
-                                        </select>
                                     </div>
                                 </form>
                             </div>
@@ -423,6 +444,6 @@
                 </main>
             </div>
         </div>
-        <script src="./js/pages/appointments.js"></script>
+        <script src="Frontend_Staff/js/pages/appointments.js"></script>
     </body>
 </html>

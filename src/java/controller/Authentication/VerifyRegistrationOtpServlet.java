@@ -12,6 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.Connection;
 import java.sql.Statement;
 import java.sql.ResultSet;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class VerifyRegistrationOtpServlet extends HttpServlet {
 
@@ -25,7 +26,14 @@ public class VerifyRegistrationOtpServlet extends HttpServlet {
         String password = (String) session.getAttribute("password");
         String name = (String) session.getAttribute("name");
         String phone = (String) session.getAttribute("phone");
-        int roleID = (int) session.getAttribute("roleID");
+
+        // Check if roleID is present in the session
+        Integer roleID = (Integer) session.getAttribute("roleID");
+        if (roleID == null) {
+            request.setAttribute("error", "Role ID is missing in the session.");
+            request.getRequestDispatcher("error.jsp").forward(request, response);
+            return;
+        }
 
         Integer attempts = (Integer) session.getAttribute("otpAttempts");
         if (attempts == null) {
@@ -120,4 +128,5 @@ public class VerifyRegistrationOtpServlet extends HttpServlet {
             request.getRequestDispatcher("OtpConfirmRegistration.jsp").forward(request, response);
         }
     }
+
 }

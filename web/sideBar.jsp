@@ -83,7 +83,7 @@
                     </li><!-- End Manager Nav -->
 
                   
-<!--                    <li class="nav-item">
+                    <li class="nav-item">
                         <a class="nav-link collapsed" data-bs-target="#customer-nav" data-bs-toggle="collapse" href="#">
                             <i class="bi bi-people"></i><span>Staff</span><i class="bi bi-chevron-down ms-auto"></i>
                         </a>
@@ -109,7 +109,7 @@
                                 </a>
                             </li>
                         </ul>
-                    </li> End Customer Nav -->
+                    </li> 
 
 
 

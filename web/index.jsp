@@ -144,8 +144,7 @@
                             </div>
                             <div class="about-text" data-aos="fade-left">
                                 <h2>Your new favorite beauty bar.</h2>
-                                <p>Blushed Beauty Bar is a full-service studio and spa serving the Fargo-Moorhead area
-                                    that
+                                <p>Smart Beauty Bar is a full-service studio and spa serving the Hanoi area
                                     specializes in
                                     handmade eyelash extensions and microblading. We have a passion for beauty, makeup,
                                     and
@@ -180,8 +179,8 @@
                                 <div class="footer-column contact-info">
                                     <h4>Contact Us</h4>
                                     <p><strong>Smart Beauty Spa</strong></p>
-                                    <p><i class="fas fa-map-marker-alt"></i> 5177 44th Street S, Fargo, ND</p>
-                                    <p><i class="fas fa-phone"></i> 218.790.3444</p>
+                                    <p><i class="fas fa-map-marker-alt"></i> FPT University Hanoi, Ha Noi, Viet Nam</p>
+                                    <p><i class="fas fa-phone"></i> +84 904 123 456</p>
                                     <div class="social-icons">
                                         <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
                                         <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>

@@ -104,17 +104,12 @@
                     <hr>
                     <c:forEach items="${feedback}" var="feedback">
                         <div class="feedback-item">
-                            <p>"${feedback.content}"</p>
-                            <span class="client-name">- ${feedback.customer.name}</span><br>
+                            <span class="client-name">-Customer Name: ${feedback.customer.name}</span><br>
+                            <p>Feedback: "${feedback.content}"</p>
                             <span class="service-name">Service: ${feedback.service.name}</span>
                         </div>
                         <hr>
                     </c:forEach>
-                </div>
-                <div class="pagination">
-                    <button onclick="changePage(-1)" class="page-btn">Previous</button>
-                    <span>Page <span id="currentPage">${currentPage}</span> of <span id="totalPages">${totalPages}</span></span>
-                    <button onclick="changePage(1)" class="page-btn">Next</button>
                 </div>
             </div>
 
@@ -126,22 +121,11 @@
                     border-top: 1px solid #ddd;
                     max-width: 80%;
                     margin: auto;
-                    max-height: 500px;
                 }
                 .feedback-item {
                     margin-bottom: 15px;
                 }
-                .pagination {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    margin-top: 20px;
-                }
-                .page-btn {
-                    margin: 0 10px;
-                    padding: 5px 15px;
-                    cursor: pointer;
-                }
+                
             </style>
         </footer>
 
@@ -151,19 +135,6 @@
             function showFeedbackContainer() {
                 document.getElementById("allFeedbackContainer").style.display = "block";
             }
-
-            // Điều khiển phân trang
-            function changePage(step) {
-                let currentPage = parseInt(document.getElementById("currentPage").innerText);
-                let totalPages = parseInt(document.getElementById("totalPages").innerText);
-
-                let newPage = currentPage + step;
-                if (newPage >= 1 && newPage <= totalPages) {
-                    window.location.href = `FeedbackServlet?page=${newPage}`;
-                }
-            }
-
-
 
             //sessionn
             document.addEventListener('DOMContentLoaded', () => {

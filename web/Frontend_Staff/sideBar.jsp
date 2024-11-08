@@ -18,7 +18,7 @@
                 </a>
             </li>
             <li>
-                <a href="services.jsp">
+                <a href="staff-services">
                     <i class="fas fa-spa"></i>
                     <span>Services</span>
                 </a>
@@ -48,7 +48,7 @@
                 </a>
             </li>
             <li>
-                <a href="packages.jsp">
+                <a href="staff-packages">
                     <i class="fas fa-gift"></i>
                     <span>Packages & Promos</span>
                 </a>
