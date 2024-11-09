@@ -68,7 +68,7 @@ public class ClientManagement extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
 
 // Forward to the JSP page for rendering
-        request.getRequestDispatcher("clients.jsp").forward(request, response);
+        request.getRequestDispatcher("Frontend_Staff/clients.jsp").forward(request, response);
 
     }
 }

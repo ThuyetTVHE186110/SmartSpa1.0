@@ -6,13 +6,13 @@
     <nav>
         <ul>
             <li>
-                <a href="./index.jsp">
+                <a href="staffDashboard">
                     <i class="fas fa-home"></i>
                     <span>Dashboard</span>
                 </a>
             </li>
             <li>
-                <a href="./appointments.jsp">
+                <a href="appointments.jsp">
                     <i class="fas fa-calendar-check"></i>
                     <span>Appointments</span>
                 </a>
@@ -42,7 +42,7 @@
                 </a>
             </li>
             <li>
-                <a href="../inventoryservlet">
+                <a href="inventoryservlet">
                     <i class="fas fa-pump-soap"></i>
                     <span>Inventory</span>
                 </a>
