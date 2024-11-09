@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Category;
 import model.Product;
@@ -77,7 +76,7 @@ public class ProductDAO extends DBContext {
                 Category category = new Category();
                 category.setId(rs.getInt("ID"));
                 category.setName(rs.getString("Name"));
-                categories.add(category); 
+                categories.add(category);
                 System.out.println("Category ID: " + category.getId() + ", Name: " + category.getName());
             }
         } catch (SQLException e) {
@@ -237,41 +236,83 @@ public class ProductDAO extends DBContext {
     }
 
     public void updateProduct(int productId, String name, String description, int price,
-            int quantity, String image, int categoryId, int supplierId, String branchName, String status, String ingredient, String howToUse, String benefit) {
-        String sql = "UPDATE Product "
-                + "SET Name = ?, "
-                + "    Price = ?, "
-                + "    Quantity = ?, "
-                + "    SupplierID = ?, "
-                + "    CategoryID = ?, "
-                + "    BranchName = ?, "
-                + "    Image = ?, "
-                + "    Description = ?, "
-                + "    Status = ?, "
-                + "    Ingredient = ?, "
-                + "    HowToUse = ?, "
-                + "    Benefit = ? "
-                + "WHERE ID = ?";
+            int quantity, String image, int categoryId, int supplierId, String branchName,
+            String status, String ingredient, String howToUse, String benefit) throws SQLException {
+        String sql;
+        boolean updateImage = image != null && !image.isEmpty();
+
+        if (updateImage) {
+            sql = "UPDATE Product SET Name = ?, Price = ?, Quantity = ?, SupplierID = ?, CategoryID = ?, "
+                    + "BranchName = ?, Image = ?, Description = ?, Status = ?, Ingredient = ?, HowToUse = ?, Benefit = ? "
+                    + "WHERE ID = ?";
+        } else {
+            sql = "UPDATE Product SET Name = ?, Price = ?, Quantity = ?, SupplierID = ?, CategoryID = ?, "
+                    + "BranchName = ?, Description = ?, Status = ?, Ingredient = ?, HowToUse = ?, Benefit = ? "
+                    + "WHERE ID = ?";
+        }
 
         try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+            // Set parameters for fields that are always updated
             pstmt.setString(1, name);
             pstmt.setInt(2, price);
             pstmt.setInt(3, quantity);
             pstmt.setInt(4, supplierId);
             pstmt.setInt(5, categoryId);
             pstmt.setString(6, branchName);
-            pstmt.setString(7, image);
-            pstmt.setString(8, description);
-            pstmt.setString(9, status);
-            pstmt.setString(10, ingredient);
-            pstmt.setString(11, howToUse);
-            pstmt.setString(12, benefit);
-            pstmt.setInt(13, productId); // Đặt productId ở vị trí cuối cùng
+
+            if (updateImage) {
+                pstmt.setString(7, image);
+                pstmt.setString(8, description);
+                pstmt.setString(9, status);
+                pstmt.setString(10, ingredient);
+                pstmt.setString(11, howToUse);
+                pstmt.setString(12, benefit);
+                pstmt.setInt(13, productId);
+            } else {
+                pstmt.setString(7, description);
+                pstmt.setString(8, status);
+                pstmt.setString(9, ingredient);
+                pstmt.setString(10, howToUse);
+                pstmt.setString(11, benefit);
+                pstmt.setInt(12, productId);
+            }
+
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+                    throw new SQLException("Failed to add product: " + e.getMessage());  // Ném ngoại lệ nếu có lỗi
+
+        }
+    }
+
+    public boolean isProductNameExists(String name) {
+        String sql = "SELECT COUNT(*) FROM Product WHERE Name = ?";
+        try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+            ps.setString(1, name);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getInt(1) > 0;  // Nếu có ít nhất 1 sản phẩm trùng tên, trả về true
+            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        return false;
     }
+    public boolean isProductNameExistsForEdit(int productId, String name) {
+    String sql = "SELECT COUNT(*) FROM Product WHERE Name = ? AND ID != ?";
+    try (Connection con = getConnection(); PreparedStatement ps = con.prepareStatement(sql)) {
+        ps.setString(1, name);
+        ps.setInt(2, productId);  // Kiểm tra trùng tên nhưng loại trừ sản phẩm hiện tại
+        ResultSet rs = ps.executeQuery();
+        if (rs.next()) {
+            return rs.getInt(1) > 0;
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
 
     public static void main(String[] args) {
         ProductDAO productDAO = new ProductDAO();

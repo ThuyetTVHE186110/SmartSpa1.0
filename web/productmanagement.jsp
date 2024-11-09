@@ -18,6 +18,7 @@
             request.getRequestDispatcher("roleError").forward(request, response);
         }
     }
+
 %>
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -54,6 +55,8 @@
 
         <!-- Template Main CSS File -->
         <link href="assets/css/style.css" rel="stylesheet">
+
+
     </head>
 
     <body>
@@ -65,6 +68,12 @@
         <jsp:include page="sideBar.jsp" />
 
         <main id="main" class="main">
+            <%-- Hiển thị thông báo nếu có --%>
+            <c:if test="${not empty param.message}">
+                <div class="alert alert-info">
+                    ${param.message}
+                </div>
+            </c:if>
 
             <div class="pagetitle">
                 <h1>Product Management</h1>
@@ -209,22 +218,21 @@
                             </div>
                             <div class="col-md-6">
                                 <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" required>
+                                <input type="number" class="form-control" id="price" name="price" value="" required min="0.01" step="0.01">
                             </div>
                             <div class="col-md-6">
                                 <label for="quantity" class="form-label">Quantity</label>
-                                <input type="number" class="form-control" id="quantity" name="quantity" required>
+                                <input type="number" class="form-control" id="quantity" name="quantity" value="" required min="1">
                             </div>
                             <div class="mb-3">
-                                <label for="file" class="form-label">Image <span
-                                        class="text-danger">*</span></label>
-                                <input type="file" class="form-control" id="file" name="file" required
-                                       accept=".jpg,.jpeg,.png">
-                                <div class="invalid-feedback">
-                                    Please select an image file (JPG or PNG only).
-                                </div>
+                                <label for="file" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="file" name="file" required accept=".jpg,.png" onchange="previewImage(event)">
                                 <div class="form-text">
-                                    Maximum file size: 5MB
+                                    Please select an image (jpg, png).
+                                </div>
+                                <!-- Preview the selected image -->
+                                <div>
+                                    <img id="imagePreview" src="#" alt="New Image Preview" style="display:none; width: 150px; height: auto; margin-top: 10px;" />
                                 </div>
                             </div>
                             <div class="col-md-6">
@@ -261,15 +269,15 @@
                             </div>
                             <div class="col-12">
                                 <label for="ingredient" class="form-label">Ingredient</label>
-                                <input type="text" class="form-control" id="ingredient" name="ingredient" required minlength="3">
+                                <textarea class="form-control" id="ingredient" name="ingredient" rows="3" required minlength="10"></textarea>
                             </div>
                             <div class="col-12">
                                 <label for="howToUse" class="form-label">How To Use</label>
-                                <input type="text" class="form-control" id="howToUse" name="howToUse" required minlength="3">
+                                <textarea class="form-control" id="howToUse" name="howToUse" rows="3" required minlength="10"></textarea>
                             </div>
                             <div class="col-12">
                                 <label for="benefit" class="form-label">Benefit</label>
-                                <input type="text" class="form-control" id="benefit" name="benefit" required minlength="3">
+                                <textarea class="form-control" id="benefit" name="benefit" rows="3" required minlength="10"></textarea>
                             </div>
                             <div class="modal-footer" href="addproduct">
                                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -296,6 +304,7 @@
                     <div class="modal-body">
                         <form action="${pageContext.request.contextPath}/updateproduct" method="post" enctype="multipart/form-data" class="row g-3">
                             <input type="hidden" name="id" value="">
+                            <input type="hidden" name="currentImage" value="${product.image}">
                             <!-- Other form fields remain the same -->
                             <div class="col-12">
                                 <label for="name" class="form-label">Product Name</label>
@@ -314,16 +323,24 @@
                                 <input type="number" class="form-control" id="quantity" name="quantity" value="" required min="1">
                             </div>
                             <div class="mb-3">
-                                <label for="file" class="form-label">Image</label> <!-- Changed id to "file" -->
-                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png">
-                                <div class="invalid-feedback">
-                                    Please select an image file (JPG or PNG only).
-                                </div>
-                                <div class="form-text">
-                                    Current image: ${product.image}<br>
-                                    Leave empty to keep current image. Maximum file size: 5MB
-                                </div>
-                            </div>
+    <label for="file" class="form-label">Image</label>
+    <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png" onchange="previewImage(event)">
+    
+    <!-- Ảnh hiện tại (nếu có) -->
+    <input type="hidden" name="currentImage" value="${product.image}"> <!-- Lưu đường dẫn ảnh hiện tại -->
+    <div class="form-text">
+        Current image: 
+        <img src="${pageContext.request.contextPath}/${product.image}" alt="Current Image" width="50"><br>
+        Leave empty to keep the current image.
+    </div>
+
+    <!-- Xem trước ảnh mới (sẽ hiển thị khi người dùng chọn tệp mới) -->
+    <div>
+        <img id="imagePreview" src="#" alt="New Image Preview" style="display:none; width: 150px; height: auto; margin-top: 10px;" />
+    </div>
+</div>
+
+
                             <div class="col-md-6">
                                 <label for="supplierId" class="form-label">Category</label>
                                 <select class="form-select" id="categoryId" name="categoryId" required>
@@ -382,37 +399,72 @@
         </div><!-- End Edit Product Modal-->
         <script>
 
-                                                        var editProductModal = document.getElementById('editProductModal');
-editProductModal.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;
-    var productId = button.getAttribute('data-id');
+           function previewImage(event) {
+    var file = event.target.files[0];
+    var reader = new FileReader();
+    reader.onload = function () {
+        var imagePreview = document.getElementById('imagePreview');
+        imagePreview.style.display = 'block';  // Hiển thị ảnh xem trước
+        imagePreview.src = reader.result;  // Cập nhật đường dẫn ảnh xem trước
+    };
+    if (file) {
+        reader.readAsDataURL(file);  // Đọc tệp dưới dạng Data URL
+    }
+}
 
-    fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
-        .then(response => response.json())
-        .then(product => {
-            var form = editProductModal.querySelector('form');
-            form.action = form.action.split('?')[0] + "?id=" + productId;
+// Hàm kiểm tra kích thước tệp trước khi gửi
+function validateForm() {
+    const fileInput = document.getElementById("file");
+    const fileSize = fileInput.files[0]?.size;
+    if (fileSize > 5 * 1024 * 1024) { // Giới hạn 5MB
+        alert("Maximum file size is 5MB.");
+        return false;
+    }
+    return true;
+}
 
-            form.querySelector('input[name="id"]').value = product.id || '';
-            form.querySelector('input[name="name"]').value = product.name || '';
-            form.querySelector('textarea[name="description"]').value = product.description || '';
-            form.querySelector('input[name="price"]').value = product.price || '';
-            form.querySelector('input[name="quantity"]').value = product.quantity || '';
-            form.querySelector('input[name="branchName"]').value = product.branchName || '';
-            form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
-            form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
-            form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
+// Khi trang tải xong, hiển thị ảnh hiện tại nếu có
+window.onload = function() {
+    const currentImagePath = "${product.image}"; // Lấy đường dẫn ảnh hiện tại
 
-            // Gán giá trị cho nhà cung cấp
-            var supplierSelect = form.querySelector('select[name="supplierId"]');
-            supplierSelect.value = product.supplierInfo.id; // Đảm bảo rằng ID này là chính xác
+    if (currentImagePath && currentImagePath !== "null" && currentImagePath !== "") {
+        var imagePreview = document.getElementById('imagePreview');
+        imagePreview.style.display = 'block'; // Hiển thị ảnh
+        imagePreview.src = "${pageContext.request.contextPath}/${product.image}"; // Cập nhật đường dẫn ảnh hiện tại
+    }
+};
 
-            // Gán giá trị cho trạng thái
-            var statusSelect = form.querySelector('select[name="status"]');
-            statusSelect.value = product.status || ''; // Đảm bảo trạng thái được gán đúng
-        })
-        .catch(error => console.error('Error fetching product details:', error));
-});
+            var editProductModal = document.getElementById('editProductModal');
+            editProductModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var productId = button.getAttribute('data-id');
+
+                fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
+                        .then(response => response.json())
+                        .then(product => {
+                            var form = editProductModal.querySelector('form');
+                            form.action = form.action.split('?')[0] + "?id=" + productId;
+
+                            form.querySelector('input[name="id"]').value = product.id || '';
+                            form.querySelector('input[name="name"]').value = product.name || '';
+                            form.querySelector('textarea[name="description"]').value = product.description || '';
+                            form.querySelector('input[name="price"]').value = product.price || '';
+                            form.querySelector('input[name="quantity"]').value = product.quantity || '';
+                            form.querySelector('input[name="branchName"]').value = product.branchName || '';
+                            form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
+                            form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
+                            form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
+
+                            // Gán giá trị cho nhà cung cấp
+                            var supplierSelect = form.querySelector('select[name="supplierId"]');
+                            supplierSelect.value = product.supplierInfo.id; // Đảm bảo rằng ID này là chính xác
+
+                            // Gán giá trị cho trạng thái
+                            var statusSelect = form.querySelector('select[name="status"]');
+                            statusSelect.value = product.status || ''; // Đảm bảo trạng thái được gán đúng
+                        })
+                        .catch(error => console.error('Error fetching product details:', error));
+            });
         </script>
 
     </body><!-- comment -->
