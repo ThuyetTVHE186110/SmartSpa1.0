@@ -885,4 +885,22 @@ public class PersonDAO extends DBContext {
         return count;
     }
 
+    // Method to update client-specific information
+    public boolean updateClient(Person person) throws SQLException {
+        String sql = "UPDATE Person SET name = ?, phone = ?, address = ?, email = ?, dateOfBirth = ?, gender = ?, tier = ? WHERE id = ?";
+        try (Connection conn = getConnection(); PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, person.getName());
+            ps.setString(2, person.getPhone());
+            ps.setString(3, person.getAddress());
+            ps.setString(4, person.getEmail());
+            ps.setDate(5, person.getDateOfBirth());
+            ps.setString(6, String.valueOf(person.getGender()));
+            ps.setString(7, person.getTier());
+            ps.setInt(8, person.getId());
+
+            return ps.executeUpdate() > 0;
+        }
+    }
+
 }
