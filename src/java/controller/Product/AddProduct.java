@@ -33,7 +33,7 @@ public class AddProduct extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-       ProductDAO productDAO = new ProductDAO();
+        ProductDAO productDAO = new ProductDAO();
         List<Supplier> suppliers = productDAO.getAllSuppliers();
         List<Category> categories = productDAO.getAllCategories();
         request.setAttribute("suppliers", suppliers);
@@ -64,30 +64,16 @@ public class AddProduct extends HttpServlet {
 
         // Kiểm tra và chuyển đổi các tham số, nếu có giá trị
         try {
-            String priceParam = request.getParameter("price");
-            if (priceParam != null) {
-                price = Integer.parseInt(priceParam);
-            }
+            price = Integer.parseInt(request.getParameter("price"));
+            quantity = Integer.parseInt(request.getParameter("quantity"));
+            categoryId = Integer.parseInt(request.getParameter("categoryId"));
+            supplierId = Integer.parseInt(request.getParameter("supplierId"));
 
-            String quantityParam = request.getParameter("quantity");
-            if (quantityParam != null) {
-                quantity = Integer.parseInt(quantityParam);
+            if (price < 0 || quantity < 0) {
+                throw new NumberFormatException("Price and quantity must be positive");
             }
-
-            String categoryIdParam = request.getParameter("categoryId");
-            if (categoryIdParam != null) {
-                categoryId = Integer.parseInt(categoryIdParam);
-            }
-
-            String supplierIdParam = request.getParameter("supplierId");
-            if (supplierIdParam != null) {
-                supplierId = Integer.parseInt(supplierIdParam);
-            }
-
-           
         } catch (NumberFormatException e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid number format");
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid input for price, quantity, category or supplier.");
             return;
         }
 
@@ -118,23 +104,26 @@ public class AddProduct extends HttpServlet {
         String ingredient = request.getParameter("ingredient");
         String howToUse = request.getParameter("howToUse");
         String benefit = request.getParameter("benefit");
-        // Tạo đối tượng ProductDAO và gọi phương thức addProduct
+        // Validate required fields
+        if (name == null || name.isEmpty() || description == null || description.isEmpty()
+                || branchName == null || branchName.isEmpty() || ingredient == null || ingredient.length() < 3
+                || howToUse == null || howToUse.length() < 3 || benefit == null || benefit.length() < 3) {
+            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Please fill all required fields with valid data.");
+            return;
+        }
         ProductDAO productDAO = new ProductDAO();
-        System.out.println(name);
-        System.out.println(description);
-        System.out.println(price);
-        System.out.println(quantity);
-        System.out.println(image);
-        System.out.println(categoryId);
-        System.out.println(supplierId);
-        System.out.println(branchName);
-        productDAO.addProduct(name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
+        if (productDAO.isProductNameExists(name)) {
+            response.sendRedirect("productlist?message=Product name already exists. Please choose a different name.");
+            return;
+        }
 
-
-        // Chuyển hướng đến danh sách sản phẩm
-        response.sendRedirect("productlist");
-
-
+        // Add the product to the database and handle the exception
+        try {
+            productDAO.addProduct(name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
+            response.sendRedirect("productlist?message=Product added successfully");
+        } catch (Exception e) {
+            response.sendRedirect("productlist?message=Failed to add product: " + e.getMessage());
+        }
     }
 
     @Override
