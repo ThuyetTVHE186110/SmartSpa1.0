@@ -77,10 +77,10 @@ public class SaveSurveyServlet extends HttpServlet {
         String budgetRange = request.getParameter("budgetRange");
         ServiceDAO serviceDAO = new ServiceDAO();
 
-        List<Service> recommendedServices = serviceDAO.getRecommendedServices(skinType, budgetRange);
-
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-        response.getWriter().write(new Gson().toJson(recommendedServices));
+//        List<Service> recommendedServices = serviceDAO.getRecommendedServices(skinType, budgetRange);
+//
+//        response.setContentType("application/json");
+//        response.setCharacterEncoding("UTF-8");
+//        response.getWriter().write(new Gson().toJson(recommendedServices));
     }
 }
