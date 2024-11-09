@@ -20,13 +20,13 @@ public class ClientManagement extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("../adminLogin");
+            response.sendRedirect("adminLogin");
             return;
         }
 
         Account account = (Account) session.getAttribute("account");
         if (account.getRole() != 3) {  // Assuming roleID = 3 is for staff
-            response.sendRedirect("../adminLogin");
+            response.sendRedirect("adminLogin");
             return;
         }
 

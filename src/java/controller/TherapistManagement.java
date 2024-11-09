@@ -11,6 +11,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
+import model.Account;
 import model.Appointment;
 import model.Person;
 
@@ -21,6 +23,18 @@ public class TherapistManagement extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("account") == null) {
+            response.sendRedirect("adminLogin");
+            return;
+        }
+
+        Account account = (Account) session.getAttribute("account");
+        if (account.getRole() != 3) {  // Assuming roleID = 3 is for staff
+            response.sendRedirect("adminLogin");
+            return;
+        }
+        
         int page = 1;
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
