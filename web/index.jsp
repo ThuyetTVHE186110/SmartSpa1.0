@@ -33,71 +33,13 @@
                                 <div class="survey-content" data-aos="fade-up">
                                     <h2>Welcome to Smart Beauty Spa! 🌟</h2>
                                     <p>Help us customize your beauty journey by answering a few questions.</p>
-
-                                    <form id="beautySurvey" method="POST">
-                                        <div class="survey-section">
-                                            <label for="skinType">What's your skin type?</label>
-                                            <select name="skinType" required>
-                                                <option value="">Select your skin type</option>
-                                                <option value="normal">Normal</option>
-                                                <option value="dry">Dry</option>
-                                                <option value="oily">Oily</option>
-                                                <option value="combination">Combination</option>
-                                                <option value="sensitive">Sensitive</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="survey-section">
-                                            <label>What are your skin concerns? (Select all that apply)</label>
-                                            <div class="checkbox-group">
-                                                <label><input type="checkbox" name="skinConcerns" value="acne">
-                                                    Acne</label>
-                                                <label><input type="checkbox" name="skinConcerns" value="aging">
-                                                    Anti-aging</label>
-                                                <label><input type="checkbox" name="skinConcerns" value="darkSpots">
-                                                    Dark spots</label>
-                                                <label><input type="checkbox" name="skinConcerns" value="dullness">
-                                                    Dullness</label>
-                                                <label><input type="checkbox" name="skinConcerns" value="dryness">
-                                                    Dryness</label>
-                                                <label><input type="checkbox" name="skinConcerns" value="sensitivity">
-                                                    Sensitivity</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="survey-section">
-                                            <label>What are your beauty goals?</label>
-                                            <div class="checkbox-group">
-                                                <label><input type="checkbox" name="beautyGoals" value="natural">
-                                                    Natural enhancement</label>
-                                                <label><input type="checkbox" name="beautyGoals" value="dramatic">
-                                                    Dramatic transformation</label>
-                                                <label><input type="checkbox" name="beautyGoals" value="maintenance">
-                                                    Regular maintenance</label>
-                                                <label><input type="checkbox" name="beautyGoals" value="antiAging">
-                                                    Anti-aging</label>
-                                                <label><input type="checkbox" name="beautyGoals" value="skinHealth">
-                                                    Skin health</label>
-                                            </div>
-                                        </div>
-
-                                        <div class="survey-section">
-                                            <label for="budgetRange">What's your preferred budget range for
-                                                treatments?</label>
-                                            <select name="budgetRange" required>
-                                                <option value="">Select budget range</option>
-                                                <option value="budget">$50-$100</option>
-                                                <option value="moderate">$100-$300</option>
-                                                <option value="premium">$300+</option>
-                                            </select>
-                                        </div>
-
-                                        <div class="survey-actions">
-                                            <button type="submit" class="submit-survey">Complete Survey</button>
-                                            <button type="button" class="skip-survey" onclick="closeSurvey()">Skip for
-                                                Now</button>
-                                        </div>
-                                    </form>
+                                    <div class="survey-actions">
+                                        <button class="submit-survey"><a style="text-decoration: none; color: white;"
+                                                href="survey.jsp">Take
+                                                Survey</a></button>
+                                        <button type="button" class="skip-survey" onclick="closeSurvey()">Skip for
+                                            Now</button>
+                                    </div>
                                 </div>
                             </div>
                         </c:if>

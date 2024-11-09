@@ -402,7 +402,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StaffServiceServlet</servlet-name>
-        <url-pattern>/staff-services</url-pattern>
+        <url-pattern>/Frontend_Staff/staff-services</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StaffDashboardServlet</servlet-name>

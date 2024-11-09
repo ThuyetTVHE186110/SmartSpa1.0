@@ -4,12 +4,10 @@
  */
 package controller;
 
-import com.google.gson.Gson;
-import dal.ServiceDAO;
-import dal.SurveyDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -19,68 +17,91 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import model.Account;
-import model.Service;
+import model.RecommendationResult;
 import model.Survey;
+import service.SurveyService;
+import service.ValidationException;
+import model.RecommendationResult;
 
 /**
  *
  * @author Asus
  */
+@WebServlet(name = "SaveSurveyServlet", urlPatterns = {"/SaveSurvey"})
 public class SaveSurveyServlet extends HttpServlet {
-
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("application/json");
-        Map<String, Object> jsonResponse = new HashMap<>();
-
-        try {
-            // Get the user ID from session if logged in
-            Integer userId = null;
-            if (request.getSession().getAttribute("user") != null) {
-                userId = ((Account) request.getSession().getAttribute("user")).getPersonInfo().getId();
-            }
-
-            // Create Survey object from request parameters
-            Survey survey = new Survey();
-            survey.setUserId(userId);
-            survey.setSkinType(request.getParameter("skinType"));
-            survey.setSkinConcerns(String.join(",", request.getParameterValues("skinConcerns")));
-            survey.setBeautyGoals(String.join(",", request.getParameterValues("beautyGoals")));
-            survey.setBudgetRange(request.getParameter("budgetRange"));
-
-            // Save survey using DAO
-            SurveyDAO surveyDAO = new SurveyDAO();
-            boolean saved = surveyDAO.saveSurvey(survey);
-
-            if (saved && userId != null) {
-                // Get recommendations
-                List<String> recommendations = surveyDAO.getRecommendedServices(userId);
-                jsonResponse.put("recommendations", recommendations);
-            }
-
-            jsonResponse.put("success", saved);
-            jsonResponse.put("message", saved ? "Survey saved successfully" : "Error saving survey");
-
-        } catch (Exception e) {
-            jsonResponse.put("success", false);
-            jsonResponse.put("message", "Error: " + e.getMessage());
-        }
-
-        String json = new Gson().toJson(jsonResponse);
-        response.getWriter().write(json);
+    private final SurveyService surveyService;
+    
+    public SaveSurveyServlet() {
+        this.surveyService = new SurveyService();
     }
-
+    
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String skinType = request.getParameter("skinType");
-        String budgetRange = request.getParameter("budgetRange");
-        ServiceDAO serviceDAO = new ServiceDAO();
-
-//        List<Service> recommendedServices = serviceDAO.getRecommendedServices(skinType, budgetRange);
-//
-//        response.setContentType("application/json");
-//        response.setCharacterEncoding("UTF-8");
-//        response.getWriter().write(new Gson().toJson(recommendedServices));
+        try {
+            // Create survey object from request
+            Survey survey = createSurveyFromRequest(request);
+            
+            // Process survey and get recommendations
+            RecommendationResult result = surveyService.processSurvey(survey);
+            
+            // Store recommendations in session
+            request.setAttribute("recommendations", result.getRecommendations());
+            
+            // Forward back to survey page with recommendations
+            request.getRequestDispatcher("survey.jsp").forward(request, response);
+            
+        } catch (ValidationException ve) {
+            request.setAttribute("errorMessage", "Validation error: " + ve.getMessage());
+            request.getRequestDispatcher("survey.jsp").forward(request, response);
+        } catch (Exception e) {
+            request.setAttribute("errorMessage", "Server error: " + e.getMessage());
+            request.getRequestDispatcher("survey.jsp").forward(request, response);
+        }
+    }
+    
+    private Survey createSurveyFromRequest(HttpServletRequest request) {
+        Survey survey = new Survey();
+        
+        try {
+            // Get the user ID from session if logged in
+            if (request.getSession().getAttribute("user") != null) {
+                Account user = (Account) request.getSession().getAttribute("user");
+                survey.setUserId(user.getPersonInfo().getId());
+            }
+            
+            String skinType = request.getParameter("skinType");
+            String[] skinConcerns = request.getParameterValues("skinConcerns");
+            String budgetRange = request.getParameter("budgetRange");
+            
+            // Validate required fields
+            if (skinType == null || skinType.isEmpty()) {
+                throw new ValidationException("Please select your skin type");
+            }
+            
+            if (skinConcerns == null || skinConcerns.length == 0) {
+                throw new ValidationException("Please select at least one skin concern");
+            }
+            
+            if (budgetRange == null || budgetRange.isEmpty()) {
+                throw new ValidationException("Please select your budget range");
+            }
+            
+            System.out.println("Form data received:");
+            System.out.println("skinType: " + skinType);
+            System.out.println("skinConcerns: " + (skinConcerns != null ? String.join(",", skinConcerns) : "null"));
+            System.out.println("budgetRange: " + budgetRange);
+            
+            survey.setSkinType(skinType);
+            survey.setSkinConcerns(String.join(",", skinConcerns));
+            survey.setBudgetRange(budgetRange);
+            
+        } catch (Exception e) {
+            System.out.println("Error creating survey: " + e.getMessage());
+            e.printStackTrace();
+            throw new ValidationException(e.getMessage());
+        }
+        
+        return survey;
     }
 }
