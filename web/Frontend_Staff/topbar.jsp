@@ -94,13 +94,17 @@
             %>
 
             <div class="user-menu">
-                <img src="<%= avatarUrl%>" alt="User Avatar" class="user-avatar">
+                 <img src="<%= (person != null && person.getImage() != null && !person.getImage().isEmpty())
+                        ? " img/" + person.getImage() : "img/default-avartar.jpg"%>" alt="Profile
+                 Picture" class="rounded-circle" style="width: 20px; height:
+                 20px; object-fit: cover;">
                 <span class="user-name"><%= displayName%></span>
                 <i class="fas fa-chevron-down dropdown-icon"></i>
 
                 <div class="dropdown-content">
-                    <a href="/update-profile">Update Profile</a>
-                    <a href="../LogoutServlet" class="book-now-btn nav-item nav-link">Logout</a>
+                    <a href="staffProfile">View Profile</a>
+                    <a href="userProfile">Update Profile</a>
+                    <a href="LogoutServlet" class="book-now-btn nav-item nav-link">Logout</a>
                 </div>
             </div>
 

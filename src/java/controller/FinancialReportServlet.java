@@ -39,12 +39,6 @@ public class FinancialReportServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         
-        // Check if user is logged in and is manager
-        Account account = (Account) request.getSession().getAttribute("account");
-        if (account == null || account.getRole() != 1) {
-            response.sendRedirect("login");
-            return;
-        }
         
         try {
             // Get parameters with default values
