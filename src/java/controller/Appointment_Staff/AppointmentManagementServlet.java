@@ -2,24 +2,21 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-// This is a personal academic project. Dear PVS-Studio, please check it.
-// PVS-Studio Static Code Analyzer for C, C++, C#, and Java: https://pvs-studio.com
-package controller;
+package controller.Appointment_Staff;
 
 import dal.AppointmentDAO;
 import dal.AppointmentServiceDAO;
 import dal.PersonDAO;
 import dal.ServiceDAO;
 import java.io.IOException;
+import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.sql.SQLException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.Month;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,12 +29,38 @@ import model.Person;
 import model.Service;
 
 /**
- * Appointment Management Servlet
  *
  * @author ADMIN
  */
 public class AppointmentManagementServlet extends HttpServlet {
 
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.setContentType("text/html;charset=UTF-8");
+        try (PrintWriter out = response.getWriter()) {
+            /* TODO output your page here. You may use following sample code. */
+            out.println("<!DOCTYPE html>");
+            out.println("<html>");
+            out.println("<head>");
+            out.println("<title>Servlet AppointmentManagementServlet</title>");
+            out.println("</head>");
+            out.println("<body>");
+            out.println("<h1>Servlet AppointmentManagementServlet at " + request.getContextPath() + "</h1>");
+            out.println("</body>");
+            out.println("</html>");
+        }
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -71,15 +94,20 @@ public class AppointmentManagementServlet extends HttpServlet {
                     appointmentServicesMap.put(appointmentId, services);
                 }
             }
+            List<Person> customerList = customerList();
+            request.setAttribute("customerList", customerList);
+            List<Appointment> upcoming = upcoming();
+            request.setAttribute("upcoming", upcoming);
             PersonDAO personDAO = new PersonDAO();
             List<Person> staffList = personDAO.getPersonByRole("staff");
             request.setAttribute("searchDate", LocalDate.now());
             request.setAttribute("staffList", staffList);
             request.setAttribute("serviceList", serviceList);
             request.setAttribute("appointmentServicesMap", appointmentServicesMap);
-            request.getRequestDispatcher("appointment-management.jsp").forward(request, response);
+            request.getRequestDispatcher("Frontend_Staff\\appointments.jsp").forward(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
+            response.sendRedirect("error");
         }
     }
 
@@ -95,6 +123,8 @@ public class AppointmentManagementServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
+            List<Appointment> upcoming = upcoming();
+            
             PersonDAO personDAO = new PersonDAO();
             AppointmentDAO appointmentDAO = new AppointmentDAO();
             String action = request.getParameter("action");
@@ -145,6 +175,11 @@ public class AppointmentManagementServlet extends HttpServlet {
                     appointments = appointmentDAO.getByDate(tomorrow);
                     request.setAttribute("searchDate", tomorrow);
                     break;
+                case "this-week":
+                    LocalDate week = LocalDate.now();
+                    appointments = appointmentDAO.getByThisWeek(week);
+                    request.setAttribute("searchDate", week);
+                    break;
                 case "searchDate":
                     String searchDateTemp = request.getParameter("searchDate");
                     if (!searchDateTemp.isBlank()) {
@@ -155,7 +190,7 @@ public class AppointmentManagementServlet extends HttpServlet {
                     break;
                 case "chooseStaff":
                     String selectedStaff = request.getParameter("selectedStaff");
-                    if ("all-staff".equals(selectedStaff)){
+                    if ("all-staff".equals(selectedStaff)) {
                         appointments = appointmentDAO.getAll();
                         request.setAttribute("selectedStaff", selectedStaff);
                     } else {
@@ -178,13 +213,16 @@ public class AppointmentManagementServlet extends HttpServlet {
                     appointmentServicesMap.put(appointmentId, services);
                 }
             }
+            List<Person> customerList = customerList();
+            request.setAttribute("customerList", customerList);
+            request.setAttribute("upcoming", upcoming);
             request.setAttribute("serviceList", serviceList);
             request.setAttribute("appointmentServicesMap", appointmentServicesMap);
-            request.getRequestDispatcher("appointment-management.jsp").forward(request, response);
+            request.getRequestDispatcher("Frontend_Staff\\appointments.jsp").forward(request, response);
         } catch (SQLException ex) {
-            Logger.getLogger(AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(controller.AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (DateTimeParseException e) {
-            Logger.getLogger(AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, e);
+            Logger.getLogger(controller.AppointmentManagementServlet.class.getName()).log(Level.SEVERE, null, e);
             doGet(request, response);
         }
     }
@@ -198,5 +236,13 @@ public class AppointmentManagementServlet extends HttpServlet {
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
+    private final AppointmentDAO appointmentDAO = new AppointmentDAO();
+    private List<Appointment> upcoming(){
+        return appointmentDAO.getCommingToday();
+    }
+    private final PersonDAO personDAO = new PersonDAO();
+    private List<Person> customerList(){
+        return  personDAO.getPersonByRole("Customer");
+    }
 
 }

@@ -3,29 +3,23 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
 
-package controller.Inventory;
+package controller.Room;
 
-import dal.InventoryDAO;
-import jakarta.servlet.RequestDispatcher;
+import dal.RoomDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.List;
-import model.Category;
-import model.Inventory;
-import model.Material;
-import model.Product;
+import model.Room;
 
 /**
  *
- * @author hotdo
+ * @author ADMIN
  */
-@WebServlet(name="InventoryServlet", urlPatterns={"/inventoryservlet"})
-public class InventoryServlet extends HttpServlet {
+public class RoomManagement extends HttpServlet {
    
     /** 
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -42,15 +36,16 @@ public class InventoryServlet extends HttpServlet {
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
-            out.println("<title>Servlet InventoryServlet</title>");  
+            out.println("<title>Servlet RoomManagement</title>");  
             out.println("</head>");
             out.println("<body>");
-            out.println("<h1>Servlet InventoryServlet at " + request.getContextPath () + "</h1>");
+            out.println("<h1>Servlet RoomManagement at " + request.getContextPath () + "</h1>");
             out.println("</body>");
             out.println("</html>");
         }
     } 
-
+    private static final RoomDAO roomDAO = new RoomDAO();
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /** 
      * Handles the HTTP <code>GET</code> method.
@@ -59,38 +54,13 @@ public class InventoryServlet extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-   @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-    InventoryDAO inventoryDAO = new InventoryDAO();
-    
-    // Lấy tham số categoryID từ yêu cầu
-    String categoryIdParam = request.getParameter("categoryID");
-    List<Product> products;
-    
-    if (categoryIdParam != null && !categoryIdParam.isEmpty()) {
-        // Nếu có categoryID, chuyển sang kiểu số và lấy danh sách sản phẩm theo danh mục
-        int categoryId = Integer.parseInt(categoryIdParam);
-        products = inventoryDAO.getProductsByCategory(categoryId);
-    } else {
-        // Nếu không có categoryID, lấy tất cả sản phẩm
-        products = inventoryDAO.getAllProducts();
-    }
-
-    // Lấy danh mục sản phẩm và danh mục vật liệu
-    List<Category> productCategories = inventoryDAO.getProductCategories();
-    List<Material> materialCategories = inventoryDAO.getMaterialCategories();
-    
-    // Set các thuộc tính cho JSP
-    request.setAttribute("products", products);
-    request.setAttribute("productCategories", productCategories);
-    request.setAttribute("materialCategories", materialCategories);
-    
-    // Chuyển tiếp tới trang JSP hiển thị
-    RequestDispatcher dispatcher = request.getRequestDispatcher("Frontend_Staff/inventory.jsp");
-    dispatcher.forward(request, response);
-}
-
+        List<Room> roomList = roomDAO.findAllRooms();
+        request.setAttribute("roomList", roomList);
+        request.getRequestDispatcher("Frontend_Staff/rooms.jsp").forward(request, response);
+    } 
 
     /** 
      * Handles the HTTP <code>POST</code> method.
@@ -113,5 +83,8 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response)
     public String getServletInfo() {
         return "Short description";
     }// </editor-fold>
-
+    public static void main(String[] args) {
+        List<Room> roomList = roomDAO.findAllRooms();
+        System.out.println(roomList.get(0).getId());
+    }
 }

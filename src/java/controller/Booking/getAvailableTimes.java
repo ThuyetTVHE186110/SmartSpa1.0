@@ -90,15 +90,14 @@ public class GetAvailableTimes extends HttpServlet {
             List<TimeSlot> busyTimes = appointmentDAO.getBusyTimes(staffId, date);
 
             // Định nghĩa giờ mở cửa và đóng cửa
-            LocalTime openingTime = LocalTime.of(10, 0);
-            LocalTime nowTime = LocalTime.now();
-            if (nowTime.isAfter(openingTime)) {
-                openingTime = nowTime;
-            }
+            LocalTime openingTime = LocalTime.of(9, 0);
             LocalTime closingTime = LocalTime.of(18, 0);
 
             // Tính toán các khung giờ trống dựa trên tổng thời gian dịch vụ
-            if (date.isEqual(today) || date.isAfter(today)) {
+            if (date.isEqual(today)) {
+                openingTime = openingTime();
+                availableTimes = calculateAvailableSlots(totalDuration, openingTime, closingTime, busyTimes);
+            } else if(date.isAfter(today)) {
                 availableTimes = calculateAvailableSlots(totalDuration, openingTime, closingTime, busyTimes);
             }
 
@@ -158,6 +157,30 @@ public class GetAvailableTimes extends HttpServlet {
         }
 
         return availableSlots;
+    }
+
+    private LocalTime openingTime() {
+        LocalTime openingTime = LocalTime.of(10, 0);
+        LocalTime closingTime = LocalTime.of(18, 0);
+        LocalTime nowTime = LocalTime.of(LocalTime.now().getHour(), LocalTime.now().getMinute());
+        List<LocalTime> timeList = timeList(openingTime, closingTime);
+        for (LocalTime localTime : timeList) {
+            if (nowTime.equals(localTime) || nowTime.isBefore(localTime)) {
+                openingTime = localTime;
+                return openingTime;
+            }
+        }
+        return openingTime;
+    }
+
+    private List<LocalTime> timeList(LocalTime opening, LocalTime closing) {
+        List<LocalTime> timeList = new ArrayList<>();
+        LocalTime time = opening;
+        while (time.isBefore(closing) || time.equals(closing)) {
+            timeList.add(time);
+            time = time.plusMinutes(30);
+        }
+        return timeList;
     }
 
 }

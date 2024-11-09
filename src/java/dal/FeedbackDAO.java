@@ -21,7 +21,7 @@ public class FeedbackDAO extends DBContext {
     public ArrayList<Feedback> getAllFeedback() {
         ArrayList<Feedback> feedbackList = new ArrayList<>();
         try {
-            String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.name AS serviceName, f.StarRating "
+            String sql = "SELECT f.ID, f.Content, p.Name AS customerName, s.name AS serviceName, f.StarRating, f.responseFeedback "
                     + "FROM Feedback f "
                     + "JOIN Person p ON f.CustomerID = p.ID "
                     + "JOIN Services s ON f.ServicesID = s.ID";
@@ -43,7 +43,7 @@ public class FeedbackDAO extends DBContext {
                 fb.setService(service);
                 
                 fb.setStarRating(rs.getInt("StarRating"));
-                
+                fb.setResponseFeedback(rs.getString("responseFeedback"));
                 feedbackList.add(fb);
             }
         } catch (SQLException e) {
@@ -164,6 +164,22 @@ public class FeedbackDAO extends DBContext {
             System.out.println(e);
         }
     }
+     public void updateResponseFeedbackByID(String feedbackId, String responseFeedback) {
+        try {
+            String sql = "UPDATE [dbo].[Feedback]\n"
+                    + "SET \n"
+                    + "    [responseFeedback] = ?\n"
+                    + "WHERE \n"
+                    + "    [ID] = ?;";
+            PreparedStatement statement = DBContext.getConnection().prepareStatement(sql);
+
+            statement.setString(1,responseFeedback);
+            statement.setString(2, feedbackId);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+    }
 
     public boolean createFeedback(int customerId, String content, int serviceId) {
         boolean isAdded = false;
@@ -184,12 +200,14 @@ public class FeedbackDAO extends DBContext {
     
     public static void main(String args[]) {
         FeedbackDAO feedbackDAO = new FeedbackDAO();
-        ArrayList<Feedback> f = feedbackDAO.getAllFeedback();
-        for (Feedback feedback : f) {
-            System.out.println(feedback.getStarRating());
-        }
+//        ArrayList<Feedback> f = feedbackDAO.getAllFeedback();
+//        for (Feedback feedback : f) {
+//            System.out.println(feedback);
+//        }
+feedbackDAO.updateResponseFeedbackByID("2", "oke");
     }
 
+    
 //    public void readFeedback(int id){
 //        try {
 //            String sql = "SELECT * FROM Feedback WHERE ID = ?";

@@ -55,7 +55,7 @@
     </servlet>
     <servlet>
         <servlet-name>VerifyRegistrationOtpServlet</servlet-name>
-        <servlet-class>controller.VerifyRegistrationOtpServlet</servlet-class>
+        <servlet-class>controller.Authentication.VerifyRegistrationOtpServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>SelectStaffServlet</servlet-name>
@@ -91,7 +91,7 @@
     </servlet>
     <servlet>
         <servlet-name>BookingServlet</servlet-name>
-        <servlet-class>controller.BookingServlet</servlet-class>
+        <servlet-class>controller.Booking.BookingServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>CustomerProfileServlet</servlet-name>
@@ -178,6 +178,14 @@
         <servlet-class>controller.CustomerClassificationServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>AppointmentStaffServlet</servlet-name>
+        <servlet-class>controller.Appointment_Staff.AppointmentManagementServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RoomManagement</servlet-name>
+        <servlet-class>controller.Room.RoomManagement</servlet-class>
+    </servlet>
+    <servlet>    
         <servlet-name>ClientManagement</servlet-name>
         <servlet-class>controller.ClientManagement</servlet-class>
     </servlet>
@@ -370,6 +378,14 @@
         <url-pattern>/customerClassification</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>AppointmentStaffServlet</servlet-name>
+        <url-pattern>/appointment-staff</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RoomManagement</servlet-name>
+        <url-pattern>/room-management</url-pattern>
+    </servlet-mapping>    
+    <servlet-mapping>    
         <servlet-name>ClientManagement</servlet-name>
         <url-pattern>/Frontend_Staff/clientManagement</url-pattern>
     </servlet-mapping>

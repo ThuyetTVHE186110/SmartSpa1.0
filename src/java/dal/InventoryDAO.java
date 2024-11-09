@@ -168,4 +168,28 @@ public class InventoryDAO extends DBContext {
         }
     }
 
+   public List<Product> getProductsByCategory(int categoryId) {
+    List<Product> products = new ArrayList<>();
+    String sql = "SELECT * FROM Product WHERE CategoryID = ?";
+    
+           try (Connection connection = getConnection(); PreparedStatement pstmt = connection.prepareStatement(sql)) {
+
+        pstmt.setInt(1, categoryId);
+        ResultSet rs = pstmt.executeQuery();
+        
+        while (rs.next()) {
+            Product product = new Product();
+            product.setId(rs.getInt("ID"));
+            product.setName(rs.getString("Name"));
+            product.setPrice(rs.getInt("Price"));
+            product.setQuantity(rs.getInt("Quantity"));
+            // Thiết lập các thuộc tính khác của Product từ ResultSet
+            products.add(product);
+        }
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return products;
+}
+
 }

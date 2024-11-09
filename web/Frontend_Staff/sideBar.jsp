@@ -42,7 +42,7 @@
                 </a>
             </li>
             <li>
-                <a href="inventory.jsp">
+                <a href="../inventoryservlet">
                     <i class="fas fa-pump-soap"></i>
                     <span>Inventory</span>
                 </a>
