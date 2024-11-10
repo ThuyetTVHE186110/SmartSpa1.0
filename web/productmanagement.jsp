@@ -323,22 +323,22 @@
                                 <input type="number" class="form-control" id="quantity" name="quantity" value="" required min="1">
                             </div>
                             <div class="mb-3">
-    <label for="file" class="form-label">Image</label>
-    <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png" onchange="previewImage(event)">
-    
-    <!-- Ảnh hiện tại (nếu có) -->
-    <input type="hidden" name="currentImage" value="${product.image}"> <!-- Lưu đường dẫn ảnh hiện tại -->
-    <div class="form-text">
-        Current image: 
-        <img src="${pageContext.request.contextPath}/${product.image}" alt="Current Image" width="50"><br>
-        Leave empty to keep the current image.
-    </div>
+                                <label for="file" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png" onchange="previewImage(event)">
 
-    <!-- Xem trước ảnh mới (sẽ hiển thị khi người dùng chọn tệp mới) -->
-    <div>
-        <img id="imagePreview" src="#" alt="New Image Preview" style="display:none; width: 150px; height: auto; margin-top: 10px;" />
-    </div>
-</div>
+                                <!-- Ảnh hiện tại (nếu có) -->
+                                <input type="hidden" name="currentImage" value="${product.image}"> <!-- Lưu đường dẫn ảnh hiện tại -->
+                                <div class="form-text">
+                                    Current image: 
+                                    <img src="${pageContext.request.contextPath}/${product.image}" alt="Current Image" width="50"><br>
+                                    Leave empty to keep the current image.
+                                </div>
+
+                                <!-- Xem trước ảnh mới (sẽ hiển thị khi người dùng chọn tệp mới) -->
+                                <div>
+                                    <img id="imagePreview" src="#" alt="New Image Preview" style="display:none; width: 150px; height: auto; margin-top: 10px;" />
+                                </div>
+                            </div>
 
 
                             <div class="col-md-6">
@@ -399,72 +399,72 @@
         </div><!-- End Edit Product Modal-->
         <script>
 
-           function previewImage(event) {
-    var file = event.target.files[0];
-    var reader = new FileReader();
-    reader.onload = function () {
-        var imagePreview = document.getElementById('imagePreview');
-        imagePreview.style.display = 'block';  // Hiển thị ảnh xem trước
-        imagePreview.src = reader.result;  // Cập nhật đường dẫn ảnh xem trước
-    };
-    if (file) {
-        reader.readAsDataURL(file);  // Đọc tệp dưới dạng Data URL
-    }
-}
+            function previewImage(event) {
+                var file = event.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var imagePreview = document.getElementById('imagePreview');
+                    imagePreview.style.display = 'block';  // Hiển thị ảnh xem trước
+                    imagePreview.src = reader.result;  // Cập nhật đường dẫn ảnh xem trước
+                };
+                if (file) {
+                    reader.readAsDataURL(file);  // Đọc tệp dưới dạng Data URL
+                }
+            }
 
 // Hàm kiểm tra kích thước tệp trước khi gửi
-function validateForm() {
-    const fileInput = document.getElementById("file");
-    const fileSize = fileInput.files[0]?.size;
-    if (fileSize > 5 * 1024 * 1024) { // Giới hạn 5MB
-        alert("Maximum file size is 5MB.");
-        return false;
-    }
-    return true;
-}
+            function validateForm() {
+                const fileInput = document.getElementById("file");
+                const fileSize = fileInput.files[0]?.size;
+                if (fileSize > 5 * 1024 * 1024) { // Giới hạn 5MB
+                    alert("Maximum file size is 5MB.");
+                    return false;
+                }
+                return true;
+            }
 
 // Khi trang tải xong, hiển thị ảnh hiện tại nếu có
-window.onload = function() {
-    const currentImagePath = "${product.image}"; // Lấy đường dẫn ảnh hiện tại
+            window.onload = function () {
+                const currentImagePath = "${product.image}"; // Lấy đường dẫn ảnh hiện tại
 
-    if (currentImagePath && currentImagePath !== "null" && currentImagePath !== "") {
-        var imagePreview = document.getElementById('imagePreview');
-        imagePreview.style.display = 'block'; // Hiển thị ảnh
-        imagePreview.src = "${pageContext.request.contextPath}/${product.image}"; // Cập nhật đường dẫn ảnh hiện tại
-    }
-};
+                if (currentImagePath && currentImagePath !== "null" && currentImagePath !== "") {
+                    var imagePreview = document.getElementById('imagePreview');
+                    imagePreview.style.display = 'block'; // Hiển thị ảnh
+                    imagePreview.src = "${pageContext.request.contextPath}/${product.image}"; // Cập nhật đường dẫn ảnh hiện tại
+                            }
+                        };
 
-            var editProductModal = document.getElementById('editProductModal');
-            editProductModal.addEventListener('show.bs.modal', function (event) {
-                var button = event.relatedTarget;
-                var productId = button.getAttribute('data-id');
+                        var editProductModal = document.getElementById('editProductModal');
+                        editProductModal.addEventListener('show.bs.modal', function (event) {
+                            var button = event.relatedTarget;
+                            var productId = button.getAttribute('data-id');
 
-                fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
-                        .then(response => response.json())
-                        .then(product => {
-                            var form = editProductModal.querySelector('form');
-                            form.action = form.action.split('?')[0] + "?id=" + productId;
+                            fetch('${pageContext.request.contextPath}/productinformation?id=' + productId)
+                                    .then(response => response.json())
+                                    .then(product => {
+                                        var form = editProductModal.querySelector('form');
+                                        form.action = form.action.split('?')[0] + "?id=" + productId;
 
-                            form.querySelector('input[name="id"]').value = product.id || '';
-                            form.querySelector('input[name="name"]').value = product.name || '';
-                            form.querySelector('textarea[name="description"]').value = product.description || '';
-                            form.querySelector('input[name="price"]').value = product.price || '';
-                            form.querySelector('input[name="quantity"]').value = product.quantity || '';
-                            form.querySelector('input[name="branchName"]').value = product.branchName || '';
-                            form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
-                            form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
-                            form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
+                                        form.querySelector('input[name="id"]').value = product.id || '';
+                                        form.querySelector('input[name="name"]').value = product.name || '';
+                                        form.querySelector('textarea[name="description"]').value = product.description || '';
+                                        form.querySelector('input[name="price"]').value = product.price || '';
+                                        form.querySelector('input[name="quantity"]').value = product.quantity || '';
+                                        form.querySelector('input[name="branchName"]').value = product.branchName || '';
+                                        form.querySelector('textarea[name="ingredient"]').value = product.ingredient || '';
+                                        form.querySelector('textarea[name="howToUse"]').value = product.howToUse || '';
+                                        form.querySelector('textarea[name="benefit"]').value = product.benefit || '';
 
-                            // Gán giá trị cho nhà cung cấp
-                            var supplierSelect = form.querySelector('select[name="supplierId"]');
-                            supplierSelect.value = product.supplierInfo.id; // Đảm bảo rằng ID này là chính xác
+                                        // Gán giá trị cho nhà cung cấp
+                                        var supplierSelect = form.querySelector('select[name="supplierId"]');
+                                        supplierSelect.value = product.supplierInfo.id; // Đảm bảo rằng ID này là chính xác
 
-                            // Gán giá trị cho trạng thái
-                            var statusSelect = form.querySelector('select[name="status"]');
-                            statusSelect.value = product.status || ''; // Đảm bảo trạng thái được gán đúng
-                        })
-                        .catch(error => console.error('Error fetching product details:', error));
-            });
+                                        // Gán giá trị cho trạng thái
+                                        var statusSelect = form.querySelector('select[name="status"]');
+                                        statusSelect.value = product.status || ''; // Đảm bảo trạng thái được gán đúng
+                                    })
+                                    .catch(error => console.error('Error fetching product details:', error));
+                        });
         </script>
 
     </body><!-- comment -->

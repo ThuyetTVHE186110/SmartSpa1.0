@@ -209,15 +209,14 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="file" class="form-label">Image <span
-                                        class="text-danger">*</span></label>
-                                <input type="file" class="form-control" id="file" name="file" required
-                                       accept=".jpg,.jpeg,.png">
-                                <div class="invalid-feedback">
-                                    Please select an image file (JPG or PNG only).
-                                </div>
+                                <label for="file" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="file" name="file" required accept=".jpg,.png" onchange="previewImage(event)">
                                 <div class="form-text">
-                                    Maximum file size: 5MB
+                                    Please select an image (jpg, png).
+                                </div>
+                                <!-- Preview the selected image -->
+                                <div>
+                                    <img id="imagePreview" src="#" alt="New Image Preview" style="display:none; width: 150px; height: auto; margin-top: 10px;" />
                                 </div>
                             </div>
 
@@ -282,14 +281,20 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="file" class="form-label">Image</label> <!-- Changed id to "file" -->
-                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png">
-                                <div class="invalid-feedback">
-                                    Please select an image file (JPG or PNG only).
-                                </div>
+                                <label for="file" class="form-label">Image</label>
+                                <input type="file" class="form-control" id="file" name="file" accept=".jpg,.jpeg,.png" onchange="previewImage(event)">
+
+                                <!-- Ảnh hiện tại (nếu có) -->
+                                <input type="hidden" name="currentImage" value="${material.image}"> <!-- Lưu đường dẫn ảnh hiện tại -->
                                 <div class="form-text">
-                                    Current image: ${material.image}<br>
-                                    Leave empty to keep current image. Maximum file size: 5MB
+                                    Current image: 
+                                    <img src="${pageContext.request.contextPath}/${material.image}" alt="Current Image" width="50"><br>
+                                    Leave empty to keep the current image.
+                                </div>
+
+                                <!-- Xem trước ảnh mới (sẽ hiển thị khi người dùng chọn tệp mới) -->
+                                <div>
+                                    <img id="imagePreview" src="#" alt="New Image Preview" style="display:none; width: 150px; height: auto; margin-top: 10px;" />
                                 </div>
                             </div>
 
@@ -327,55 +332,52 @@
         </div><!-- End Edit Material Modal-->
 
         <script>
-                                                        function previewImage(event) {
-                                                            const imagePreview = document.getElementById('imagePreview');
-                                                            const file = event.target.files[0];
-                                                            if (file) {
-                                                                const reader = new FileReader();
-                                                                reader.onload = function (e) {
-                                                                    imagePreview.src = e.target.result;
-                                                                    imagePreview.style.display = 'block';
-                                                                };
-                                                                reader.readAsDataURL(file);
-                                                            } else {
-                                                                imagePreview.src = '';
-                                                                imagePreview.style.display = 'none';
-                                                            }
-                                                        }
-                                                        var editMaterialModal = document.getElementById('editMaterialModal');
-editMaterialModal.addEventListener('show.bs.modal', function (event) {
-    var button = event.relatedTarget;
-    var materialId = button.getAttribute('data-id');
+            function previewImage(event) {
+                var file = event.target.files[0];
+                var reader = new FileReader();
+                reader.onload = function () {
+                    var imagePreview = document.getElementById('imagePreview');
+                    imagePreview.style.display = 'block';  // Hiển thị ảnh xem trước
+                    imagePreview.src = reader.result;  // Cập nhật đường dẫn ảnh xem trước
+                };
+                if (file) {
+                    reader.readAsDataURL(file);  // Đọc tệp dưới dạng Data URL
+                }
+            }
+            var editMaterialModal = document.getElementById('editMaterialModal');
+            editMaterialModal.addEventListener('show.bs.modal', function (event) {
+                var button = event.relatedTarget;
+                var materialId = button.getAttribute('data-id');
 
-    fetch('${pageContext.request.contextPath}/materialinformation?id=' + materialId)
-        .then(response => response.json())
-        .then(material => {
-            var form = editMaterialModal.querySelector('form');
-            form.action = form.action.split('?')[0] + "?id=" + materialId;
+                fetch('${pageContext.request.contextPath}/materialinformation?id=' + materialId)
+                        .then(response => response.json())
+                        .then(material => {
+                            var form = editMaterialModal.querySelector('form');
+                            form.action = form.action.split('?')[0] + "?id=" + materialId;
 
-            // Populate fields
-            form.querySelector('input[name="id"]').value = material.id;
-            form.querySelector('input[name="name"]').value = material.name;
-            form.querySelector('textarea[name="description"]').value = material.description;
-            form.querySelector('input[name="price"]').value = material.price;
+                            // Populate fields
+                            form.querySelector('input[name="id"]').value = material.id;
+                            form.querySelector('input[name="name"]').value = material.name;
+                            form.querySelector('textarea[name="description"]').value = material.description;
+                            form.querySelector('input[name="price"]').value = material.price;
 
-            // Supplier select
-         
-var supplierSelect = form.querySelector('select[name="supplierId"]');
-supplierSelect.value = material.supplierInfo.id; // Kiểm tra xem id này có đúng không
+                            // Supplier select
 
-            // Status select
-            var statusSelect = form.querySelector('select[name="status"]');
-            statusSelect.value = material.status; // Ensure this value is correctly set
+                            var supplierSelect = form.querySelector('select[name="supplierId"]');
+                            supplierSelect.value = material.supplierInfo.id; // Kiểm tra xem id này có đúng không
 
-            // Image preview
-            var currentImageInput = form.querySelector('input[name="currentImage"]');
-            currentImageInput.value = material.image;
-            var imagePreviewText = form.querySelector('.form-text');
-            imagePreviewText.innerHTML = `Current image: <img src="${material.image}" alt="Current Image" style="max-width: 100px;">`;
-        })
-        .catch(error => console.error('Error fetching material details:', error));
-});
+                            // Status select
+                            var statusSelect = form.querySelector('select[name="status"]');
+                            statusSelect.value = material.status; // Ensure this value is correctly set
+
+                            // Image preview
+                            var currentImageInput = form.querySelector('input[name="currentImage"]');
+                            currentImageInput.value = material.image;
+                            var imagePreviewText = form.querySelector('.form-text');
+                            imagePreviewText.innerHTML = `Current image: <img src="${material.image}" alt="Current Image" style="max-width: 100px;">`;
+                        })
+                        .catch(error => console.error('Error fetching material details:', error));
+            });
 
         </script>
 
