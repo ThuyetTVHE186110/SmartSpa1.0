@@ -34,6 +34,7 @@ body {
     color: var(--text-primary);
     line-height: 1.6;
 }
+
 .pagination {
     display: flex;
     justify-content: center;
@@ -91,6 +92,115 @@ body {
     transition: all 0.3s ease;
     padding-top: 1rem;
     z-index: 100;
+    transition: width 0.3s ease;
+    width: 250px;
+    overflow: hidden;
+}
+
+.sidebar.collapsed {
+    width: 60px;
+}
+
+.sidebar .submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out;
+}
+
+.sidebar .has-submenu.active .submenu {
+    max-height: 500px;
+    /* Adjust based on your content */
+}
+
+.sidebar .submenu-arrow {
+    transition: transform 0.3s ease;
+}
+
+.sidebar nav ul li a {
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ripple effect */
+.ripple {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    transform: scale(0);
+    animation: ripple 0.6s linear;
+    pointer-events: none;
+}
+
+@keyframes ripple {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* Hover animations */
+.sidebar nav ul li a:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+.sidebar nav ul li a:active {
+    transform: scale(0.98);
+}
+
+.submenu-toggle {
+    transition: background-color 0.3s ease;
+}
+
+.submenu-toggle:hover {
+    background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Active state animations */
+.sidebar nav ul li a.active {
+    background-color: rgba(59, 130, 246, 0.15);
+    border-left: 3px solid #3b82f6;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(-10px);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* Expanded state */
+.sidebar.expanded {
+    width: 250px;
+    box-shadow: 4px 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Icon animations */
+.sidebar i {
+    transition: transform 0.3s ease;
+}
+
+.sidebar nav ul li a:hover i {
+    transform: scale(1.1);
+}
+
+/* Smooth transitions for text */
+.sidebar nav ul li a span {
+    transition: opacity 0.3s ease;
+}
+
+.sidebar.collapsed nav ul li a span {
+    opacity: 0;
+}
+
+.sidebar.expanded nav ul li a span {
+    opacity: 1;
 }
 
 .sidebar-header {
@@ -1016,8 +1126,8 @@ section {
 
 /* Timeline Column */
 .timeline-column {
-    
-    
+
+
     background: white;
     border-radius: var(--border-radius);
     padding: 1.5rem;
@@ -2230,19 +2340,25 @@ section {
     height: 80px;
     border-radius: 50%;
     object-fit: cover;
-    border: 3px solid #f0f0f0; /* Use a light, neutral color for border */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transitions */
+    border: 3px solid #f0f0f0;
+    /* Use a light, neutral color for border */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    /* Subtle shadow for depth */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    /* Smooth transitions */
 }
 
 /* Add hover effect for visual feedback */
 .client-avatar:hover {
-    transform: scale(1.05); /* Slight enlargement on hover */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow on hover */
+    transform: scale(1.05);
+    /* Slight enlargement on hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+    /* Stronger shadow on hover */
 }
 
 /* Improve image quality for high-DPI screens */
-@media (-webkit-min-device-pixel-ratio: 1.5), (min-resolution: 144dpi) {
+@media (-webkit-min-device-pixel-ratio: 1.5),
+(min-resolution: 144dpi) {
     .client-avatar {
         image-rendering: auto;
     }
@@ -4481,4 +4597,52 @@ section {
         right: 0;
         /* Ensure dropdown does not go off screen on small devices */
     }
+}
+
+/* Add or update these styles in your styles.css */
+
+/* Submenu styles */
+.submenu {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background: rgba(0, 0, 0, 0.05);
+    padding-left: 2.5rem;
+}
+
+.has-submenu.active .submenu {
+    max-height: 200px;
+    /* Adjust this value based on your content */
+}
+
+.submenu-toggle {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1.5rem;
+    color: var(--text-secondary);
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.submenu-arrow {
+    transition: transform 0.3s ease;
+}
+
+.has-submenu.active .submenu-arrow {
+    transform: rotate(180deg);
+}
+
+.submenu li a {
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    display: block;
+    transition: all 0.3s ease;
+}
+
+.submenu li a:hover {
+    background: rgba(59, 130, 246, 0.1);
+    color: var(--primary-color);
 }

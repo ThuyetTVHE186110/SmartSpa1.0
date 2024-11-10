@@ -23,6 +23,27 @@
                     <span>Services</span>
                 </a>
             </li>
+            <li class="has-submenu">
+                <a href="#" class="submenu-toggle">
+                    <i class="fas fa-file-invoice-dollar"></i>
+                    <span>Billing</span>
+                    <i class="fas fa-chevron-down submenu-arrow"></i>
+                </a>
+                <ul class="submenu">
+                    <li>
+                        <a href="${pageContext.request.contextPath}/staff/createBill">
+                            <i class="fas fa-plus-circle"></i>
+                            <span>Create Bill</span>
+                        </a>
+                    </li>
+                    <li>
+                        <a href="${pageContext.request.contextPath}/staff/billHistory">
+                            <i class="fas fa-history"></i>
+                            <span>Bill History</span>
+                        </a>
+                    </li>
+                </ul>
+            </li>
             <li>
                 <a href="therapist">
                     <i class="fas fa-user-md"></i>
@@ -69,20 +90,53 @@
     </nav>
 </aside>
 
+<script src="${pageContext.request.contextPath}/Frontend_Staff/js/sidebar.js"></script>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const currentPath = window.location.pathname.split("/").pop();
         const sidebarLinks = document.querySelectorAll(".sidebar nav ul li a");
+        const submenuToggles = document.querySelectorAll(".submenu-toggle");
 
-        // Smoothly add 'active' to the matching link and remove from others
+        // Handle submenu toggles
+        submenuToggles.forEach(toggle => {
+            toggle.addEventListener("click", function (e) {
+                e.preventDefault();
+                const parent = this.closest(".has-submenu");
+                parent.classList.toggle("active");
+
+                // Close other open submenus
+                document.querySelectorAll(".has-submenu").forEach(item => {
+                    if (item !== parent) {
+                        item.classList.remove("active");
+                    }
+                });
+            });
+        });
+
+        // Set active states
         sidebarLinks.forEach(link => {
             const linkPath = link.getAttribute("href");
 
             if (linkPath === currentPath) {
                 link.classList.add("active");
+                // If this is a submenu item, open its parent
+                const submenuParent = link.closest(".has-submenu");
+                if (submenuParent) {
+                    submenuParent.classList.add("active");
+                }
             } else {
                 link.classList.remove("active");
             }
         });
+
+        // Keep submenu open if child is active
+        document.querySelectorAll(".submenu a").forEach(submenuLink => {
+            if (submenuLink.classList.contains("active")) {
+                submenuLink.closest(".has-submenu").classList.add("active");
+            }
+        });
     });
 </script>
+
+<!-- Add this at the bottom of your sideBar.jsp, after the existing script tag -->
+<script src="${pageContext.request.contextPath}/Frontend_Staff/js/sidebar.js"></script>

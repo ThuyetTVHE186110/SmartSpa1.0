@@ -77,9 +77,9 @@
         <jsp:include page="sideBar.jsp" />
 
         <div class="container mt-4">
-            <h1>Edit Blog</h1>
+            <h1 style="padding-left: 50px">Edit Blog</h1>
 
-            <form action="blogManagement" method="post" enctype="multipart/form-data">
+            <form action="blogManagement" method="post" enctype="multipart/form-data" style="padding-left: 50px">
                 <input type="hidden" name="action" value="edit">
                 <input type="hidden" name="id" value="${blog.id}">
 
@@ -172,6 +172,6 @@
                     if (errorAlert)
                     errorAlert.style.display = 'none';
 }, 5000); // Auto-dismiss after 5 seconds
-        </script>
+    </script>
     </body>
 </html>
