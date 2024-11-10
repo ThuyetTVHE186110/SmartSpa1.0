@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="6.0" xmlns="https://jakarta.ee/xml/ns/jakartaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_6_0.xsd">
-    
     <servlet>
         <servlet-name>LoginServlet</servlet-name>
         <servlet-class>controller.Authentication.LoginServlet</servlet-class>
@@ -185,7 +184,7 @@
         <servlet-name>RoomManagement</servlet-name>
         <servlet-class>controller.Room.RoomManagement</servlet-class>
     </servlet>
-    <servlet>    
+    <servlet>
         <servlet-name>ClientManagement</servlet-name>
         <servlet-class>controller.ClientManagement</servlet-class>
     </servlet>
@@ -200,6 +199,14 @@
     <servlet>
         <servlet-name>StaffServiceServlet</servlet-name>
         <servlet-class>controller.StaffServiceServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffDashboardServlet</servlet-name>
+        <servlet-class>controller.StaffDashboardServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>StaffProfileServlet</servlet-name>
+        <servlet-class>controller.StaffProfileServlet</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>BillServlet</servlet-name>
@@ -388,10 +395,10 @@
     <servlet-mapping>
         <servlet-name>RoomManagement</servlet-name>
         <url-pattern>/room-management</url-pattern>    
-    </servlet-mapping>    
-    <servlet-mapping>    
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>ClientManagement</servlet-name>
-        <url-pattern>/Frontend_Staff/clientManagement</url-pattern>
+        <url-pattern>/clientManagement</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>AdminLoginServlet</servlet-name>
@@ -399,7 +406,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TherapistManagement</servlet-name>
-        <url-pattern>/Frontend_Staff/therapist</url-pattern>
+        <url-pattern>/therapist</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>StaffServiceServlet</servlet-name>

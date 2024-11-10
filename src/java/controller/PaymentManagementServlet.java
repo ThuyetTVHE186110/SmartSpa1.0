@@ -21,13 +21,7 @@ public class PaymentManagementServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        HttpSession session = request.getSession();
-        Account account = (Account) session.getAttribute("account");
         
-        if (account == null || (account.getRole() != 1 && account.getRole() != 2)) {
-            response.sendRedirect("login");
-            return;
-        }
 
         String action = request.getParameter("action");
         String search = request.getParameter("search");

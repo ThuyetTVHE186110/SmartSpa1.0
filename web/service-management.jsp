@@ -3,7 +3,7 @@
         <%@ page import="model.Account" %>
             <% // No need to declare session manually; it's already available in JSP // You can directly use session
                 if(session==null || session.getAttribute("account")==null) { // Redirect to login page if session is not found or account is not in session 
-                response.sendRedirect("adminLogin.jsp"); 
+                response.sendRedirect("adminLogin"); 
                 } else { 
                 // Get the account object from session 
                 Account account=(Account) session.getAttribute("account"); 

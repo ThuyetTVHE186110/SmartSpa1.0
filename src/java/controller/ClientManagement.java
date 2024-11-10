@@ -20,13 +20,13 @@ public class ClientManagement extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("account") == null) {
-            response.sendRedirect("../adminLogin");
+            response.sendRedirect("adminLogin");
             return;
         }
 
         Account account = (Account) session.getAttribute("account");
         if (account.getRole() != 3) {  // Assuming roleID = 3 is for staff
-            response.sendRedirect("../adminLogin");
+            response.sendRedirect("adminLogin");
             return;
         }
 
@@ -68,7 +68,7 @@ public class ClientManagement extends HttpServlet {
         request.setAttribute("totalPages", totalPages);
 
 // Forward to the JSP page for rendering
-        request.getRequestDispatcher("clients.jsp").forward(request, response);
+        request.getRequestDispatcher("Frontend_Staff/clients.jsp").forward(request, response);
 
     }
 }

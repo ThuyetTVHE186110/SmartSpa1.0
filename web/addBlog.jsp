@@ -77,7 +77,7 @@
         <jsp:include page="sideBar.jsp" />
 
         <div class="container mt-4">
-            <h1>Add a Blog</h1>
+            <h1 style="padding-left: 50px">Add a Blog</h1>
 
             <!-- Display success or error messages -->
             <c:if test="${not empty errorMessage}">
@@ -88,7 +88,7 @@
             </c:if>
 
             <!-- Edit Blog Form -->
-            <form action="blogManagement" method="post" enctype="multipart/form-data">
+            <form action="blogManagement" method="post" enctype="multipart/form-data" style="padding-left: 50px">
                 <input type="hidden" name="action" value="add">
 
                 <div class="mb-3">
@@ -118,7 +118,10 @@
                 </div>
 
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-secondary" onclick="window.location.href = 'blogManagement'">
+                        Close
+                    </button>
+
                     <button type="submit" class="btn btn-primary">Add Blog</button>
                 </div>
             </form>
@@ -149,14 +152,14 @@
 
             <script>
             // Dismiss messages after 5 seconds
-        setTimeout(function () {
+            setTimeout(function () {
                     const successAlert = document.querySelector('.alert-success');
                     const errorAlert = document.querySelector('.alert-danger');
                     if (successAlert)
                     successAlert.style.display = 'none';
                     if (errorAlert)
                     errorAlert.style.display = 'none';
-}, 5000); // Auto-dismiss after 5 seconds
+        }, 5000); // Auto-dismiss after 5 seconds
         </script>
     </body>
 </html>

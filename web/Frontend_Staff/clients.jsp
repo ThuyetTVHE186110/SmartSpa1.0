@@ -40,7 +40,146 @@
         }
     }
 %>
+<style>
+    /* General modal styling */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6); /* Dark overlay */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 1000;
+        overflow: hidden;
+    }
 
+    .modal.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background-color: #f9f9f9; /* Soft background */
+        padding: 25px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); /* Elegant shadow */
+        width: 90%;
+        max-width: 500px;
+        animation: slide-down 0.3s ease; /* Smooth open animation */
+    }
+
+    @keyframes slide-down {
+        from {
+            transform: translateY(-20px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #ddd;
+        padding-bottom: 10px;
+        margin-bottom: 15px;
+    }
+
+    .modal-header h2 {
+        font-size: 1.5rem;
+        color: #333; /* Primary text color */
+        margin: 0;
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: #888;
+        transition: color 0.3s;
+    }
+
+    .close-modal:hover {
+        color: #555; /* Darker on hover */
+    }
+
+    .modal-body {
+        padding: 15px 0;
+    }
+
+    .form-group {
+        margin-bottom: 15px;
+    }
+
+    .form-group label {
+        display: block;
+        font-weight: 600;
+        color: #444; /* Label color */
+        margin-bottom: 5px;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: border-color 0.3s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        border-color: #007bff; /* Focus color */
+        outline: none;
+        box-shadow: 0 0 5px rgba(0, 123, 255, 0.2); /* Subtle glow on focus */
+    }
+
+    .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .modal-footer .btn-primary {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .modal-footer .btn-primary:hover {
+        background-color: #0056b3; /* Darker blue on hover */
+    }
+
+    .modal-footer .btn-secondary {
+        background-color: #f1f1f1;
+        color: #333;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 6px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .modal-footer .btn-secondary:hover {
+        background-color: #e2e2e2; /* Slightly darker gray on hover */
+    }
+
+</style>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -52,7 +191,7 @@
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-        <link rel="stylesheet" href="./styles.css">
+        <link rel="stylesheet" href="Frontend_Staff/styles.css">
     </head>
     <body>
         <div class="dashboard-container">
@@ -138,13 +277,133 @@
                                         </div>
                                     </div>
                                     <div class="client-actions">
-                                        <button class="btn-icon" title="View Profile"><i class="fas fa-user"></i></button>
+                                        <button class="btn-icon" title="Book Appointment" onclick="window.location.href = 'customer-management'">
+                                            <i class="fas fa-user"></i>
+                                        </button>
+
                                         <button class="btn-icon" title="Book Appointment"><i class="fas fa-calendar-plus"></i></button>
-                                        <button class="btn-icon" title="Edit"><i class="fas fa-edit"></i></button>
+                                        <button class="btn-icon" title="Edit" onclick="openEditModal({
+                                                    name: '${client.name}',
+                                                    email: '${client.email}',
+                                                    phone: '${client.phone}',
+                                                    tier: '${client.tier}',
+                                                    points: '${client.points}'
+                                                })">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+
+
                                     </div>
                                 </div>
                             </c:forEach>
 
+                        </div>
+                        <!-- Book Appointment Modal -->
+                        <div id="bookAppointmentModal" class="modal">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2>Book Appointment</h2>
+                                    <button class="close-modal" onclick="closeBookingModal()" aria-label="Close">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form action="BookAppointmentServlet" method="post">
+                                        <!-- Client Name (Read-Only) -->
+                                        <div class="form-group">
+                                            <label for="clientName">Client Name</label>
+                                            <input type="text" id="clientName" name="clientName" readonly value="${client.name}" />
+                                        </div>
+
+                                        <!-- Appointment Date -->
+                                        <div class="form-group">
+                                            <label for="appointmentDate">Date</label>
+                                            <input type="date" id="appointmentDate" name="appointmentDate" required />
+                                        </div>
+
+                                        <!-- Appointment Time -->
+                                        <div class="form-group">
+                                            <label for="appointmentTime">Time</label>
+                                            <input type="time" id="appointmentTime" name="appointmentTime" required />
+                                        </div>
+
+                                        <!-- Service Type -->
+                                        <div class="form-group">
+                                            <label for="serviceType">Service Type</label>
+                                            <select id="serviceType" name="serviceType" required>
+                                                <option value="Swedish Massage">Swedish Massage</option>
+                                                <option value="Deep Tissue Massage">Deep Tissue Massage</option>
+                                                <option value="Aromatherapy">Aromatherapy</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Therapist Preference -->
+                                        <div class="form-group">
+                                            <label for="therapistPreference">Therapist Preference</label>
+                                            <select id="therapistPreference" name="therapistPreference">
+                                                <option value="Any">Any</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Submit Button -->
+                                        <div class="modal-footer">
+                                            <button type="submit" class="btn-primary">Confirm Appointment</button>
+                                            <button type="button" class="btn-secondary" onclick="closeBookingModal()">Cancel</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Edit Client Modal -->
+                        <div id="editClientModal" class="modal" role="dialog" aria-labelledby="editClientTitle" aria-hidden="true">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h2 id="editClientTitle">Edit Client</h2>
+                                    <button class="close-modal" onclick="closeEditModal()" aria-label="Close">&times;</button>
+                                </div>
+                                <div class="modal-body">
+                                    <form>
+                                        <!-- Client Name -->
+                                        <div class="form-group">
+                                            <label for="clientName">Name</label>
+                                            <input type="text" id="clientName" aria-required="true">
+                                        </div>
+
+                                        <!-- Email -->
+                                        <div class="form-group">
+                                            <label for="clientEmail">Email</label>
+                                            <input type="email" id="clientEmail" aria-required="true">
+                                        </div>
+
+                                        <!-- Phone -->
+                                        <div class="form-group">
+                                            <label for="clientPhone">Phone</label>
+                                            <input type="tel" id="clientPhone" aria-required="true">
+                                        </div>
+
+                                        <!-- Tier -->
+                                        <div class="form-group">
+                                            <label for="clientTier">Tier</label>
+                                            <select id="clientTier" aria-required="true">
+                                                <option value="regular">Regular</option>
+                                                <option value="vip">VIP</option>
+                                                <option value="new">New</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Points -->
+                                        <div class="form-group">
+                                            <label for="clientPoints">Total Points</label>
+                                            <input type="number" id="clientPoints" aria-required="true">
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button class="btn-primary" onclick="saveClient()">Save Changes</button>
+                                    <button class="btn-secondary" onclick="closeEditModal()">Cancel</button>
+                                </div>
+                            </div>
                         </div>
 
 
@@ -246,5 +505,35 @@
                 </main>
             </div>
         </div>
+        <script>
+            function openEditModal(client) {
+                // Thiết lập các giá trị vào modal
+                document.getElementById('clientName').value = client.name;
+                document.getElementById('clientEmail').value = client.email;
+                document.getElementById('clientPhone').value = client.phone;
+                document.getElementById('clientTier').value = client.tier ? client.tier.toLowerCase() : 'regular';
+                document.getElementById('clientPoints').value = client.points;
+
+                // Hiển thị modal
+                const modal = document.getElementById('editClientModal');
+                modal.classList.add('active');
+                modal.style.display = "flex";
+            }
+
+// Đóng modal
+            function closeEditModal() {
+                const modal = document.getElementById('editClientModal');
+                modal.classList.remove('active');
+                modal.style.display = "none";
+            }
+
+
+// Hàm xử lý khi lưu thay đổi
+            function saveClientChanges() {
+                // Logic để lưu thay đổi, có thể bao gồm AJAX gửi dữ liệu đến server
+                alert("Changes have been saved!");
+                closeEditModal();
+            }
+        </script>
     </body><!-- comment -->
 </html>

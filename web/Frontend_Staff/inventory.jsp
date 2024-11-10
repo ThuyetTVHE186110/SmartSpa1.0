@@ -194,24 +194,81 @@
     </body>
 
     <script>
-        // Function to update active button
-        function updateActiveButton(selectedButton) {
-            document.querySelectorAll(".filter-btn").forEach(button => {
-                button.classList.remove("active");
-            });
-            selectedButton.classList.add("active");
-        }
-
-// Add event listeners to filter buttons
-        document.querySelectorAll('.filter-btn').forEach(button => {
-            button.addEventListener('click', function () {
-                const categoryId = this.getAttribute('data-category');
-                // Check if categoryId is defined and append it to the URL correctly
-                if (categoryId) {
-                    window.location.href = `inventoryservlet?categoryID=${categoryId}`;
-                }
-            });
+       document.addEventListener('DOMContentLoaded', function () {
+    // Cập nhật nút đang được chọn
+    function updateActiveButton(selectedButton) {
+        document.querySelectorAll(".filter-btn").forEach(button => {
+            button.classList.remove("active");
         });
+        selectedButton.classList.add("active");
+    }
+
+    // Thêm sự kiện cho các nút lọc
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        button.addEventListener('click', function () {
+            const categoryId = this.getAttribute('data-category');
+            updateActiveButton(this);
+
+            // Gọi AJAX để lọc sản phẩm và nguyên liệu theo danh mục đã chọn
+            fetchFilteredItems(categoryId);
+        });
+    });
+
+    // Hàm gọi AJAX để lọc sản phẩm và nguyên liệu
+    function fetchFilteredItems(categoryId) {
+        fetch(`inventoryservlet?categoryID=${categoryId}`, {
+            method: 'GET',
+        })
+        .then(response => response.json())
+        .then(data => {
+            // Xóa các sản phẩm và nguyên liệu hiện tại
+            document.querySelector('.inventory-cards').innerHTML = '';
+            document.querySelector('.inventory-cards.materials').innerHTML = '';
+
+            // Cập nhật danh sách sản phẩm
+            data.products.forEach(product => {
+                const productCard = document.createElement('div');
+                productCard.classList.add('inventory-card');
+                productCard.innerHTML = `
+                    <div class="inventory-header">
+                        <img src="${product.image}" alt="${product.name}" class="item-image">
+                    </div>
+                    <div class="inventory-info">
+                        <h4>${product.name}</h4>
+                        <div class="item-details">
+                            <span><i class="fas fa-dollar-sign"></i> Price: $${product.price}</span>
+                            <span><i class="fas fa-tag"></i> Category: ${product.category}</span>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('.inventory-cards').appendChild(productCard);
+            });
+
+            // Cập nhật danh sách nguyên liệu
+            data.materials.forEach(material => {
+                const materialCard = document.createElement('div');
+                materialCard.classList.add('inventory-card');
+                materialCard.innerHTML = `
+                    <div class="inventory-header">
+                        <img src="${material.image}" alt="${material.name}" class="item-image">
+                    </div>
+                    <div class="inventory-info">
+                        <h4>${material.name}</h4>
+                        <div class="item-details">
+                            <span><i class="fas fa-dollar-sign"></i> Price: $${material.price}</span>
+                        </div>
+                    </div>
+                `;
+                document.querySelector('.inventory-cards.materials').appendChild(materialCard);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching filtered items:', error);
+        });
+    }
+});
+
+
 
 // Function to load items based on the selected category
         function loadItemsByCategory(category) {

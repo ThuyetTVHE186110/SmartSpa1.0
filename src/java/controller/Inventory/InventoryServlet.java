@@ -62,34 +62,38 @@ public class InventoryServlet extends HttpServlet {
    @Override
 protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-    InventoryDAO inventoryDAO = new InventoryDAO();
-    
-    // Lấy tham số categoryID từ yêu cầu
-    String categoryIdParam = request.getParameter("categoryID");
-    List<Product> products;
-    
-    if (categoryIdParam != null && !categoryIdParam.isEmpty()) {
-        // Nếu có categoryID, chuyển sang kiểu số và lấy danh sách sản phẩm theo danh mục
-        int categoryId = Integer.parseInt(categoryIdParam);
-        products = inventoryDAO.getProductsByCategory(categoryId);
-    } else {
-        // Nếu không có categoryID, lấy tất cả sản phẩm
-        products = inventoryDAO.getAllProducts();
-    }
+     InventoryDAO inventoryDAO = new InventoryDAO();
+        
+        // Get the categoryID parameter from the request
+        String categoryIdParam = request.getParameter("categoryID");
+        List<Product> products;
+        List<Material> materials;
+        
+        if (categoryIdParam != null && !categoryIdParam.isEmpty()) {
+            // If categoryID is provided, parse it and filter products and materials by category
+            int categoryId = Integer.parseInt(categoryIdParam);
+            products = inventoryDAO.getProductsByCategory(categoryId);  // Filter products by category
+            materials = inventoryDAO.getMaterialCategories();  // Filter materials by category
+        } else {
+            // If no categoryID, get all products and materials
+            products = inventoryDAO.getAllProducts();
+            materials = inventoryDAO.getMaterialCategories();
+        }
 
-    // Lấy danh mục sản phẩm và danh mục vật liệu
-    List<Category> productCategories = inventoryDAO.getProductCategories();
-    List<Material> materialCategories = inventoryDAO.getMaterialCategories();
-    
-    // Set các thuộc tính cho JSP
-    request.setAttribute("products", products);
-    request.setAttribute("productCategories", productCategories);
-    request.setAttribute("materialCategories", materialCategories);
-    
-    // Chuyển tiếp tới trang JSP hiển thị
-    RequestDispatcher dispatcher = request.getRequestDispatcher("Frontend_Staff/inventory.jsp");
-    dispatcher.forward(request, response);
-}
+        // Fetch product categories and material categories
+        List<Category> productCategories = inventoryDAO.getProductCategories();
+        List<Material> materialCategories = inventoryDAO.getMaterialCategories();
+        
+        // Set attributes for the JSP
+        request.setAttribute("products", products);
+        request.setAttribute("materials", materials);
+        request.setAttribute("productCategories", productCategories);
+        request.setAttribute("materialCategories", materialCategories);
+        
+        // Forward the request to the JSP
+        RequestDispatcher dispatcher = request.getRequestDispatcher("Frontend_Staff/inventory.jsp");
+        dispatcher.forward(request, response);
+    }
 
 
     /** 

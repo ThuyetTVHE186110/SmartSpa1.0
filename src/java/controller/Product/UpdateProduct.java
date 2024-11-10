@@ -88,32 +88,21 @@ public class UpdateProduct extends HttpServlet {
         }
 
         // Xử lý tải lên hình ảnh hoặc giữ hình ảnh hiện tại
+        String image = request.getParameter("currentImage");
+
+// Check if a new image file is uploaded
         Part imagePart = request.getPart("file");
-        String image = request.getParameter("currentImage"); // Giữ hình ảnh hiện tại
-
         if (imagePart != null && imagePart.getSize() > 0) {
-            // Kiểm tra và lưu tệp hình ảnh mới
+            // If a new image is uploaded, update the image path
             String fileName = imagePart.getSubmittedFileName();
-            if (!fileName.toLowerCase().endsWith(".jpg") && !fileName.toLowerCase().endsWith(".png")) {
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Only JPG and PNG files are allowed");
-                return;
-            }
-            if (imagePart.getSize() > 5 * 1024 * 1024) { // Giới hạn 5MB
-                response.sendError(HttpServletResponse.SC_BAD_REQUEST, "File size must be 5MB or less");
-                return;
-            }
-
-            // Đường dẫn lưu tệp
             String uploadPath = getServletContext().getRealPath("img");
             File uploadDir = new File(uploadPath);
             if (!uploadDir.exists()) {
-                uploadDir.mkdirs(); // Tạo thư mục nếu không tồn tại
+                uploadDir.mkdirs();
             }
-
-            // Lưu tệp và thiết lập đường dẫn hình ảnh
             Path filePath = Paths.get(uploadPath, fileName);
             Files.copy(imagePart.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
-            image = "img/" + fileName; // Cập nhật đường dẫn hình ảnh
+            image = "img/" + fileName; // Update image path with new file
         }
 
         String branchName = request.getParameter("branchName");
@@ -122,11 +111,26 @@ public class UpdateProduct extends HttpServlet {
         String howToUse = request.getParameter("howToUse");
         String benefit = request.getParameter("benefit");
 
-        // Tạo đối tượng ProductDAO và gọi phương thức updateProduct
+        // Tạo đối tượng ProductDAO
         ProductDAO productDAO = new ProductDAO();
-        productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
-        // Chuyển hướng đến trang danh sách sản phẩm (hoặc trang hiển thị)
-        response.sendRedirect("productlist");
+
+        // Kiểm tra tên sản phẩm mới có bị trùng với tên sản phẩm khác không
+        if (productDAO.isProductNameExistsForEdit(id, name)) {
+            response.sendRedirect("productlist?productId=" + id + "&message=Product name already exists. Please choose a different name.");
+            return;
+        }
+
+        // Cập nhật thông tin sản phẩm
+        try {
+            productDAO.updateProduct(id, name, description, price, quantity, image, categoryId, supplierId, branchName, status, ingredient, howToUse, benefit);
+
+            // Nếu thành công, chuyển hướng đến trang danh sách sản phẩm với thông báo
+            response.sendRedirect("productlist?message=Product%20updated%20successfully");
+
+        } catch (Exception e) {
+            // Nếu có lỗi, chuyển hướng đến trang danh sách sản phẩm với thông báo lỗi
+            response.sendRedirect("productlist?message=Error%20updating%20product%3A%20" + e.getMessage());
+        }
     }
 
     @Override
