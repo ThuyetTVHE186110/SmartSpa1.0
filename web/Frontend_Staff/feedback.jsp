@@ -197,7 +197,6 @@
                                 </div>
                             </div>
 
-                            <!-- Rating Distribution -->
                             <div class="summary-card">
                                 <h3>Rating Distribution</h3>
                                 <div class="rating-distribution">
@@ -206,21 +205,21 @@
                                         <div class="progress-bar">
                                             <div class="progress" id="progress-5" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count" id="count-5">0</span>
+                                        <span class="rating-count" id="count-5">2</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">4 Stars</span>
                                         <div class="progress-bar">
                                             <div class="progress" id="progress-4" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count" id="count-4">0</span>
+                                        <span class="rating-count" id="count-4">1</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">3 Stars</span>
                                         <div class="progress-bar">
                                             <div class="progress" id="progress-3" style="width: 0%"></div>
                                         </div>
-                                        <span class="rating-count" id="count-3">0</span>
+                                        <span class="rating-count" id="count-3">2</span>
                                     </div>
                                     <div class="rating-bar">
                                         <span class="rating-label">2 Stars</span>
@@ -296,16 +295,18 @@
 <script>
     // RATING DISTRIBUTE
     document.addEventListener("DOMContentLoaded", function () {
-        // Kiểm tra dữ liệu feedbackList và cập nhật Rating Distribution
+        // Giả lập dữ liệu feedbackList
         const feedbackList = [
-            {starRating: 5, content: "Great service!"},
-            {starRating: 4, content: "Very good!"},
-            {starRating: 3, content: "It was okay."},
-            {starRating: 2, content: "Not satisfied."},
-            {starRating: 1, content: "Terrible experience."},
-                    // Thêm các mục feedback khác nếu cần
+            {starRating: 5, content: "Excellent service!"},
+            {starRating: 4, content: "Good experience!"},
+            {starRating: 3, content: "Average."},
+            {starRating: 5, content: "Wonderful!"},
+            {starRating: 2, content: "Not great."},
+            {starRating: 1, content: "Terrible."},
+                    // Thêm các đánh giá khác vào đây
         ];
 
+        // Hàm cập nhật Rating Distribution
         function updateRatingDistribution(feedbackList) {
             const ratingCounts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
 
@@ -319,20 +320,64 @@
             // Tổng số đánh giá
             const totalReviews = feedbackList.length;
 
-            // Cập nhật tỷ lệ và số lượng cho từng mức đánh giá
+            // Cập nhật thanh tiến trình và số lượng cho từng mức đánh giá
             for (let rating = 5; rating >= 1; rating--) {
                 const count = ratingCounts[rating];
                 const percentage = totalReviews > 0 ? ((count / totalReviews) * 100).toFixed(0) + "%" : "0%";
 
-                // Cập nhật thanh tiến trình và số lượng
-                document.getElementById(`progress-${rating}`).style.width = percentage;
+                // Cập nhật số lượng đánh giá
                 document.getElementById(`count-${rating}`).textContent = count;
+
+                // Cập nhật độ rộng của thanh tiến trình
+                document.getElementById(`progress-${rating}`).style.width = percentage;
             }
         }
 
-        // Gọi hàm cập nhật
+        // Gọi hàm để cập nhật Rating Distribution
         updateRatingDistribution(feedbackList);
     });
+
+
+
+
+//    document.addEventListener("DOMContentLoaded", function () {
+//        // Kiểm tra dữ liệu feedbackList và cập nhật Rating Distribution
+//        const feedbackList = [
+//            {starRating: 5, content: "Great service!"},
+//            {starRating: 4, content: "Very good!"},
+//            {starRating: 3, content: "It was okay."},
+//            {starRating: 2, content: "Not satisfied."},
+//            {starRating: 1, content: "Terrible experience."},
+//                    // Thêm các mục feedback khác nếu cần
+//        ];
+//
+//        function updateRatingDistribution(feedbackList) {
+//            const ratingCounts = {5: 0, 4: 0, 3: 0, 2: 0, 1: 0};
+//
+//            // Đếm số lượng đánh giá cho mỗi mức sao
+//            feedbackList.forEach(feedback => {
+//                if (feedback.starRating >= 1 && feedback.starRating <= 5) {
+//                    ratingCounts[feedback.starRating]++;
+//                }
+//            });
+//
+//            // Tổng số đánh giá
+//            const totalReviews = feedbackList.length;
+//
+//            // Cập nhật tỷ lệ và số lượng cho từng mức đánh giá
+//            for (let rating = 5; rating >= 1; rating--) {
+//                const count = ratingCounts[rating];
+//                const percentage = totalReviews > 0 ? ((count / totalReviews) * 100).toFixed(0) + "%" : "0%";
+//
+//                // Cập nhật thanh tiến trình và số lượng
+//                document.getElementById(`progress-${rating}`).style.width = percentage;
+//                document.getElementById(`count-${rating}`).textContent = count;
+//            }
+//        }
+//
+//        // Gọi hàm cập nhật
+//        updateRatingDistribution(feedbackList);
+//    });
 
 
 </script>

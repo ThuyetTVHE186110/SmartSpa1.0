@@ -48,6 +48,7 @@
                                             <option value="${service.id}">${service.name}</option>
                                         </c:forEach>
                                     </select>
+                                    
                                 </div>
                             </div>
                             <div class="form-group">
